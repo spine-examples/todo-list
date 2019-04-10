@@ -38,7 +38,6 @@ import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {houseTasks} from 'test/given/tasks';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
-import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {tomorrowMoment} from 'test/given/dates';
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
@@ -47,7 +46,10 @@ import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {LayoutModule} from 'app/layout/layout.module';
+import {NotificationService} from 'app/layout/notification.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 describe('TaskDefinitionComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -74,8 +76,9 @@ describe('TaskDefinitionComponent', () => {
 
         TodoListComponentsModule,
         TodoListPipesModule,
-        NotificationServiceModule,
+        LayoutModule,
 
+        MatSnackBarModule,
         MatMomentDateModule,
         MatButtonModule,
         MatDatepickerModule,
@@ -85,6 +88,7 @@ describe('TaskDefinitionComponent', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
+        NotificationService,
         {provide: Client, useValue: mockClient},
         {provide: LayoutService, useValue: mockLayoutService()}
       ]

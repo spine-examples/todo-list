@@ -63,8 +63,10 @@ import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {mockLayoutService, mockNotificationService} from 'test/given/layout-service';
 import {LayoutService} from 'app/layout/layout.service';
-import {NotificationService} from 'app/notification-service/notification.service';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {NotificationService} from 'app/layout/notification.service';
+import {LayoutModule} from 'app/layout/layout.module';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -116,9 +118,10 @@ describe('TaskCreationWizardComponent', () => {
         TodoListComponentsModule,
         TodoListPipesModule,
         TaskServiceModule,
-        NotificationServiceModule,
         LabelsModule,
+        LayoutModule,
 
+        MatSnackBarModule,
         MatMomentDateModule,
         MatButtonModule,
         MatChipsModule,

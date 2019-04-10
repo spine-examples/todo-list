@@ -30,9 +30,11 @@ import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 import {taskWithId} from 'test/given/tasks';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from "app/layout/notification.service";
+import {LayoutModule} from "app/layout/layout.module";
 
 const expectedTask = taskWithId('some id');
 
@@ -52,8 +54,8 @@ describe('TaskItemComponent', () => {
       imports: [
         RouterTestingModule.withRoutes([]),
         MatExpansionModule, TodoListPipesModule,
-        BrowserAnimationsModule, NotificationServiceModule],
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+        BrowserAnimationsModule, LayoutModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}, LayoutService, NotificationService]
     })
       .compileComponents();
   }));

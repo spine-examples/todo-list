@@ -18,14 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {LayoutModule} from 'app/layout/layout.module';
 
 /**
- * Module that provides `NotificationService`.
+ * A service that is responsible for notifying users about notable events, such as an error.
  */
-@NgModule({
-  imports: [MatSnackBarModule]
+@Injectable({
+  providedIn: LayoutModule
 })
-export class NotificationServiceModule {
+export class NotificationService {
+
+  constructor(private snackBar: MatSnackBar) {
+  }
+
+  /** Shows the snack-bar with the specified message for four seconds. */
+  public showSnackbarWith(message: string): void {
+    this.snackBar.open(message, 'Ok', {
+      duration: 4_000
+    });
+  }
 }

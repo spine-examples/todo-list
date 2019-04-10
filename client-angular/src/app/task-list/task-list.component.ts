@@ -40,7 +40,7 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.filter) {
+    if (!this.filter) {
       this.route.data
         .subscribe(data => {
           this.initializeFromRoutedData(data);

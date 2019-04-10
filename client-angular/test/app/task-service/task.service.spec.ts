@@ -34,9 +34,8 @@ import {
 import {BehaviorSubject} from 'rxjs';
 import {TaskId, TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {CreateBasicTask} from 'proto/todolist/c/commands_pb';
-import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 import {mockNotificationService} from 'test/given/layout-service';
-import {NotificationService} from 'app/notification-service/notification.service';
+import {NotificationService} from 'app/layout/notification.service';
 
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
@@ -61,7 +60,6 @@ describe('TaskService', () => {
   let service: TaskService;
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      imports: [NotificationServiceModule],
       providers: [
         TaskService, {provide: Client, useValue: mockClient},
         NotificationService, {provide: NotificationService, useValue: notificationService}

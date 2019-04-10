@@ -40,7 +40,9 @@ import {TaskListComponent} from 'app/task-list/task-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
-import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
+import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from 'app/layout/notification.service';
+import {LayoutModule} from "app/layout/layout.module";
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -93,9 +95,12 @@ describe('ActiveTasksComponent', () => {
         BrowserAnimationsModule,
         MatExpansionModule,
         TodoListPipesModule,
-        NotificationServiceModule
+        LayoutModule
       ],
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+      providers: [TaskService, {
+        provide: Client,
+        useValue: mockClient
+      }, LayoutService, NotificationService]
     })
       .compileComponents();
 

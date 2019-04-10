@@ -19,7 +19,7 @@
  */
 
 import {LayoutService} from 'app/layout/layout.service';
-import {NotificationService} from 'app/notification-service/notification.service';
+import {NotificationService} from 'app/layout/notification.service';
 
 /**
  * Obtains a mock `LayoutService`.

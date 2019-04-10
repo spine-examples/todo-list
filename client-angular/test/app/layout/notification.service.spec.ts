@@ -18,25 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
+import {TestBed} from '@angular/core/testing';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
-/**
- * A service that is responsible for notifying users about notable events, such as an error.
- */
-@Injectable({
-  providedIn: NotificationServiceModule
-})
-export class NotificationService {
+import {NotificationService} from 'app/layout/notification.service';
 
-  constructor(private snackBar: MatSnackBar) {
-  }
+describe('NotificationService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [MatSnackBarModule],
+    providers: [NotificationService]
+  }));
 
-  /** Shows the snack-bar with the specified message for four seconds. */
-  public showSnackbarWith(message: string): void {
-    this.snackBar.open(message, 'Ok', {
-      duration: 4_000
-    });
-  }
-}
+  it('should be created', () => {
+    const service: NotificationService = TestBed.get(NotificationService);
+    expect(service).toBeTruthy();
+  });
+});

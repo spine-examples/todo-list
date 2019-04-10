@@ -35,7 +35,10 @@ import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
-import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
+import {LayoutModule} from 'app/layout/layout.module';
+import {NotificationService} from 'app/layout/notification.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -58,13 +61,15 @@ describe('ConfirmationComponent', () => {
           {path: 'task-list/active', component: ConfirmationComponent}
         ]),
 
+        MatSnackBarModule,
         TodoListComponentsModule,
         TodoListPipesModule,
-        NotificationServiceModule
+        LayoutModule
       ],
       providers: [
         TaskCreationWizard,
         TaskService,
+        NotificationService,
         {provide: Client, useValue: mockClient},
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
