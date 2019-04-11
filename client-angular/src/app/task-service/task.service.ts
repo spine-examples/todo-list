@@ -41,16 +41,13 @@ import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/layout/notification.service';
 
 /**
- * An operation that involves a task with the specified ID.
+ * A state of the task before the change.
  *
- * Includes fields that the task used to have before the operation occurred.
- *
- * If the state is `null`, the task has not existed prior to this operation, meaning that the
- * operation has created a new task.
+ * If `previousState` is not set, the task hasn't existed prior to change.
  */
-interface TaskOperation {
+interface TaskState {
   taskId: TaskId;
-  previousState: TaskItem;
+  previousState?: TaskItem;
 }
 
 /**
@@ -61,26 +58,12 @@ interface TaskOperation {
 })
 export class TaskService implements OnDestroy {
 
-  private _tasks$: BehaviorSubject<TaskItem[]>;
-  private _unsubscribe: () => void;
-  private optimisticallyChanged: TaskOperation[] = [];
-
   /**
    * @param spineWebClient a client for accessing Spine backend
    * @param notificationService a service that notifies users about events that happen in
    * the application
    */
   constructor(private spineWebClient: Client, private notificationService: NotificationService) {
-  }
-
-  /** Obtains a new task item with all the fields taken from the specified one. */
-  private static from(task: TaskItem): TaskItem {
-    const result = new TaskItem();
-    result.setId(task.getId());
-    result.setDescription(task.getDescription());
-    result.setStatus(task.getStatus());
-    result.setPriority(task.getPriority());
-    return result;
   }
 
   /**
@@ -99,6 +82,35 @@ export class TaskService implements OnDestroy {
     return this._tasks$.getValue();
   }
 
+  private _tasks$: BehaviorSubject<TaskItem[]>;
+  private _unsubscribe: () => void;
+  private optimisticallyChanged: TaskState[] = [];
+
+  /** Obtains a new task item with all the fields taken from the specified one. */
+  private static copy(task: TaskItem): TaskItem {
+    const result = new TaskItem();
+    result.setId(task.getId());
+    result.setDescription(task.getDescription());
+    result.setStatus(task.getStatus());
+    result.setPriority(task.getPriority());
+    return result;
+  }
+
+  /**
+   * Based on the error that has occurred during command handling, decides whether the optimistic
+   * operation associated with the command should be undone.
+   *
+   * @param err error that has occurred during command handling.
+   *
+   * Visible for testing.
+   */
+  static shouldUndoOptimisticOperation(err: CommandHandlingError): boolean {
+    if (err.hasOwnProperty('assuresCommandNeglected')) {
+      return err.assuresCommandNeglected();
+    }
+    return false;
+  }
+
   /**
    * Makes sure that array of tasks is initialized.
    *
@@ -107,8 +119,7 @@ export class TaskService implements OnDestroy {
   public assureTasksInitialized(): void {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
-      this.subscribeToTasks()
-        .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+      this.subscribeToTasks().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
   }
 
@@ -126,7 +137,7 @@ export class TaskService implements OnDestroy {
     cmd.setId(taskId);
     const toBroadcast: TaskItem[] = this.tasks.map(task => {
       if (task.getId() === taskId) {
-        const changedTask: TaskItem = TaskService.from(task);
+        const changedTask: TaskItem = TaskService.copy(task);
         task.setStatus(TaskStatus.DELETED);
         this.optimisticallyChanged.push({
           taskId,
@@ -136,9 +147,7 @@ export class TaskService implements OnDestroy {
       return task;
     }, this);
     this._tasks$.next(toBroadcast);
-    this.spineWebClient.sendCommand(cmd,
-      () => this.removeFromOptimisticallyChanged(taskId),
-      err => this.recoverPreviousState(err, taskId));
+    this.sendTaskCommand(cmd, taskId);
   }
 
   /**
@@ -155,7 +164,7 @@ export class TaskService implements OnDestroy {
     cmd.setId(taskId);
     const toBroadcast = this.tasks.map(task => {
       if (task.getId() === taskId) {
-        const changedTask = TaskService.from(task);
+        const changedTask = TaskService.copy(task);
         task.setStatus(TaskStatus.COMPLETED);
         this.optimisticallyChanged.push({
           taskId,
@@ -165,9 +174,7 @@ export class TaskService implements OnDestroy {
       return task;
     }, this);
     this._tasks$.next(toBroadcast);
-    this.spineWebClient.sendCommand(cmd,
-      () => this.removeFromOptimisticallyChanged(taskId),
-      (err) => this.recoverPreviousState(err, taskId));
+    this.sendTaskCommand(cmd, taskId);
   }
 
   /**
@@ -195,16 +202,29 @@ export class TaskService implements OnDestroy {
     createdTask.setStatus(TaskStatus.OPEN);
 
     this.optimisticallyChanged.push({
-      taskId: id,
-      previousState: null
+      taskId: id
     });
     const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);
-    this.spineWebClient.sendCommand(cmd,
-      () => this.removeFromOptimisticallyChanged(id),
-      (err) => this.recoverPreviousState(err, id));
+    this.sendTaskCommand(cmd, id);
   }
 
+  /**
+   * Sends the specified task-related command, which is related to the task with the specified ID.
+   *
+   * If the handling of the command fails, the changes implied by the given command
+   * may be undone (see `recoverPreviousState docs`).
+   *
+   * @param cmd command to send
+   * @param taskId ID of the task that is related to the sent command
+   */
+  private sendTaskCommand(cmd, taskId): void {
+    this.spineWebClient.sendCommand(cmd,
+      () => this.removeFromOptimisticallyChanged(taskId),
+      err => this.recoverPreviousState(err, taskId));
+  }
+
+  /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */
   private removeFromOptimisticallyChanged(taskId: TaskId): void {
     this.optimisticallyChanged = this.optimisticallyChanged.filter(t => t.taskId !== taskId);
   }
@@ -221,22 +241,29 @@ export class TaskService implements OnDestroy {
    * Visible for testing
    */
   recoverPreviousState(err, taskId: TaskId): void {
-    if (this.shouldUndoOptimisticOperation(err)) {
+    this.removeFromOptimisticallyChanged(taskId);
+    if (TaskService.shouldUndoOptimisticOperation(err)) {
       this.undoOptimisticOperation(taskId);
       this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     }
   }
 
+  /**
+   * Finds the task with the specified ID in the list of optimistically changed tasks, updates it
+   * to its previous state (as per `TaskState` interface).
+   *
+   * Then broadcasts the updated task list via `tasks$`.
+   *
+   * @param taskToUndo ID of the task to rollback to the previous state
+   */
   private undoOptimisticOperation(taskToUndo: TaskId): void {
     if (taskToUndo) {
       const lastBroadcastTasks = this.tasks;
       const toBroadcast: TaskItem[] = [];
-      const toUndo: TaskOperation = this.optimisticallyChanged.find(value => value.taskId === taskToUndo);
+      const toUndo: TaskState = this.optimisticallyChanged.find(value => value.taskId === taskToUndo);
       lastBroadcastTasks.forEach(task => {
         if (task.getId() === toUndo.taskId) {
           if (toUndo.previousState) {
-            console.log(task.getId().getValue());
-            console.log(toUndo.taskId.getValue());
             toBroadcast.push(toUndo.previousState);
           }
         } else {
@@ -244,7 +271,6 @@ export class TaskService implements OnDestroy {
         }
       }, this);
       this._tasks$.next(toBroadcast);
-      this.removeFromOptimisticallyChanged(taskToUndo);
     }
   }
 
@@ -314,27 +340,4 @@ export class TaskService implements OnDestroy {
       this._unsubscribe();
     }
   }
-
-  /**
-   * Based on the error that has occurred during command handling, decides whether the optimistic
-   * operation associated with the command should be undone.
-   *
-   * @param err error that has occurred during command handling.
-   *
-   * Visible for testing.
-   */
-  shouldUndoOptimisticOperation(err: CommandHandlingError): boolean {
-    const shouldUndoFns: Array<(err: CommandHandlingError) => boolean> = [
-      (e: CommandHandlingError) => e.assuresCommandNeglected(),
-      (e: CommandHandlingError) => e._cause.name.startsWith('ConnectionError'),
-      (e: CommandHandlingError) => e instanceof ConnectionError
-    ];
-    for (const key in shouldUndoFns) {
-      if (shouldUndoFns[key](err)) {
-        return true;
-      }
-    }
-    return false;
-  }
 }
-

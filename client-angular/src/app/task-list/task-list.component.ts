@@ -39,28 +39,18 @@ export class TaskListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private readonly taskService: TaskService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!this.filter) {
-      this.route.data
-        .subscribe(data => {
-          this.initializeFromRoutedData(data);
-          this.performSubscription();
-        });
-    } else {
-      this.performSubscription();
+      const routerData = await this.route.data.toPromise();
+      this.filter = routerData.filter;
     }
+    this.performSubscription();
   }
 
-  private performSubscription() {
+  private performSubscription(): void {
     this.taskService.tasks$.subscribe(tasks => {
       this.tasks = tasks.filter(this.filter);
       this.hasElements = this.tasks.length !== 0;
     });
-  }
-
-  private initializeFromRoutedData(data) {
-    if (!this.filter) {
-      this.filter = data.filter;
-    }
   }
 }
