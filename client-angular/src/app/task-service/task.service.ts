@@ -241,11 +241,11 @@ export class TaskService implements OnDestroy {
    * Visible for testing
    */
   recoverPreviousState(err, taskId: TaskId): void {
-    this.removeFromOptimisticallyChanged(taskId);
     if (TaskService.shouldUndoOptimisticOperation(err)) {
       this.undoOptimisticOperation(taskId);
       this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     }
+    this.removeFromOptimisticallyChanged(taskId);
   }
 
   /**
