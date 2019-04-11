@@ -36,6 +36,9 @@ import {NotificationService} from 'app/layout/notification.service';
  * A state of the task before the change.
  *
  * If `previousState` is not set, the task hasn't existed prior to change.
+ *
+ * Is used to restore an optimistically-executed operation, such as adding a task, to rollback to
+ * the state before the operation.
  */
 interface TaskState {
   taskId: TaskId;
@@ -108,7 +111,7 @@ export class TaskService implements OnDestroy {
    *
    * Visible for testing.
    */
-  public assureTasksInitialized(): void {
+  private assureTasksInitialized(): void {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
       this.subscribeToTasks().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
