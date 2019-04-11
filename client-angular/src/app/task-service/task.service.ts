@@ -19,15 +19,7 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {
-  Client,
-  ClientError,
-  CommandHandlingError,
-  ConnectionError,
-  ServerError,
-  SpineError,
-  Type
-} from 'spine-web';
+import {Client, CommandHandlingError, Type} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -37,7 +29,7 @@ import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
 import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
-import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
+import {TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/layout/notification.service';
 
 /**

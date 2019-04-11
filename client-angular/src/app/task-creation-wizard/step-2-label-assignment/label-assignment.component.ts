@@ -24,8 +24,6 @@ import {Router} from '@angular/router';
 import {LabelService} from 'app/labels/label.service';
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {WizardStep} from 'app/task-creation-wizard/wizard-step';
-
-import {LabelId} from 'proto/todolist/identifiers_pb';
 import {LabelView} from 'proto/todolist/q/projections_pb';
 
 /**
