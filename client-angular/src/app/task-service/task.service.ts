@@ -83,22 +83,6 @@ export class TaskService implements OnDestroy {
     return result;
   }
 
-  /** Visible for testing. */
-  static doNothing(): () => void {
-    return () => {
-    };
-  }
-
-  /** Visible for testing. */
-  static logCmdAck() {
-    console.log('Command acknowledged by the server');
-  }
-
-  /** Visible for testing. */
-  static logCmdErr(err) {
-    console.log('Error when sending command to the server: %s', err);
-  }
-
   /**
    * Obtains an `Observable` of tasks all tasks in the list.
    */
@@ -262,10 +246,6 @@ export class TaskService implements OnDestroy {
       this._tasks$.next(toBroadcast);
       this.removeFromOptimisticallyChanged(taskToUndo);
     }
-  }
-
-  private wasOptimisticallyUpdated(taskId: TaskId): boolean {
-    return this.optimisticallyChanged.map(t => t.taskId).includes(taskId);
   }
 
   /**

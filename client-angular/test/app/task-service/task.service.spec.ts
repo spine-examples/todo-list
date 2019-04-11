@@ -122,21 +122,6 @@ describe('TaskService', () => {
     expect(noneAreDeleted).toBe(true);
   }));
 
-  it('should log command acknowledgement', () => {
-    console.log = jasmine.createSpy('log');
-    TaskService.logCmdAck();
-    expect(console.log).toHaveBeenCalledWith('Command acknowledged by the server');
-  });
-
-  it('should log command error', () => {
-    console.log = jasmine.createSpy('log');
-    const errorMessage = 'Failed to process command';
-    TaskService.logCmdErr(errorMessage);
-    expect(console.log).toHaveBeenCalledWith(
-      'Error when sending command to the server: %s', errorMessage
-    );
-  });
-
   it('should fetch an expected list of tasks', () => {
     service.tasks$.toPromise().then(fetchedTasks => {
       expect(fetchedTasks.length).toBe(2);
