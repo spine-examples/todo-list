@@ -34,12 +34,12 @@ export class AppComponent implements OnInit {
   private showNav: boolean;
   private toolbarLabel: string;
 
-  constructor(private readonly navService: LayoutService,
+  constructor(private readonly layoutService: LayoutService,
               private readonly changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
-    this.navService.config$.subscribe(config => {
+    this.layoutService.config$.subscribe(config => {
       this.showNav = config.showNavigation;
       this.toolbarLabel = config.toolbarLabel;
       this.changeDetector.detectChanges();

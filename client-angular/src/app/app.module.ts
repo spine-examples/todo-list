@@ -32,6 +32,7 @@ import {AppComponent} from 'app/app.component';
 import {TaskListModule} from 'app/task-list/task-list.module';
 import {LayoutModule} from 'app/layout/layout.module';
 import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
+import {LayoutService} from "app/layout/layout.service";
 
 /**
  * The main application module.

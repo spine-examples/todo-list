@@ -113,12 +113,12 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
               route: ActivatedRoute,
-              private readonly navService: LayoutService) {
+              private readonly layoutService: LayoutService) {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
-    this.navService.updateToolbar('Wizard');
-    this.navService.updateShowNav(false);
+    this.layoutService.updateToolbar('Wizard');
+    this.layoutService.updateShowNav(false);
   }
 
   /**
@@ -195,6 +195,6 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.navService.defaultLayout();
+    this.layoutService.defaultLayout();
   }
 }
