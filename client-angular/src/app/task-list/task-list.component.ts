@@ -22,6 +22,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-task-list',
@@ -39,12 +40,17 @@ export class TaskListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private readonly taskService: TaskService) {
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     if (!this.filter) {
-      const routerData = await this.route.data.toPromise();
-      this.filter = routerData.filter;
+      this.route.data
+        .pipe(first())
+        .subscribe((data: any): void => {
+          this.filter = data.filter;
+          this.performSubscription();
+        });
+    } else {
+      this.performSubscription();
     }
-    this.performSubscription();
   }
 
   private performSubscription(): void {
