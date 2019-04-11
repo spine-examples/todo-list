@@ -44,10 +44,7 @@ export class TaskListComponent implements OnInit {
       this.route.data
         .subscribe(data => {
           this.initializeFromRoutedData(data);
-          this.taskService.tasks$.subscribe(tasks => {
-            this.tasks = tasks.filter(this.filter);
-            this.hasElements = this.tasks.length !== 0;
-          });
+          this.performSubscription();
         });
     } else {
       this.performSubscription();
