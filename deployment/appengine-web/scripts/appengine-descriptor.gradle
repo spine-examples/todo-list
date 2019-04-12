@@ -21,7 +21,7 @@
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-apply from: "$projectDir/scripts/buildProfile.gradle"
+apply from: "$rootDir/scripts/buildProfile.gradle"
 
 /**
  * Copies the AppEngine deployment descriptor into the location recognized by the AppEngine Gradle
