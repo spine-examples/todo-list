@@ -22,6 +22,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-task-list',
@@ -40,19 +41,22 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.data
-      .subscribe(data => {
-        this.initializeFromRoutedData(data);
-        this.taskService.tasks$.subscribe(tasks => {
-          this.tasks = tasks.filter(this.filter);
-          this.hasElements = this.tasks.length !== 0;
+    if (!this.filter) {
+      this.route.data
+        .pipe(first())
+        .subscribe((data: any): void => {
+          this.filter = data.filter;
+          this.performSubscription();
         });
-      });
+    } else {
+      this.performSubscription();
+    }
   }
 
-  private initializeFromRoutedData(data) {
-    if (!this.filter) {
-      this.filter = data.filter;
-    }
+  private performSubscription(): void {
+    this.taskService.tasks$.subscribe(tasks => {
+      this.tasks = tasks.filter(this.filter);
+      this.hasElements = this.tasks.length !== 0;
+    });
   }
 }

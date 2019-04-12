@@ -60,13 +60,13 @@ export class LayoutService {
   }
 
   /** Updates the label on the toolbar with the specified value. */
-  public updateToolbar(toolbarValue: string) {
+  public updateToolbar(toolbarValue: string): void {
     const result = {...this._config$.getValue(), ...{toolbarLabel: toolbarValue}};
     this._config$.next(result);
   }
 
   /** Updates whether the toolbar is supposed to be showed. */
-  public updateShowNav(shouldShowNav: boolean) {
+  public updateShowNav(shouldShowNav: boolean): void {
     const result = {...this._config$.getValue(), ...{showNavigation: shouldShowNav}};
     this._config$.next(result);
   }

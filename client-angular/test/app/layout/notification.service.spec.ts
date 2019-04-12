@@ -18,17 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {LayoutService} from 'app/layout/layout.service';
+import {TestBed} from '@angular/core/testing';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 import {NotificationService} from 'app/layout/notification.service';
 
-/**
- * Obtains a mock `LayoutService`.
- */
-export function mockLayoutService() {
-  return jasmine.createSpyObj<LayoutService>('LayoutService',
-    ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
-}
+describe('NotificationService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [MatSnackBarModule],
+    providers: [NotificationService]
+  }));
 
-export function mockNotificationService() {
-  return jasmine.createSpyObj<NotificationService>('NotificationService', ['showSnackbarWith']);
-}
+  it('should be created', () => {
+    const service: NotificationService = TestBed.get(NotificationService);
+    expect(service).toBeTruthy();
+  });
+});

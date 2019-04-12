@@ -29,13 +29,16 @@ import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {houseTasks} from 'test/given/tasks';
-import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
-import {LayoutService} from "app/layout/layout.service";
-import {mockLayoutService} from "test/given/layout-service";
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {LayoutModule} from 'app/layout/layout.module';
+import {NotificationService} from 'app/layout/notification.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -58,12 +61,15 @@ describe('ConfirmationComponent', () => {
           {path: 'task-list/active', component: ConfirmationComponent}
         ]),
 
+        MatSnackBarModule,
         TodoListComponentsModule,
-        TodoListPipesModule
+        TodoListPipesModule,
+        LayoutModule
       ],
       providers: [
         TaskCreationWizard,
         TaskService,
+        NotificationService,
         {provide: Client, useValue: mockClient},
         {provide: LayoutService, useValue: mockLayoutService()}
       ]

@@ -21,12 +21,13 @@
 import {NgModule} from '@angular/core';
 
 import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
+import {LayoutModule} from 'app/layout/layout.module';
 
 /**
  * A module which provides the {@link TaskService}.
  */
 @NgModule({
-  imports: [SpineClientProvider]
+  imports: [SpineClientProvider, LayoutModule]
 })
 export class TaskServiceModule {
 }

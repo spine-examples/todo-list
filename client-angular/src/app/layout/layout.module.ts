@@ -23,12 +23,13 @@ import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 import {RouterModule} from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 /**
  * A module which provides the {@link LayoutService}.
  */
 @NgModule({
-  imports: [RouterModule, MatIconModule, MatListModule],
+  imports: [RouterModule, MatIconModule, MatListModule, MatSnackBarModule],
   declarations: [
     NavigationComponent
   ],

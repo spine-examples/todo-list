@@ -46,7 +46,7 @@ export class TaskItemComponent {
     return this.shouldShowButton();
   }
 
-  private shouldShowButton() {
+  private shouldShowButton(): boolean {
     if (this.task) {
       const status = this.task.getStatus();
       return status === TaskStatus.OPEN || status === TaskStatus.FINALIZED;
@@ -54,11 +54,11 @@ export class TaskItemComponent {
     return false;
   }
 
-  private completeTask() {
+  private completeTask(): void {
     this.taskService.completeTask(this.task.getId());
   }
 
-  private deleteTask() {
+  private deleteTask(): void {
     this.taskService.deleteTask(this.task.getId());
   }
 }

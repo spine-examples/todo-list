@@ -35,9 +35,12 @@ import {houseTasks} from 'test/given/tasks';
 import {initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {label1, label2} from 'test/given/labels';
-import {WizardStep} from 'app/task-creation-wizard/wizard-step';
-import {LayoutService} from "app/layout/layout.service";
-import {mockLayoutService} from "test/given/layout-service";
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {LayoutModule} from 'app/layout/layout.module';
+import {NotificationService} from 'app/layout/notification.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -69,7 +72,9 @@ describe('LabelAssignmentComponent', () => {
 
         TodoListComponentsModule,
         TodoListPipesModule,
+        LayoutModule,
 
+        MatSnackBarModule,
         MatChipsModule,
         MatIconModule,
         MatListModule
@@ -78,6 +83,7 @@ describe('LabelAssignmentComponent', () => {
         TaskCreationWizard,
         TaskService,
         LabelService,
+        NotificationService,
         {provide: Client, useValue: mockClient},
         {provide: LayoutService, useValue: mockLayoutService()}
       ]

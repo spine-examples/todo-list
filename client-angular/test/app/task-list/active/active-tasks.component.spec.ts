@@ -26,11 +26,12 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
-import {Client, Type} from 'spine-web';
+import {Client, Message, Type} from 'spine-web';
+import {BehaviorSubject} from 'rxjs';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {houseTasks} from 'test/given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
@@ -39,6 +40,9 @@ import {TaskListComponent} from 'app/task-list/task-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
+import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from 'app/layout/notification.service';
+import {LayoutModule} from "app/layout/layout.module";
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -47,16 +51,39 @@ describe('ActiveTasksComponent', () => {
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+  function collectDisplayedTasks(): string[] {
+    const taskLists = fixture.debugElement
+      .queryAll(By.css('app-task-list'));
+    const taskItems = taskLists[1].queryAll(By.css('app-task-item'));
+    return taskItems.map(item =>
+      item.query(By.css('mat-panel-title'))
+        .query(By.css('div'))
+        .nativeElement.innerHTML);
+  }
+
+  function addBasicTaskWith(taskDescription: string) {
+    const input = fixture.debugElement
+      .query(By.css('input'))
+      .nativeElement;
+    input.value = taskDescription;
+    const keyPressed = new KeyboardEvent('keydown', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
+  }
+
+  const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
+
+  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
+    addedTasksSubject.asObservable(), unsubscribe
   ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         ActiveTasksComponent,
-        TaskItemComponent,
         TaskListComponent,
+        TaskItemComponent,
         TaskDetailsComponent
       ],
       imports: [
@@ -67,9 +94,13 @@ describe('ActiveTasksComponent', () => {
         MatIconModule,
         BrowserAnimationsModule,
         MatExpansionModule,
-        TodoListPipesModule
+        TodoListPipesModule,
+        LayoutModule
       ],
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+      providers: [TaskService, {
+        provide: Client,
+        useValue: mockClient
+      }, LayoutService, NotificationService]
     })
       .compileComponents();
 
@@ -79,18 +110,38 @@ describe('ActiveTasksComponent', () => {
     fixture.detectChanges();
   }));
 
-  it('should allow basic task creation', () => {
-    const method = spyOn<any>(component, 'createBasicTask');
-    const input = fixture.debugElement.query(By.css('input')).nativeElement;
-    input.value = 'Some basic task text';
-    const keyPressed = new KeyboardEvent('keydown', {
-      key: 'Enter'
-    });
-    input.dispatchEvent(keyPressed);
-    expect(method).toHaveBeenCalledTimes(1);
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should allow basic task creation', () => {
+    const method = spyOn<any>(component, 'createBasicTask');
+    addBasicTaskWith('some irrelevant description');
+    expect(method).toHaveBeenCalledTimes(1);
+  });
+
+  it('should update the list of tasks without waiting for the response from the serve with a new task',
+    fakeAsync(() => {
+      const description = 'Wash my dog';
+      addBasicTaskWith(description);
+      tick();
+      fixture.detectChanges();
+      const taskDescriptions: string[] = collectDisplayedTasks();
+      expect(taskDescriptions).toContain(` ${description} `);
+    }));
+
+  it('should rollback invalid optimistic task creations', fakeAsync(() => {
+    const description = 'Walk my dog';
+    mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
+      const err = {
+        assuresCommandNeglected: () => true
+      };
+      onError(err);
+    });
+    addBasicTaskWith(description);
+    tick(1_000);
+    fixture.detectChanges();
+    const taskDescriptions = collectDisplayedTasks();
+    expect(taskDescriptions.includes(description)).toBe(false);
+  }));
 });

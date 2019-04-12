@@ -18,17 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {LayoutService} from 'app/layout/layout.service';
-import {NotificationService} from 'app/layout/notification.service';
+import {Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {LayoutModule} from 'app/layout/layout.module';
 
 /**
- * Obtains a mock `LayoutService`.
+ * A service that is responsible for notifying users about notable events, such as an error.
  */
-export function mockLayoutService() {
-  return jasmine.createSpyObj<LayoutService>('LayoutService',
-    ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
-}
+@Injectable({
+  providedIn: LayoutModule
+})
+export class NotificationService {
 
-export function mockNotificationService() {
-  return jasmine.createSpyObj<NotificationService>('NotificationService', ['showSnackbarWith']);
+  constructor(private snackBar: MatSnackBar) {
+  }
+
+  /** Shows the snack-bar with the specified message for four seconds. */
+  public showSnackbarWith(message: string): void {
+    this.snackBar.open(message, 'Ok', {
+      duration: 4_000
+    });
+  }
 }

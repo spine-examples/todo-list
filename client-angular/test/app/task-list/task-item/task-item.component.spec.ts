@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -27,15 +27,16 @@ import {Component} from '@angular/core';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {taskWithId} from 'test/given/tasks';
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {TaskId, TaskItem} from 'proto/todolist/q/projections_pb';
-import {By} from '@angular/platform-browser';
+import {taskWithId} from 'test/given/tasks';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from "app/layout/notification.service";
+import {LayoutModule} from "app/layout/layout.module";
 
-const expectedTaskId = 'taskId';
-const expectedTask: TaskItem = taskWithId(expectedTaskId);
+const expectedTask = taskWithId('some id');
 
 describe('TaskItemComponent', () => {
 
@@ -50,9 +51,11 @@ describe('TaskItemComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestHostComponent, TaskItemComponent, TaskDetailsComponent],
-      imports: [RouterTestingModule.withRoutes([]), MatExpansionModule, TodoListPipesModule,
-        BrowserAnimationsModule],
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        MatExpansionModule, TodoListPipesModule,
+        BrowserAnimationsModule, LayoutModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}, LayoutService, NotificationService]
     })
       .compileComponents();
   }));

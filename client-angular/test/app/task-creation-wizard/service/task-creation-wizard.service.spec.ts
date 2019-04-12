@@ -44,6 +44,9 @@ import {
   UpdateTaskDetails
 } from 'proto/todolist/c/commands_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
+import {LayoutModule} from 'app/layout/layout.module';
+import {NotificationService} from 'app/layout/notification.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('TaskCreationWizard', () => {
 
@@ -101,7 +104,12 @@ describe('TaskCreationWizard', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
+        NotificationService,
         {provide: Client, useValue: mockClient}
+      ],
+      imports: [
+        LayoutModule,
+        MatSnackBarModule
       ]
     });
     wizard = TestBed.get(TaskCreationWizard);

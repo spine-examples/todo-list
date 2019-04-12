@@ -22,8 +22,6 @@ import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskService} from 'app/task-service/task.service';
-
-import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
