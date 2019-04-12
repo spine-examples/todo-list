@@ -19,15 +19,7 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {
-  Client,
-  ClientError,
-  CommandHandlingError,
-  ConnectionError,
-  ServerError,
-  SpineError,
-  Type
-} from 'spine-web';
+import {Client, CommandHandlingError, Type} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -37,13 +29,16 @@ import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
 import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
-import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
+import {TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/layout/notification.service';
 
 /**
  * A state of the task before the change.
  *
  * If `previousState` is not set, the task hasn't existed prior to change.
+ *
+ * Is used to restore an optimistically-executed operation, such as adding a task, to rollback to
+ * the state before the operation.
  */
 interface TaskState {
   taskId: TaskId;
@@ -116,7 +111,7 @@ export class TaskService implements OnDestroy {
    *
    * Visible for testing.
    */
-  public assureTasksInitialized(): void {
+  private assureTasksInitialized(): void {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
       this.subscribeToTasks().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
@@ -241,11 +236,11 @@ export class TaskService implements OnDestroy {
    * Visible for testing
    */
   recoverPreviousState(err, taskId: TaskId): void {
-    this.removeFromOptimisticallyChanged(taskId);
     if (TaskService.shouldUndoOptimisticOperation(err)) {
       this.undoOptimisticOperation(taskId);
       this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     }
+    this.removeFromOptimisticallyChanged(taskId);
   }
 
   /**

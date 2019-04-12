@@ -27,13 +27,7 @@ import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation
 import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
-
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {TaskPriority} from 'proto/todolist/attributes_pb';
-import {TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
-import {TaskDescription} from 'proto/todolist/values_pb';
-import {SetTaskDetails, StartTaskCreation} from 'proto/todolist/c/commands_pb';
 import {LayoutService} from 'app/layout/layout.service';
 
 /**

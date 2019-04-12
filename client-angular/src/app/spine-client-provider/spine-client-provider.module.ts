@@ -22,7 +22,6 @@ import {NgModule} from '@angular/core';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireDatabase, AngularFireDatabaseModule} from '@angular/fire/database';
 import {ActorProvider, Client, init} from 'spine-web';
-import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 
 import {environment} from 'environments/environment';
 
@@ -52,10 +51,10 @@ function clientFactory(angularFire: AngularFireDatabase): Client {
     AngularFireDatabaseModule
   ],
   providers: [{
-      provide: Client,
-      useFactory: clientFactory,
-      deps: [AngularFireDatabase]
-    }]
+    provide: Client,
+    useFactory: clientFactory,
+    deps: [AngularFireDatabase]
+  }]
 })
 export class SpineClientProvider {
 }

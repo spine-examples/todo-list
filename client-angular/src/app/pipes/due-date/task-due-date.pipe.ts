@@ -19,7 +19,6 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
 
 /**
