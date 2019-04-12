@@ -33,7 +33,7 @@ export class TaskListComponent implements OnInit {
   @Input()
   private filter: (t: TaskItem) => boolean;
 
-  private tasks: TaskItem[];
+  tasks: TaskItem[];
 
   public hasElements: boolean;
 

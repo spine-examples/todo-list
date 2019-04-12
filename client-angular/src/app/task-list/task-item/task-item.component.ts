@@ -34,15 +34,15 @@ export class TaskItemComponent {
   }
 
   @Input()
-  private readonly task: TaskItem;
+  task: TaskItem;
 
-  private expanded: boolean;
+  expanded: boolean;
 
-  private get displayCompleteButton(): boolean {
+  get displayCompleteButton(): boolean {
     return this.shouldShowButton();
   }
 
-  private get displayDeleteButton(): boolean {
+  get displayDeleteButton(): boolean {
     return this.shouldShowButton();
   }
 

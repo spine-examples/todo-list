@@ -33,7 +33,7 @@ import * as todoListTypes from 'proto/index';
  *
  * @param angularFire the Angular Fire database to use
  */
-function clientFactory(angularFire: AngularFireDatabase): Client {
+export function clientFactory(angularFire: AngularFireDatabase): Client {
   return init({
     protoIndexFiles: [todoListTypes, spineWebTypes],
     endpointUrl: environment.host,
