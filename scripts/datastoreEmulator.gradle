@@ -1,0 +1,138 @@
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * Apply this script to enable tasks for operating the Google Datastore emulator for
+ * local development.
+ */
+
+import org.gradle.internal.os.OperatingSystem
+import io.github.httpbuilderng.http.HttpTask
+
+final def DATASTORE_EMULATOR_TASK_GROUP = "Datastore emulator"
+final def localDatastorePort = 8081
+
+apply from: "$rootDir/config/gradle/dependencies.gradle"
+
+buildscript {
+    repositories {
+        maven { url = repos.gradlePlugins }
+    }
+
+    dependencies {
+        classpath 'gradle.plugin.io.github.http-builder-ng:http-plugin:0.1.1'
+    }
+}
+
+// Third-party plugins cannot be applied by ID from external build scripts. If applied by ID
+// an exception is thrown saying that the plugin cannot be found.
+//
+// See the original issue: https://github.com/gradle/gradle/issues/1262
+//
+// apply plugin: "io.github.http-builder-ng.http-plugin"
+apply plugin: io.github.httpbuilderng.http.HttpPlugin
+
+task pingDatastoreDefaultPort(type: HttpTask) {
+    group = DATASTORE_EMULATOR_TASK_GROUP
+    description = "Checks for the running Datastore presence by sending GET request to its default HTTP port."
+
+    config {
+        request.uri = "http://localhost:${localDatastorePort}"
+    }
+    get {
+        request.uri.path = '/'
+        response.success {
+            logger.info("Local datastore is running on port ${localDatastorePort}")
+            pingDatastoreDefaultPort.ext.responded = true
+        }
+        response.exception {
+            pingDatastoreDefaultPort.ext.responded = false
+        }
+    }
+}
+
+/**
+ * Resets the local in-memory Datastore by sending POST request to its `/reset` endpoint.
+ *
+ * This task is disabled by default.
+ */
+task resetDatastore(type: HttpTask) {
+    group = DATASTORE_EMULATOR_TASK_GROUP
+    description = "Resets the local in-memory Datastore by sending POST request to its `/reset` endpoint."
+
+    config {
+        request.uri = "http://localhost:${localDatastorePort}"
+    }
+    post {
+        request.uri.path = '/reset'
+        response.success {
+            logger.info("Local Datastore reset completed")
+        }
+    }
+}
+
+resetDatastore.enabled = false
+
+/**
+ * Starts local in-memory Datastore.
+ *
+ * Checks the standard Datastore HTTP port using `pingDatastoreDefaultPort` task. If the port does
+ * not respond, starts the Datastore using scripts from `./scripts` folder. If the Datastore is
+ * already running, enables the `resetDatastore` task which is performed after this task execution.
+ */
+task startDatastore(dependsOn: pingDatastoreDefaultPort) {
+    group = DATASTORE_EMULATOR_TASK_GROUP
+    description = "Starts local in-memory Datastore using scripts from ./scripts folder."
+
+    doLast {
+        if (!pingDatastoreDefaultPort.responded) {
+            // Start Datastore emulator with the CLI command at `http://localhost:8081`.
+            final def runsOnWindows = OperatingSystem.current().isWindows()
+            final def scriptName = "start-datastore.${runsOnWindows ? 'bat' : 'sh'} ${localDatastorePort}"
+            ".${File.separatorChar}scripts${File.separatorChar}${scriptName}".execute()
+
+            logger.info("Local Datastore started on port ${localDatastorePort}")
+        } else {
+            // Enable `resetDatastore` task since the Datastore is already running
+            // and requires a reset.
+            resetDatastore.enabled = true
+        }
+    }
+}
+
+startDatastore.finalizedBy resetDatastore
+
+task stopDatastore(type: HttpTask) {
+    group = DATASTORE_EMULATOR_TASK_GROUP
+    description = "Stops the local in-memory Datastore by sending POST request to its `/shutdown` endpoint."
+
+    config {
+        request.uri = "http://localhost:${localDatastorePort}"
+    }
+    post {
+        request.uri.path = '/shutdown'
+        response.success {
+            logger.info("Local Datastore stopped")
+        }
+        response.exception {
+            logger.warn("Local Datastore is not running on ${localDatastorePort}")
+        }
+    }
+}
