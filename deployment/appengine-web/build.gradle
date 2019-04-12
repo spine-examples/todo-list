@@ -34,7 +34,6 @@ apply plugin: 'com.google.cloud.tools.appengine'
 apply from: "$projectDir/scripts/appengine-descriptor.gradle"
 apply from: "$projectDir/scripts/datastoreEmulator.gradle"
 
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -54,4 +53,17 @@ configurations.all {
             it.useVersion(servletApiVersion)
         }
     }
+}
+
+task copyWebapp(dependsOn: ':client-angular:build', type: Copy) {
+    description = "Copies the compiled Angular app from an output directory to the static resources."
+
+    from "${project(':client-angular').projectDir}/dist/client-angular"
+    into "$projectDir/src/main/webapp/static"
+}
+
+assemble.dependsOn copyWebapp
+
+clean {
+    delete "$projectDir/src/main/webapp/static"
 }
