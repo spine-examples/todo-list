@@ -49,7 +49,7 @@ export class TaskDefinitionComponent extends WizardStep {
   /**
    * Possible task priorities.
    */
-  private readonly TASK_PRIORITIES: TaskPriority =
+  readonly TASK_PRIORITIES: TaskPriority =
     [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
 
   /**
@@ -57,7 +57,7 @@ export class TaskDefinitionComponent extends WizardStep {
    *
    * As the due date receives default '00:00' time, it's the closest value that is reasonable.
    */
-  private readonly tomorrow: Date = TaskDefinitionComponent.tomorrow();
+  readonly tomorrow: Date = TaskDefinitionComponent.tomorrow();
 
   /** Visible for testing. */
   description: TaskDescription;

@@ -31,8 +31,8 @@ import {LayoutService} from 'app/layout/layout.service';
 })
 export class AppComponent implements OnInit {
 
-  private showNav: boolean;
-  private toolbarLabel: string;
+  showNav: boolean;
+  toolbarLabel: string;
 
   constructor(private readonly navService: LayoutService,
               private readonly changeDetector: ChangeDetectorRef) {

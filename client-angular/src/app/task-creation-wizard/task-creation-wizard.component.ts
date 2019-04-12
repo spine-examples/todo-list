@@ -95,7 +95,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    *
    * Used for manipulations with UI elements.
    */
-  private isLoading: boolean;
+  isLoading: boolean;
 
   /**
    * A promise to initialize the injected {@link TaskCreationWizard} either "from scratch" or with
