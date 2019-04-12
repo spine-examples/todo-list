@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2000-2018 TeamDev. All rights reserved.
+ * TeamDev PROPRIETARY and CONFIDENTIAL.
+ * Use is subject to license terms.
+ */
+
+/**
+ * The script, which allows to define the environment to build the project for.
+ * 
+ * <p>You can specify the environment by supplying the parameter {@code -PbuildProfile=dev}.
+ * 
+ * <p>The default environment is local.
+ */
+
+ext {
+    buildProfile = getBuildProfile()
+    isDev = this.&isDev
+    isLocal = this.&isLocal
+}
+
+def isDev() {
+    'dev'.equalsIgnoreCase(getBuildProfile())
+}
+
+def isLocal(){
+    'local'.equalsIgnoreCase(getBuildProfile())
+}
+
+def getBuildProfile() {
+    if (project.hasProperty('buildProfile')) {
+        final def propertyValue = project.getProperty('buildProfile')
+        return String.valueOf(propertyValue)
+    }
+    return 'local'
+}
