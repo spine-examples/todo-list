@@ -45,6 +45,6 @@
     </mat-form-field>
 </p>
 <app-error-viewport></app-error-viewport>
-<a mat-button color='primary' [disabled]="true">Previous</a>
-<a (click)="next()" mat-button color='primary'>Next</a>
-<a (click)="cancel()" mat-button color='primary'>Cancel</a>
+<a (click)="next()" mat-button color='primary' class="next-button">Next</a>
+<a mat-button color='primary' [disabled]="true" class="previous-button">Previous</a>
+<a (click)="cancel()" mat-button color='primary' class="cancel-button">Cancel</a>

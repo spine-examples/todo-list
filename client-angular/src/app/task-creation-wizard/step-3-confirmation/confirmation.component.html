@@ -28,6 +28,6 @@
     with a due date: <i>'{{wizard.taskDueDate | moment}}'</i>
 </p>
 <app-error-viewport></app-error-viewport>
-<a (click)="previous()" mat-button color='primary'>Previous</a>
-<a (click)="finish()" mat-button color='primary'>Finish</a>
-<a (click)="cancel()" mat-button color='primary'>Cancel</a>
+<a (click)="finish()" mat-button color='primary' class="finish-button">Finish</a>
+<a (click)="previous()" mat-button color='primary' class="previous-button">Previous</a>
+<a (click)="cancel()" mat-button color='primary' class="cancel-button">Cancel</a>
