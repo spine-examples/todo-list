@@ -23,11 +23,13 @@
 }
 
 .wizard-card {
-  position: absolute;
-  left: 280px;
+  margin: auto;
+  width: 600px;
+  height: 30vh;
 }
+
 .proceed-button {
-  float:right
+  float: right;
 }
 
 .go-back-button {
