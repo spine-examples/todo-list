@@ -38,8 +38,7 @@ import {WizardStep} from 'app/task-creation-wizard/wizard-step';
  */
 @Component({
   selector: 'app-confirmation',
-  templateUrl: './confirmation.component.html',
-  styleUrls: ['../task-wizard.css']
+  templateUrl: './confirmation.component.html'
 })
 export class ConfirmationComponent extends WizardStep {
 

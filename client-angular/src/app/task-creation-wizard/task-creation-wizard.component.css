@@ -18,10 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-mat-horizontal-stepper {
-  width: 600px;
-}
-
 [hidden] {
   display: none !important;
+}
+
+.wizard-card {
+  position: absolute;
+  left: 280px;
+}
+.proceed-button {
+  float:right
+}
+
+.go-back-button {
+  float: right;
+}
+
+.cancel-button {
+  float: left;
 }

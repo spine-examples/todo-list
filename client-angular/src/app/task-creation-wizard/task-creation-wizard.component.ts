@@ -29,6 +29,8 @@ import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-as
 import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {LayoutService} from 'app/layout/layout.service';
+import {WizardStep} from "app/task-creation-wizard/wizard-step";
+import {ErrorViewport} from "app/common-components/error-viewport/error-viewport.component";
 
 /**
  * The main component of the Task Creation Wizard.
@@ -90,6 +92,9 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
+  @ViewChild(ErrorViewport)
+  errorViewPort: ErrorViewport;
+
   /**
    * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
    *
@@ -120,6 +125,48 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    */
   private static reportFatalError(err): void {
     throw new Error(err);
+  }
+
+  /**
+   * Returns the current step of the task creation wizard.
+   *
+   * Steps are mapped 1-to-1 with stages.
+   */
+  private currentStep(): WizardStep {
+    const currentStage = this.wizard.stage;
+    switch (currentStage) {
+      case 1:
+        return this.taskDefinition;
+      case 2:
+        return this.labelAssignment;
+      case 3:
+        return this.confirmation;
+      default:
+        TaskCreationWizardComponent.reportFatalError('No stage found');
+    }
+  }
+
+  /**
+   * If there are steps after the current one, moves the wizard to the next step. Finishes the
+   * wizard otherwise.
+   */
+  private proceed(): void {
+    const currentStep = this.currentStep();
+    this.isLastStage() ?
+      currentStep.finish() :
+      currentStep.next();
+  }
+
+  /** Returns to the previous step. */
+  private goBack(): void {
+    this.currentStep().previous();
+  }
+
+  /**
+   * Cancels the task creation wizard, aborting the task creation operation.
+   */
+  private cancel(): void {
+    this.currentStep().cancel();
   }
 
   /**
@@ -190,5 +237,13 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.layoutService.defaultLayout();
+  }
+
+  isLastStage(): boolean {
+    return this.wizard.stage === 3;
+  }
+
+  isFirstStage(): boolean {
+    return this.wizard.stage === 1;
   }
 }

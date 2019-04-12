@@ -33,6 +33,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatCardModule} from '@angular/material/card';
 
 import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
@@ -80,7 +81,8 @@ import {LayoutModule} from 'app/layout/layout.module';
     MatListModule,
     MatProgressBarModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    MatCardModule
   ]
 })
 export class TaskCreationWizardModule {

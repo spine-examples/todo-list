@@ -39,7 +39,7 @@ import {LabelView} from 'proto/todolist/q/projections_pb';
 @Component({
   selector: 'app-label-assignment',
   templateUrl: './label-assignment.component.html',
-  styleUrls: ['./label-assignment.component.css', '../task-wizard.css']
+  styleUrls: ['./label-assignment.component.css']
 })
 export class LabelAssignmentComponent extends WizardStep {
 
