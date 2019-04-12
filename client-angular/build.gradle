@@ -24,7 +24,7 @@ buildJs {
     outputs.dir "$projectDir/dist"
 
     doLast {
-        npm 'run', 'build'
+        npm 'run', buildParameter()
     }
 }
 
@@ -34,4 +34,11 @@ testJs {
     }
 
     dependsOn buildJs
+}
+
+def buildParameter() {
+    if (ext.isDev()) {
+        return 'build-prod'
+    }
+    return 'build'
 }
