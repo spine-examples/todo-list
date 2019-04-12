@@ -59,14 +59,13 @@ import {LabelService} from 'app/labels/label.service';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 
 import {TaskCreation} from 'proto/todolist/model_pb';
-import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {mockLayoutService, mockNotificationService} from 'test/given/layout-service';
 import {LayoutService} from 'app/layout/layout.service';
 import {NotificationService} from 'app/layout/notification.service';
 import {LayoutModule} from 'app/layout/layout.module';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-
+import {MatCardModule} from '@angular/material/card';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -132,7 +131,8 @@ describe('TaskCreationWizardComponent', () => {
         MatListModule,
         MatProgressBarModule,
         MatSelectModule,
-        MatStepperModule
+        MatStepperModule,
+        MatCardModule
       ],
       providers: [
         TaskCreationWizard,
