@@ -26,6 +26,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static io.spine.examples.todolist.server.Application.application;
+
 /**
  * The {@code /command} endpoint of the TodoList system.
  *
@@ -40,7 +42,7 @@ public final class TodoCommandServlet extends CommandServlet {
     static final String NAME = "Command Service";
 
     public TodoCommandServlet() {
-        super(Application.instance().commandService());
+        super(application().commandService());
     }
 
     @Override

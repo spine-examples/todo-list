@@ -23,22 +23,25 @@ package io.spine.examples.todolist.server;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.web.firebase.FirebaseClient;
+import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
+import io.spine.web.query.QueryBridge;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.server.Application.application;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SuppressWarnings("DuplicateStringLiteralInspection") // Test display names duplication.
 @DisplayName("Application should")
 class ApplicationTest {
 
-    private final Application application = Application.instance();
+    private final Application application = application();
 
     @Test
-    @DisplayName("return non-null QueryService")
-    void returnQueryService() {
-        QueryService queryService = application.queryService();
-        assertNotNull(queryService);
+    @DisplayName("return non-null QueryBridge")
+    void returnQueryBridge() {
+        QueryBridge bridge = application.queryBridge();
+        assertNotNull(bridge);
     }
 
     @Test
@@ -49,9 +52,9 @@ class ApplicationTest {
     }
 
     @Test
-    @DisplayName("return non-null FirebaseClient")
+    @DisplayName("return non-null FirebaseSubscriptionBridge")
     void returnFirebaseClient() {
-        FirebaseClient firebaseClient = application.firebaseClient();
-        assertNotNull(firebaseClient);
+        final FirebaseSubscriptionBridge bridge = application.subscriptionBridge();
+        assertNotNull(bridge);
     }
 }

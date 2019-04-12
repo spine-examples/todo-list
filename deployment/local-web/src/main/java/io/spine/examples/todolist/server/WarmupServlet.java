@@ -40,7 +40,7 @@ public class WarmupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         logger.log("Warm up started.");
-        Application application = Application.instance();
+        Application application = Application.application();
         logger.log("Warm up finished. {} created", application.getClass().getSimpleName());
     }
 }

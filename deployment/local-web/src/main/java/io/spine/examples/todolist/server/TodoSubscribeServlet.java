@@ -20,12 +20,13 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.subscription.servlet.SubscribeServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static io.spine.examples.todolist.server.Application.application;
 
 /**
  * The {@code /subscription/create} endpoint of the TodoList system.
@@ -42,11 +43,7 @@ public final class TodoSubscribeServlet extends SubscribeServlet {
     static final String NAME = "Subscription Creation Service";
 
     public TodoSubscribeServlet() {
-        super(FirebaseSubscriptionBridge.newBuilder()
-                                        .setQueryService(Application.instance().queryService())
-                                        .setFirebaseClient(Application.instance()
-                                                                      .firebaseClient())
-                                        .build());
+        super(application().subscriptionBridge());
     }
 
     @Override

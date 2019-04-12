@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.net.Url;
 import io.spine.net.UrlVBuilder;
@@ -31,6 +30,9 @@ import io.spine.web.firebase.DatabaseUrl;
 import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
+import io.spine.web.firebase.query.FirebaseQueryBridge;
+import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
+import io.spine.web.query.QueryBridge;
 
 import java.io.InputStream;
 
@@ -41,53 +43,82 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
+    private static final StartUpLogger log = StartUpLogger.instance();
     private static final String DATABASE_URL = "https://spine-dev.firebaseio.com/";
     private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
 
-    private final QueryService queryService;
-
     private final CommandService commandService;
-    private final FirebaseClient firebaseClient;
+    private final FirebaseQueryBridge queryBridge;
+    private final FirebaseSubscriptionBridge subscriptionBridge;
 
-    @VisibleForTesting
-    Application(BoundedContext boundedContext) {
-        this.queryService = QueryService
-                .newBuilder()
-                .add(boundedContext)
-                .build();
-        this.commandService = CommandService
-                .newBuilder()
-                .add(boundedContext)
-                .build();
-        this.firebaseClient = initClient();
-    }
+    private static final Application INSTANCE = create();
 
     /**
-     * The query service used in this application.
+     * Returns the singleton application instance.
      */
-    QueryService queryService() {
-        return queryService;
+    public static Application application() {
+        return INSTANCE;
     }
 
-    /**
-     * The command service used in this application.
-     */
+    private Application(CommandService commandService,
+                        QueryService queryService,
+                        FirebaseClient firebaseClient) {
+        this.commandService = commandService;
+        this.queryBridge = newQueryBridge(queryService, firebaseClient);
+        this.subscriptionBridge = newSubscriptionBridge(queryService, firebaseClient);
+    }
+
+    private static Application create() {
+        BoundedContext boundedContext = BoundedContexts.create();
+
+        log.log("Initializing C/Q services.");
+        CommandService commandService =
+                CommandService.newBuilder()
+                              .add(boundedContext)
+                              .build();
+        QueryService queryService =
+                QueryService.newBuilder()
+                            .add(boundedContext)
+                            .build();
+        log.log("Initializing Firebase Realtime Database client.");
+        Application application = new Application(commandService, queryService, firebaseClient());
+        log.log("Application initialized");
+        return application;
+    }
+
+    QueryBridge queryBridge() {
+        return queryBridge;
+    }
+
     CommandService commandService() {
         return commandService;
     }
 
-    /**
-     * The Firebase client used in this application.
-     */
-    FirebaseClient firebaseClient() {
-        return firebaseClient;
+    FirebaseSubscriptionBridge subscriptionBridge() {
+        return subscriptionBridge;
     }
 
-    private static FirebaseClient initClient() {
+    private static FirebaseClient firebaseClient() {
         InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
         FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
         FirebaseClient client = restClient(databaseUrl(), credentials);
         return client;
+    }
+
+    private static FirebaseQueryBridge newQueryBridge(QueryService queryService,
+                                                      FirebaseClient firebaseClient) {
+        return FirebaseQueryBridge.newBuilder()
+                                  .setQueryService(queryService)
+                                  .setFirebaseClient(firebaseClient)
+                                  .build();
+    }
+
+    private static FirebaseSubscriptionBridge newSubscriptionBridge(QueryService queryService,
+                                                                    FirebaseClient firebaseClient) {
+        return FirebaseSubscriptionBridge.newBuilder()
+                                         .setQueryService(queryService)
+                                         .setFirebaseClient(firebaseClient)
+                                         .build();
     }
 
     private static DatabaseUrl databaseUrl() {
@@ -100,17 +131,5 @@ final class Application {
                 .setUrl(url)
                 .build();
         return databaseUrl;
-    }
-
-    static Application instance() {
-        return Singleton.INSTANCE.value;
-    }
-
-    @SuppressWarnings("ImmutableEnumChecker") // OK for this singleton.
-    private enum Singleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Application value =
-                new Application(BoundedContexts.create());
     }
 }
