@@ -8,7 +8,7 @@ How to run:
 
 1. Start the local backend server (from project root):
     ```bash
-    ./gradlew :local-web:appRun
+    ./gradlew :appengine-web:appengineRun
     ```
     
 2. Run the client (in separate terminal):

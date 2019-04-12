@@ -24,5 +24,5 @@
     <!-- recognize GAE Standard Environment. -->
     <!-- -->
     <!-- This file will be replaced with the actual configuration during deployment. -->
-    <!-- Please, take a look at `local-web/scripts/appengine-descriptor.gradle` for details. -->
+    <!-- Please, take a look at `appengine-web/scripts/appengine-descriptor.gradle` for details. -->
 </appengine-web-app>

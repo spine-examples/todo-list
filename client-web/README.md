@@ -11,7 +11,7 @@ way (e.g. from IDEA).
 ### Prerequirements
 
 In order to launch the Web application successfully
- - start the [`local-web`](../deployment/local-web/README.md) server;
+ - start the local [`appengine-web`](../deployment/appengine-web/README.md) server;
  - if the server uses a custom Firebase project (not `spine-dev`), point the client to that project
  in `client-web/lib/firebase_client.js`;
  - build the `client-web` Gradle project with `./gradlew :client-web:build` (the general 

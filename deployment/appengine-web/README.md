@@ -1,4 +1,4 @@
-## `local-web`
+## `appengine-web`
 
 Introducing the `web` deployment configuration.
 

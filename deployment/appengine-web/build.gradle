@@ -24,10 +24,16 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
+        classpath deps.build.gradlePlugins.appengine
     }
 }
 
-apply plugin: 'org.gretty'
+apply plugin: 'war'
+apply plugin: 'com.google.cloud.tools.appengine'
+
+apply from: "$projectDir/scripts/appengine-descriptor.gradle"
+apply from: "$projectDir/scripts/datastoreEmulator.gradle"
+
 
 repositories {
     mavenCentral()
@@ -48,11 +54,4 @@ configurations.all {
             it.useVersion(servletApiVersion)
         }
     }
-}
-
-gretty {
-    httpPort = 8080
-    contextPath = "/"
-
-    scanInterval = 0 // Disables "hot deployment".
 }
