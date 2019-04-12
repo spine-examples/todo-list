@@ -20,27 +20,39 @@
 
 package io.spine.examples.todolist.server;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.spine.logging.Logging;
+import org.slf4j.Logger;
+
+import static java.lang.String.format;
 
 /**
- * An endpoint triggered by AppEngine when a new instance is being started.
- *
- * @see <a href="https://cloud.google.com/appengine/docs/standard/go/how-instances-are-managed">AppEngine doc</a>
+ * A logger facade to be used when logging the application start up process.
  */
-@WebServlet("/_ah/warmup")
-public class WarmupServlet extends HttpServlet {
+final class StartUpLogger {
 
-    private static final StartUpLogger logger = StartUpLogger.instance();
+    private static final Logger logger = Logging.get(Application.class);
+    private static final StartUpLogger instance = new StartUpLogger();
 
-    private static final long serialVersionUID = 0L;
+    /**
+     * Prevents direct instantiation.
+     */
+    private StartUpLogger() {
+    }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        logger.log("Warm up started.");
-        Application application = Application.instance();
-        logger.log("Warm up finished. {} created", application.getClass().getSimpleName());
+    static StartUpLogger instance() {
+        return instance;
+    }
+
+    /**
+     * Logs the given message on the {@code INFO} level.
+     *
+     * @param template
+     *         the logged message template
+     * @param arguments
+     *         the message template arguments
+     */
+    void log(String template, Object... arguments) {
+        String messageTemplate = format("Start up: %s", template);
+        logger.debug(messageTemplate, arguments);
     }
 }
