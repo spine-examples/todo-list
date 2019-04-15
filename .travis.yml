@@ -9,8 +9,23 @@ before_install:
   - mkdir ./deployment/appengine-web/src/main/resources
   - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
 
+# Skip the `install` step.
+install: true
+
 script:
-  - ./gradlew check --stacktrace
+  - ./gradlew assemble check --info --stacktrace -PbuildProfile=dev
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: gae
+  config: deployment/appengine-web/build/exploded-appengine-web/WEB-INF/appengine-web.xml
+  keyfile: deployment/appengine-web/src/main/resourses/spine-dev.json
+  # When changing the project don't forget to update `-PbuildProfile` parameter in `script` section.
+  project: spine-dev
+  # The artifacts created when executing Travis scripts section are required
+  # to deploy the application. The cleanup is disabled to preserve these generated artifacts.
+  skip_cleanup: true
+  on:
+    branch: master
