@@ -36,13 +36,13 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
  */
 final class GoogleAuth {
 
+    private static final String SERVICE_ACCOUNT_KEY = "spine-dev.json";
+
     /**
      * Prevents the utility class instantiation.
      */
     private GoogleAuth() {
     }
-
-    private static final String SERVICE_ACCOUNT_KEY = "spine-dev.json";
 
     /**
      * Obtains the service account credential.
