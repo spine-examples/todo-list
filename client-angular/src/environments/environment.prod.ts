@@ -18,13 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {commonEnvironment} from 'environments/environment.common';
-
 /**
  * The environment configuration for the production.
+ *
+ * Configures an application to work with a remote development backend server
+ * and Firebase application.
  */
 export const environment = {
   production: true,
-  firebaseConfig: commonEnvironment.firebaseConfig,
-  host: commonEnvironment.host
+  firebaseConfig: {
+    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
+    authDomain: 'spine-dev.firebaseapp.com',
+    databaseURL: 'https://spine-dev.firebaseio.com',
+    projectId: 'spine-dev',
+    storageBucket: '',
+    messagingSenderId: '165066236051'
+  },
+  host: 'https://todo-list-dot-spine-dev.appspot.com'
 };

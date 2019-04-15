@@ -22,8 +22,6 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-import {commonEnvironment} from 'environments/environment.common';
-
 /*
  * In development mode, to ignore zone related error stack frames such as
  * `zone.run`, `zoneDelegate.invokeTask` for easier debugging, you can
@@ -34,9 +32,19 @@ import 'zone.js/dist/zone-error'; // Included with Angular CLI.
 
 /**
  * The environment configuration for the local development.
+ *
+ * Configures an application to work with a local backend server and the development Firebase
+ * application.
  */
 export const environment = {
   production: false,
-  firebaseConfig: commonEnvironment.firebaseConfig,
-  host: commonEnvironment.host
+  firebaseConfig: {
+    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
+    authDomain: 'spine-dev.firebaseapp.com',
+    databaseURL: 'https://spine-dev.firebaseio.com',
+    projectId: 'spine-dev',
+    storageBucket: '',
+    messagingSenderId: '165066236051'
+  },
+  host: 'http://localhost:8080'
 };
