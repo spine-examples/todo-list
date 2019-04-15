@@ -26,6 +26,7 @@ import io.spine.net.UrlVBuilder;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.storage.StorageFactory;
 import io.spine.web.firebase.DatabaseUrl;
 import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
@@ -34,8 +35,8 @@ import io.spine.web.firebase.query.FirebaseQueryBridge;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.query.QueryBridge;
 
-import java.io.InputStream;
-
+import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
+import static io.spine.examples.todolist.server.Storage.createStorage;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -45,7 +46,6 @@ final class Application {
 
     private static final StartUpLogger log = StartUpLogger.instance();
     private static final String DATABASE_URL = "https://spine-dev.firebaseio.com/";
-    private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
 
     private final CommandService commandService;
     private final FirebaseQueryBridge queryBridge;
@@ -69,7 +69,8 @@ final class Application {
     }
 
     private static Application create() {
-        BoundedContext boundedContext = BoundedContexts.create();
+        StorageFactory storageFactory = createStorage(false);
+        BoundedContext boundedContext = BoundedContexts.create(storageFactory);
 
         log.log("Initializing C/Q services.");
         CommandService commandService =
@@ -99,8 +100,8 @@ final class Application {
     }
 
     private static FirebaseClient firebaseClient() {
-        InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
-        FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
+        FirebaseCredentials credentials =
+                FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
         FirebaseClient client = restClient(databaseUrl(), credentials);
         return client;
     }
