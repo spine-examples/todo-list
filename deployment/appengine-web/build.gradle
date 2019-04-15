@@ -50,7 +50,7 @@ dependencies {
 }
 
 appengine {
-    deploy.project = 'oc-contractors-dev'
+    deploy.project = 'spine-dev'
     run {
         port = 8080
         jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
