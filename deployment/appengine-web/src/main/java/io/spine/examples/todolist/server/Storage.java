@@ -23,6 +23,7 @@ import static io.spine.server.ServerEnvironment.getDeploymentType;
  */
 final class Storage {
 
+    @VisibleForTesting
     static final String LOCAL_PROJECT = "spine-dev";
     static final String LOCAL_DATASTORE_HOST = "localhost:8081";
 
