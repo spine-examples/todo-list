@@ -32,7 +32,7 @@ apply plugin: 'war'
 apply plugin: 'com.google.cloud.tools.appengine'
 
 apply from: "$projectDir/scripts/appengine-descriptor.gradle"
-apply from: "$projectDir/scripts/datastoreEmulator.gradle"
+apply from: "$rootDir/scripts/datastoreEmulator.gradle"
 
 repositories {
     mavenCentral()
@@ -46,6 +46,32 @@ dependencies {
     compile "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
     compile "io.spine:spine-web:$spineWebVersion"
 }
+
+appengine {
+    deploy.project = 'oc-contractors-dev'
+    run {
+        port = 8080
+        jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
+        logLevel = "debug"
+    }
+}
+
+idea.module {
+    excludeDirs += file("$projectDir/src/main/webapp/static")
+
+    iml {
+        beforeMerged { module ->
+            module.dependencies.clear()
+        }
+        whenMerged { module ->
+            module.dependencies*.exported = true
+        }
+    }
+}
+
+tasks["appengineRun"].dependsOn startDatastore
+tasks["appengineStart"].dependsOn startDatastore
+tasks["appengineStop"].dependsOn stopDatastore
 
 configurations.all {
     resolutionStrategy.eachDependency {
