@@ -14,8 +14,6 @@ install: true
 
 script:
   - ./gradlew assemble check --info --stacktrace -PbuildProfile=dev
-
-before_deploy:
   - ./gradlew :appengine-web:war
 
 after_success:

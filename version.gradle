@@ -32,6 +32,9 @@ project.ext {
     spineBaseVersion = SPINE_VERSION
     spineWebVersion = SPINE_VERSION
 
+    // Google
+    googleApiClient = '1.27.0'
+
     // Main scope third party dependencies' versions
     servletApiVersion = '4.0.0'
     cloudSqlSocketFactoryVersion = '1.0.4'

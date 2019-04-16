@@ -25,6 +25,7 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
         classpath deps.build.gradlePlugins.appengine
+        classpath deps.build.guava
     }
 }
 
@@ -38,15 +39,20 @@ repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
-    google()
 }
 
 dependencies {
-    compile project(path: ':server')
-    compile "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
-    compile "io.spine:spine-web:$spineWebVersion"
+    implementation project(':server')
 
+    implementation 'com.google.appengine:appengine-api-1.0-sdk:1.9.67'
+    implementation "io.spine:spine-web:$spineWebVersion"
+    implementation "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
     implementation "io.spine.gcloud:spine-datastore:$spineVersion"
+
+    implementation "com.google.api-client:google-api-client:$googleApiClient"
+    implementation("com.google.api-client:google-api-client-appengine:$googleApiClient") {
+        exclude group: 'javax.servlet', module: 'servlet-api'
+    }
 }
 
 appengine {
