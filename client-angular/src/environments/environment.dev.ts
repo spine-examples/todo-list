@@ -19,16 +19,13 @@
  */
 
 /**
- * The environment configuration for the production.
+ * The environment configuration for the development.
  *
  * Configures an application to work with a remote development backend server
  * and Firebase application.
- *
- * Note, that assembling of the production version is done using "AOT" compiler.
- * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.
  */
 export const environment = {
-  production: true,
+  production: false,
   firebaseConfig: {
     apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
     authDomain: 'spine-dev.firebaseapp.com',

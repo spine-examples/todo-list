@@ -39,7 +39,7 @@ testJs {
 
 def buildParameter() {
     if (ext.isDev()) {
-        return 'build-prod'
+        return 'build-dev'
     }
     return 'build'
 }
