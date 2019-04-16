@@ -15,6 +15,9 @@ install: true
 script:
   - ./gradlew assemble check --info --stacktrace -PbuildProfile=dev
 
+before_deploy:
+  - ./gradlew :appengine-web:war
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
