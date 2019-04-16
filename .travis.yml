@@ -27,5 +27,6 @@ deploy:
   # The artifacts created when executing Travis scripts section are required
   # to deploy the application. The cleanup is disabled to preserve these generated artifacts.
   skip_cleanup: true
-  on:
-    branch: master
+  # Enable `master` branch filter after CI deployment adjustments
+  # on:
+  #  branch: master
