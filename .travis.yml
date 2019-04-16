@@ -21,7 +21,7 @@ after_success:
 deploy:
   provider: gae
   config: deployment/appengine-web/build/exploded-appengine-web/WEB-INF/appengine-web.xml
-  keyfile: deployment/appengine-web/src/main/resourses/spine-dev.json
+  keyfile: deployment/appengine-web/src/main/resources/spine-dev.json
   # When changing the project don't forget to update `-PbuildProfile` parameter in `script` section.
   project: spine-dev
   # The artifacts created when executing Travis scripts section are required
