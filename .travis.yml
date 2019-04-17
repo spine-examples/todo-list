@@ -30,4 +30,4 @@ deploy:
   skip_cleanup: true
   # Enable `master` branch filter after CI deployment adjustments
   on:
-    branch: appengine-deploy
+    branch: separate-deployment
