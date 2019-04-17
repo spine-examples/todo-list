@@ -88,16 +88,3 @@ configurations.all {
         }
     }
 }
-
-task copyWebapp(dependsOn: ':client-angular:build', type: Copy) {
-    description = "Copies the compiled Angular app from an output directory to the static resources."
-
-    from "${project(':client-angular').projectDir}/dist/client-angular"
-    into "$projectDir/src/main/webapp/static"
-}
-
-assemble.dependsOn copyWebapp
-
-clean {
-    delete "$projectDir/src/main/webapp/static"
-}

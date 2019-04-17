@@ -36,27 +36,4 @@
     <!--<basic-scaling>-->
     <!--<max-instances>1</max-instances>-->
     <!--</basic-scaling>-->
-
-    <static-files>
-        <!--
-            Note that App Engine doesn't include static files in the resulting war
-            therefore they are not accessible by the app code.
-        -->
-
-        <include path="/static/**" expiration="30s">
-            <http-header name="Cache-Control" value="private"/>
-        </include>
-    </static-files>
-
-    <public-root>/static</public-root>
-
-    <resource-files>
-        <include path="/WEB-INF/**.*"/>
-        <!--
-            Here go resources that are static by the nature but should be accessible by the app code
-            (e.g. dispatcher servlet handles all of the requests with context path,
-            like "http://domain/hhcolorlab/pages/index.html")
-        -->
-        <include path="/static/index.html"/>
-    </resource-files>
 </appengine-web-app>
