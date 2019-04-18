@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    implementation project(path: ':client')
+    implementation project(path: ':client-java')
 
     testImplementation "mysql:mysql-connector-java:$mysqlDriverVersion"
     testImplementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"

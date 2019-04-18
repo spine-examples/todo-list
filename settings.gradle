@@ -20,7 +20,7 @@
 
 include 'api-java'
 include 'model'
-include 'client'
+include 'client-java'
 include 'server'
 include 'client-cli'
 include 'client-web'
