@@ -54,7 +54,7 @@ final class Application {
     private static final Application INSTANCE = create();
 
     /**
-     * Returns the singleton application instance.
+     * Returns the application instance.
      */
     public static Application application() {
         return INSTANCE;

@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
-/** Test environment for {@link io.ourclients.contractors.web.context.StorageTest}. */
+/** Test environment for {@link io.spine.examples.todolist.server.StorageTest}. */
 public class StorageTestEnv {
 
     /** Prevents instantiation of the test environment. */

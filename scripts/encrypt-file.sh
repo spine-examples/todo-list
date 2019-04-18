@@ -40,7 +40,7 @@ openssl aes-256-cbc -K ${NEW_TRAVIS_KEY} -iv ${NEW_TRAVIS_IV} -in "$2" -out "$2"
 
 # Print instructions.
 echo
-echo "Now add the following environment variables to the Travis: https://travis-ci.com/OurClients/Contractors/settings"
+echo "Now add the following environment variables to the Travis: https://travis-ci.com/SpineEventEngine/todo-list/settings"
 echo
 echo "    "$1"_key  =  "${NEW_TRAVIS_KEY}
 echo "    "$1"_iv   =  "${NEW_TRAVIS_IV}
