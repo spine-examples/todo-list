@@ -45,9 +45,6 @@ already running on the respective port, the Datastore emulator is reset.
 The deployment uses the Firebase Realtime Database. It is required that the Firebase
 credentials are available under the `appengine-web/src/main/resources/spine-dev.json`.
 
-To use a custom Firebase project (not `spine-dev`) put the credentials into the module
-classpath end edit the `io.spine.examples.todolist.server.FirebaseCredentials` class accordingly.
-
 To deploy the application:
 
 1. Assemble the application with a respective `buildProfile` parameter:
