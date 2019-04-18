@@ -92,6 +92,6 @@ google-services.json
 
 # Web-specific entires.
 package-lock.json
-client-web/proto
-client-web/node_modules
-client-web/bundle.js
+client/web/proto
+client/web/node_modules
+client/web/bundle.js
