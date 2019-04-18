@@ -25,7 +25,7 @@ ext {
 dependencies {
     implementation "org.jline:jline:$jlineVersion"
 
-    implementation project(path: ':client-java')
+    implementation project(path: ':client:java')
     implementation project(path: ':cli-core')
     testImplementation project(path: ':testutil-cli')
     testImplementation project(path: ':testutil-api')

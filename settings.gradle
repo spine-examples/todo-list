@@ -18,17 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+rootProject.name = "todo-list"
+
 include 'api-java'
 include 'model'
-include 'client-java'
 include 'server'
-include 'client-cli'
-include 'client-web'
-include 'client-angular'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
 include 'integration-tests'
+include 'client:java'
+include 'client:cli'
+include 'client:web'
+include 'client:angular'
 
 def deployment(final String name) {
     final String path = ":$name"
