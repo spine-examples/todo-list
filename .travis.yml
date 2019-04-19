@@ -4,7 +4,9 @@
 # See https://docs.travis-ci.com/user/build-stages/ for details.
 #
 stages:
-  - Unit and Integration Tests
+  - name: Unit and Integration Tests
+    # Disabled to speed-up build process
+    if: branch = master
   - name: Deployment
     #if: branch = master AND type != pull_request //Enable this stage on merge into master branch
     if: branch = appengine-deploy
@@ -63,12 +65,15 @@ jobs:
         # This line is critical. We setup the SDK to take precedence in our
         # environment over the old SDK that is already on the machine.
         - source $HOME/google-cloud-sdk/path.bash.inc
+        - gcloud version
+        # Here we use the decrypted service account credentials to authenticate the command line tool.
+        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
+      install:
         # Install Google App Engine SDK packages for Java. These components are used by Gradle
         # App Engine plugin to deploy a Java application to App Engine.
         - gcloud components install app-engine-java
-        - gcloud version
-      # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
-      install: true
+        # Set the correct project to deploy to.
+        - gcloud config set project spine-dev
       script:
         - ./gradlew :appengine-web:war -PbuildProfile=dev
         - ./gradlew :appengine-web:appengineDeploy -PbuildProfile=dev
