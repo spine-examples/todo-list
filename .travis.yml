@@ -48,6 +48,7 @@ jobs:
         # We cache the SDK so we don't have to download it again on subsequent builds.
         - $HOME/google-cloud-sdk/
       env:
+        - GOOGLE_CLOUD_SDK_HOME=${HOME}/google-cloud-sdk
         - PATH=$PATH:${HOME}/google-cloud-sdk/bin CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
         - chmod +x gradlew
