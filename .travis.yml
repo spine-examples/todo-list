@@ -43,22 +43,20 @@ jobs:
       language: java
       jdk:
           - oraclejdk8
-      cache:
-        directories:
-        - '$HOME/google-cloud-sdk/'
       env:
-        - PATH=${HOME}/google-cloud-sdk/bin:$PATH CLOUDSDK_CORE_DISABLE_PROMPTS=1
-      # global:
-      # Do not prompt for user input when using any SDK methods.
-      #- CLOUDSDK_CORE_DISABLE_PROMPTS=1
+        # Make sure gcloud command is on our PATH. Suppress requesting prompts from gcloud.
+        - PATH=$PATH:${HOME}/google-cloud-sdk/bin CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
+        # Make gradlew executable.
         - chmod +x gradlew
-        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+
+        - if [ ! -d $HOME/google-cloud-sdk ]; then
+          curl https://sdk.cloud.google.com | bash;
+          fi
+
         # Add gcloud to $PATH
         - source $HOME/google-cloud-sdk/path.bash.inc
-        #- if [ ! -d $HOME/google-cloud-sdk ]; then
-        #  curl https://sdk.cloud.google.com | bash;
-        #  fi
+
         - echo "Complete the installation"
         - gcloud version
         # Here we use the decrypted service account credentials to authenticate the command line tool.
