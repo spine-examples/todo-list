@@ -1,32 +1,48 @@
-language: java
+# To-do List application Travis CI Build configuration.
+#
+# Uses Travis build stages to organize build and deployment processes.
+# See https://docs.travis-ci.com/user/build-stages/ for details.
+#
+stages:
+  - Unit and Integration Tests
+  - name: Deployment
+    #if: branch = master AND type != pull_request //Enable this stage on merge into master branch
+    if: branch = appengine-deploy
+jobs:
+  include:
 
-jdk:
-  - oraclejdk8
+    # The objective of this stage is to assemble the project and
+    # to run unit and integration tests with coverage
+    #
+    - stage: Unit and Integration Tests
+      language: java
+      jdk:
+        - oraclejdk8
+      before_install:
+        - chmod +x gradlew
+      # Skip the `install` step.
+      install: true
+      script:
+        - ./gradlew assemble check --info --stacktrace
+        - ./gradlew :appengine-web:war
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
 
-before_install:
-  - chmod +x gradlew
-  - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-  - mkdir ./deployment/appengine-web/src/main/resources
-  - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
-
-# Skip the `install` step.
-install: true
-
-script:
-  - ./gradlew assemble check --info --stacktrace -PbuildProfile=dev
-  - ./gradlew :appengine-web:war
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
-deploy:
-  provider: gae
-  config: deployment/appengine-web/build/exploded-appengine-web/WEB-INF/appengine-web.xml
-  keyfile: deployment/appengine-web/src/main/resources/spine-dev.json
-  # When changing the project don't forget to update `-PbuildProfile` parameter in `script` section.
-  project: spine-dev
-  # The artifacts created when executing Travis scripts section are required
-  # to deploy the application. The cleanup is disabled to preserve these generated artifacts.
-  skip_cleanup: true
-  on:
-    branch: master
+    # The objective of this stage is to decrypt various credentials and use them to
+    # deploy the application to the AppEngine Standard environment.
+    # See `appengine-web/README.md` for details.
+    #
+    - stage: Deployment
+      language: java
+      jdk:
+        - oraclejdk8
+      before_install:
+        - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
+        - mkdir ./deployment/appengine-web/src/main/resources
+        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
+      # Skip the `install` step.
+      install: true
+      script:
+        - ./gradlew :appengine-web:war -PbuildProfile
+        - ./gradlew :appengine-web:appengineDeploy -PbuildProfile
