@@ -46,26 +46,28 @@ jobs:
       cache:
         directories:
         # We cache the SDK so we don't have to download it again on subsequent builds.
-        - $HOME/google-cloud-sdk/
+        - "$HOME/google-cloud-sdk/"
       env:
-        - GOOGLE_CLOUD_SDK_HOME=${HOME}/google-cloud-sdk
-        - PATH=$PATH:${HOME}/google-cloud-sdk/bin CLOUDSDK_CORE_DISABLE_PROMPTS=1
+        - CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
         - chmod +x gradlew
-        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf "$HOME/google-cloud-sdk"; curl https://sdk.cloud.google.com | bash > /dev/null; fi
-        - source $HOME/google-cloud-sdk/path.bash.inc
         - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
         - mkdir ./deployment/appengine-web/src/main/resources
         - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
 
         # Here we use the decrypted service account credentials to authenticate the command line tool.
         - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
-      install:
-        # Install Google App Engine SDK packages for Java. These components are used by Gradle
-        # App Engine plugin to deploy a Java application to App Engine.
-        - gcloud components update app-engine-java
         # Set the correct project to deploy to.
         - gcloud config set project spine-dev
+      install: true
       script:
+        - gcloud version || true
+        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+        - source /home/travis/google-cloud-sdk/path.bash.inc
+        # Install Google App Engine SDK packages for Java. These components are used by Gradle
+        # App Engine plugin to deploy a Java application to App Engine.
+        - gcloud -q components install app-engine-java
+        - gcloud version
+
         - ./gradlew :appengine-web:war -PbuildProfile=dev
         - ./gradlew :appengine-web:appengineDeploy -PbuildProfile=dev
