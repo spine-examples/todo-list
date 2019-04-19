@@ -33,17 +33,41 @@ jobs:
     # The objective of this stage is to  deploy the To-do List application to the
     # AppEngine Standard environment. See `appengine-web/README.md` for details.
     #
+    # The Google Cloud SDK is shipped on Travis and you cannot expand it with custom components
+    # because this Cloud SDK installation is managed by an external package manager. So if you want
+    # to use an up-to-date version and install custom components, you have to install your own.
+    #
     - stage: Deployment
       language: java
       jdk:
-        - oraclejdk8
+          - oraclejdk8
+      cache:
+        directories:
+          # We cache the SDK so we don't have to download it again on subsequent builds.
+          - $HOME/google-cloud-sdk
+      env:
+        global:
+          # Do not prompt for user input when using any SDK methods.
+          - CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
         - chmod +x gradlew
-      # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
-      install: true
-      script:
+        - if [ ! -d $HOME/google-cloud-sdk/bin ]; then
+          # The install script errors if this directory already exists,
+          # but Travis already creates it when we mark it as cached.
+          rm -rf $HOME/google-cloud-sdk;
+          # The install script is overly verbose, which sometimes causes
+          # problems on Travis, so ignore stdout.
+          curl https://sdk.cloud.google.com | bash > /dev/null;
+          fi
+        # This line is critical. We setup the SDK to take precedence in our
+        # environment over the old SDK that is already on the machine.
+        - source $HOME/google-cloud-sdk/path.bash.inc
         # Install Google App Engine SDK packages for Java. These components are used by Gradle
         # App Engine plugin to deploy a Java application to App Engine.
         - gcloud components install app-engine-java
+        - gcloud version
+      # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
+      install: true
+      script:
         - ./gradlew :appengine-web:war -PbuildProfile
         - ./gradlew :appengine-web:appengineDeploy -PbuildProfile
