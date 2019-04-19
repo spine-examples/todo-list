@@ -5,11 +5,9 @@
 #
 stages:
   - name: Unit and Integration Tests
-    # Disabled to speed-up build process
-    if: branch = master
+  # The deployment is executed when the pull request is merged to the master branch.
   - name: Deployment
-    #if: branch = master AND type != pull_request //Enable this stage on merge into master branch
-    if: branch = appengine-deploy
+    if: branch = master AND type != pull_request
 jobs:
   include:
 
@@ -33,7 +31,7 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
-    # The objective of this stage is to  deploy the To-do List application to the
+    # The objective of this stage is to deploy the To-do List application to the
     # AppEngine Standard environment. See `appengine-web/README.md` for details.
     #
     # The Google Cloud SDK is shipped on Travis and you cannot expand it with custom components
