@@ -55,12 +55,14 @@ jobs:
             curl -s https://sdk.cloud.google.com | bash;
           fi
 
-        - gcloud version
-        # Here we use the decrypted service account credentials to authenticate the command line tool.
-        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
-
         # Make gradlew executable.
         - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
+        - mkdir ./deployment/appengine-web/src/main/resources
+        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
+
+        # Here we use the decrypted service account credentials to authenticate the command line tool.
+        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
       install:
         # Install Google App Engine SDK packages for Java. These components are used by Gradle
         # App Engine plugin to deploy a Java application to App Engine.
