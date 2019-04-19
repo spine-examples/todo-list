@@ -70,5 +70,5 @@ jobs:
       # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
       install: true
       script:
-        - ./gradlew :appengine-web:war -PbuildProfile
-        - ./gradlew :appengine-web:appengineDeploy -PbuildProfile
+        - ./gradlew :appengine-web:war -PbuildProfile=dev
+        - ./gradlew :appengine-web:appengineDeploy -PbuildProfile=dev
