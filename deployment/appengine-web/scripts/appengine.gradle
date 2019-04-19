@@ -22,7 +22,15 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
+ * Contains the Gradle tasks used for preparation of the application for deployment to
+ * App Engine Standard Environment depending on the type of assembly.
  * 
+ * <p>Configures the deployable `war` depending on the build profile property, see
+ * `scripts/build-profile.gradle` for details.
+ * 
+ * <p>For now, the adjustments before application deployment involves the replacement of
+ * the "appengine-web.xml" placeholder with a respective copy depending on the build
+ * profile value.
  */
 
 apply from: "$rootDir/scripts/build-profile.gradle"
