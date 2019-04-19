@@ -22,7 +22,7 @@
  * The environment configuration for the development.
  *
  * Configures an application to work with a remote development backend server
- * and Firebase application.
+ * and a development Firebase application.
  */
 export const environment = {
   production: false,

@@ -19,16 +19,14 @@
  */
 
 /**
- * The environment configuration for the production.
+ * The environment configuration for the local development.
  *
- * Configures an application to work with a remote development backend server
- * and a development Firebase application.
- *
- * Note, that assembling of the production version is done using "AOT" compiler.
- * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.
+ * Configures an application to work with a local backend server and a development Firebase
+ * application. See the "Running the application locally" section of `appengine-web/README.md`
+ * for details.
  */
 export const environment = {
-  production: true,
+  production: false,
   firebaseConfig: {
     apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
     authDomain: 'spine-dev.firebaseapp.com',
@@ -37,5 +35,5 @@ export const environment = {
     storageBucket: '',
     messagingSenderId: '165066236051'
   },
-  host: 'https://todo-list-dot-spine-dev.appspot.com'
+  host: 'http://localhost:8080'
 };

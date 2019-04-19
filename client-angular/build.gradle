@@ -41,5 +41,5 @@ def buildParameter() {
     if (ext.isDev()) {
         return 'build-dev'
     }
-    return 'build'
+    return 'build-local'
 }
