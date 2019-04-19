@@ -42,5 +42,8 @@ jobs:
       # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
       install: true
       script:
+        # Install Google App Engine SDK packages for Java. These components are used by Gradle
+        # App Engine plugin to deploy a Java application to App Engine.
+        - gcloud components install app-engine-java
         - ./gradlew :appengine-web:war -PbuildProfile
         - ./gradlew :appengine-web:appengineDeploy -PbuildProfile
