@@ -20,11 +20,13 @@ jobs:
         - oraclejdk8
       before_install:
         - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
+        - mkdir ./deployment/appengine-web/src/main/resources
+        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
       # Skip the `install` step.
       install: true
       script:
         - ./gradlew assemble check --info --stacktrace
-        - ./gradlew :appengine-web:war
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
@@ -38,9 +40,6 @@ jobs:
         - oraclejdk8
       before_install:
         - chmod +x gradlew
-        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-        - mkdir ./deployment/appengine-web/src/main/resources
-        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
       # Skip the `install` step.
       install: true
       script:
