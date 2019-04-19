@@ -44,23 +44,23 @@ jobs:
       jdk:
           - oraclejdk8
       env:
-        # Make sure gcloud command is on our PATH. Suppress requesting prompts from gcloud.
-        - PATH=$PATH:${HOME}/google-cloud-sdk/bin CLOUDSDK_CORE_DISABLE_PROMPTS=1
+        global:
+          # Make sure gcloud command is on our PATH.
+          - PATH=$PATH:${HOME}/google-cloud-sdk/bin
+          # Suppress requesting prompts from gcloud.
+          - CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
-        # Make gradlew executable.
-        - chmod +x gradlew
-
-        - if [ ! -d $HOME/google-cloud-sdk ]; then
-          curl https://sdk.cloud.google.com | bash;
+        - if [ ! -d ${HOME}/google-cloud-sdk/bin ]; then
+            rm -rf ${HOME}/google-cloud-sdk;
+            curl -s https://sdk.cloud.google.com | bash;
           fi
 
-        # Add gcloud to $PATH
-        - source $HOME/google-cloud-sdk/path.bash.inc
-
-        - echo "Complete the installation"
         - gcloud version
         # Here we use the decrypted service account credentials to authenticate the command line tool.
         - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
+
+        # Make gradlew executable.
+        - chmod +x gradlew
       install:
         # Install Google App Engine SDK packages for Java. These components are used by Gradle
         # App Engine plugin to deploy a Java application to App Engine.
