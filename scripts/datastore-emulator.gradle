@@ -41,12 +41,6 @@ buildscript {
     }
 }
 
-// Third-party plugins cannot be applied by ID from external build scripts. If applied by ID
-// an exception is thrown saying that the plugin cannot be found.
-//
-// See the original issue: https://github.com/gradle/gradle/issues/1262
-//
-// apply plugin: "io.github.http-builder-ng.http-plugin"
 apply plugin: io.github.httpbuilderng.http.HttpPlugin
 
 task pingDatastoreDefaultPort(type: HttpTask) {

@@ -33,7 +33,7 @@ apply plugin: 'war'
 apply plugin: 'com.google.cloud.tools.appengine'
 
 apply from: "$projectDir/scripts/appengine-descriptor.gradle"
-apply from: "$rootDir/scripts/datastoreEmulator.gradle"
+apply from: "$rootDir/scripts/datastore-emulator.gradle"
 
 repositories {
     mavenCentral()
