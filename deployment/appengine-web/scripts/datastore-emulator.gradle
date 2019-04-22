@@ -27,7 +27,25 @@ import org.gradle.internal.os.OperatingSystem
 import io.github.httpbuilderng.http.HttpTask
 
 final def DATASTORE_EMULATOR_TASK_GROUP = "Datastore emulator"
+
+/** The local port to run Datastore emulator on */
 final def localDatastorePort = 8081
+
+/** The Google Cloud Platform project name to associate Datastore with */
+final def projectName = 'spine-dev'
+
+/**
+ * Starts the Datastore emulator associated with a given Google Cloud project
+ * on the given local port.
+ */
+void startDatastore(final projectName, final localPort) {
+    final def scriptFolder = "$projectDir${File.separatorChar}scripts"
+    final def runsOnWindows = OperatingSystem.current().isWindows()
+    final def scriptName = "start-datastore.${runsOnWindows ? 'bat' : 'sh'}"
+    final def parameters = " ${projectName} ${localPort}"
+
+    "${scriptFolder}${File.separatorChar}${scriptName}${parameters}".execute()
+}
 
 apply from: "$rootDir/config/gradle/dependencies.gradle"
 
@@ -97,10 +115,8 @@ task startDatastore(dependsOn: pingDatastoreDefaultPort) {
 
     doLast {
         if (!pingDatastoreDefaultPort.responded) {
-            // Start Datastore emulator with the CLI command at `http://localhost:8081`.
-            final def runsOnWindows = OperatingSystem.current().isWindows()
-            final def scriptName = "start-datastore.${runsOnWindows ? 'bat' : 'sh'} ${localDatastorePort}"
-            ".${File.separatorChar}scripts${File.separatorChar}${scriptName}".execute()
+
+            startDatastore(projectName, localDatastorePort)
 
             logger.info("Local Datastore started on port ${localDatastorePort}")
         } else {
