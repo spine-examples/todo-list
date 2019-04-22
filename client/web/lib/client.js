@@ -42,8 +42,10 @@ const errorCallback = (error) => {
     console.error(error);
 };
 
+/**
+ * The base URL of the To-Do List application backend.
+ */
 const HOST = "http://localhost:8080";
-const ACTOR = "TodoList-actor";
 
 /**
  * The client of the TodoList application.
@@ -55,7 +57,7 @@ export class Client {
             protoIndexFiles: [knownTypes, spineWebTypes],
             endpointUrl: HOST,
             firebaseDatabase: firebase.application.database(),
-            actorProvider: Client._actorProvider()
+            actorProvider: new spineWeb.ActorProvider()
         });
     }
 
@@ -95,12 +97,6 @@ export class Client {
                 itemRemoved.subscribe(fillTable);
             })
             .catch(errorCallback);
-    }
-
-    static _actorProvider() {
-        let userId = new UserId();
-        userId.setValue(ACTOR);
-        return new spineWeb.ActorProvider(userId);
     }
 
     static _fillTable(table, myListView) {

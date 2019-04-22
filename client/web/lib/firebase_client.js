@@ -21,6 +21,9 @@
 let firebase = require("firebase/app");
 require("firebase/database");
 
+/**
+ * The configuration of the Firebase application.
+ */
 let config = {
     apiKey: "AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU",
     authDomain: "spine-dev.firebaseapp.com",
