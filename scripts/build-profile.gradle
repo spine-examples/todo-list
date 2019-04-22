@@ -9,7 +9,7 @@
  * 
  * <p>You can specify the environment by supplying the parameter {@code -PbuildProfile=dev}.
  * 
- * <p>The default environment is local.
+ * <p>Currently, `dev` and `local` environments are supported, the default environment is local.
  */
 
 ext {

@@ -36,8 +36,6 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
  */
 final class GoogleAuth {
 
-    private static final String SERVICE_ACCOUNT_KEY = "spine-dev.json";
-
     /**
      * Prevents the utility class instantiation.
      */
@@ -57,7 +55,10 @@ final class GoogleAuth {
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredential::getApplicationDefault);
         } else {
-            InputStream inputStream = readResource(SERVICE_ACCOUNT_KEY);
+            String credentialsResource = Configuration.instance()
+                                                      .serviceAccCredentialsResource();
+            InputStream inputStream =
+                    readResource(credentialsResource);
             GoogleCredential credential = propagateIoErrors(
                     () -> GoogleCredential.fromStream(inputStream)
             );
@@ -80,7 +81,10 @@ final class GoogleAuth {
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredentials::getApplicationDefault);
         } else {
-            InputStream inputStream = readResource(SERVICE_ACCOUNT_KEY);
+            String credentialsResource = Configuration.instance()
+                                                      .serviceAccCredentialsResource();
+            InputStream inputStream =
+                    readResource(credentialsResource);
             GoogleCredentials credential = propagateIoErrors(
                     () -> GoogleCredentials.fromStream(inputStream)
             );

@@ -85,13 +85,9 @@ project root directory:
 ```bash
 ./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
 ```
-     
-Alternatively, you can generate a new JSON key for an existing `spine-dev` service account in
-IAM Admin Service Accounts section. The credential used for deploy is specified at `.travis.yml`
-as `deploy.keyfile`.
 
 #### Encrypt credentials for Travis
-Travis encrypt-file command creates the same keys for multiple invocations. In order to create
+Travis `encrypt-file` command creates the same keys for multiple invocations. In order to create
 multiple encrypted files use encrypt files with openssl:
 ```bash
 ./scripts/encrypt-file.sh secret_api secret.json
