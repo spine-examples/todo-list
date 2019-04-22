@@ -21,7 +21,6 @@ jobs:
       before_install:
         - chmod +x gradlew
         - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-        - mkdir ./deployment/appengine-web/src/main/resources
         - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
       # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
       install: true
@@ -52,7 +51,6 @@ jobs:
       before_install:
         - chmod +x gradlew
         - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-        - mkdir ./deployment/appengine-web/src/main/resources
         - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
 
         # If the SDK is not already cached, download it and unpack it.
