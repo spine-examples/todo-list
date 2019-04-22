@@ -44,7 +44,7 @@ public final class Configuration {
     /**
      * Returns the configuration instance.
      */
-    public static Configuration application() {
+    public static Configuration instance() {
         return INSTANCE;
     }
 
@@ -55,7 +55,7 @@ public final class Configuration {
         this.firebaseDatabaseUrl = Setting.FIREBASE_DB_URL.valueFrom(properties);
         this.projectId = Setting.APP_ENGINE_PROJECT_ID.valueFrom(properties);
         this.serviceAccCredentialsResource =
-                Setting.SERVICE_ACCOUNT_CREDENTIALS_RESOURCE.nullableValueFrom(properties);
+                Setting.SERVICE_ACCOUNT_CREDENTIALS_RESOURCE.valueFrom(properties);
     }
 
     /**
@@ -102,8 +102,6 @@ public final class Configuration {
         /**
          * The path to the JSON file with Google credentials in application classpath.
          *
-         * <p>These credentials are used for accessing data owned by the application.
-         *
          * <p>For example, for the Firebase Database and Datastore access.
          */
         SERVICE_ACCOUNT_CREDENTIALS_RESOURCE("service-account.credentials.resource"),
@@ -111,8 +109,6 @@ public final class Configuration {
         /**
          * The URL of the Firebase Database to use for the client transport purposes, as
          * a {@code String}.
-         *
-         * <p>This is a required setting.
          */
         FIREBASE_DB_URL("firebase.database.url"),
 

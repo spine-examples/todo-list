@@ -24,7 +24,6 @@ import static io.spine.server.ServerEnvironment.getDeploymentType;
 final class Storage {
 
     @VisibleForTesting
-    static final String LOCAL_PROJECT = "spine-dev";
     static final String LOCAL_DATASTORE_HOST = "localhost:8081";
 
     /**
@@ -67,7 +66,7 @@ final class Storage {
         }
         return DatastoreOptions
                 .newBuilder()
-                .setProjectId(LOCAL_PROJECT)
+                .setProjectId(Configuration.instance().projectId())
                 .setHost(LOCAL_DATASTORE_HOST)
                 .build();
     }

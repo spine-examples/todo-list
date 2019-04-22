@@ -45,7 +45,6 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 final class Application {
 
     private static final StartUpLogger log = StartUpLogger.instance();
-    private static final String DATABASE_URL = "https://spine-dev.firebaseio.com/";
 
     private final CommandService commandService;
     private final FirebaseQueryBridge queryBridge;
@@ -125,7 +124,7 @@ final class Application {
     private static DatabaseUrl databaseUrl() {
         Url url = UrlVBuilder
                 .newBuilder()
-                .setSpec(DATABASE_URL)
+                .setSpec(Configuration.instance().firebaseDatabaseUrl())
                 .build();
         DatabaseUrl databaseUrl = DatabaseUrlVBuilder
                 .newBuilder()
