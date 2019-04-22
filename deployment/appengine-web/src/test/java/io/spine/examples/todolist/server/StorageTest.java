@@ -60,7 +60,7 @@ class StorageTest {
             configureDeployment(() -> APPENGINE_EMULATOR);
             DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
             assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
-            assertEquals(Storage.LOCAL_PROJECT, options.getProjectId());
+            assertEquals(Configuration.instance().projectId(), options.getProjectId());
         }
 
         @Test
@@ -69,7 +69,7 @@ class StorageTest {
             configureDeployment(() -> STANDALONE);
             DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
             assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
-            assertEquals(Storage.LOCAL_PROJECT, options.getProjectId());
+            assertEquals(Configuration.instance().projectId(), options.getProjectId());
         }
     }
 }
