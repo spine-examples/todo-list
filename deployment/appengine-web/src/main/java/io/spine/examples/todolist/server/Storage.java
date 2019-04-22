@@ -64,9 +64,11 @@ final class Storage {
                     .setCredentials(credentials)
                     .build();
         }
+        String projectId = Configuration.instance()
+                                        .projectId();
         return DatastoreOptions
                 .newBuilder()
-                .setProjectId(Configuration.instance().projectId())
+                .setProjectId(projectId)
                 .setHost(LOCAL_DATASTORE_HOST)
                 .build();
     }

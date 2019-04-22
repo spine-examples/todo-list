@@ -122,9 +122,11 @@ final class Application {
     }
 
     private static DatabaseUrl databaseUrl() {
+        String firebaseDatabaseUrl = Configuration.instance()
+                                           .firebaseDatabaseUrl();
         Url url = UrlVBuilder
                 .newBuilder()
-                .setSpec(Configuration.instance().firebaseDatabaseUrl())
+                .setSpec(firebaseDatabaseUrl)
                 .build();
         DatabaseUrl databaseUrl = DatabaseUrlVBuilder
                 .newBuilder()

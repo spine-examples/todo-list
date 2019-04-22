@@ -55,8 +55,10 @@ final class GoogleAuth {
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredential::getApplicationDefault);
         } else {
+            String credentialsResource = Configuration.instance()
+                                                      .serviceAccCredentialsResource();
             InputStream inputStream =
-                    readResource(Configuration.instance().serviceAccCredentialsResource());
+                    readResource(credentialsResource);
             GoogleCredential credential = propagateIoErrors(
                     () -> GoogleCredential.fromStream(inputStream)
             );
@@ -79,8 +81,10 @@ final class GoogleAuth {
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredentials::getApplicationDefault);
         } else {
+            String credentialsResource = Configuration.instance()
+                                                      .serviceAccCredentialsResource();
             InputStream inputStream =
-                    readResource(Configuration.instance().serviceAccCredentialsResource());
+                    readResource(credentialsResource);
             GoogleCredentials credential = propagateIoErrors(
                     () -> GoogleCredentials.fromStream(inputStream)
             );
