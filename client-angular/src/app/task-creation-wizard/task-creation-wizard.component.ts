@@ -173,7 +173,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
         this.taskDefinition.initFromWizard();
         this.labelAssignment.initFromWizard();
 
-        this.layoutService.updateShowQuitWizardButton(true);
+        this.layoutService.updateShowQuitButton(true);
         this.layoutService.updateQuitButtonHandler(() => this.currentStep().cancel());
 
         this.isLoading = false;

@@ -81,7 +81,7 @@ export class LayoutService {
   }
 
   /** Updates whether the button to the quit button is supposed to be visible. */
-  public updateShowQuitWizardButton(shouldShow: boolean): void {
+  public updateShowQuitButton(shouldShow: boolean): void {
     const result = {...this._config$.getValue(), ...{showQuitButton: shouldShow}};
     this._config$.next(result);
   }
