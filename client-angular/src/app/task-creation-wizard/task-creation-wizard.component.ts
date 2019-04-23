@@ -66,7 +66,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
-              route: ActivatedRoute,
+              private route: ActivatedRoute,
               private readonly layoutService: LayoutService) {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
