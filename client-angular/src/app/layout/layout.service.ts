@@ -19,18 +19,19 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LayoutModule} from 'app/layout/layout.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 /**
  * Configuration of the layout.
  *
- * Defines the toolbar label value on the toolbar as well as whether a navbar
- * is supposed to be shown.
+ * Defines the toolbar label value on the toolbar, whether a navbar and a button to quit the
+ * task creation wizard are supposed to be shown.
  */
 export interface LayoutConfig {
   toolbarLabel: string;
   showNavigation: boolean;
+  showQuitButton: boolean;
+  quitButtonHandler: () => void;
 }
 
 /**
@@ -45,7 +46,10 @@ export class LayoutService {
 
   private static readonly DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
     toolbarLabel: 'To-do list',
-    showNavigation: true
+    showNavigation: true,
+    showQuitButton: false,
+    quitButtonHandler: () => {
+    }
   };
 
   private _config$: BehaviorSubject<LayoutConfig>;
@@ -59,15 +63,32 @@ export class LayoutService {
     return this._config$.asObservable();
   }
 
+  /** Executes the current value of the `quitButtonHandler`. */
+  public quit(): void {
+    this._config$.getValue().quitButtonHandler();
+  }
+
   /** Updates the label on the toolbar with the specified value. */
   public updateToolbar(toolbarValue: string): void {
     const result = {...this._config$.getValue(), ...{toolbarLabel: toolbarValue}};
     this._config$.next(result);
   }
 
-  /** Updates whether the toolbar is supposed to be showed. */
+  /** Updates whether the toolbar is supposed to be visible. */
   public updateShowNav(shouldShowNav: boolean): void {
     const result = {...this._config$.getValue(), ...{showNavigation: shouldShowNav}};
+    this._config$.next(result);
+  }
+
+  /** Updates whether the button to the quit button is supposed to be visible. */
+  public updateShowQuitWizardButton(shouldShow: boolean): void {
+    const result = {...this._config$.getValue(), ...{showQuitButton: shouldShow}};
+    this._config$.next(result);
+  }
+
+  /** Updates the action that is taken when the `quit` button is clicked. */
+  public updateQuitButtonHandler(handler: () => void): void {
+    const result = {...this._config$.getValue(), ...{quitButtonHandler: handler}};
     this._config$.next(result);
   }
 

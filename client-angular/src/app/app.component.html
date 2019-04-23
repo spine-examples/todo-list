@@ -18,7 +18,15 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-toolbar color="primary">{{toolbarLabel}}</mat-toolbar>
+<mat-toolbar color="primary">{{toolbarLabel}}
+    <span class="divider"></span>
+    <button class="cancel-button"
+            mat-button
+            mat-icon
+            *ngIf="showQuitButton"
+            (click)="layoutService.quit()">Cancel
+    </button>
+</mat-toolbar>
 <mat-sidenav-container class="task-list-container">
     <mat-sidenav *ngIf="showNav" mode="side" opened class="task-list-sidenav">
         <app-navigation></app-navigation>

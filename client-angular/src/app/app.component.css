@@ -31,6 +31,15 @@
   width: 256px;
 }
 
+.divider {
+  flex: 1 1 auto;
+}
+
+.cancel-button {
+  font: 500 18px/32px Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
+}
+
 mat-sidenav-content {
   padding: 25px;
 }

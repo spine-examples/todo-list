@@ -21,7 +21,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
-import {MatToolbarModule} from '@angular/material';
+import {MatButtonModule, MatToolbarModule} from '@angular/material';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
@@ -51,7 +51,8 @@ import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
     MatListModule,
     MatSidenavModule,
     LayoutModule,
-    RouterModule
+    RouterModule,
+    MatButtonModule
   ],
   bootstrap: [AppComponent]
 })

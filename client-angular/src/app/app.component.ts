@@ -31,6 +31,7 @@ import {LayoutService} from 'app/layout/layout.service';
 })
 export class AppComponent implements OnInit {
 
+  private showQuitButton: boolean;
   private showNav: boolean;
   private toolbarLabel: string;
 
@@ -40,6 +41,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.layoutService.config$.subscribe(config => {
+      console.log(this.showQuitButton);
+      this.showQuitButton = config.showQuitButton;
       this.showNav = config.showNavigation;
       this.toolbarLabel = config.toolbarLabel;
       this.changeDetector.detectChanges();
