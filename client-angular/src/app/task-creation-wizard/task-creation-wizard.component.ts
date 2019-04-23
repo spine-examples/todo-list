@@ -103,7 +103,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    *
    * Used for manipulations with UI elements.
    */
-  private isLoading: boolean;
+  isLoading: boolean;
 
   /**
    * Maps wizard steps to their index number.
