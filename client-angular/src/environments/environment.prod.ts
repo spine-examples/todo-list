@@ -21,8 +21,10 @@
 /**
  * The environment configuration for the production.
  *
- * Configures an application to work with a remote development backend server
- * and a development Firebase application.
+ * Configures an application to work with:
+ *  - a remote development backend server deployed to the AppEngine Standard environment.
+ *    See `deployment/appengine-web/README.md` for details.
+ *  - a development "spine-dev" Firebase application.
  *
  * Note, that assembling of the production version is done using "AOT" compiler.
  * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.

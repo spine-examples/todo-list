@@ -21,9 +21,10 @@
 /**
  * The environment configuration for the local development.
  *
- * Configures an application to work with a local backend server and a development Firebase
- * application. See the "Running the application locally" section of `appengine-web/README.md`
- * for details.
+ * Configures an application to work with:
+ *  - a remote local backend server running on AppEngine emulator. See "Running the application
+ *    locally" section of `deployment/appengine-web/README.md` for details.
+ *  - a development "spine-dev" Firebase application.
  */
 export const environment = {
   production: false,
