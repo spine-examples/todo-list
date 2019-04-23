@@ -23,7 +23,7 @@
     <mat-sidenav *ngIf="showNav" mode="side" opened class="task-list-sidenav">
         <app-navigation></app-navigation>
     </mat-sidenav>
-    <mat-sidenav-content>
+    <mat-sidenav-content [ngClass]="{'container-nav-shown': showNav}">
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 </mat-sidenav-container>
