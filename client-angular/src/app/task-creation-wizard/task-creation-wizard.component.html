@@ -38,16 +38,16 @@
             </mat-step>
         </mat-horizontal-stepper>
         <div *ngIf="!isLoading">
-        <button mat-button (click)="proceed()" class="proceed-button">
-            <label *ngIf="!isLastStage()">Next</label>
-            <label *ngIf="isLastStage()">Finish</label>
-        </button>
-        <button mat-button
-                [disabled]="isFirstStage()"
-                (click)="goBack()"
-                class="go-back-button">Previous
-        </button>
-        <button mat-button (click)="cancel()" class="cancel-button">Cancel</button>
+            <button mat-button (click)="proceed()" class="proceed-button">
+                <label>{{ isLastStage() ? 'Complete' : 'Next' }}</label>
+            </button>
+            <button mat-button
+                    [disabled]="isFirstStage()"
+                    (click)="goBack()"
+                    class="go-back-button">
+                Previous
+            </button>
+            <button mat-button (click)="cancel()" class="cancel-button">Cancel</button>
         </div>
     </mat-card>
 </div>
