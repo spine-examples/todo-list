@@ -18,28 +18,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/build-profile.gradle"
-apply from: "$rootDir/scripts/js.gradle"
+package io.spine.examples.todolist.server.given;
 
-buildJs {
-    outputs.dir "$projectDir/dist"
+import com.google.auth.Credentials;
 
-    doLast {
-        npm 'run', buildParameter()
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+
+/** Test environment for {@link io.spine.examples.todolist.server.StorageTest}. */
+public class StorageTestEnv {
+
+    /** Prevents instantiation of the test environment. */
+    private StorageTestEnv() {
     }
-}
 
-testJs {
-    doLast {
-        npm 'run', 'test'
+    public static class EmptyCredentials extends Credentials {
+
+        private static final long serialVersionUID = 0;
+
+        @Override
+        public String getAuthenticationType() {
+            return "";
+        }
+
+        @Override
+        public Map<String, List<String>> getRequestMetadata(URI uri) {
+            return emptyMap();
+        }
+
+        @Override
+        public boolean hasRequestMetadata() {
+            return false;
+        }
+
+        @Override
+        public boolean hasRequestMetadataOnly() {
+            return false;
+        }
+
+        @Override
+        public void refresh() {
+        }
     }
-
-    dependsOn buildJs
-}
-
-def buildParameter() {
-    if (ext.isDev()) {
-        return 'build-dev'
-    }
-    return 'build-local'
 }

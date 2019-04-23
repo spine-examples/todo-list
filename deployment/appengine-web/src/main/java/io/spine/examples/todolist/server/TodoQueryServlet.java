@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2018, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,26 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server;
+
+import io.spine.web.query.QueryServlet;
+
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static io.spine.examples.todolist.server.Application.application;
+
 /**
- * The environment configuration for the production.
+ * The {@code /query} endpoint of the TodoList system.
  *
- * Configures an application to work with:
- *  - a remote development backend server deployed to the AppEngine Standard environment.
- *    See `deployment/appengine-web/README.md` for details.
- *  - a development "spine-dev" Firebase application.
+ * <p>Handles query {@code POST} requests. See {@link QueryServlet} for more details.
  *
- * Note, that assembling of the production version is done using "AOT" compiler.
- * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.
+ * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
-export const environment = {
-  production: true,
-  firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
-  },
-  host: 'https://todo-list-dot-spine-dev.appspot.com'
-};
+@WebServlet(name = TodoQueryServlet.NAME, value = "/query")
+@SuppressWarnings("serial")
+public final class TodoQueryServlet extends QueryServlet {
+
+    static final String NAME = "Query Service";
+
+    public TodoQueryServlet() {
+        super(application().queryBridge());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
+    }
+}

@@ -18,26 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * The environment configuration for the production.
- *
- * Configures an application to work with:
- *  - a remote development backend server deployed to the AppEngine Standard environment.
- *    See `deployment/appengine-web/README.md` for details.
- *  - a development "spine-dev" Firebase application.
- *
- * Note, that assembling of the production version is done using "AOT" compiler.
- * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.
- */
-export const environment = {
-  production: true,
-  firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
-  },
-  host: 'https://todo-list-dot-spine-dev.appspot.com'
-};
+package io.spine.examples.todolist.server;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@DisplayName("TodoSubscribeServlet should")
+class TodoSubscribeServletTest {
+
+    @Test
+    @DisplayName("be instantiated with an empty constructor")
+    void instantiated() {
+        TodoSubscribeServlet servlet = new TodoSubscribeServlet();
+        assertNotNull(servlet);
+    }
+}

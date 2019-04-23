@@ -18,26 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server;
+
+import io.spine.logging.Logging;
+import org.slf4j.Logger;
+
+import static java.lang.String.format;
+
 /**
- * The environment configuration for the production.
- *
- * Configures an application to work with:
- *  - a remote development backend server deployed to the AppEngine Standard environment.
- *    See `deployment/appengine-web/README.md` for details.
- *  - a development "spine-dev" Firebase application.
- *
- * Note, that assembling of the production version is done using "AOT" compiler.
- * See [The Ahead-of-Time (AOT) compiler](https://angular.io/guide/aot-compiler) for details.
+ * A logger facade to be used when logging the application start up process.
  */
-export const environment = {
-  production: true,
-  firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
-  },
-  host: 'https://todo-list-dot-spine-dev.appspot.com'
-};
+final class StartUpLogger {
+
+    private static final Logger logger = Logging.get(Application.class);
+    private static final StartUpLogger instance = new StartUpLogger();
+
+    /**
+     * Prevents direct instantiation.
+     */
+    private StartUpLogger() {
+    }
+
+    static StartUpLogger instance() {
+        return instance;
+    }
+
+    /**
+     * Logs the given message on the {@code INFO} level.
+     *
+     * @param template
+     *         the logged message template
+     * @param arguments
+     *         the message template arguments
+     */
+    void log(String template, Object... arguments) {
+        String messageTemplate = format("Start up: %s", template);
+        logger.debug(messageTemplate, arguments);
+    }
+}
