@@ -32,7 +32,8 @@ import {
   MatChipsModule,
   MatIconModule,
   MatListModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
@@ -120,6 +121,7 @@ describe('TaskCreationWizardComponent', () => {
         LabelsModule,
         LayoutModule,
 
+        MatProgressSpinnerModule,
         MatSnackBarModule,
         MatMomentDateModule,
         MatButtonModule,
