@@ -41,7 +41,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.layoutService.config$.subscribe(config => {
-      console.log(this.showQuitButton);
       this.showQuitButton = config.showQuitButton;
       this.showNav = config.showNavigation;
       this.toolbarLabel = config.toolbarLabel;
