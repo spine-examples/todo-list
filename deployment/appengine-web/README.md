@@ -76,15 +76,15 @@ deployed by Travis:
 - Cloud Scheduler Admin
 - Cloud Task Queue Admin
 
-Travis performs deployment using regular gcloud CLI tool. The required roles are described at
-[Deploying using IAM roles](https://cloud.google.com/appengine/docs/standard/python/granting-project-access#deploying_using_iam_roles)
-section of Granting Project Access Google documentation.
-
 To generate a key for an existing service account execute the following `gcloud` command under
 project root directory:
 ```bash
 ./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
 ```
+
+The same service account is used during the automatic deployment on Travis build. The service
+account key is decrypted and stored under `deployment/appengine-web/src/main/resources/spine-dev.json`
+path.
 
 #### Encrypt credentials for Travis
 Travis `encrypt-file` command creates the same keys for multiple invocations. In order to create
