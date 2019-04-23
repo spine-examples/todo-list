@@ -27,8 +27,10 @@ import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation
 import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
-import {TaskCreation} from 'proto/todolist/model_pb';
 import {LayoutService} from 'app/layout/layout.service';
+import {WizardStep} from 'app/task-creation-wizard/wizard-step';
+import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
+import {TaskCreation} from 'proto/todolist/model_pb';
 
 /**
  * The main component of the Task Creation Wizard.
@@ -61,14 +63,17 @@ import {LayoutService} from 'app/layout/layout.service';
 })
 export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
 
-  /**
-   * The task creation stages with a corresponding {@link stepper} page indices.
-   */
-  private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
-    [TaskCreation.Stage.TASK_DEFINITION, 0],
-    [TaskCreation.Stage.LABEL_ASSIGNMENT, 1],
-    [TaskCreation.Stage.CONFIRMATION, 2]
-  ]);
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly changeDetector: ChangeDetectorRef,
+              private readonly location: Location,
+              private route: ActivatedRoute,
+              private readonly layoutService: LayoutService) {
+    this.isLoading = true;
+    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    this.initWizard = wizard.init(taskCreationId);
+    this.layoutService.updateToolbar('Create a task');
+    this.layoutService.updateShowNav(false);
+  }
 
   /**
    * A reference to the Angular Material Stepper which controls the wizard UI.
@@ -90,6 +95,9 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
+  @ViewChild(ErrorViewport)
+  errorViewPort: ErrorViewport;
+
   /**
    * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
    *
@@ -98,28 +106,56 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   isLoading: boolean;
 
   /**
+   * Maps wizard steps to their index number.
+   */
+  private steps: Map<number, WizardStep> = new Map();
+
+  /**
    * A promise to initialize the injected {@link TaskCreationWizard} either "from scratch" or with
    * the data from the pre-loaded process.
    */
   private readonly initWizard: Promise<void>;
-
-  constructor(private readonly wizard: TaskCreationWizard,
-              private readonly changeDetector: ChangeDetectorRef,
-              private readonly location: Location,
-              route: ActivatedRoute,
-              private readonly navService: LayoutService) {
-    this.isLoading = true;
-    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    this.initWizard = wizard.init(taskCreationId);
-    this.navService.updateToolbar('Wizard');
-    this.navService.updateShowNav(false);
-  }
 
   /**
    * Reports an error which cannot really be recovered in the scope of a current page.
    */
   private static reportFatalError(err): void {
     throw new Error(err);
+  }
+
+  /**
+   * Returns the current step of the task creation wizard.
+   *
+   * Steps are mapped 1-to-1 with stages.
+   */
+  private currentStep(): WizardStep {
+    const currentStage = this.wizard.stage;
+    return this.steps.get(currentStage);
+  }
+
+  /**
+   * If there are steps after the current one, moves the wizard to the next step. Finishes the
+   * wizard otherwise.
+   */
+  private proceed(): void {
+    const currentStep = this.currentStep();
+    if (this.isLastStage()) {
+      currentStep.finish();
+    } else {
+      currentStep.next();
+    }
+  }
+
+  /** Returns to the previous step. */
+  private goBack(): void {
+    this.currentStep().previous();
+  }
+
+  /**
+   * Cancels the task creation wizard, aborting the task creation operation.
+   */
+  private cancel(): void {
+    this.currentStep().cancel();
   }
 
   /**
@@ -141,6 +177,9 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
         this.changeDetector.detectChanges();
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));
+    this.steps.set(TaskCreation.Stage.TASK_DEFINITION, this.taskDefinition);
+    this.steps.set(TaskCreation.Stage.LABEL_ASSIGNMENT, this.labelAssignment);
+    this.steps.set(TaskCreation.Stage.CONFIRMATION, this.confirmation);
   }
 
   /**
@@ -168,15 +207,14 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    */
   private moveToCurrentStep(): void {
     const currentStage = this.wizard.stage;
-    const index = TaskCreationWizardComponent.STEPS.get(currentStage);
-    if (index === undefined) {
+    if (!currentStage) {
       TaskCreationWizardComponent.reportFatalError(
         `There is no wizard step for stage ${currentStage}`
       );
       return;
     }
-    this.completeVisitedSteps(index);
-    this.stepper.selectedIndex = index;
+    this.completeVisitedSteps(currentStage);
+    this.stepper.selectedIndex = currentStage;
   }
 
   /**
@@ -184,11 +222,30 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    */
   private completeVisitedSteps(index) {
     for (let i = 0; i < this.stepper.steps.length; i++) {
-      this.stepper.steps.toArray()[i].completed = i < index;
+      /* Steps in the `stepper` are indexed from 0,
+         steps as per the model are indexed from 1, hence the -1 */
+      this.stepper.steps.toArray()[i].completed = i < index - 1;
     }
   }
 
   ngOnDestroy(): void {
-    this.navService.defaultLayout();
+    this.layoutService.defaultLayout();
+  }
+
+  isLastStage(): boolean {
+    const keys = Array.from(this.steps.keys());
+    const lastStage = keys.sort()[keys.length - 1];
+    return this.currentStageIs(stage => stage === lastStage);
+  }
+
+  isFirstStage(): boolean {
+    const keys = Array.from(this.steps.keys());
+    const firstStage = keys.sort()[0];
+    return this.currentStageIs(stage => stage === firstStage);
+  }
+
+  private currentStageIs(predicate: (stage: number) => boolean): boolean {
+    const currentStage = this.wizard.stage;
+    return predicate(currentStage);
   }
 }

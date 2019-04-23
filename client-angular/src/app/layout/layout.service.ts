@@ -39,7 +39,7 @@ export interface LayoutConfig {
  * Allows to adjust the way the sidenav and the toolbar are displayed.
  */
 @Injectable({
-  providedIn: LayoutModule
+  providedIn: 'root'
 })
 export class LayoutService {
 

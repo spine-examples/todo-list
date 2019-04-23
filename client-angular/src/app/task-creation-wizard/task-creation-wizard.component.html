@@ -18,22 +18,43 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<app-page-header text="New Task"></app-page-header>
-
-<mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-<mat-horizontal-stepper linear #stepper [hidden]="isLoading">
-    <mat-step>
-        <ng-template matStepLabel>Task definition</ng-template>
-        <app-task-definition [stepper]="stepper">
-        </app-task-definition>
-    </mat-step>
-    <mat-step>
-        <ng-template matStepLabel>Label assignment</ng-template>
-        <app-label-assignment [stepper]="stepper">
-        </app-label-assignment>
-    </mat-step>
-    <mat-step>
-        <ng-template matStepLabel>Confirmation</ng-template>
-        <app-confirmation [stepper]="stepper"></app-confirmation>
-    </mat-step>
-</mat-horizontal-stepper>
+<mat-card class="wizard-card">
+    <mat-card-header>
+        <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-horizontal-stepper linear #stepper [hidden]="isLoading">
+            <mat-step>
+                <ng-template matStepLabel>Task definition</ng-template>
+                <app-task-definition [stepper]="stepper">
+                </app-task-definition>
+            </mat-step>
+            <mat-step>
+                <ng-template matStepLabel>Label assignment</ng-template>
+                <app-label-assignment [stepper]="stepper">
+                </app-label-assignment>
+            </mat-step>
+            <mat-step>
+                <ng-template matStepLabel>Confirmation</ng-template>
+                <app-confirmation [stepper]="stepper"></app-confirmation>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-card-actions *ngIf="!isLoading" fxLayout="row" fxLayoutAlign="space-between start">
+        <button mat-button (click)="cancel()" class="cancel-button">
+            Cancel
+        </button>
+        <div>
+            <button mat-button
+                    [disabled]="isFirstStage()"
+                    (click)="goBack()"
+                    class="go-back-button">
+                Previous
+            </button>
+            <button mat-button (click)="proceed()" class="proceed-button">
+                <label>{{ isLastStage() ? 'Complete' : 'Next' }}</label>
+            </button>
+        </div>
+    </mat-card-actions>
+</mat-card>

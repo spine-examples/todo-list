@@ -18,6 +18,7 @@
     "@angular/compiler": "~7.2.0",
     "@angular/core": "~7.2.0",
     "@angular/fire": "latest",
+    "@angular/flex-layout": "^7.0.0-beta.24",
     "@angular/forms": "~7.2.0",
     "@angular/material": "^7.3.4",
     "@angular/material-moment-adapter": "^7.3.4",
@@ -32,7 +33,7 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.13.6",
+    "@angular-devkit/build-angular": "^0.13.8",
     "@angular/cli": "^7.3.6",
     "@angular/compiler-cli": "^7.2.10",
     "@angular/language-service": "~7.2.0",

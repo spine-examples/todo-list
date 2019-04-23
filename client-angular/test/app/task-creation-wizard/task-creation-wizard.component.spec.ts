@@ -59,14 +59,13 @@ import {LabelService} from 'app/labels/label.service';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 
 import {TaskCreation} from 'proto/todolist/model_pb';
-import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {mockLayoutService, mockNotificationService} from 'test/given/layout-service';
 import {LayoutService} from 'app/layout/layout.service';
 import {NotificationService} from 'app/layout/notification.service';
 import {LayoutModule} from 'app/layout/layout.module';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-
+import {MatCardModule} from '@angular/material/card';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -132,7 +131,8 @@ describe('TaskCreationWizardComponent', () => {
         MatListModule,
         MatProgressBarModule,
         MatSelectModule,
-        MatStepperModule
+        MatStepperModule,
+        MatCardModule
       ],
       providers: [
         TaskCreationWizard,
@@ -201,8 +201,7 @@ describe('TaskCreationWizardComponent', () => {
 
     component.ngAfterViewInit();
     tick();
-    const labelAssignmentPageIndex = 1;
-    expect(component.stepper.selectedIndex).toEqual(labelAssignmentPageIndex);
+    expect(component.stepper.selectedIndex).toEqual(TaskCreation.Stage.LABEL_ASSIGNMENT);
   }));
 
   it('should throw an Error when trying to navigate to unknown stage', fakeAsync(() => {
@@ -222,7 +221,7 @@ describe('TaskCreationWizardComponent', () => {
   it('should change the label on the toolbar', fakeAsync(() => {
     TestBed.createComponent(TaskCreationWizardComponent);
     tick();
-    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Wizard');
+    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Create a task');
   }));
 
   it('should execute child components initialization', fakeAsync(() => {
