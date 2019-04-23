@@ -105,6 +105,9 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    */
   private isLoading: boolean;
 
+  /**
+   * Maps wizard steps to their index number.
+   */
   private steps: Map<number, WizardStep> = new Map();
 
   /**

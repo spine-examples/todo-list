@@ -34,6 +34,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatCardModule} from '@angular/material/card';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
@@ -71,6 +72,7 @@ import {LayoutModule} from 'app/layout/layout.module';
     LabelsModule,
     LayoutModule,
 
+    FlexLayoutModule,
     MatMomentDateModule,
     MatButtonModule,
     MatChipsModule,
