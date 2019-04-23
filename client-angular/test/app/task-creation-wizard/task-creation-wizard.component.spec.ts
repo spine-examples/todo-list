@@ -201,8 +201,7 @@ describe('TaskCreationWizardComponent', () => {
 
     component.ngAfterViewInit();
     tick();
-    const labelAssignmentPageIndex = 1;
-    expect(component.stepper.selectedIndex).toEqual(labelAssignmentPageIndex);
+    expect(component.stepper.selectedIndex).toEqual(TaskCreation.Stage.LABEL_ASSIGNMENT);
   }));
 
   it('should throw an Error when trying to navigate to unknown stage', fakeAsync(() => {
@@ -222,7 +221,7 @@ describe('TaskCreationWizardComponent', () => {
   it('should change the label on the toolbar', fakeAsync(() => {
     TestBed.createComponent(TaskCreationWizardComponent);
     tick();
-    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Wizard');
+    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Create a task');
   }));
 
   it('should execute child components initialization', fakeAsync(() => {

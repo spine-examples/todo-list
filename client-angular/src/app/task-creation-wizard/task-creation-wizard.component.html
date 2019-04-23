@@ -40,22 +40,21 @@
             </mat-step>
         </mat-horizontal-stepper>
     </mat-card-content>
-        <mat-card-actions *ngIf="!isLoading" fxLayout="row" fxLayoutAlign="space-between start">
-            <div fxLayoutAlign="end end">
-                <button mat-button (click)="cancel()" class="cancel-button">
-                    Cancel
-                </button>
-            </div>
-            <div fxLayoutAlign="start start">
-                <button mat-button
-                        [disabled]="isFirstStage()"
-                        (click)="goBack()"
-                        class="go-back-button">
-                    Previous
-                </button>
-                <button mat-button (click)="proceed()" class="proceed-button">
-                    <label>{{ isLastStage() ? 'Complete' : 'Next' }}</label>
-                </button>
-            </div>
-        </mat-card-actions>
+    <mat-divider></mat-divider>
+    <mat-card-actions *ngIf="!isLoading" fxLayout="row" fxLayoutAlign="space-between start">
+        <button mat-button (click)="cancel()" class="cancel-button">
+            Cancel
+        </button>
+        <div>
+            <button mat-button
+                    [disabled]="isFirstStage()"
+                    (click)="goBack()"
+                    class="go-back-button">
+                Previous
+            </button>
+            <button mat-button (click)="proceed()" class="proceed-button">
+                <label>{{ isLastStage() ? 'Complete' : 'Next' }}</label>
+            </button>
+        </div>
+    </mat-card-actions>
 </mat-card>
