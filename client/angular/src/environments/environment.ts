@@ -36,8 +36,10 @@ import 'zone.js/dist/zone-error'; // Included with Angular CLI.
  * This configuration is used for the local development when executing Angular CLI `build`, `serve`,
  * and `test` commands without specifying of a `--configuration` property.
  *
- * Configures an application to work with a local backend server and the development Firebase
- * application.
+ * Configures an application to work with:
+ *  - a remote local backend server running on AppEngine emulator. See "Running the application
+ *    locally" section of `deployment/appengine-web/README.md` for details.
+ *  - a development "spine-dev" Firebase application.
  */
 export const environment = {
   production: false,

@@ -33,6 +33,8 @@ import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatCardModule} from '@angular/material/card';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
@@ -44,6 +46,7 @@ import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provid
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskServiceModule} from 'app/task-service/task-service.module';
 import {LabelsModule} from 'app/labels/labels.module';
+import {LayoutModule} from 'app/layout/layout.module';
 
 /**
  * The module which provides a wizard for step-by-step task creation.
@@ -67,7 +70,9 @@ import {LabelsModule} from 'app/labels/labels.module';
     TodoListPipesModule,
     TaskServiceModule,
     LabelsModule,
+    LayoutModule,
 
+    FlexLayoutModule,
     MatMomentDateModule,
     MatButtonModule,
     MatChipsModule,
@@ -78,7 +83,8 @@ import {LabelsModule} from 'app/labels/labels.module';
     MatListModule,
     MatProgressBarModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    MatCardModule
   ]
 })
 export class TaskCreationWizardModule {

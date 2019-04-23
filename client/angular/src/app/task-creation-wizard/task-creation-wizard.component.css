@@ -18,10 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-mat-horizontal-stepper {
-  width: 600px;
-}
-
 [hidden] {
   display: none !important;
+}
+
+.wizard-card {
+  margin: auto;
+  max-width: 600px;
 }

@@ -21,8 +21,10 @@
 /**
  * The environment configuration for the development.
  *
- * Configures an application to work with a remote development backend server
- * and a development Firebase application.
+ * Configures an application to work with:
+ *  - a remote development backend server deployed to the AppEngine Standard environment.
+ *    See `deployment/appengine-web/README.md` for details.
+ *  - a development "spine-dev" Firebase application.
  */
 export const environment = {
   production: false,

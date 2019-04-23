@@ -11,8 +11,7 @@ stages:
 jobs:
   include:
 
-    # The objective of this stage is to assemble the project and
-    # to run unit and integration tests with coverage
+    # Assembles the project and runs unit and integration tests with coverage.
     #
     - stage: Unit and Integration Tests
       language: java
@@ -30,12 +29,11 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
-    # The objective of this stage is to deploy the To-do List application to the
-    # AppEngine Standard environment. See `appengine-web/README.md` for details.
+    # Deploys the application to AppEngine Standard environment.
+    # See `appengine-web/README.md` for details.
     #
-    # The Google Cloud SDK is shipped on Travis and you cannot expand it with custom components
-    # because this Cloud SDK installation is managed by an external package manager. So if you want
-    # to use an up-to-date version and install custom components, you have to install your own.
+    # The Google Cloud SDK shipped with Travis cannot be expanded with any custom components.
+    # Therefore we install our own Cloud SDK tool.
     #
     - stage: Deployment
       language: java

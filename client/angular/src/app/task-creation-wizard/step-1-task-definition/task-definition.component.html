@@ -21,7 +21,9 @@
 <p>
     <mat-form-field appearance="standard">
         <mat-label>Description</mat-label>
-        <input [ngModel]="description | stringValue" (ngModelChange)="setDescription($event)"
+        <input autocomplete="off"
+               [ngModel]="description | stringValue"
+               (ngModelChange)="setDescription($event)"
                matInput placeholder="Description" required>
     </mat-form-field>
 </p>
@@ -45,6 +47,3 @@
     </mat-form-field>
 </p>
 <app-error-viewport></app-error-viewport>
-<a mat-button color='primary' [disabled]="true">Previous</a>
-<a (click)="next()" mat-button color='primary'>Next</a>
-<a (click)="cancel()" mat-button color='primary'>Cancel</a>
