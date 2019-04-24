@@ -44,7 +44,7 @@ export class ActiveTasksComponent implements OnInit {
     });
   }
 
-  private createBasicTaskForms: FormGroup;
+  createBasicTaskForms: FormGroup;
 
   @ViewChild('urgentList')
   private urgentList: TaskListComponent;
@@ -55,16 +55,16 @@ export class ActiveTasksComponent implements OnInit {
   @ViewChild('lowList')
   private lowList: TaskListComponent;
 
-  private activeFilter: (t: TaskItem) => boolean =
+  activeFilter: (t: TaskItem) => boolean =
     (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
 
-  private urgentFilter: (t: TaskItem) => boolean =
+  urgentFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH;
 
-  private lowPriorityFilter: (t: TaskItem) => boolean =
+  lowPriorityFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW;
 
-  private normalPriorityFilter: (t: TaskItem) => boolean =
+  normalPriorityFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**
@@ -74,7 +74,7 @@ export class ActiveTasksComponent implements OnInit {
    * See `commands.proto#CreateBasicTask` in the `model` module.
    * @param taskDescription desired description of the task.
    */
-  private createBasicTask(taskDescription: string): void {
+  createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
   }
 

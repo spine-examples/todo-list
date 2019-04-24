@@ -84,5 +84,19 @@ protoJs {
     buildJs.dependsOn generateParsersTask()
 }
 
+idea.module {
+    sourceDirs += file("$projectDir/src")
+    testSourceDirs += file("$projectDir/test")
+
+    iml {
+        beforeMerged { module ->
+            module.dependencies.clear()
+        }
+        whenMerged { module ->
+            module.dependencies*.exported = true
+        }
+    }
+}
+
 project.compileJava.enabled = false
 project.compileTestJava.enabled = false

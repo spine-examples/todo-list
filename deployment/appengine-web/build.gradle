@@ -1,0 +1,90 @@
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+buildscript {
+    repositories {
+        maven { url = repos.gradlePlugins }
+    }
+    dependencies {
+        classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
+        classpath deps.build.gradlePlugins.appengine
+        classpath deps.build.guava
+    }
+}
+
+apply plugin: 'war'
+apply plugin: 'com.google.cloud.tools.appengine'
+
+apply from: "$projectDir/scripts/appengine.gradle"
+apply from: "$projectDir/scripts/datastore-emulator.gradle"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    implementation project(':server')
+
+    implementation 'com.google.appengine:appengine-api-1.0-sdk:1.9.67'
+    implementation "io.spine:spine-web:$spineWebVersion"
+    implementation "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
+    implementation "io.spine.gcloud:spine-datastore:$spineVersion"
+
+    implementation "com.google.api-client:google-api-client:$googleApiClient"
+    implementation("com.google.api-client:google-api-client-appengine:$googleApiClient") {
+        exclude group: 'javax.servlet', module: 'servlet-api'
+    }
+}
+
+appengine {
+    deploy.project = 'spine-dev'
+    run {
+        port = 8080
+        jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
+        logLevel = "debug"
+    }
+}
+
+idea.module {
+    excludeDirs += file("$projectDir/src/main/webapp/static")
+
+    iml {
+        beforeMerged { module ->
+            module.dependencies.clear()
+        }
+        whenMerged { module ->
+            module.dependencies*.exported = true
+        }
+    }
+}
+
+tasks["appengineRun"].dependsOn startDatastore
+tasks["appengineStart"].dependsOn startDatastore
+tasks["appengineStop"].dependsOn stopDatastore
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (it.requested.group == 'javax.servlet') {
+            it.useVersion(servletApiVersion)
+        }
+    }
+}

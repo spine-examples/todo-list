@@ -1,16 +1,69 @@
-language: java
+# To-Do List application Travis CI Build configuration.
+#
+# Uses Travis build stages to organize build and deployment processes.
+# See https://docs.travis-ci.com/user/build-stages/ for details.
+#
+stages:
+  - name: Unit and Integration Tests
+  # The deployment is executed when the pull request is merged to the master branch.
+  - name: Deployment
+    if: branch = master AND type != pull_request
+jobs:
+  include:
 
-jdk:
-  - oraclejdk8
+    # Assembles the project and runs unit and integration tests with coverage.
+    #
+    - stage: Unit and Integration Tests
+      language: java
+      jdk:
+        - oraclejdk8
+      before_install:
+        - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
+        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
+      # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
+      install: true
+      script:
+        # Default Travis behaviour for Gradle.
+        - ./gradlew check --info --stacktrace
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
 
-before_install:
-  - chmod +x gradlew
-  - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-  - mkdir ./deployment/local-web/src/main/resources
-  - mv ./spine-dev.json ./deployment/local-web/src/main/resources/spine-dev.json
+    # Deploys the application to AppEngine Standard environment.
+    # See `appengine-web/README.md` for details.
+    #
+    # The Google Cloud SDK shipped with Travis cannot be expanded with any custom components.
+    # Therefore we install our own Cloud SDK tool.
+    #
+    - stage: Deployment
+      language: java
+      jdk:
+          - oraclejdk8
+      cache:
+        directories:
+        # We cache the SDK so we don't have to download it again on subsequent builds.
+        - "$HOME/google-cloud-sdk/"
+      env:
+        - PROJECT_ID="spine-dev"
+        - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+      before_install:
+        - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
+        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
 
-script:
-  - ./gradlew check --stacktrace
+        # If the SDK is not already cached, download it and unpack it.
+        # Check the bin directory as the google-cloud-sdk is automatically created by the cache section.
+        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+        - source /home/travis/google-cloud-sdk/path.bash.inc
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+        # Here we use the decrypted service account credentials to authenticate the command line tool.
+        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
+        # Set the correct project to deploy to.
+        - gcloud config set project $PROJECT_ID
+      install:
+        # Install Google App Engine SDK packages for Java. These components are used by Gradle
+        # App Engine plugin to deploy a Java application to App Engine.
+        - gcloud -q components install app-engine-java
+      script:
+        - ./gradlew :appengine-web:war -PbuildProfile=dev
+        - ./gradlew :appengine-web:appengineDeploy -PbuildProfile=dev

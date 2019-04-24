@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+apply from: "$rootDir/scripts/build-profile.gradle"
 apply from: "$rootDir/scripts/js.gradle"
 
 buildJs {
     outputs.dir "$projectDir/dist"
 
     doLast {
-        npm 'run', 'build'
+        npm 'run', buildParameter()
     }
 }
 
@@ -34,4 +35,11 @@ testJs {
     }
 
     dependsOn buildJs
+}
+
+def buildParameter() {
+    if (ext.isDev()) {
+        return 'build-dev'
+    }
+    return 'build-local'
 }

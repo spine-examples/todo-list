@@ -1,0 +1,137 @@
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+/**
+ * Contains the Gradle tasks used for preparation of the application for deployment to
+ * App Engine Standard Environment depending on the type of assembly.
+ * 
+ * <p>Configures the deployable `war` depending on the build profile property, see
+ * `scripts/build-profile.gradle` for details.
+ * 
+ * <p>For now, the adjustments before application deployment involves the replacement of
+ * the "appengine-web.xml" placeholder with a respective copy depending on the build
+ * profile value.
+ */
+
+apply from: "$rootDir/scripts/build-profile.gradle"
+
+/**
+ * Copies the AppEngine deployment descriptor into the location recognized by the AppEngine Gradle
+ * plugin.
+ *
+ * <p>It is expected that the project contains the file named {@code appengine-web.template.xml}.
+ * This file is written into the {@code src/main/webapp/WEB-INF/} directory as
+ * {@code appengine-web.xml}.
+ *
+ * <p>The template file may contain replacement tags in the following format: {@code $tagname$}.
+ * Currently, only the {@code version} tag is supported. It is replaced with the current version of
+ * the application.
+ */
+void copyDescriptor() {
+    final def VERSION_PATTERN = Pattern.compile('\\$version\\$')
+    final def DESCRIPTOR_FILE_NAME = "appengine-web.xml"
+    final def DESCRIPTOR_TEMPLATE_FILE_NAME = "appengine-web.template.xml"
+
+    final def version = project.appVersion
+
+    final File template = file("$projectDir/deployment/${environmentFolder()}/${DESCRIPTOR_TEMPLATE_FILE_NAME}")
+    final File destinationDir = new File("$projectDir/src/main/webapp/WEB-INF")
+
+    copy {
+        from template
+        into destinationDir
+
+        setDuplicatesStrategy DuplicatesStrategy.INCLUDE
+
+        rename { DESCRIPTOR_FILE_NAME }
+
+        filter { final line ->
+            final Matcher matcher = VERSION_PATTERN.matcher(line)
+            if (matcher.find()) {
+                return matcher.replaceAll(version)
+            } else {
+                return line
+            }
+        }
+    }
+}
+
+/**
+ * Obtains the name of a deployment folder for the current environment.
+ */
+def environmentFolder() {
+    if (ext.isDev()) {
+        return 'dev'
+    }
+    return 'local'
+}
+
+/**
+ * Renames {@code appengine-web.xml} in {@code src/main/webapp/WEB-INF}, which is used as a
+ * placeholder for Gradle App Engine plugin to correctly recognize the application.
+ */
+void backupAppEngineConfigPlaceholder() {
+    copy {
+        from "${projectDir}/src/main/webapp/WEB-INF"
+        into "${projectDir}/src/main/webapp/WEB-INF"
+        include '*.xml'
+        rename { name -> name + '.placeholder' }
+    }
+}
+
+/**
+ * Restores the placeholder {@code appengine-web.xml}, allowing for Gradle App Engine plugin to
+ * correctly recognize the application further.
+ */
+final def restoreAppEngineConfigPlaceholder = {
+    final def placeholder = "${projectDir}/src/main/webapp/WEB-INF/appengine-web.xml.placeholder"
+    if (file(placeholder).exists()) {
+        delete "${projectDir}/src/main/webapp/WEB-INF/appengine-web.xml"
+        copy {
+            from "${projectDir}/src/main/webapp/WEB-INF/appengine-web.xml.placeholder"
+            into "${projectDir}/src/main/webapp/WEB-INF"
+            rename { name -> 'appengine-web.xml' }
+        }
+        delete placeholder
+    }
+}
+
+/**
+ * Backs up the placeholder config for Gradle App Engine plugin to correctly recognize
+ * the application and puts an actual application descriptor to be added to WAR.
+ */
+task generateAppEngineXml {
+    doLast {
+        backupAppEngineConfigPlaceholder()
+        copyDescriptor()
+    }
+}
+
+war.dependsOn generateAppEngineXml
+
+/**
+ * After collecting a WAR the placeholder application configuration is restored.
+ */
+war.doLast {
+    restoreAppEngineConfigPlaceholder()
+}

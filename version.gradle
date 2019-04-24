@@ -22,17 +22,20 @@
 final def SPINE_VERSION = '1.0.0-pre6'
 
 project.ext {
-    // To-do List app version
+    // To-do List app version.
     appVersion = SPINE_VERSION
 
-    // Spine dependencies' versions
+    // Versions of Spine libraries.
     spineVersion = SPINE_VERSION
 
     spineJdbcStorageVersion = SPINE_VERSION
     spineBaseVersion = SPINE_VERSION
     spineWebVersion = SPINE_VERSION
 
-    // Main scope third party dependencies' versions
+    // Versions of Google APIs Client libraries.
+    googleApiClient = '1.27.0'
+
+    // Versions of 3rd-party runtime dependencies.
     servletApiVersion = '4.0.0'
     cloudSqlSocketFactoryVersion = '1.0.4'
     shadowJarVersion = '4.0.4'
@@ -42,7 +45,7 @@ project.ext {
     grettyVersion = '2.3.1'
     hikariCpVersion = '2.4.3'
 
-    // Test scope third party dependencies' versions
+    // Versions of 3rd-party test-scope dependencies.
     jUnitPlatformVersion = '1.0.0'
     jUnitVersion = '5.0.0'
 }
