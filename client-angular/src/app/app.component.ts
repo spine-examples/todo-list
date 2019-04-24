@@ -31,17 +31,17 @@ import {LayoutService} from 'app/layout/layout.service';
 })
 export class AppComponent implements OnInit {
 
-  private showQuitButton: boolean;
-  private showNav: boolean;
-  private toolbarLabel: string;
+  showQuitButton: boolean;
+  showNav: boolean;
+  toolbarLabel: string;
 
-  constructor(private readonly layoutService: LayoutService,
+  constructor(readonly layoutService: LayoutService,
               private readonly changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.layoutService.config$.subscribe(config => {
-      this.showQuitButton = config.showQuitButton;
+      this.showQuitButton = !!config.quitButtonHandler;
       this.showNav = config.showNavigation;
       this.toolbarLabel = config.toolbarLabel;
       this.changeDetector.detectChanges();

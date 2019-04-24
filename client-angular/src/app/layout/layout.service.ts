@@ -30,7 +30,6 @@ import {BehaviorSubject, Observable} from 'rxjs';
 export interface LayoutConfig {
   toolbarLabel?: string;
   showNavigation?: boolean;
-  showQuitButton?: boolean;
   quitButtonHandler?: () => void;
 }
 
@@ -46,10 +45,7 @@ export class LayoutService {
 
   private static readonly DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
     toolbarLabel: 'To-do list',
-    showNavigation: true,
-    showQuitButton: false,
-    quitButtonHandler: () => {
-    }
+    showNavigation: true
   };
 
   private _config$: BehaviorSubject<LayoutConfig>;
@@ -68,7 +64,14 @@ export class LayoutService {
     this._config$.getValue().quitButtonHandler();
   }
 
-  /** Updates the label on the toolbar with the specified value. */
+  /**
+   * Updates the layout config.
+   *
+   * Updating the config partly is possible, an object with unspecified field can be passed in
+   * this case.
+   *
+   * @param config layout config with updated field values.
+   */
   public update(config: LayoutConfig): void {
     const result = {...this._config$.getValue(), ...config};
     this._config$.next(result);
