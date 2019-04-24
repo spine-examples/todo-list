@@ -73,9 +73,6 @@ message UpdateTaskDescription {
 
     // The change of the task description.
     DescriptionChange description_change = 2 [(valid) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // Update a due date of an existing task.
@@ -94,9 +91,6 @@ message UpdateTaskDueDate {
     //
     // The updated value cannot be in the past.
     change.TimestampChange due_date_change = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // Update a priority of an existing task.
@@ -113,9 +107,6 @@ message UpdateTaskPriority {
     // The priority change.
     // Contains the previous priority and the priority to set for the target task.
     PriorityChange priority_change = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // Assing a label to a task.
@@ -161,9 +152,6 @@ message CreateDraft {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // Finalize a task, moving it from the draft state into the actual state.
@@ -175,9 +163,6 @@ message FinalizeDraft {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // Complete a task.
@@ -189,9 +174,6 @@ message CompleteTask {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // Complete a task.
@@ -202,9 +184,6 @@ message ReopenTask {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // Delete a task.
@@ -216,9 +195,6 @@ message DeleteTask {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // Restore a deleted task.
@@ -229,9 +205,6 @@ message RestoreDeletedTask {
 
     // An identifier of the target task.
     TaskId id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An attempt to create a label in a "Quick" mode.
@@ -248,9 +221,6 @@ message CreateBasicLabel {
 
     // A title for the label.
     string label_title = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // Update the details of a label.
@@ -263,9 +233,6 @@ message UpdateLabelDetails {
     // The label details change.
     // Contains the previous label details and the label details to set for the target label.
     LabelDetailsChange label_details_change = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // Commands to the task creation wizard
