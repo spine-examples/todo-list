@@ -31,10 +31,6 @@
   width: 256px;
 }
 
-.divider {
-  flex: 1 1 auto;
-}
-
 .cancel-button {
   font-size: 18px;
   height: 100%;

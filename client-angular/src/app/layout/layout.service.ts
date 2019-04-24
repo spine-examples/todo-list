@@ -24,8 +24,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 /**
  * Configuration of the layout.
  *
- * Defines the toolbar label value on the toolbar, whether a navbar and a button to quit the
- * task creation wizard are supposed to be shown.
+ * Defines the toolbar label value on the toolbar, whether a navbar and a quit button are supposed
+ * to be visible.
  */
 export interface LayoutConfig {
   toolbarLabel: string;
