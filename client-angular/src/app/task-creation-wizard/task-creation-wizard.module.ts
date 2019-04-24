@@ -22,7 +22,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 
-import {MatIconModule} from '@angular/material';
+import {MatIconModule, MatProgressSpinnerModule} from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
 import {MatChipsModule} from '@angular/material/chips';
@@ -72,6 +72,7 @@ import {LayoutModule} from 'app/layout/layout.module';
     LabelsModule,
     LayoutModule,
 
+    MatProgressSpinnerModule,
     FlexLayoutModule,
     MatMomentDateModule,
     MatButtonModule,

@@ -18,7 +18,7 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-card class="wizard-card">
+<mat-card class="wizard-card" [hidden]="isLoading">
     <mat-card-header>
         <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
     </mat-card-header>
@@ -58,3 +58,10 @@
         </div>
     </mat-card-actions>
 </mat-card>
+
+<mat-progress-spinner
+        diameter="50"
+        class="spinner"
+        [hidden]="!isLoading"
+        mode="indeterminate">
+</mat-progress-spinner>

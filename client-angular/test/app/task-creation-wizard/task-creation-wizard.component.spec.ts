@@ -32,7 +32,8 @@ import {
   MatChipsModule,
   MatIconModule,
   MatListModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
@@ -120,6 +121,7 @@ describe('TaskCreationWizardComponent', () => {
         LabelsModule,
         LayoutModule,
 
+        MatProgressSpinnerModule,
         MatSnackBarModule,
         MatMomentDateModule,
         MatButtonModule,
@@ -221,7 +223,7 @@ describe('TaskCreationWizardComponent', () => {
   it('should change the label on the toolbar', fakeAsync(() => {
     TestBed.createComponent(TaskCreationWizardComponent);
     tick();
-    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Create a task');
+    expect(layoutService.update).toHaveBeenCalledWith({toolbarLabel: 'Create a task', showNavigation: false});
   }));
 
   it('should execute child components initialization', fakeAsync(() => {
