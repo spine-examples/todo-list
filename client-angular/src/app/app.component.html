@@ -18,14 +18,14 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-toolbar color="primary">{{toolbarLabel}}
-    <span class="divider"></span>
+<mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between">
+    <div fxLayoutAlign="center center">{{toolbarLabel}}</div>
     <button class="cancel-button"
+            matTooltip="Cancel"
             mat-button
-            mat-icon
             *ngIf="showQuitButton"
             (click)="layoutService.quit()">
-        Cancel
+        <mat-icon>clear</mat-icon>
     </button>
 </mat-toolbar>
 <mat-sidenav-container class="task-list-container">

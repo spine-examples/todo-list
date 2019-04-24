@@ -36,7 +36,7 @@
 }
 
 .cancel-button {
-  font: 500 18px/32px Roboto, "Helvetica Neue", sans-serif;
+  font-size: 18px;
   height: 100%;
 }
 
