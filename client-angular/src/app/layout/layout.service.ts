@@ -28,10 +28,10 @@ import {BehaviorSubject, Observable} from 'rxjs';
  * to be visible.
  */
 export interface LayoutConfig {
-  toolbarLabel: string;
-  showNavigation: boolean;
-  showQuitButton: boolean;
-  quitButtonHandler: () => void;
+  toolbarLabel?: string;
+  showNavigation?: boolean;
+  showQuitButton?: boolean;
+  quitButtonHandler?: () => void;
 }
 
 /**
@@ -69,26 +69,8 @@ export class LayoutService {
   }
 
   /** Updates the label on the toolbar with the specified value. */
-  public updateToolbar(toolbarValue: string): void {
-    const result = {...this._config$.getValue(), ...{toolbarLabel: toolbarValue}};
-    this._config$.next(result);
-  }
-
-  /** Updates whether the toolbar is supposed to be visible. */
-  public updateShowNav(shouldShowNav: boolean): void {
-    const result = {...this._config$.getValue(), ...{showNavigation: shouldShowNav}};
-    this._config$.next(result);
-  }
-
-  /** Updates whether the button to the quit button is supposed to be visible. */
-  public updateShowQuitButton(shouldShow: boolean): void {
-    const result = {...this._config$.getValue(), ...{showQuitButton: shouldShow}};
-    this._config$.next(result);
-  }
-
-  /** Updates the action that is taken when the `quit` button is clicked. */
-  public updateQuitButtonHandler(handler: () => void): void {
-    const result = {...this._config$.getValue(), ...{quitButtonHandler: handler}};
+  public update(config: LayoutConfig): void {
+    const result = {...this._config$.getValue(), ...config};
     this._config$.next(result);
   }
 

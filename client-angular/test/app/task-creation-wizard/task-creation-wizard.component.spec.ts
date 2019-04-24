@@ -223,7 +223,7 @@ describe('TaskCreationWizardComponent', () => {
   it('should change the label on the toolbar', fakeAsync(() => {
     TestBed.createComponent(TaskCreationWizardComponent);
     tick();
-    expect(layoutService.updateToolbar).toHaveBeenCalledWith('Create a task');
+    expect(layoutService.update).toHaveBeenCalledWith({toolbarLabel: 'Create a task', showNavigation: false});
   }));
 
   it('should execute child components initialization', fakeAsync(() => {

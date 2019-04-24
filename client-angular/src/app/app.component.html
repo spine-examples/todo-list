@@ -20,13 +20,16 @@
 
 <mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between">
     <div fxLayoutAlign="center center">{{toolbarLabel}}</div>
-    <button class="cancel-button"
-            matTooltip="Cancel"
-            mat-button
-            *ngIf="showQuitButton"
-            (click)="layoutService.quit()">
-        <mat-icon>clear</mat-icon>
-    </button>
+    <div fxLayoutAlign="center center">
+        <button class="cancel-button"
+                mat-icon-button
+                matTooltip="Cancel"
+                fxLayoutAlign="center center"
+                *ngIf="showQuitButton"
+                (click)="layoutService.quit()">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </div>
 </mat-toolbar>
 <mat-sidenav-container class="task-list-container">
     <mat-sidenav *ngIf="showNav" mode="side" opened class="task-list-sidenav">
