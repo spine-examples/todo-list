@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("TaskView should")
 class TaskViewTest extends ViewTest {
 
-    private final TaskItem task = TaskItem
+    private final io.spine.examples.todolist.q.projection.TaskView task = io.spine.examples.todolist.q.projection.TaskView
             .newBuilder()
             .setDescription(newDescription("my task description"))
             .setPriority(NORMAL)

@@ -26,12 +26,12 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A client interface.
@@ -51,25 +51,11 @@ public interface TodoClient {
     void postCommand(CommandMessage commandMessage);
 
     /**
-     * Obtains the single {@link MyListView}.
+     * Obtains all {@linkplain TaskView task views}.
      *
-     * @return the {@code MyListView}
+     * @return all task views
      */
-    MyListView getMyListView();
-
-    /**
-     * Obtains the list of the {@link LabelledTasksView}.
-     *
-     * @return the list of the {@code LabelledTasksView}
-     */
-    List<LabelledTasksView> getLabelledTasksView();
-
-    /**
-     * Obtains the single {@link DraftTasksView}.
-     *
-     * @return the {@code DraftTasksView}
-     */
-    DraftTasksView getDraftTasksView();
+    List<TaskView> getTaskViews();
 
     /**
      * Obtains all {@linkplain Task tasks} in the system.
@@ -110,6 +96,17 @@ public interface TodoClient {
      * @return the labels of the specified task
      */
     TaskLabels getLabels(TaskId taskId);
+
+    /**
+     * Obtains an {@code Optional} containing the view of the label with the specified ID.
+     *
+     * If the specified ID does not correspond to any label, an empty {@code Optional} is returned.
+     *
+     * @param id
+     *         ID of the label to obtain
+     * @return a view of the label with the specified ID.
+     */
+    Optional<LabelView> getLabelView(LabelId id);
 
     /**
      * Obtains a single {@link TaskLabel} by its ID.

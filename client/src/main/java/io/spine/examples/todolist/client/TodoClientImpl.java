@@ -50,9 +50,8 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskLabelsVBuilder;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.time.ZoneOffsets;
 
 import javax.annotation.Nullable;
@@ -69,7 +68,6 @@ import static java.util.stream.Collectors.toList;
 /**
  * An implementation of the TodoList gRPC client.
  */
-@SuppressWarnings("OverlyCoupledClass")
 final class TodoClientImpl implements SubscribingTodoClient {
 
     private static final int TIMEOUT = 10;
@@ -101,39 +99,16 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public MyListView getMyListView() {
+    public List<TaskView> getTaskViews() {
         Query query = requestFactory.query()
-                                    .all(MyListView.class);
+                                    .all(TaskView.class);
         List<Any> messages = queryService.read(query)
                                          .getMessagesList();
-        return messages.isEmpty()
-               ? MyListView.getDefaultInstance()
-               : unpack(messages.get(0), MyListView.class);
-    }
-
-    @Override
-    public List<LabelledTasksView> getLabelledTasksView() {
-        Query query = requestFactory.query()
-                                    .all(LabelledTasksView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
-        List<LabelledTasksView> result = messages
+        List<TaskView> result = messages
                 .stream()
-                .map(any -> unpack(any, LabelledTasksView.class))
+                .map(any -> unpack(any, TaskView.class))
                 .collect(toList());
-
         return result;
-    }
-
-    @Override
-    public DraftTasksView getDraftTasksView() {
-        Query query = requestFactory.query()
-                                    .all(DraftTasksView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
-        return messages.isEmpty()
-               ? DraftTasksView.getDefaultInstance()
-               : unpack(messages.get(0), DraftTasksView.class);
     }
 
     @Override
@@ -161,6 +136,12 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return result;
     }
 
+    @Override
+    public Optional<LabelView> getLabelView(LabelId id) {
+        Optional<LabelView> result = findById(LabelView.class, id);
+        return result;
+    }
+
     @Nullable
     @Override
     public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
@@ -169,9 +150,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public Subscription subscribeToTasks(StreamObserver<MyListView> observer) {
+    public Subscription subscribeToTasks(StreamObserver<TaskView> observer) {
         Topic topic = requestFactory.topic()
-                                    .allOf(MyListView.class);
+                                    .allOf(TaskView.class);
         return subscribeTo(topic, observer);
     }
 

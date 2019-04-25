@@ -20,17 +20,17 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("After execution of CreateDraft command")
@@ -46,38 +46,44 @@ class CreateDraftTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("DraftTasksView should contain the task view")
+    @DisplayName("1 draft should be present")
     void obtainDraftView() {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        DraftTasksView draftTasksView = client.getDraftTasksView();
-        List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
-                                                    .getItemsList();
-        assertEquals(1, taskViewList.size());
-        assertEquals(createDraft.getId(), taskViewList.get(0)
-                                                      .getId());
+        List<TaskView> drafts = client.getTaskViews()
+                                      .stream()
+                                      .filter(view -> view.getStatus() == TaskStatus.DRAFT)
+                                      .collect(toList());
+        assertEquals(1, drafts.size());
+        assertEquals(createDraft.getId(), drafts.get(0)
+                                                .getId());
     }
 
     @Test
-    @DisplayName("LabelledTasksView should not contain the task view")
+    @DisplayName("no labelled tasks should be present")
     void obtainLabelledView() {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        assertTrue(labelledTasksView.isEmpty());
+        boolean noDraftsPresent = client
+                .getTaskViews()
+                .stream()
+                .map(TaskView::getLabelIdsList)
+                .allMatch(list -> list.getIdsList()
+                                      .isEmpty());
+        assertTrue(noDraftsPresent);
     }
 
     @Test
-    @DisplayName("MyListView should not contain task view")
-    void ObtainMyListView() {
+    @DisplayName("a task view in the `draft` stat should be present")
+    void obtainMyListView() {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        assertTrue(taskViews.isEmpty());
+        List<TaskView> taskViews = client.getTaskViews();
+        assertEquals(1, taskViews.size());
+        TaskView taskView = taskViews.get(0);
+        assertEquals(TaskStatus.DRAFT, taskView.getStatus());
     }
 }

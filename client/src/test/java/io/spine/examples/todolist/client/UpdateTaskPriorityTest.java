@@ -22,25 +22,26 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+@DisplayName("After execution of UpdateTaskPriority command task views should")
 class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TodoClient client;
@@ -52,152 +53,98 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         client = getClient();
     }
 
-    @Nested
-    @DisplayName("LabelledTasksView should")
-    class UpdateTaskPriorityInLabelledTasksView {
-
-        @Test
-        @DisplayName("contain the task view with updated task priority")
-        void containUpdatedView() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
-            assertEquals(newPriority, view.getPriority());
-        }
-
-        @Test
-        @DisplayName("contain the task view with non-updated task priority " +
-                "when command has wrong task ID")
-        void containNonUpdated() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
-            assertNotEquals(newPriority, view.getPriority());
-        }
-
-        private TaskItem obtainViewWhenHandledCommandUpdateTaskPriority(TaskPriority priority,
-                                                                        boolean isCorrectId) {
-            CreateBasicTask createTask = createBasicTask();
-            TaskId createdTaskId = createTask.getId();
-            client.postCommand(createTask);
-
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createdTaskId);
-            client.postCommand(updateTaskPriority);
-
-            updatePriority(priority, isCorrectId, createdTaskId);
-
-            CreateBasicLabel createLabel = createBasicLabel();
-            client.postCommand(createLabel);
-
-            int expectedListSize = 1;
-            AssignLabelToTask assignLabelToTask =
-                    assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
-            client.postCommand(assignLabelToTask);
-
-            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            assertEquals(expectedListSize, tasksViewList.size());
-            List<TaskItem> taskViews = tasksViewList.get(0)
-                                                    .getLabelledTasks()
-                                                    .getItemsList();
-
-            assertEquals(expectedListSize, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(createLabel.getLabelId(), view.getLabelId());
-            assertEquals(createdTaskId, view.getId());
-
-            return view;
-        }
+    @Test
+    @DisplayName("contain an updated labelled task")
+    void containUpdatedLabelledTask() {
+        TaskPriority newPriority = TaskPriority.LOW;
+        TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
+        assertEquals(newPriority, view.getPriority());
     }
 
-    @Nested
-    @DisplayName("DraftTasksView should")
-    class UpdateTaskPriorityInDraftTasksView {
-
-        @Test
-        @DisplayName("contain the task view with updated task priority")
-        void containUpdatedView() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
-
-            assertEquals(newPriority, view.getPriority());
-        }
-
-        @Test
-        @DisplayName("contain task view with non-updated task priority " +
-                "when command has wrong task ID")
-        void containNonUpdatedView() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
-
-            assertNotEquals(newPriority, view.getPriority());
-        }
-
-        private TaskItem obtainViewWhenHandledUpdateTaskPriorityCommand(TaskPriority newPriority,
-                                                                        boolean isCorrectId) {
-            CreateDraft createDraft = createDraft();
-            client.postCommand(createDraft);
-            TaskId createdTaskId = createDraft.getId();
-
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createdTaskId);
-            client.postCommand(updateTaskPriority);
-
-            updatePriority(newPriority, isCorrectId, createdTaskId);
-
-            List<TaskItem> taskViews = client.getDraftTasksView()
-                                             .getDraftTasks()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(createdTaskId, view.getId());
-
-            return view;
-        }
+    @Test
+    @DisplayName("contain an unchanged labelled task if the command had an incorrect ID")
+    void containUnchangedLabelledTask() {
+        TaskPriority newPriority = TaskPriority.LOW;
+        TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
+        assertNotEquals(newPriority, view.getPriority());
     }
 
-    @Nested
-    @DisplayName("MyListView should")
-    class UpdateTaskPriorityInMyListView {
+    private TaskView obtainViewWhenHandledCommandUpdateTaskPriority(TaskPriority priority,
+                                                                    boolean isCorrectId) {
+        CreateBasicTask createTask = createBasicTask();
+        TaskId createdTaskId = createTask.getId();
+        client.postCommand(createTask);
 
-        @Test
-        @DisplayName("contain the task view with updated task priority")
-        void containUpdatedView() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, true);
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createdTaskId);
+        client.postCommand(updateTaskPriority);
 
-            assertEquals(newPriority, view.getPriority());
-        }
+        updatePriority(priority, isCorrectId, createdTaskId);
 
-        @Test
-        @DisplayName("contain task view with non-updated task priority " +
-                "when command has wrong task ID")
-        void containNonUpdatedView() {
-            TaskPriority newPriority = TaskPriority.LOW;
-            TaskItem view = obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, false);
+        CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
 
-            assertNotEquals(newPriority, view.getPriority());
-        }
+        int expectedListSize = 1;
+        AssignLabelToTask assignLabelToTask =
+                assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
+        client.postCommand(assignLabelToTask);
 
-        private TaskItem obtainTaskItemWhenHandledUpdateTaskPriority(TaskPriority newPriority,
-                                                                     boolean isCorrectId) {
-            CreateBasicTask createTask = createBasicTask();
-            client.postCommand(createTask);
+        List<TaskView> labelledTasks = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
+        assertEquals(expectedListSize, labelledTasks.size());
 
-            TaskId idOfCreatedTask = createTask.getId();
+        TaskView view = labelledTasks.get(0);
+        assertEquals(createLabel.getLabelId(), view.getLabelIdsList()
+                                                   .getIds(0));
+        assertEquals(createdTaskId, view.getId());
 
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(idOfCreatedTask);
-            client.postCommand(updateTaskPriority);
+        return view;
+    }
 
-            updatePriority(newPriority, isCorrectId, idOfCreatedTask);
+    @Test
+    @DisplayName("contain a draft with updated task priority")
+    void containUpdatedDraft() {
+        TaskPriority newPriority = TaskPriority.LOW;
+        TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
 
-            List<TaskItem> taskViews = client.getMyListView()
-                                             .getMyList()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-            TaskItem view = taskViews.get(0);
+        assertEquals(newPriority, view.getPriority());
+    }
 
-            assertEquals(idOfCreatedTask, view.getId());
-            return view;
-        }
+    @Test
+    @DisplayName("contain an unchanged draft if the command had an incorrect ID")
+    void containUnchangedDraft() {
+        TaskPriority newPriority = TaskPriority.LOW;
+        TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
+
+        assertNotEquals(newPriority, view.getPriority());
+    }
+
+    private TaskView obtainViewWhenHandledUpdateTaskPriorityCommand(TaskPriority newPriority,
+                                                                    boolean isCorrectId) {
+        CreateDraft createDraft = createDraft();
+        client.postCommand(createDraft);
+        TaskId createdTaskId = createDraft.getId();
+
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createdTaskId);
+        client.postCommand(updateTaskPriority);
+
+        updatePriority(newPriority, isCorrectId, createdTaskId);
+
+        List<TaskView> drafts = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> view.getStatus() == TaskStatus.DRAFT)
+                .collect(toList());
+        assertEquals(1, drafts.size());
+
+        TaskView result = drafts.get(0);
+        assertEquals(createdTaskId, result.getId());
+
+        return result;
     }
 
     private void

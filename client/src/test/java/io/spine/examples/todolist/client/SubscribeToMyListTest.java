@@ -22,8 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.client.Subscription;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.grpc.MemoizingObserver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -45,21 +44,16 @@ class SubscribeToMyListTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("subscribe to MyList updates")
+    @DisplayName("subscribe to task view updates")
     void testSubscribe() throws InterruptedException {
-        MemoizingObserver<MyListView> observer = memoizingObserver();
+        MemoizingObserver<TaskView> observer = memoizingObserver();
         Subscription subscription = client.subscribeToTasks(observer);
         assertNotNull(subscription);
         CreateBasicTask command = createTask();
         Thread.sleep(2000L);
-        MyListView view = observer.firstResponse();
-        TaskItem taskItem = view.getMyList()
-                                .getItemsList()
-                                .stream()
-                                .findAny()
-                                .orElseThrow(AssertionError::new);
-        assertEquals(command.getId(), taskItem.getId());
-        assertEquals(command.getDescription(), taskItem.getDescription());
+        TaskView task = observer.firstResponse();
+        assertEquals(command.getId(), task.getId());
+        assertEquals(command.getDescription(), task.getDescription());
         client.unSubscribe(subscription);
     }
 }

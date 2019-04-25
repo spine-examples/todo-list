@@ -22,6 +22,7 @@ package io.spine.test.integration;
 
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -34,7 +35,7 @@ import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,11 +54,11 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("OverlyCoupledClass")
 @DisplayName("TodoList Integration Test")
 class ToDoListTest extends AbstractIntegrationTest {
 
@@ -86,13 +87,11 @@ class ToDoListTest extends AbstractIntegrationTest {
         CompleteTask completeTask = completeTaskInstance(basicTask.getId());
         client.postCommand(completeTask);
 
-        List<TaskItem> taskItems = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
+        List<TaskView> taskItems = client.getTaskViews();
 
         assertEquals(1, taskItems.size());
 
-        TaskItem taskItem = taskItems.get(0);
+        TaskView taskItem = taskItems.get(0);
         assertEquals(COMPLETED, taskItem.getStatus());
     }
 
@@ -121,18 +120,19 @@ class ToDoListTest extends AbstractIntegrationTest {
                 basicLabel.getLabelId());
         client.postCommand(removeLabelFromTask);
 
-        List<TaskItem> tasks = client.getMyListView()
-                                     .getMyList()
-                                     .getItemsList();
+        List<TaskView> tasks = client.getTaskViews();
 
-        List<TaskItem> labeledTasks = client.getLabelledTasksView()
-                                            .get(0)
-                                            .getLabelledTasks()
-                                            .getItemsList();
+        List<TaskView> labeledTasks = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
 
         assertEquals(1, tasks.size());
 
-        TaskItem taskItem = tasks.get(0);
+        TaskView taskItem = tasks.get(0);
 
         assertNotSame(COMPLETED, taskItem.getStatus());
 
@@ -165,9 +165,12 @@ class ToDoListTest extends AbstractIntegrationTest {
                 draftTask.getId(), basicLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
-        List<TaskItem> draftTasks = client.getDraftTasksView()
-                                          .getDraftTasks()
-                                          .getItemsList();
+        List<TaskView> draftTasks = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> view.getStatus() ==
+                        TaskStatus.DRAFT)
+                .collect(toList());
 
         assertEquals(1, draftTasks.size());
         assertEquals(newDueDate, draftTasks.get(0)
@@ -202,10 +205,13 @@ class ToDoListTest extends AbstractIntegrationTest {
         RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(basicTask.getId());
         client.postCommand(restoreDeletedTask);
 
-        List<TaskItem> labeledTasks = client.getLabelledTasksView()
-                                            .get(0)
-                                            .getLabelledTasks()
-                                            .getItemsList();
+        List<TaskView> labeledTasks = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
 
         assertEquals(1, labeledTasks.size());
         assertEquals(newPriority, labeledTasks.get(0)

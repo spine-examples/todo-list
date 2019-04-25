@@ -26,11 +26,9 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -38,10 +36,11 @@ import java.util.List;
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-@DisplayName("After execution of CompleteTask command")
+@DisplayName("After execution of CompleteTask command a list of task views should")
 class CompleteTaskTest extends TodoClientTest {
 
     private TodoClient client;
@@ -53,90 +52,47 @@ class CompleteTaskTest extends TodoClientTest {
         client = getClient();
     }
 
-    @Nested
-    @DisplayName("LabelledTasksView should")
-    class CompleteTaskFromLabelledTasksView {
-
-        @Test
-        @DisplayName("contain task view marked as completed")
-        void obtainLabelledViewWithCompletedTask() {
-            TaskItem view = obtainViewWhenHandledCommandCompleteTask(true);
-            assertEquals(COMPLETED, view.getStatus());
-        }
-
-        @Test
-        @DisplayName("contain task view which does not marked as completed " +
-                "when command has wrong task ID")
-        void obtainLabelledViewWithUncompletedTask() {
-            TaskItem view = obtainViewWhenHandledCommandCompleteTask(false);
-            assertNotSame(COMPLETED, view.getStatus());
-        }
-
-        private TaskItem obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
-            CreateBasicTask createTask = createTask();
-            TaskId createdTaskId = createTask.getId();
-
-            CreateBasicLabel createLabel = createBasicLabel();
-            client.postCommand(createLabel);
-
-            TaskId taskId = createTask.getId();
-            LabelId labelId = createLabel.getLabelId();
-
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
-
-            completeTask(isCorrectId, createdTaskId);
-
-            List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-            int expectedListSize = 1;
-            assertEquals(expectedListSize, labelledTasksView.size());
-
-            List<TaskItem> taskViews = labelledTasksView.get(0)
-                                                        .getLabelledTasks()
-                                                        .getItemsList();
-            assertEquals(expectedListSize, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(taskId, view.getId());
-
-            return view;
-        }
+    @Test
+    @DisplayName("contain a labelled completed task")
+    void obtainLabelledViewWithCompletedTask() {
+        TaskView view = obtainViewWhenHandledCommandCompleteTask(true);
+        assertEquals(COMPLETED, view.getStatus());
     }
 
-    @Nested
-    @DisplayName("MyListView should")
-    class CompleteTaskFromMyListView {
+    @Test
+    @DisplayName("contain a labelled uncompleted task if the command had an incorrect ID")
+    void obtainLabelledViewWithUncompletedTask() {
+        TaskView view = obtainViewWhenHandledCommandCompleteTask(false);
+        assertNotSame(COMPLETED, view.getStatus());
+    }
 
-        @Test
-        @DisplayName("contain task view marked as completed")
-        void obtainMyListViewWithCompletedTask() {
-            TaskItem view = obtainTaskItemWhenHandledCompleteTask(true);
-            assertEquals(COMPLETED, view.getStatus());
-        }
+    private TaskView obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
+        CreateBasicTask createTask = createTask();
+        TaskId createdTaskId = createTask.getId();
 
-        @Test
-        @DisplayName("task view which does not marked as completed when command has wrong task ID")
-        void obtainMyListViewWithoutCompletedTask() {
-            TaskItem view = obtainTaskItemWhenHandledCompleteTask(false);
-            assertNotSame(COMPLETED, view.getStatus());
-        }
+        CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
 
-        private TaskItem obtainTaskItemWhenHandledCompleteTask(boolean isCorrectId) {
-            CreateBasicTask createTask = createTask();
-            TaskId idOfCreatedTask = createTask.getId();
+        TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
 
-            completeTask(isCorrectId, idOfCreatedTask);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
 
-            List<TaskItem> taskViews = client.getMyListView()
-                                             .getMyList()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
+        completeTask(isCorrectId, createdTaskId);
 
-            TaskItem result = taskViews.get(0);
-            assertEquals(idOfCreatedTask, result.getId());
-
-            return result;
-        }
+        List<TaskView> labelledTaskViews = client
+                .getTaskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
+        int expectedListSize = 1;
+        assertEquals(expectedListSize, labelledTaskViews.size());
+        TaskView view = labelledTaskViews.get(0);
+        assertEquals(taskId, view.getId());
+        return view;
     }
 
     private void completeTask(boolean isCorrectId, TaskId idOfCreatedTask) {

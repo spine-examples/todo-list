@@ -25,13 +25,11 @@ import io.spine.cli.NoOpView;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
-import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.examples.todolist.q.projection.TaskListView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -48,7 +46,7 @@ class MyTasksListViewTest extends ViewTest {
     private static final int VIEW_INDEX = 0;
 
     private final Bot bot = new Bot();
-    private final TaskItem taskView = TaskItem
+    private final io.spine.examples.todolist.q.projection.TaskView taskView = io.spine.examples.todolist.q.projection.TaskView
             .newBuilder()
             .setDescription(newDescription("task desc"))
             .build();
@@ -76,14 +74,7 @@ class MyTasksListViewTest extends ViewTest {
     @DisplayName("create action for every task view")
     void createActions() {
         int tasksCount = 5;
-        TaskListView taskListView = TaskListView
-                .newBuilder()
-                .addAllItems(nCopies(tasksCount, taskView))
-                .build();
-        MyListView myListView = MyListView
-                .newBuilder()
-                .setMyList(taskListView)
-                .build();
+        List<io.spine.examples.todolist.q.projection.TaskView> myListView = nCopies(5, taskView);
         Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }

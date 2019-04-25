@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -49,9 +49,7 @@ class ToDoListTest extends AbstractIntegrationTest {
                    .postCommand(basicTask);
         }, numberOfRequests);
 
-        List<TaskItem> taskItems = getClient().getMyListView()
-                                              .getMyList()
-                                              .getItemsList();
+        List<TaskView> taskItems = getClient().getTaskViews();
 
         assertEquals(numberOfRequests, taskItems.size());
     }
