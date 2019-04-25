@@ -22,12 +22,8 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.BoundedContextNames;
-import io.spine.examples.todolist.repository.DeletedTaskProjectionRepository;
-import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelViewRepository;
-import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
-import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
@@ -49,7 +45,6 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
-    @SuppressWarnings("DuplicateStringLiteralInspection") // Duplication with tests.
     private static final String NAME = "TodoListBoundedContext";
 
     private static final StorageFactory IN_MEMORY_FACTORY =
@@ -84,11 +79,6 @@ public final class BoundedContexts {
         LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         TaskRepository taskRepo = new TaskRepository();
         TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
-
-        MyListViewRepository myListViewRepo = new MyListViewRepository();
-        LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
-        DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
-        DeletedTaskProjectionRepository deletedTasksRepo = new DeletedTaskProjectionRepository();
         TaskViewRepository taskViewRepository = new TaskViewRepository();
         LabelViewRepository labelViewRepository = new LabelViewRepository();
 
@@ -103,13 +93,9 @@ public final class BoundedContexts {
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
         boundedContext.register(labelAggregateRepo);
-        boundedContext.register(myListViewRepo);
-        boundedContext.register(tasksViewRepo);
-        boundedContext.register(draftTasksViewRepo);
         boundedContext.register(taskViewRepository);
         boundedContext.register(labelViewRepository);
         boundedContext.register(taskCreationRepo);
-        boundedContext.register(deletedTasksRepo);
 
         return boundedContext;
     }

@@ -37,7 +37,7 @@ import static java.lang.System.lineSeparator;
  *
  * <p>Renders the task and provides actions for working with the task.
  */
-final class TaskView extends EntityView<TaskId, TaskItem> {
+final class TaskView extends EntityView<TaskId, io.spine.examples.todolist.q.projection.TaskView> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
@@ -48,15 +48,13 @@ final class TaskView extends EntityView<TaskId, TaskItem> {
     }
 
     @Override
-    protected TaskItem load(TaskId id) {
+    protected io.spine.examples.todolist.q.projection.TaskView load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        List<TaskItem> tasks = getClient().getMyListView()
-                                          .getMyList()
-                                          .getItemsList();
-        Optional<TaskItem> optionalTask = tasks.stream()
+        List<io.spine.examples.todolist.q.projection.TaskView> tasks = getClient().getTaskViews();
+        Optional<io.spine.examples.todolist.q.projection.TaskView> optionalTask = tasks.stream()
                                                .filter(task -> task.getId()
                                                                    .equals(id))
-                                               .findFirst();
+                                                                                       .findFirst();
         if (optionalTask.isPresent()) {
             return optionalTask.get();
         }
@@ -65,7 +63,7 @@ final class TaskView extends EntityView<TaskId, TaskItem> {
     }
 
     @Override
-    protected String renderState(TaskItem state) {
+    protected String renderState(io.spine.examples.todolist.q.projection.TaskView state) {
         String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())

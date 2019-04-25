@@ -32,69 +32,9 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
-
-// A projection state of created tasks.
-//
-// This view includes all tasks that are not in a draft state and not deleted.
-//
-// Sorting:
-//
-//     // incompleted on top; completed at bottom;
-//     // by priority (HIGH, then NORMAL, then LOW);
-//     // most recent on top.
-//
-message MyListView {
-    option (entity).kind = PROJECTION;
-
-    TaskListId id = 1;
-
-    TaskListView my_list = 2;
-}
-
-// A projection state of tasks in a "draft" state.
-//
-// This view includes all non-deleted tasks, which creation is in progress.
-//
-// Sorting:
-//
-//     // most recent on top.
-//
-message DraftTasksView {
-    option (entity).kind = PROJECTION;
-
-    TaskListId id = 1;
-
-    TaskListView draft_tasks = 2;
-}
-
-// A projection state of the created tasks marked with a certain label.
-//
-// This view includes all tasks per label that are neither in a draft state nor deleted.
-//
-// Sorting:
-//
-//     // incompleted on top; completed at bottom;
-//     // by priority (HIGH, then NORMAL, then LOW);
-//     // most recent on top.
-//
-message LabelledTasksView {
-    option (entity).kind = PROJECTION;
-
-    LabelId id = 1;
-
-    string label_title = 2 [(required) = true];
-
-    // A color of the label in hexadecimal format.
-    //
-    // E.g. RED ~ "#ff0000".
-    string label_color = 3;
-
-    TaskListView labelled_tasks = 4;
-}
 
 // Generic definition of a task list container.
 //
@@ -102,22 +42,6 @@ message TaskListView {
 
     // A list of tasks.
     repeated TaskItem items = 1;
-}
-
-// A deleted task.
-//
-// Tasks can be deleted with a result of `DeleteTask` command.
-//
-// Deleted tasks can be restored with a `RestoreDeletedTask` command.
-//
-message DeletedTask {
-    option (entity).kind = PROJECTION;
-
-    // Identifier of the deleted task.
-    TaskId id = 1;
-
-    // Description of the deleted task.
-    TaskDescription description = 2;
 }
 
 // Item of a task list view.
@@ -165,6 +89,9 @@ message TaskView {
 
     // The IDs of the labels assigned to the task.
     LabelIdsList label_ids_list = 5;
+
+    // Status of the task.
+    TaskStatus status = 6;
 }
 
 // A single label view.

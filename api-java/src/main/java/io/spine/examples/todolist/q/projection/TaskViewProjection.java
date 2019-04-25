@@ -28,13 +28,18 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.server.projection.Projection;
 
 import java.util.ArrayList;
@@ -43,7 +48,7 @@ import java.util.Collection;
 /**
  * A projection which mirrors the state of a single task.
  */
-@SuppressWarnings({"unused", "Duplicates"}) // OK for this projection.
+@SuppressWarnings({"unused", "Duplicates", "OverlyCoupledClass"}) // OK for this projection.
 public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBuilder> {
 
     public TaskViewProjection(TaskId id) {
@@ -54,7 +59,28 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     public void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
-                 .setDescription(taskDetails.getDescription());
+                 .setDescription(taskDetails.getDescription())
+                 .setStatus(TaskStatus.OPEN);
+    }
+
+    @Subscribe
+    public void taskCompleted(TaskCompleted event) {
+        builder().setStatus(TaskStatus.COMPLETED);
+    }
+
+    @Subscribe
+    public void taskDraftFinalized(TaskDraftFinalized event) {
+        builder().setStatus(TaskStatus.FINALIZED);
+    }
+
+    @Subscribe
+    public void taskReopened(TaskReopened event) {
+        builder().setStatus(TaskStatus.OPEN);
+    }
+
+    @Subscribe
+    public void taskDeleted(TaskDeleted deleted) {
+        builder().setStatus(TaskStatus.DELETED);
     }
 
     @Subscribe
@@ -81,7 +107,8 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     @Subscribe
     public void draftCreated(TaskDraftCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId());
+        builder().setId(event.getId())
+                 .setStatus(TaskStatus.DRAFT);
     }
 
     @Subscribe
@@ -93,7 +120,8 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
                 .newBuilder()
                 .addAllIds(list)
                 .build();
-        builder().setLabelIdsList(labelIdsList);
+        builder().setId(event.getTaskId())
+                 .setLabelIdsList(labelIdsList);
     }
 
     @Subscribe
