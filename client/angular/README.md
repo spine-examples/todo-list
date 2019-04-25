@@ -47,6 +47,6 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
     ```
     
     This command will run the web application on `localhost:4200` and adjust it to work
-    with a backend server on the `localhost:8080` and a development Firebase application.
+    with a backend server on the `localhost:8080` and a development "spine-dev" Firebase application.
     
 3. Navigate to `localhost:4200`, the app will automatically reload if you change any of the source files.

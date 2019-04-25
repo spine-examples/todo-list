@@ -18,7 +18,8 @@ Install `gcloud` CLI and its components:
 2. Install AppEngine component: `gcloud components install app-engine-java`.
 3. Install Datastore emulator component: `gcloud components install gcd-emulator`.
 
-Authenticate `gcloud` CLI and set current Google Cloud project to `spine-dev`:  
+In order to deploy application manually, authenticate `gcloud` CLI and set current Google Cloud
+project to `spine-dev`:  
 4. Login with your Google account: `gcloud auth login`.
 5. Set the current project to work with: `gcloud config set project spine-dev`.
 
@@ -40,7 +41,7 @@ project root directory:
 ```bash
 ./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
 ```
-Note, that a service account key file __should not__ be stored in version control.
+Note, that a service account key file __should not__ be stored in VCS.
 
 The same service account is used during the automatic deployment on Travis build. The service
 account key is decrypted and stored under `deployment/appengine-web/src/main/resources/spine-dev.json`
