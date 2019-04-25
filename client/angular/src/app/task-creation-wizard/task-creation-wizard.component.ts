@@ -71,8 +71,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
-    this.layoutService.updateToolbar('Create a task');
-    this.layoutService.updateShowNav(false);
+    this.layoutService.update({toolbarLabel: 'Create a task', showNavigation: false});
   }
 
   /**
@@ -173,13 +172,21 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
         this.taskDefinition.initFromWizard();
         this.labelAssignment.initFromWizard();
 
+        this.layoutService.update({
+          quitButtonHandler: () => this.currentStep().cancel()
+        });
+
         this.isLoading = false;
         this.changeDetector.detectChanges();
       })
+      .then(() => {
+        this.steps = new Map<number, WizardStep>([
+          [TaskCreation.Stage.TASK_DEFINITION, this.taskDefinition],
+          [TaskCreation.Stage.LABEL_ASSIGNMENT, this.labelAssignment],
+          [TaskCreation.Stage.CONFIRMATION, this.confirmation]
+        ]);
+      })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));
-    this.steps.set(TaskCreation.Stage.TASK_DEFINITION, this.taskDefinition);
-    this.steps.set(TaskCreation.Stage.LABEL_ASSIGNMENT, this.labelAssignment);
-    this.steps.set(TaskCreation.Stage.CONFIRMATION, this.confirmation);
   }
 
   /**
@@ -235,17 +242,20 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   isLastStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const lastStage = keys.sort()[keys.length - 1];
+    console.log(keys.sort());
     return this.currentStageIs(stage => stage === lastStage);
   }
 
   isFirstStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const firstStage = keys.sort()[0];
+    console.log(keys.sort());
     return this.currentStageIs(stage => stage === firstStage);
   }
 
   private currentStageIs(predicate: (stage: number) => boolean): boolean {
     const currentStage = this.wizard.stage;
+    console.log(currentStage + "current");
     return predicate(currentStage);
   }
 }

@@ -43,7 +43,7 @@ import "todolist/changes.proto";
 // It is fired in the cases as follows:
 //
 //      * a task is created using the "Quick" creation mode;
-//      * a task, initilally in the draft state, is finalized.
+//      * a task, initially in the draft state, is finalized.
 //
 // The task referenced by the event is always finalized.
 // The task referenced by the event is neither completed nor deleted.
@@ -55,9 +55,6 @@ message TaskCreated {
 
     // Details of the created task.
     TaskDetails details = 2;
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // An event signalizing about the task draft creation.
@@ -77,9 +74,6 @@ message TaskDraftCreated {
     //
     // May be used to filter the stale drafts.
     google.protobuf.Timestamp draft_creation_time = 3 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 4 to 10;
 }
 
 // An event fired upon a task description update.
@@ -93,12 +87,6 @@ message TaskDescriptionUpdated {
 
     // The change of the task description.
     DescriptionChange description_change = 2 [(valid) = true];
-
-    // Reserved for future extension.
-    //
-    // For instance, to mark the start and end positions of the text changed (useful for
-    // huge task descriptions).
-    reserved 3 to 10;
 }
 
 // An event fired upon a task priority update.
@@ -112,12 +100,6 @@ message TaskPriorityUpdated {
 
     // The change of the task priority.
     PriorityChange priority_change = 2 [(required) = true];
-
-    // Reserved for future extension.
-    //
-    // For instance, to mark the start and end positions of the text changed (useful for
-    // huge task descriptions).
-    reserved 3 to 10;
 }
 
 // An event fired upon a task due date update.
@@ -131,9 +113,6 @@ message TaskDueDateUpdated {
 
     // The task due date change.
     change.TimestampChange due_date_change = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 4 to 10;
 }
 
 // An event fired upon task draft finalization.
@@ -144,9 +123,6 @@ message TaskDraftFinalized {
 
     // An identifier of the task draft finalized.
     TaskId task_id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An event fired upon task completion.
@@ -157,9 +133,6 @@ message TaskCompleted {
 
     // An identifier of the completed task.
     TaskId task_id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An event fired upon task reopening.
@@ -170,9 +143,6 @@ message TaskReopened {
 
     // An identifier of the reopened task.
     TaskId task_id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An event fired upon task deletion.
@@ -183,9 +153,6 @@ message TaskDeleted {
 
     // An identifier of the deleted task.
     TaskId task_id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An event fired upon the label assignment to a task.
@@ -197,9 +164,6 @@ message LabelAssignedToTask {
 
     // An identifier of the label to assign to the target task.
     LabelId label_id = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // An event fired upon the label removal from a task.
@@ -211,9 +175,6 @@ message LabelRemovedFromTask {
 
     // An identifier of the label to remove from the target task.
     LabelId label_id = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
 }
 
 // An event fired upon a deleted task restoration.
@@ -224,9 +185,6 @@ message DeletedTaskRestored {
 
     // An identifier of the restored task.
     TaskId task_id = 1;
-
-    // Reserved for future extension.
-    reserved 2 to 10;
 }
 
 // An event reflecting the label creation.
@@ -253,9 +211,9 @@ message LabelDetailsUpdated {
 
 message LabelledTaskRestored {
 
-    // A label idenifier.
+    // A label identifier.
     LabelId label_id = 1;
 
-    // A task idenifier.
+    // A task identifier.
     TaskId task_id = 2;
 }

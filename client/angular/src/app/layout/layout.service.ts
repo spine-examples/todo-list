@@ -19,18 +19,18 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LayoutModule} from 'app/layout/layout.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 /**
  * Configuration of the layout.
  *
- * Defines the toolbar label value on the toolbar as well as whether a navbar
- * is supposed to be shown.
+ * Defines the toolbar label value on the toolbar, whether a navbar and a quit button are supposed
+ * to be visible.
  */
 export interface LayoutConfig {
-  toolbarLabel: string;
-  showNavigation: boolean;
+  toolbarLabel?: string;
+  showNavigation?: boolean;
+  quitButtonHandler?: () => void;
 }
 
 /**
@@ -59,15 +59,21 @@ export class LayoutService {
     return this._config$.asObservable();
   }
 
-  /** Updates the label on the toolbar with the specified value. */
-  public updateToolbar(toolbarValue: string): void {
-    const result = {...this._config$.getValue(), ...{toolbarLabel: toolbarValue}};
-    this._config$.next(result);
+  /** Executes the current value of the `quitButtonHandler`. */
+  public quit(): void {
+    this._config$.getValue().quitButtonHandler();
   }
 
-  /** Updates whether the toolbar is supposed to be showed. */
-  public updateShowNav(shouldShowNav: boolean): void {
-    const result = {...this._config$.getValue(), ...{showNavigation: shouldShowNav}};
+  /**
+   * Updates the layout config.
+   *
+   * Updating the config partly is possible, an object with unspecified field can be passed in
+   * this case.
+   *
+   * @param config layout config with updated field values.
+   */
+  public update(config: LayoutConfig): void {
+    const result = {...this._config$.getValue(), ...config};
     this._config$.next(result);
   }
 

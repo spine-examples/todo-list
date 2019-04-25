@@ -26,7 +26,7 @@ import {NotificationService} from 'app/layout/notification.service';
  */
 export function mockLayoutService() {
   return jasmine.createSpyObj<LayoutService>('LayoutService',
-    ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
+    ['config$', 'update', 'defaultLayout', 'quit']);
 }
 
 export function mockNotificationService() {
