@@ -31,10 +31,10 @@ import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {taskWithId} from 'test/given/tasks';
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 import {LayoutService} from 'app/layout/layout.service';
-import {NotificationService} from "app/layout/notification.service";
-import {LayoutModule} from "app/layout/layout.module";
+import {NotificationService} from 'app/layout/notification.service';
+import {LayoutModule} from 'app/layout/layout.module';
 
 const expectedTask = taskWithId('some id');
 
@@ -77,6 +77,6 @@ describe('TaskItemComponent', () => {
 })
 class TestHostComponent {
 
-  private task: TaskItem = expectedTask;
+  private task: TaskView = expectedTask;
 }
 

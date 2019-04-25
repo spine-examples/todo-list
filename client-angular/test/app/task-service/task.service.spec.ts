@@ -28,11 +28,10 @@ import {
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
   HOUSE_TASK_2_ID,
-  houseTask,
-  houseTasks
+  houseTask
 } from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
-import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
 import {mockNotificationService} from 'test/given/layout-service';
 import {NotificationService} from 'app/layout/notification.service';
 
@@ -41,7 +40,7 @@ describe('TaskService', () => {
   const unsubscribe = jasmine.createSpy();
   const notificationService = mockNotificationService();
 
-  const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
+  const addedTasksSubject = new BehaviorSubject<TaskView>(houseTask());
 
   function makeCommandFail() {
     mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
@@ -71,7 +70,7 @@ describe('TaskService', () => {
   }));
 
   afterEach(() => {
-    addedTasksSubject.next(houseTasks());
+    addedTasksSubject.next(houseTask());
     mockClient.sendCommand.and.callThrough();
   });
 
@@ -89,7 +88,7 @@ describe('TaskService', () => {
   it('should optimistically broadcast added tasks', () => {
     const idToComplete = service.tasks[0].getId();
     service.completeTask(idToComplete);
-    const tasks: TaskItem[] = service.tasks;
+    const tasks: TaskView[] = service.tasks;
     const firstHouseTask = tasks.find(task => task.getId() === idToComplete);
     expect(firstHouseTask).toBeTruthy();
     expect(firstHouseTask.getStatus()).toBe(TaskStatus.COMPLETED);
@@ -107,7 +106,7 @@ describe('TaskService', () => {
   it('should update task list with a deleted task without waiting for the server response', () => {
     const idToDelete = service.tasks[0].getId();
     service.deleteTask(idToDelete);
-    const tasks: TaskItem[] = service.tasks;
+    const tasks: TaskView[] = service.tasks;
     const firstHouseTask = tasks.find(task => task.getId() === idToDelete);
     expect(firstHouseTask).toBeTruthy();
     expect(firstHouseTask.getStatus()).toBe(TaskStatus.DELETED);

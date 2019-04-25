@@ -21,7 +21,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from 'app/task-service/task.service';
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 import {first} from 'rxjs/operators';
 
 @Component({
@@ -31,9 +31,9 @@ import {first} from 'rxjs/operators';
 export class TaskListComponent implements OnInit {
 
   @Input()
-  private filter: (t: TaskItem) => boolean;
+  private filter: (t: TaskView) => boolean;
 
-  tasks: TaskItem[];
+  tasks: TaskView[];
 
   public hasElements: boolean;
 

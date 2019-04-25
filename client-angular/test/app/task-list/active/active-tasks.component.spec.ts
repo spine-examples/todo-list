@@ -26,15 +26,15 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
-import {Client, Message, Type} from 'spine-web';
+import {Client, Message} from 'spine-web';
 import {BehaviorSubject} from 'rxjs';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {houseTasks} from 'test/given/tasks';
+import {houseTask} from 'test/given/tasks';
 
-import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -42,7 +42,7 @@ import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {LayoutService} from 'app/layout/layout.service';
 import {NotificationService} from 'app/layout/notification.service';
-import {LayoutModule} from "app/layout/layout.module";
+import {LayoutModule} from 'app/layout/layout.module';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -54,8 +54,8 @@ describe('ActiveTasksComponent', () => {
   function collectDisplayedTasks(): string[] {
     const taskLists = fixture.debugElement
       .queryAll(By.css('app-task-list'));
-    const taskItems = taskLists[1].queryAll(By.css('app-task-item'));
-    return taskItems.map(item =>
+    const tasks = taskLists[1].queryAll(By.css('app-task-item'));
+    return tasks.map(item =>
       item.query(By.css('mat-panel-title'))
         .query(By.css('div'))
         .nativeElement.innerHTML);
@@ -72,7 +72,7 @@ describe('ActiveTasksComponent', () => {
     input.dispatchEvent(keyPressed);
   }
 
-  const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
+  const addedTasksSubject = new BehaviorSubject<TaskView>(houseTask());
 
   mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
     addedTasksSubject.asObservable(), unsubscribe

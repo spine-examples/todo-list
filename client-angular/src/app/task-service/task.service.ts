@@ -19,7 +19,7 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client, CommandHandlingError, Type} from 'spine-web';
+import {Client, Type} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -89,21 +89,6 @@ export class TaskService implements OnDestroy {
     result.setStatus(task.getStatus());
     result.setPriority(task.getPriority());
     return result;
-  }
-
-  /**
-   * Based on the error that has occurred during command handling, decides whether the optimistic
-   * operation associated with the command should be undone.
-   *
-   * @param err error that has occurred during command handling.
-   *
-   * Visible for testing.
-   */
-  static shouldUndoOptimisticOperation(err: CommandHandlingError): boolean {
-    if (err.hasOwnProperty('assuresCommandNeglected')) {
-      return err.assuresCommandNeglected();
-    }
-    return false;
   }
 
   /**
@@ -194,7 +179,6 @@ export class TaskService implements OnDestroy {
     createdTask.setId(id);
     createdTask.setDescription(taskDescription);
     createdTask.setStatus(TaskStatus.OPEN);
-    createdTask.setStatus(TaskStatus.OPEN);
 
     this.optimisticallyChanged.push({
       taskId: id
@@ -236,10 +220,8 @@ export class TaskService implements OnDestroy {
    * Visible for testing
    */
   recoverPreviousState(err, taskId: TaskId): void {
-    if (TaskService.shouldUndoOptimisticOperation(err)) {
-      this.undoOptimisticOperation(taskId);
-      this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
-    }
+    this.undoOptimisticOperation(taskId);
+    this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     this.removeFromOptimisticallyChanged(taskId);
   }
 
@@ -294,8 +276,7 @@ export class TaskService implements OnDestroy {
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
    *
-   * The tasks are retrieved from the `MyListView` projection, which is an application-wide
-   * singleton storing active and completed task items.
+   * The tasks are retrieved are `TaskView` projections.
    *
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
    * the `unsubscribe` function.
@@ -306,9 +287,14 @@ export class TaskService implements OnDestroy {
     const taskAdded = {
       next: (view: TaskView): void => {
         if (view) {
-          const presentItems: TaskView[] = this.tasks.slice();
-          presentItems.push(view);
-          this._tasks$.next(presentItems);
+          const alreadyBroadcast = this.tasks
+            .map(value => value.getId().getValue())
+            .includes(view.getId().getValue());
+          if (!alreadyBroadcast) {
+            const presentItems: TaskView[] = this.tasks.slice();
+            presentItems.push(view);
+            this._tasks$.next(presentItems);
+          }
         }
       }
     };

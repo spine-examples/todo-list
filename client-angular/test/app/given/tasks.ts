@@ -19,11 +19,9 @@
  */
 
 import {tomorrow} from 'test/given/dates';
-
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {TaskId, TaskListId} from 'proto/todolist/identifiers_pb';
+import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {MyListView, TaskItem, TaskListView, TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 
 export const HOUSE_TASK_1_ID = 'task-1';
@@ -32,35 +30,16 @@ export const HOUSE_TASK_1_DESC = 'Wash the dishes';
 export const HOUSE_TASK_2_ID = 'task-2';
 export const HOUSE_TASK_2_DESC = 'Clean the house';
 
-export function emptyTaskList(): MyListView {
-  const taskListId = new TaskListId();
-  taskListId.setValue('empty-task-list');
-  const taskListView = new TaskListView();
-  taskListView.setItemsList([]);
-  const result = new MyListView();
-  result.setId(taskListId);
-  result.setMyList(taskListView);
-  return result;
-}
-
-export function houseTasks(): MyListView {
-  const taskListId = new TaskListId();
-  taskListId.setValue('task-list-ID');
-
-  const taskListView = new TaskListView();
+export function houseTasks(): TaskView[] {
   const tasks = [
     taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC),
     taskItem(HOUSE_TASK_2_ID, HOUSE_TASK_2_DESC)
   ];
-  tasks.forEach(taskview => taskview.setStatus(TaskStatus.OPEN));
-  taskListView.setItemsList(tasks);
-  const result = new MyListView();
-  result.setId(taskListId);
-  result.setMyList(taskListView);
-  return result;
+  tasks.forEach(task => task.setStatus(TaskStatus.OPEN));
+  return tasks;
 }
 
-export function taskWithId(desiredId: string): TaskItem {
+export function taskWithId(desiredId: string): TaskView {
   const taskId = new TaskId();
   taskId.setValue(desiredId);
   const description = new TaskDescription();
@@ -68,27 +47,7 @@ export function taskWithId(desiredId: string): TaskItem {
   return taskItem(taskId, description);
 }
 
-export function taskItem(id: TaskId, description: TaskDescription): TaskItem {
-  const result = new TaskItem();
-  const taskId = new TaskId();
-  taskId.setValue(id);
-  result.setId(taskId);
-  const taskDescription = new TaskDescription();
-  taskDescription.setValue(description);
-  result.setDescription(taskDescription);
-  const dueDate: Timestamp = new Timestamp();
-  dueDate.setSeconds(0);
-  result.setDueDate(dueDate);
-  result.setStatus(TaskStatus.OPEN);
-  result.setPriority(TaskPriority.NORMAL);
-  return result;
-}
-
-export function houseTask(): TaskView {
-  return taskView(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
-}
-
-function taskView(id: string, description: string): TaskView {
+export function taskItem(id: TaskId, description: TaskDescription): TaskView {
   const result = new TaskView();
   const taskId = new TaskId();
   taskId.setValue(id);
@@ -96,9 +55,12 @@ function taskView(id: string, description: string): TaskView {
   const taskDescription = new TaskDescription();
   taskDescription.setValue(description);
   result.setDescription(taskDescription);
-  result.setPriority(TaskPriority.HIGH);
-
-  // noinspection TypeScriptValidateJSTypes Wrong IDEA type lookup.
   result.setDueDate(tomorrow());
+  result.setStatus(TaskStatus.OPEN);
+  result.setPriority(TaskPriority.NORMAL);
   return result;
+}
+
+export function houseTask(): TaskView {
+  return taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 }

@@ -40,10 +40,7 @@ import {houseTasks} from 'test/given/tasks';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 import {tomorrowMoment} from 'test/given/dates';
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
-
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
-import {TaskCreation} from 'proto/todolist/model_pb';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
 import {LayoutModule} from 'app/layout/layout.module';

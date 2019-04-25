@@ -23,14 +23,14 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
-import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**
  * Task filters for components that access the `TaskListComponent` directly.
  */
-const completedFilter = (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED;
-const deletedFilter = (task: TaskItem) => task.getStatus === TaskStatus.DELETED;
+const completedFilter = (task: TaskView) => task.getStatus() === TaskStatus.COMPLETED;
+const deletedFilter = (task: TaskView) => task.getStatus === TaskStatus.DELETED;
 
 
 export const routes: Routes = [
