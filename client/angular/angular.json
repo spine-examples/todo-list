@@ -59,14 +59,6 @@
                   "with": "src/environments/environment.local.ts"
                 }
               ]
-            },
-            "dev": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
             }
           }
         },
@@ -81,9 +73,6 @@
             },
             "local": {
               "browserTarget": "client-angular:build:local"
-            },
-            "dev": {
-              "browserTarget": "client-angular:build:dev"
             }
           }
         },

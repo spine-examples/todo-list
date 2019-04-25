@@ -12,7 +12,7 @@ First, make sure that Node.js is installed (it also includes npm). See the
 [Angular Getting started](https://angular.io/guide/quickstart) section for the respective installation instructions.
 
 ## Environment configuration
-The Angular client supports different named build configurations, such as 'dev', 'local' and 'production',
+The Angular client supports different named build configurations, such as 'local' and 'production',
 with different defaults. See ["Configuring application environments"](https://angular.io/guide/build#configuring-application-environments)
 on how the Angular environment file replacement works.
 

@@ -39,7 +39,8 @@ testJs {
 
 def buildParameter() {
     if (ext.isDev()) {
-        return 'build-dev'
+        // Use production build of the Angular application
+        return 'build-prod'
     }
     return 'build-local'
 }
