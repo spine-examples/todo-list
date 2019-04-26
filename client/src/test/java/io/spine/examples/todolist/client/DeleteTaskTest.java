@@ -28,6 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -77,8 +79,8 @@ class DeleteTaskTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("contain a deleted task")
-    void obtainEmptyView() {
+    @DisplayName("not contain a deleted draft")
+    void obtainNoView() {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
@@ -86,9 +88,27 @@ class DeleteTaskTest extends TodoClientTest {
         client.postCommand(deleteTask);
 
         List<TaskView> views = client.getTaskViews();
+        assertEquals(0, views.size());
+    }
+
+    @Test
+    @DisplayName("contain a task with `Deleted` status")
+    void obtainDeletedView() {
+        CreateDraft createDraft = createDraft();
+        client.postCommand(createDraft);
+
+        TaskId id = createDraft.getId();
+
+        FinalizeDraft finalizeDraft = finalizeDraftInstance(id);
+        client.postCommand(finalizeDraft);
+
+        DeleteTask deleteTask = deleteTaskInstance(id);
+        client.postCommand(deleteTask);
+
+        List<TaskView> views = client.getTaskViews();
         assertEquals(1, views.size());
-        TaskView view = views.get(0);
-        assertEquals(TaskStatus.DELETED, view.getStatus());
+        TaskView taskView = views.get(0);
+        assertEquals(TaskStatus.DELETED, taskView.getStatus());
     }
 }
 
