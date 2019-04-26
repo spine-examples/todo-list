@@ -60,6 +60,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
                  .setDescription(taskDetails.getDescription())
+                 .setDueDate(taskDetails.getDueDate())
                  .setStatus(TaskStatus.OPEN);
     }
 
@@ -80,7 +81,12 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     public void taskDeleted(TaskDeleted deleted) {
-        builder().setStatus(TaskStatus.DELETED);
+        TaskStatus currentStatus = builder().getStatus();
+        if (currentStatus == TaskStatus.DRAFT) {
+            eraseTask();
+        } else {
+            builder().setStatus(TaskStatus.DELETED);
+        }
     }
 
     @Subscribe
@@ -134,5 +140,13 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
                 .addAllIds(list)
                 .build();
         builder().setLabelIdsList(labelIdsList);
+    }
+
+    /**
+     * Tasks that are being deleted while in {@code Draft} state are deleted beyong recovery.
+     */
+    private void eraseTask() {
+        this.setArchived(true);
+        this.setDeleted(true);
     }
 }

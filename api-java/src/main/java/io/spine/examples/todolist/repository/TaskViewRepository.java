@@ -20,7 +20,16 @@
 
 package io.spine.examples.todolist.repository;
 
+import com.google.common.collect.ImmutableSet;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
 import io.spine.server.projection.ProjectionRepository;
@@ -30,4 +39,29 @@ import io.spine.server.projection.ProjectionRepository;
  */
 public class TaskViewRepository
         extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
+
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
+        reroute();
+    }
+
+    private void reroute() {
+        eventRouting().route(TaskCreated.class,
+                             (message, context) -> ImmutableSet.of(message.getId()));
+        eventRouting().route(TaskDeleted.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(TaskCompleted.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(TaskDraftCreated.class,
+                             (message, context) -> ImmutableSet.of(message.getId()));
+        eventRouting().route(TaskDescriptionUpdated.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(TaskDueDateUpdated.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(TaskReopened.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(TaskPriorityUpdated.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+    }
 }
