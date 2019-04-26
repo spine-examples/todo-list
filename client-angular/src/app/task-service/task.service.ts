@@ -299,24 +299,13 @@ export class TaskService implements OnDestroy {
       }
     };
 
-    const taskRemoved = {
-      next: (removedTask: TaskView): void => {
-        if (removedTask) {
-          const presentItems: TaskView[] = this.tasks;
-          const indexToDelete: number = presentItems.indexOf(removedTask);
-          const withTaskRemoved: TaskView = presentItems.slice(indexToDelete);
-          this._tasks$.next(withTaskRemoved);
-        }
-      }
-    };
-
     const type = Type.forClass(TaskView);
     return new Promise((resolve, reject) =>
       this.spineWebClient.subscribeToEntities({ofType: type})
         .then((subscriptionObject) => {
           subscriptionObject.itemAdded.subscribe(taskAdded);
-          subscriptionObject.itemRemoved.subscribe(taskRemoved);
 
+          //TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
           resolve(subscriptionObject.unsubscribe);
         })
         .catch(err => {

@@ -30,7 +30,7 @@ import {TaskListComponent} from 'app/task-list/task-list.component';
  * Task filters for components that access the `TaskListComponent` directly.
  */
 const completedFilter = (task: TaskView) => task.getStatus() === TaskStatus.COMPLETED;
-const deletedFilter = (task: TaskView) => task.getStatus === TaskStatus.DELETED;
+const deletedFilter = (task: TaskView) => task.getStatus() === TaskStatus.DELETED;
 
 
 export const routes: Routes = [

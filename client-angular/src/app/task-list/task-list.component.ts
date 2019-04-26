@@ -54,7 +54,7 @@ export class TaskListComponent implements OnInit {
   }
 
   private performSubscription(): void {
-    this.taskService.tasks$.subscribe(tasks => {
+    this.taskService.tasks$.subscribe((tasks: TaskView[]) => {
       this.tasks = tasks.filter(this.filter);
       this.hasElements = this.tasks.length !== 0;
     });
