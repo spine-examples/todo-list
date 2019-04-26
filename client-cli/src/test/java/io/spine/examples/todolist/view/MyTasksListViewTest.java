@@ -25,6 +25,7 @@ import io.spine.cli.NoOpView;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,7 @@ class MyTasksListViewTest extends ViewTest {
     private static final int VIEW_INDEX = 0;
 
     private final Bot bot = new Bot();
-    private final io.spine.examples.todolist.q.projection.TaskView taskView = io.spine.examples.todolist.q.projection.TaskView
+    private final TaskView taskView = TaskView
             .newBuilder()
             .setDescription(newDescription("task desc"))
             .build();
@@ -74,7 +75,7 @@ class MyTasksListViewTest extends ViewTest {
     @DisplayName("create action for every task view")
     void createActions() {
         int tasksCount = 5;
-        List<io.spine.examples.todolist.q.projection.TaskView> myListView = nCopies(5, taskView);
+        List<TaskView> myListView = nCopies(5, taskView);
         Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }
@@ -85,7 +86,7 @@ class MyTasksListViewTest extends ViewTest {
         String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        TransitionActionProducer<MyTasksListView, TaskView> producer =
+        TransitionActionProducer<MyTasksListView, TaskItemView> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
         String expectedDescription = taskView.getDescription()

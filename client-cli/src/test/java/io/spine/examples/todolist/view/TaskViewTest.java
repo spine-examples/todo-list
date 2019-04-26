@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,9 +29,9 @@ import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
-import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.view.TaskView.PRIORITY_VALUE;
+import static io.spine.examples.todolist.view.TaskItemView.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.TaskItemView.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.TaskItemView.PRIORITY_VALUE;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("TaskView should")
 class TaskViewTest extends ViewTest {
 
-    private final io.spine.examples.todolist.q.projection.TaskView task = io.spine.examples.todolist.q.projection.TaskView
+    private final TaskView task = TaskView
             .newBuilder()
             .setDescription(newDescription("my task description"))
             .setPriority(NORMAL)
             .setDueDate(getCurrentTime())
             .build();
-    private final TaskView taskView = new TaskView(TaskId.getDefaultInstance());
+    private final TaskItemView taskView = new TaskItemView(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
@@ -65,5 +66,4 @@ class TaskViewTest extends ViewTest {
                         DUE_DATE_VALUE + format(task.getDueDate());
         assertEquals(expectedResult, taskView.renderState(task));
     }
-
 }

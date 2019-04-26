@@ -23,6 +23,7 @@ package io.spine.examples.todolist.view;
 import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,24 +38,24 @@ import static java.lang.System.lineSeparator;
  *
  * <p>Renders the task and provides actions for working with the task.
  */
-final class TaskView extends EntityView<TaskId, io.spine.examples.todolist.q.projection.TaskView> {
+final class TaskItemView extends EntityView<TaskId, TaskView> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
 
-    TaskView(TaskId id) {
+    TaskItemView(TaskId id) {
         super(id, "My task details");
     }
 
     @Override
-    protected io.spine.examples.todolist.q.projection.TaskView load(TaskId id) {
+    protected TaskView load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        List<io.spine.examples.todolist.q.projection.TaskView> tasks = getClient().getTaskViews();
-        Optional<io.spine.examples.todolist.q.projection.TaskView> optionalTask = tasks.stream()
+        List<TaskView> tasks = getClient().getTaskViews();
+        Optional<TaskView> optionalTask = tasks.stream()
                                                .filter(task -> task.getId()
                                                                    .equals(id))
-                                                                                       .findFirst();
+                                               .findFirst();
         if (optionalTask.isPresent()) {
             return optionalTask.get();
         }
@@ -63,7 +64,7 @@ final class TaskView extends EntityView<TaskId, io.spine.examples.todolist.q.pro
     }
 
     @Override
-    protected String renderState(io.spine.examples.todolist.q.projection.TaskView state) {
+    protected String renderState(TaskView state) {
         String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())

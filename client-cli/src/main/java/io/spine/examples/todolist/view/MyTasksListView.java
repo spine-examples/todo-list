@@ -27,6 +27,7 @@ import io.spine.cli.action.TransitionAction;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.cli.view.ActionListView;
 import io.spine.cli.view.View;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +42,7 @@ import static java.lang.String.valueOf;
  *
  * <p>Mainly consists of
  * {@linkplain TransitionAction transition actions}.
- * The action gives short info about the task and leads to a {@link TaskView}.
+ * The action gives short info about the task and leads to a {@link TaskItemView}.
  */
 public final class MyTasksListView extends ActionListView {
 
@@ -59,7 +60,7 @@ public final class MyTasksListView extends ActionListView {
     public void render(Screen screen) {
         clearActions();
 
-        List<io.spine.examples.todolist.q.projection.TaskView> views = getClient().getTaskViews();
+        List<TaskView> views = getClient().getTaskViews();
         Collection<TransitionActionProducer> producers = taskActionProducersFor(views);
 
         if (producers.isEmpty()) {
@@ -87,24 +88,23 @@ public final class MyTasksListView extends ActionListView {
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> taskActionProducersFor(
-            List<io.spine.examples.todolist.q.projection.TaskView> taskViews) {
+    static Collection<TransitionActionProducer> taskActionProducersFor(List<TaskView> taskViews) {
         Collection<TransitionActionProducer> producers = new ArrayList<>();
         for (int i = 0; i < taskViews.size(); i++) {
-            io.spine.examples.todolist.q.projection.TaskView task = taskViews.get(i);
+            TaskView task = taskViews.get(i);
             producers.add(newOpenTaskViewProducer(task, i));
         }
         return producers;
     }
 
     @VisibleForTesting
-    static TransitionActionProducer<MyTasksListView, TaskView>
-    newOpenTaskViewProducer(io.spine.examples.todolist.q.projection.TaskView task, int viewIndex) {
+    static TransitionActionProducer<MyTasksListView, TaskItemView>
+    newOpenTaskViewProducer(TaskView task, int viewIndex) {
         String name = task.getDescription()
                           .getValue();
         String shortcutValue = valueOf(viewIndex + 1);
         Shortcut shortcut = new Shortcut(shortcutValue);
-        TaskView destination = new TaskView(task.getId());
+        TaskItemView destination = new TaskItemView(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }
