@@ -10,7 +10,7 @@ a description only).
 ### Prerequirements
 
 In order to launch the Web application successfully:
- - make sure that Node.js is installed (it also includes npm);
+ - make sure that Node.js is installed (it also includes `npm`);
  - if the server uses a custom Firebase project (not `spine-dev`), point the client to that project
  in `client/web/lib/firebase_client.js`;
  
@@ -28,5 +28,6 @@ In order to launch the Web application successfully:
 3. To run the client, open the `client/web/app/index.html` with the most convenient 
    way (e.g. from IDEA).
     
-   The application is adjusted to work with a backend server on the `localhost:8080` and a
-   development "spine-dev" Firebase application.
+   By default, the application expects a backend server available at `localhost:8080`. It also
+   relies upon `spine-dev` Firebase project — that you should replace with your own.
+   

@@ -41,7 +41,7 @@ project root directory:
 ```bash
 ./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
 ```
-Note, that a service account key file __should not__ be stored in VCS.
+Note, that a service account key file __must not__ be stored in VCS.
 
 The same service account is used during the automatic deployment on Travis build. The service
 account key is decrypted and stored under `deployment/appengine-web/src/main/resources/spine-dev.json`
