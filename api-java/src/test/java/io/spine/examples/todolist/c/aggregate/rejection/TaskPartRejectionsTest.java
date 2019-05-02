@@ -79,7 +79,7 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
                     .build();
             CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
                                                        () -> throwCannotCreateDraft(cmd));
-            TaskId actual = rejection.getMessageThrown()
+            TaskId actual = rejection.messageThrown()
                                      .getRejectionDetails()
                                      .getCommandDetails()
                                      .getTaskId();
@@ -114,7 +114,7 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
             CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+            RejectedTaskCommandDetails commandDetails = rejection.messageThrown()
                                                                  .getRejectionDetails()
                                                                  .getCommandDetails();
             TaskId actualId = commandDetails.getTaskId();
@@ -131,7 +131,7 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
             CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+            RejectedTaskCommandDetails commandDetails = rejection.messageThrown()
                                                                  .getRejectionDetails()
                                                                  .getCommandDetails();
 

@@ -195,7 +195,7 @@ class LabelAggregateTest {
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(updateLabelDetails));
             Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                    rejection.getMessageThrown();
+                    rejection.messageThrown();
             LabelDetailsUpdateRejected rejectionDetails =
                     cannotUpdateLabelDetails.getRejectionDetails();
             LabelId actualLabelId = rejectionDetails.getCommandDetails()

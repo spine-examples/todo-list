@@ -97,7 +97,7 @@ class CreateDraftTest extends TaskCommandTest<CreateDraft> {
                                                          envelopeOf(createDraftCmd)));
         Throwable cause = Throwables.getRootCause(t);
         CannotCreateDraft rejection = (CannotCreateDraft) cause;
-        TaskId actualId = rejection.getMessageThrown()
+        TaskId actualId = rejection.messageThrown()
                                    .getRejectionDetails()
                                    .getCommandDetails()
                                    .getTaskId();

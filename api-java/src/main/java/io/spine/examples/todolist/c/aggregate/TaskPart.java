@@ -73,7 +73,7 @@ import io.spine.server.command.Assign;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureDeleted;
@@ -106,9 +106,9 @@ import static java.util.Collections.singletonList;
         "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/,
         "unused" /* Methods are used reflectively by Spine. */})
 public class TaskPart extends AggregatePart<TaskId,
-                                            Task,
-                                            TaskVBuilder,
-                                            TaskAggregateRoot> {
+        Task,
+        TaskVBuilder,
+        TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
         super(root);
@@ -283,7 +283,7 @@ public class TaskPart extends AggregatePart<TaskId,
         TaskDraftCreated draftCreated = TaskDraftCreated
                 .newBuilder()
                 .setId(taskId)
-                .setDraftCreationTime(getCurrentTime())
+                .setDraftCreationTime(currentTime())
                 .build();
         return singletonList(draftCreated);
     }
@@ -344,7 +344,7 @@ public class TaskPart extends AggregatePart<TaskId,
     void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
-                 .setCreated(getCurrentTime())
+                 .setCreated(currentTime())
                  .setDescription(taskDetails.getDescription())
                  .setPriority(taskDetails.getPriority())
                  .setTaskStatus(TaskStatus.FINALIZED);

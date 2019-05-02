@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.DateFormatter.getDateFormat;
@@ -52,7 +52,7 @@ class DateFormatterTest {
     @Test
     @DisplayName("format timestamp")
     void formatTimestamp() {
-        Timestamp timestamp = getCurrentTime();
+        Timestamp timestamp = currentTime();
         long millis = toMillis(timestamp);
         Date date = new Date(millis);
 

@@ -145,7 +145,7 @@ public abstract class CommandView<M extends Message,
         }
 
         @Override
-        public int getIndex() {
+        public int index() {
             return this.index;
         }
     }
