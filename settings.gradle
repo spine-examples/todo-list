@@ -39,7 +39,7 @@ def deployment(final String name) {
 }
 
 deployment 'local-inmem'
-deployment 'local-my-sql'
+deployment 'local-mysql'
 deployment 'local-cloud-sql'
 deployment 'compute-cloud-sql'
 deployment 'local-firebase'

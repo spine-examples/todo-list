@@ -46,7 +46,7 @@ import static java.lang.String.format;
  * JdbcStorageFactory}, {@code MySQL} in particular.
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
+ * {@code gradle :local-mysql:runServer -Pconf=db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * {@linkplain #getDefaultArguments() default arguments} will be used.
