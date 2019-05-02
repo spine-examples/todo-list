@@ -44,12 +44,7 @@ import 'zone.js/dist/zone-error'; // Included with Angular CLI.
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
+    databaseURL: 'http://localhost:8082'
   },
   host: 'http://localhost:8080'
 };

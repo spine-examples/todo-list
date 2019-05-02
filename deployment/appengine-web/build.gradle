@@ -34,6 +34,7 @@ apply plugin: 'com.google.cloud.tools.appengine'
 
 apply from: "$projectDir/scripts/appengine.gradle"
 apply from: "$projectDir/scripts/datastore-emulator.gradle"
+apply from: "$projectDir/scripts/firebase-emulator.gradle"
 
 repositories {
     mavenCentral()
@@ -78,7 +79,10 @@ idea.module {
 }
 
 tasks["appengineRun"].dependsOn startDatastore
+tasks["appengineRun"].dependsOn startFirebaseServer
 tasks["appengineStart"].dependsOn startDatastore
+tasks["appengineStart"].dependsOn startFirebaseServer
+
 tasks["appengineStop"].dependsOn stopDatastore
 
 configurations.all {

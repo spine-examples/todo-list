@@ -1,0 +1,55 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ *
+ */
+
+final def FIREBASE_EMULATOR_TASK_GROUP = "Firebase emulator"
+
+/** The local port to run Firebase Server emulator on */
+final def localPort = 8082
+
+/**
+ * Starts the Firebase server emulator at the given local port.
+ */
+def startFirebaseServerOn(final localPort) {
+    final def scriptFolder = "$projectDir${File.separatorChar}scripts"
+    final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+    final def scriptName = "start-firebase-server.${runsOnWindows ? 'bat' : 'sh'}"
+    final def params = " ${localPort}"
+
+    "${scriptFolder}${File.separatorChar}${scriptName}${params}".execute()
+}
+
+/**
+ *
+ */
+task startFirebaseServer {
+    group = FIREBASE_EMULATOR_TASK_GROUP
+    description = "Starts local Firebase server emulator using scripts from ./scripts folder."
+
+    doLast {
+        startFirebaseServerOn(localPort)
+        logger.info("Firebase server emulator started on port ${localPort}")
+    }
+}
