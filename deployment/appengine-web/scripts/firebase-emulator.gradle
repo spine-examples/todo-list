@@ -21,22 +21,33 @@ import org.apache.tools.ant.taskdefs.condition.Os
  */
 
 /**
+ * Apply this script to enable tasks for emulating the Firebase server for local development.
  *
+ * Emulating of the Firebase server relies on the `firebase-server` NPM library that
+ * must be installed globally. To install `firebase-server` globally run the following command:
+ * ```
+ *  npm install -g firebase-server
+ * ```
+ * This package installs a CLI script called `firebase-server` that is used by this script
+ * to emulate the Firebase server.
  */
 
 final def FIREBASE_EMULATOR_TASK_GROUP = "Firebase emulator"
 
-/** The local port to run Firebase Server emulator on */
+/** The local port to run Firebase Server emulator. */
 final def localPort = 8082
+
+/** The path to the Firebase Realtime Database rules. */
+final def rulesPath = "$projectDir${File.separatorChar}scripts${File.separatorChar}firebase-rules.json"
 
 /**
  * Starts the Firebase server emulator at the given local port.
  */
-def startFirebaseServerOn(final localPort) {
+def startFirebaseServer(final localPort, final rules) {
     final def scriptFolder = "$projectDir${File.separatorChar}scripts"
     final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
     final def scriptName = "start-firebase-server.${runsOnWindows ? 'bat' : 'sh'}"
-    final def params = " ${localPort}"
+    final def params = " ${localPort} ${rules}"
 
     "${scriptFolder}${File.separatorChar}${scriptName}${params}".execute()
 }
@@ -49,7 +60,7 @@ task startFirebaseServer {
     description = "Starts local Firebase server emulator using scripts from ./scripts folder."
 
     doLast {
-        startFirebaseServerOn(localPort)
+        startFirebaseServer(localPort, rulesPath)
         logger.info("Firebase server emulator started on port ${localPort}")
     }
 }
