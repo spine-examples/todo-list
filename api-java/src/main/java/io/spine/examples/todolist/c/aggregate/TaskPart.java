@@ -106,9 +106,9 @@ import static java.util.Collections.singletonList;
         "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/,
         "unused" /* Methods are used reflectively by Spine. */})
 public class TaskPart extends AggregatePart<TaskId,
-        Task,
-        TaskVBuilder,
-        TaskAggregateRoot> {
+                                            Task,
+                                            TaskVBuilder,
+                                            TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
         super(root);
@@ -143,8 +143,7 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isEquals) {
             ValueMismatch mismatch = unexpectedValue(expectedDescription.getValue(),
                                                      actualDescription.getValue(),
-                                                     descriptionChange.getNewValue()
-                                                                      .getValue());
+                                                     descriptionChange.getNewValue().getValue());
             throwCannotUpdateDescription(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();
