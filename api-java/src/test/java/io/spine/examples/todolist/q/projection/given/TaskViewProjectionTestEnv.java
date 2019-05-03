@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.q.projection.given;
 
 import com.google.protobuf.Timestamp;
+import com.google.protobuf.util.Timestamps;
 import io.spine.base.Identifier;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.DescriptionChange;
@@ -37,7 +38,6 @@ import io.spine.examples.todolist.c.events.TaskDraftCreated;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
-import io.spine.protobuf.Timestamps2;
 
 import java.time.Instant;
 
@@ -73,7 +73,7 @@ public final class TaskViewProjectionTestEnv {
     public static Timestamp theDayAfterTomorrow() {
         Instant today = Instant.now();
         Instant theDayAfterTomorrow = today.plus(2, DAYS);
-        Timestamp result = Timestamps2.fromInstant(theDayAfterTomorrow);
+        Timestamp result = Timestamps.fromMillis(theDayAfterTomorrow.getEpochSecond());
         return result;
     }
 
@@ -158,7 +158,7 @@ public final class TaskViewProjectionTestEnv {
     public TaskDraftCreated draftCreated() {
         TaskDetails details = details(DEFAULT_DESCRIPTION);
         Instant today = Instant.now();
-        Timestamp creationTime = Timestamps2.fromInstant(today);
+        Timestamp creationTime = Timestamps.fromMillis(today.getEpochSecond());
         TaskDraftCreated result = TaskDraftCreated
                 .newBuilder()
                 .setId(taskId)
@@ -188,9 +188,10 @@ public final class TaskViewProjectionTestEnv {
     }
 
     private static Timestamp tomorrow() {
-        Instant result = Instant.now();
-        result.plus(1, DAYS);
-        return Timestamps2.fromInstant(result);
+        Instant today = Instant.now();
+        Instant tomorrow = today.plus(1, DAYS);
+        Timestamp result = Timestamps.fromMillis(tomorrow.getEpochSecond());
+        return result;
     }
 
     private static TaskDescription description(String value) {

@@ -29,7 +29,6 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
@@ -84,10 +83,9 @@ public final class BoundedContexts {
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        EventBus.Builder eventBus = createEventBus(storageFactory,
-                                                   labelAggregateRepo,
-                                                   taskRepo,
-                                                   taskLabelsRepo);
+        EventBus.Builder eventBus = EventBus
+                .newBuilder()
+                .setStorageFactory(storageFactory);
         BoundedContext boundedContext = createBoundedContext(eventBus);
 
         boundedContext.register(taskRepo);
@@ -98,24 +96,6 @@ public final class BoundedContexts {
         boundedContext.register(taskCreationRepo);
 
         return boundedContext;
-    }
-
-    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   LabelAggregateRepository labelRepo,
-                                                   TaskRepository taskRepo,
-                                                   TaskLabelsRepository labelsRepo) {
-        Enricher enricher = TodoListEnrichments
-                .newBuilder()
-                .setLabelRepository(labelRepo)
-                .setTaskRepository(taskRepo)
-                .setTaskLabelsRepository(labelsRepo)
-                .build()
-                .createEnricher();
-        EventBus.Builder eventBus = EventBus
-                .newBuilder()
-                .setEnricher(enricher)
-                .setStorageFactory(storageFactory);
-        return eventBus;
     }
 
     @VisibleForTesting
