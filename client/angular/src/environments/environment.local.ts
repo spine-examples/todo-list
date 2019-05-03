@@ -21,20 +21,15 @@
 /**
  * The environment configuration for the local development.
  *
- * Configures an application to work with:
- *  - a remote local backend server running on AppEngine emulator. See "Running the application
- *    locally" section of `deployment/appengine-web/README.md` for details.
- *  - a development "spine-dev" Firebase application.
+ * Configures an application to work with a local backend server running on AppEngine emulator and
+ * the emulated Firebase application. See "Running the application locally" section of
+ * `deployment/appengine-web/README.md` for details.
  */
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
+    authDomain: 'ws://localhost:8082',
+    databaseURL: 'ws://localhost:8082'
   },
   host: 'http://localhost:8080'
 };
