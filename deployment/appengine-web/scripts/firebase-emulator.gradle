@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 /*
  * Copyright 2019, TeamDev. All rights reserved.
  *
@@ -28,7 +26,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
  * ```
  *  npm install -g firebase-server
  * ```
- * This package installs a CLI script called `firebase-server` that is used by this script
+ * This package installs a CLI script called `firebase-server` that is further used
  * to emulate the Firebase server.
  */
 
@@ -37,30 +35,82 @@ final def FIREBASE_EMULATOR_TASK_GROUP = "Firebase emulator"
 /** The local port to run Firebase Server emulator. */
 final def localPort = 8082
 
-/** The path to the Firebase Realtime Database rules. */
-final def rulesPath = "$projectDir${File.separatorChar}scripts${File.separatorChar}firebase-rules.json"
+/** The path to the Firebase Realtime Database security rules. */
+final def rulesFilePath = "$projectDir/scripts/firebase-rules.json"
+
+/** The path to the temporary file storing the identifier of a currently running emulator process. */
+final def pidFilePath = "$projectDir/scripts/firebase-emulator.pid"
 
 /**
- * Starts the Firebase server emulator at the given local port.
+ * Returns an extension of a script file depending on the environment operation system.
+ *
+ * @return "bat" if running on Windows, "sh" otherwise.
  */
-def startFirebaseServer(final localPort, final rules) {
-    final def scriptFolder = "$projectDir${File.separatorChar}scripts"
+static def osExtension() {
     final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
-    final def scriptName = "start-firebase-server.${runsOnWindows ? 'bat' : 'sh'}"
-    final def params = " ${localPort} ${rules}"
+    return runsOnWindows ? 'bat' : 'sh'
+}
+/**
+ * Starts the Firebase server emulator.
+ *
+ * @param port          the local port to run the emulator on
+ * @param rulesFilePath the path to the file with Firebase Realtime Database security rules
+ * @param pidFilePath   the path to the file to store the PID of the emulator
+ */
+void startFirebase(final port, final rulesFilePath, final pidFilePath) {
+    final def script = "$projectDir/scripts/start-firebase.${osExtension()}"
+    final def params = " ${port} ${rulesFilePath} ${pidFilePath}"
 
-    "${scriptFolder}${File.separatorChar}${scriptName}${params}".execute()
+    "${script}${params}".execute()
 }
 
 /**
+ * Kills the process by PID.
  *
+ * @param pid the PID of a process to kill
  */
-task startFirebaseServer {
+void killProcess(final pid) {
+    final def script = "$projectDir/scripts/kill-process.${osExtension()}"
+    final def params = " ${pid}"
+
+    "${script}${params}".execute()
+}
+
+/**
+ * Starts the Firebase server emulator with REST API enabled.
+ * 
+ * Stores the PID of the started emulator process to the "./scripts/firebase-emulator.pid" file.
+ */
+task startFirebase {
     group = FIREBASE_EMULATOR_TASK_GROUP
-    description = "Starts local Firebase server emulator using scripts from ./scripts folder."
+    description = "Starts local Firebase server emulator" +
+            " using ./scripts/start-firebase-emulator scripts."
 
     doLast {
-        startFirebaseServer(localPort, rulesPath)
-        logger.info("Firebase server emulator started on port ${localPort}")
+        startFirebase(localPort, rulesFilePath, pidFilePath)
+    }
+}
+
+/**
+ * Stops the currently running Firebase emulator by killing its process by PID.
+ * 
+ * The PID of a process to kill is taken from the "./scripts/firebase-emulator.pid". If the
+ * file exists, kills the process specified then deletes the file.
+ */
+task stopFirebase {
+    group = FIREBASE_EMULATOR_TASK_GROUP
+    description = "Stops local Firebase server emulator by killing its process by PID."
+
+    startFirebase.dependsOn stopFirebase
+
+    doLast {
+        final File pidFile = file(pidFilePath)
+
+        if (pidFile.exists()) {
+            final String pid = pidFile.text
+            killProcess(pid)
+
+            delete pidFile
+        }
     }
 }

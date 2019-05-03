@@ -79,11 +79,12 @@ idea.module {
 }
 
 tasks["appengineRun"].dependsOn startDatastore
-tasks["appengineRun"].dependsOn startFirebaseServer
+tasks["appengineRun"].dependsOn startFirebase
 tasks["appengineStart"].dependsOn startDatastore
-tasks["appengineStart"].dependsOn startFirebaseServer
+tasks["appengineStart"].dependsOn startFirebase
 
 tasks["appengineStop"].dependsOn stopDatastore
+tasks["appengineStop"].dependsOn stopFirebase
 
 configurations.all {
     resolutionStrategy.eachDependency {
