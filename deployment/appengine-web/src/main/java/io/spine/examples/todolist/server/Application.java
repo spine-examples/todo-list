@@ -99,9 +99,7 @@ final class Application {
     }
 
     private static FirebaseClient firebaseClient() {
-        FirebaseCredentials credentials =
-                FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
-        FirebaseClient client = restClient(databaseUrl(), credentials);
+        FirebaseClient client = restClient(databaseUrl());
         return client;
     }
 
