@@ -233,7 +233,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return result;
     }
 
-    /** Queries the read-side with the specified query returning the result as a {@code List<Any>}. */
+    /** Queries the read-side with the specified query. */
     private List<Any> query(Query query) {
         return queryService.read(query)
                            .getMessagesList()

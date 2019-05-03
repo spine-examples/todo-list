@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.context;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelViewRepository;
@@ -29,14 +28,10 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.event.EventBus;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
-import java.util.Optional;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -83,10 +78,10 @@ public final class BoundedContexts {
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        EventBus.Builder eventBus = EventBus
+        BoundedContext boundedContext = BoundedContext
                 .newBuilder()
-                .setStorageFactory(storageFactory);
-        BoundedContext boundedContext = createBoundedContext(eventBus);
+                .setStorageFactorySupplier(() -> storageFactory)
+                .build();
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
@@ -96,18 +91,5 @@ public final class BoundedContexts {
         boundedContext.register(taskCreationRepo);
 
         return boundedContext;
-    }
-
-    @VisibleForTesting
-    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
-        Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
-        if (!storageFactory.isPresent()) {
-            throw newIllegalStateException("EventBus does not specify a StorageFactory.");
-        }
-        return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(storageFactory::get)
-                             .setName(NAME)
-                             .setEventBus(eventBus)
-                             .build();
     }
 }

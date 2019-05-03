@@ -35,9 +35,7 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
@@ -123,8 +121,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         return transit(TASK_DEFINITION, () -> {
             TaskId taskId = command.getTaskId();
-            CreateDraft createDraft = CreateDraftVBuilder
-                    .newBuilder()
+            CreateDraft createDraft = CreateDraft
+                    .vBuilder()
                     .setId(taskId)
                     .build();
             initProcess(command);
@@ -169,7 +167,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         return transit(CONFIRMATION, () -> {
             LabelAssignmentSkipped assignmentSkipped = LabelAssignmentSkipped
-                    .newBuilder()
+                    .vBuilder()
                     .setTaskId(taskId())
                     .build();
             return assignmentSkipped;
@@ -180,8 +178,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     FinalizeDraft handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
-            FinalizeDraft finalizeDraft = FinalizeDraftVBuilder
-                    .newBuilder()
+            FinalizeDraft finalizeDraft = FinalizeDraft
+                    .vBuilder()
                     .setId(taskId())
                     .build();
             completeProcess();
@@ -194,7 +192,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         return transit(CANCELED, () -> {
             completeProcess();
             TaskCreationCanceled taskCreationCanceled = TaskCreationCanceled
-                    .newBuilder()
+                    .vBuilder()
                     .setTaskId(taskId())
                     .build();
             return taskCreationCanceled;
