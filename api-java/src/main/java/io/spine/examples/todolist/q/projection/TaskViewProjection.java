@@ -56,7 +56,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     }
 
     @Subscribe
-    public void taskCreated(TaskCreated event) {
+    void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
                  .setDescription(taskDetails.getDescription())
@@ -65,22 +65,22 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     }
 
     @Subscribe
-    public void taskCompleted(TaskCompleted event) {
+    void taskCompleted(TaskCompleted event) {
         builder().setStatus(TaskStatus.COMPLETED);
     }
 
     @Subscribe
-    public void taskDraftFinalized(TaskDraftFinalized event) {
+    void taskDraftFinalized(TaskDraftFinalized event) {
         builder().setStatus(TaskStatus.FINALIZED);
     }
 
     @Subscribe
-    public void taskReopened(TaskReopened event) {
+    void taskReopened(TaskReopened event) {
         builder().setStatus(TaskStatus.OPEN);
     }
 
     @Subscribe
-    public void taskDeleted(TaskDeleted deleted) {
+    void taskDeleted(TaskDeleted deleted) {
         TaskStatus currentStatus = builder().getStatus();
         if (currentStatus == TaskStatus.DRAFT) {
             eraseTask();
@@ -90,35 +90,35 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     }
 
     @Subscribe
-    public void taskDescriptionUpdated(TaskDescriptionUpdated event) {
+    void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         TaskDescription newDescription = event.getDescriptionChange()
                                               .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Subscribe
-    public void taskDueDateUpdated(TaskDueDateUpdated event) {
+    void taskDueDateUpdated(TaskDueDateUpdated event) {
         Timestamp newDueDate = event.getDueDateChange()
                                     .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Subscribe
-    public void taskPriorityUpdated(TaskPriorityUpdated event) {
+    void taskPriorityUpdated(TaskPriorityUpdated event) {
         TaskPriority newPriority = event.getPriorityChange()
                                         .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Subscribe
-    public void draftCreated(TaskDraftCreated event) {
+    void draftCreated(TaskDraftCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
                  .setStatus(TaskStatus.DRAFT);
     }
 
     @Subscribe
-    public void labelAssignedToTask(LabelAssignedToTask event) {
+    void labelAssignedToTask(LabelAssignedToTask event) {
         Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
                                                             .getIdsList());
         list.add(event.getLabelId());
@@ -131,7 +131,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     }
 
     @Subscribe
-    public void labelRemovedFromTask(LabelRemovedFromTask event) {
+    void labelRemovedFromTask(LabelRemovedFromTask event) {
         Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
                                                             .getIdsList());
         list.remove(event.getLabelId());

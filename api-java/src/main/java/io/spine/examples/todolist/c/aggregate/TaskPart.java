@@ -143,7 +143,8 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isEquals) {
             ValueMismatch mismatch = unexpectedValue(expectedDescription.getValue(),
                                                      actualDescription.getValue(),
-                                                     descriptionChange.getNewValue().getValue());
+                                                     descriptionChange.getNewValue()
+                                                                      .getValue());
             throwCannotUpdateDescription(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();
@@ -341,7 +342,7 @@ public class TaskPart extends AggregatePart<TaskId,
      *****************/
 
     @Apply
-    void taskCreated(TaskCreated event) {
+    private void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
                  .setCreated(currentTime())
@@ -351,58 +352,58 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Apply
-    void taskDescriptionUpdated(TaskDescriptionUpdated event) {
+    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         TaskDescription newDescription = event.getDescriptionChange()
                                               .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Apply
-    void taskDueDateUpdated(TaskDueDateUpdated event) {
+    private void taskDueDateUpdated(TaskDueDateUpdated event) {
         Timestamp newDueDate = event.getDueDateChange()
                                     .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Apply
-    void taskPriorityUpdated(TaskPriorityUpdated event) {
+    private void taskPriorityUpdated(TaskPriorityUpdated event) {
         TaskPriority newPriority = event.getPriorityChange()
                                         .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Apply
-    void taskReopened(TaskReopened event) {
+    private void taskReopened(TaskReopened event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void taskDeleted(TaskDeleted event) {
+    private void taskDeleted(TaskDeleted event) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    void deletedTaskRestored(DeletedTaskRestored event) {
+    private void deletedTaskRestored(DeletedTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void labelledTaskRestored(LabelledTaskRestored event) {
+    private void labelledTaskRestored(LabelledTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void taskCompleted(TaskCompleted event) {
+    private void taskCompleted(TaskCompleted event) {
         builder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    void taskDraftFinalized(TaskDraftFinalized event) {
+    private void taskDraftFinalized(TaskDraftFinalized event) {
         builder().setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    void draftCreated(TaskDraftCreated event) {
+    private void draftCreated(TaskDraftCreated event) {
         builder().setId(event.getId())
                  .setCreated(event.getDraftCreationTime())
                  .setDescription(event.getDetails()
