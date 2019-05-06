@@ -37,7 +37,6 @@ public final class Configuration {
 
     private final String firebaseDatabaseUrl;
     private final String projectId;
-    private final String serviceAccCredentialsResource;
 
     private static final Configuration INSTANCE = new Configuration(readConfigFile());
 
@@ -54,8 +53,6 @@ public final class Configuration {
     private Configuration(Properties properties) {
         this.firebaseDatabaseUrl = Setting.FIREBASE_DB_URL.valueFrom(properties);
         this.projectId = Setting.APP_ENGINE_PROJECT_ID.valueFrom(properties);
-        this.serviceAccCredentialsResource =
-                Setting.SERVICE_ACCOUNT_CREDENTIALS_RESOURCE.valueFrom(properties);
     }
 
     /**
@@ -70,13 +67,6 @@ public final class Configuration {
      */
     String projectId() {
         return projectId;
-    }
-
-    /**
-     * Retrieves the name of a resource with JSON credentials.
-     */
-    String serviceAccCredentialsResource() {
-        return serviceAccCredentialsResource;
     }
 
     private static Properties readConfigFile() {
@@ -98,13 +88,6 @@ public final class Configuration {
      * The enumeration of separate settings of a deployment configuration.
      */
     private enum Setting {
-
-        /**
-         * The path to the JSON file with Google credentials in application classpath.
-         *
-         * <p>For example, for the Firebase Database and Datastore access.
-         */
-        SERVICE_ACCOUNT_CREDENTIALS_RESOURCE("service-account.credentials.resource"),
 
         /**
          * The URL of the Firebase Database to use for the client transport purposes, as

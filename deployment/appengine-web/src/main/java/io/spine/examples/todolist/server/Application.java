@@ -46,13 +46,16 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
+    /**
+     * The URL of the local database running on Firebase emulator.
+     */
+    private static final String LOCAL_DATABASE_URL = "http://127.0.0.1:8082";
     private static final StartUpLogger log = StartUpLogger.instance();
+    private static final Application INSTANCE = create();
 
     private final CommandService commandService;
     private final FirebaseQueryBridge queryBridge;
     private final FirebaseSubscriptionBridge subscriptionBridge;
-
-    private static final Application INSTANCE = create();
 
     /**
      * Returns the application instance.
@@ -104,11 +107,13 @@ final class Application {
         if (getDeploymentType() == APPENGINE_CLOUD) {
             FirebaseCredentials credentials =
                     FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
-            FirebaseClient client = restClient(databaseUrl(), credentials);
+            String firebaseDatabaseUrl = Configuration.instance()
+                                                      .firebaseDatabaseUrl();
+            FirebaseClient client = restClient(databaseUrl(firebaseDatabaseUrl), credentials);
             return client;
         }
 
-        FirebaseClient client = restClient(databaseUrl());
+        FirebaseClient client = restClient(databaseUrl(LOCAL_DATABASE_URL));
         return client;
     }
 
@@ -128,17 +133,13 @@ final class Application {
                                          .build();
     }
 
-    private static DatabaseUrl databaseUrl() {
-        String firebaseDatabaseUrl = Configuration.instance()
-                                           .firebaseDatabaseUrl();
-        Url url = UrlVBuilder
-                .newBuilder()
-                .setSpec(firebaseDatabaseUrl)
-                .build();
-        DatabaseUrl databaseUrl = DatabaseUrlVBuilder
-                .newBuilder()
-                .setUrl(url)
-                .build();
+    private static DatabaseUrl databaseUrl(String value) {
+        Url url = UrlVBuilder.newBuilder()
+                             .setSpec(value)
+                             .build();
+        DatabaseUrl databaseUrl = DatabaseUrlVBuilder.newBuilder()
+                                                     .setUrl(url)
+                                                     .build();
         return databaseUrl;
     }
 }

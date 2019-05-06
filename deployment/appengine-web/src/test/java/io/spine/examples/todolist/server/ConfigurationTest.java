@@ -44,6 +44,5 @@ class ConfigurationTest {
         Configuration instance = Configuration.instance();
         assertNotNull(instance.firebaseDatabaseUrl());
         assertNotNull(instance.projectId());
-        assertNotNull(instance.serviceAccCredentialsResource());
     }
 }
