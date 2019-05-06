@@ -7,9 +7,7 @@ stages:
   - name: Unit and Integration Tests
   # The deployment is executed when the pull request is merged to the master branch.
   - name: Deployment
-    #if: branch = master AND type != pull_request
-    #TODO:2019-05-06:yegor.udovchenko: Enable master branch filter
-    if: branch = project-repackaging
+    if: branch = master AND type != pull_request
 jobs:
   include:
 
