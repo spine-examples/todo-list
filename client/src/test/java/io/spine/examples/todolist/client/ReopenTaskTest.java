@@ -90,7 +90,7 @@ class ReopenTaskTest extends TodoClientTest {
         completeAndReopenTask(isCorrectId, createdTaskId);
 
         List<TaskView> labelledTasksView = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(ReopenTaskTest::hasLabel)
                 .collect(Collectors.toList());

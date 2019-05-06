@@ -83,7 +83,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
         updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
         List<TaskView> drafts = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                 .collect(toList());
@@ -131,7 +131,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
         updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
         List<TaskView> labelledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()

@@ -129,7 +129,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
                                            previousLabelDetails,
                                            newLabelDetails);
         client.postCommand(updateLabelDetails);
-        TaskView view = getLabelledTasksView(labelId, client.getTaskViews());
+        TaskView view = getLabelledTasksView(labelId, client.taskViews());
         return view;
     }
 
@@ -198,7 +198,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         client.postCommand(updateLabelDetails);
 
         List<TaskView> taskViews = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                 .collect(toList());
@@ -213,7 +213,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
     }
 
     private LabelView findLabel(LabelId labelId) {
-        return client.getLabelView(labelId)
+        return client.labelView(labelId)
                      .orElseThrow(() -> newIllegalStateException("Label not found"));
     }
 }

@@ -70,7 +70,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
         client.postCommand(assignLabelToTask);
 
         int expectedListSize = 1;
-        List<TaskView> tasksViewList = client.getTaskViews();
+        List<TaskView> tasksViewList = client.taskViews();
         assertEquals(expectedListSize, tasksViewList.size());
 
         TaskView view = tasksViewList.get(0);
@@ -99,7 +99,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
         assignLabelToTask = assignLabelToTaskInstance(taskId, secondLabelId);
         client.postCommand(assignLabelToTask);
 
-        List<TaskView> taskViews = client.getTaskViews();
+        List<TaskView> taskViews = client.taskViews();
         assertEquals(1, taskViews.size());
 
         Collection labelIds = newHashSet(firstLabelId, secondLabelId);
@@ -151,7 +151,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
                     assignLabelToTaskInstance(taskIdToAssign, labelId);
             client.postCommand(assignLabelToTask);
 
-            List<TaskView> taskViews = client.getTaskViews()
+            List<TaskView> taskViews = client.taskViews()
                                              .stream()
                                              .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                                              .collect(Collectors.toList());
@@ -204,7 +204,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
                     assignLabelToTaskInstance(idOfUpdatedTask, labelId);
             client.postCommand(assignLabelToTask);
 
-            List<TaskView> taskViews = client.getTaskViews();
+            List<TaskView> taskViews = client.taskViews();
             int expected = isCorrectId ? 1 : 2;
             assertEquals(expected, taskViews.size());
 
@@ -240,7 +240,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
             TaskId taskId = createTask.getId();
             AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.postCommand(assignLabelToTask);
-            TaskLabels labels = client.getLabels(taskId);
+            TaskLabels labels = client.labelsOf(taskId);
             return labels;
         }
     }

@@ -69,7 +69,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
 
         int expectedListSize = 1;
         List<TaskView> labelledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()
@@ -97,7 +97,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
         RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(createWrongTaskId());
         client.postCommand(restoreDeletedTask);
 
-        List<TaskView> taskViews = client.getTaskViews();
+        List<TaskView> taskViews = client.taskViews();
         assertEquals(1, taskViews.size());
 
         TaskView view = taskViews.get(0);

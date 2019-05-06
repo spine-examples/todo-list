@@ -22,4 +22,10 @@
  * This package provides test environment for
  * {@link io.spine.examples.todolist.q.projection.TaskViewProjection} tests.
  */
+@ParametersAreNonnullByDefault
+@CheckReturnValue
 package io.spine.examples.todolist.q.projection.given;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

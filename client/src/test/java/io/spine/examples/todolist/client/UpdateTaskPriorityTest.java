@@ -89,7 +89,7 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         client.postCommand(assignLabelToTask);
 
         List<TaskView> labelledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()
@@ -135,7 +135,7 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         updatePriority(newPriority, isCorrectId, createdTaskId);
 
         List<TaskView> drafts = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                 .collect(toList());

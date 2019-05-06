@@ -77,7 +77,7 @@ class FinalizeDraftTest extends TodoClientTest {
             FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
             client.postCommand(finalizeDraft);
 
-            List<TaskView> views = client.getTaskViews();
+            List<TaskView> views = client.taskViews();
             assertEquals(1, views.size());
             assertEquals(taskId, views.get(0)
                                       .getId());
@@ -90,7 +90,7 @@ class FinalizeDraftTest extends TodoClientTest {
             CreateDraft createDraft = createDraftTask();
 
             List<TaskView> taskViewList = client
-                    .getTaskViews()
+                    .taskViews()
                     .stream()
                     .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                     .collect(toList());
@@ -101,7 +101,7 @@ class FinalizeDraftTest extends TodoClientTest {
             client.postCommand(finalizeDraft);
 
             taskViewList = client
-                    .getTaskViews()
+                    .taskViews()
                     .stream()
                     .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                     .collect(toList());
@@ -118,7 +118,7 @@ class FinalizeDraftTest extends TodoClientTest {
             client.postCommand(finalizeDraft);
 
             List<TaskView> drafts = client
-                    .getTaskViews()
+                    .taskViews()
                     .stream()
                     .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                     .collect(toList());

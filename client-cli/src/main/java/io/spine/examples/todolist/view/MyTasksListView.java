@@ -60,7 +60,7 @@ public final class MyTasksListView extends ActionListView {
     public void render(Screen screen) {
         clearActions();
 
-        List<TaskView> views = getClient().getTaskViews();
+        List<TaskView> views = getClient().taskViews();
         Collection<TransitionActionProducer> producers = taskActionProducersFor(views);
 
         if (producers.isEmpty()) {

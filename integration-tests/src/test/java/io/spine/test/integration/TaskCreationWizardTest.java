@@ -155,7 +155,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     }
 
     private void assertAssignedLabel(TaskId taskId, String labelTitle, LabelColor labelColor) {
-        TaskView task = client.getTaskViews()
+        TaskView task = client.taskViews()
                               .stream()
                               .filter(view -> view.getId()
                                                   .equals(taskId))
@@ -164,7 +164,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         LabelId labelId = task.getLabelIdsList()
                               .getIdsList()
                               .get(0);
-        LabelView label = client.getLabelView(labelId)
+        LabelView label = client.labelView(labelId)
                                 .orElseThrow(() -> newIllegalStateException("Label not found."));
         assertEquals(labelColor, label.getColor());
         assertEquals(labelTitle, label.getTitle());

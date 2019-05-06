@@ -82,7 +82,7 @@ class CompleteTaskTest extends TodoClientTest {
         completeTask(isCorrectId, createdTaskId);
 
         List<TaskView> labelledTaskViews = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()

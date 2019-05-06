@@ -56,7 +56,7 @@ class CreateBasicTaskTest extends TodoClientTest {
         client.postCommand(createBasicTask);
 
         boolean noLabelsPresent = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .map(view -> view.getLabelIdsList()
                                  .getIdsList())
@@ -71,7 +71,7 @@ class CreateBasicTaskTest extends TodoClientTest {
         client.postCommand(createBasicTask);
 
         boolean noDrafts = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .allMatch(view -> view.getStatus() != TaskStatus.DRAFT);
 
@@ -87,7 +87,7 @@ class CreateBasicTaskTest extends TodoClientTest {
         CreateBasicTask createSecondTask = createBasicTask();
         client.postCommand(createSecondTask);
 
-        List<TaskView> taskViews = client.getTaskViews();
+        List<TaskView> taskViews = client.taskViews();
         assertEquals(2, taskViews.size());
 
         List<TaskId> taskIds = new ArrayList<>(2);
@@ -110,7 +110,7 @@ class CreateBasicTaskTest extends TodoClientTest {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
-        List<Task> allTasks = client.getTasks();
+        List<Task> allTasks = client.tasks();
 
         assertEquals(1, allTasks.size());
         Task singleTask = allTasks.get(0);

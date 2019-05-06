@@ -51,7 +51,7 @@ final class TaskItemView extends EntityView<TaskId, TaskView> {
     @Override
     protected TaskView load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        List<TaskView> tasks = getClient().getTaskViews();
+        List<TaskView> tasks = getClient().taskViews();
         Optional<TaskView> optionalTask = tasks.stream()
                                                .filter(task -> task.getId()
                                                                    .equals(id))

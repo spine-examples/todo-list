@@ -49,7 +49,7 @@ class ToDoListTest extends AbstractIntegrationTest {
                    .postCommand(basicTask);
         }, numberOfRequests);
 
-        List<TaskView> taskItems = getClient().getTaskViews();
+        List<TaskView> taskItems = getClient().taskViews();
 
         assertEquals(numberOfRequests, taskItems.size());
     }
@@ -65,7 +65,7 @@ class ToDoListTest extends AbstractIntegrationTest {
                    .postCommand(basicTask);
         }, numberOfRequests);
 
-        List<Task> tasks = getClient().getTasks();
+        List<Task> tasks = getClient().tasks();
 
         assertEquals(numberOfRequests, tasks.size());
     }

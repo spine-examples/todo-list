@@ -70,7 +70,7 @@ class DeleteTaskTest extends TodoClientTest {
         DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
         client.postCommand(deleteTask);
 
-        List<TaskView> tasks = client.getTaskViews();
+        List<TaskView> tasks = client.taskViews();
         assertEquals(1, tasks.size());
 
         TaskView task = tasks.get(0);
@@ -87,7 +87,7 @@ class DeleteTaskTest extends TodoClientTest {
         DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
         client.postCommand(deleteTask);
 
-        List<TaskView> views = client.getTaskViews();
+        List<TaskView> views = client.taskViews();
         assertEquals(0, views.size());
     }
 
@@ -105,7 +105,7 @@ class DeleteTaskTest extends TodoClientTest {
         DeleteTask deleteTask = deleteTaskInstance(id);
         client.postCommand(deleteTask);
 
-        List<TaskView> views = client.getTaskViews();
+        List<TaskView> views = client.taskViews();
         assertEquals(1, views.size());
         TaskView taskView = views.get(0);
         assertEquals(TaskStatus.DELETED, taskView.getStatus());

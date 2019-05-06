@@ -74,7 +74,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
             client.postCommand(removeLabelFromTask);
 
-            List<TaskView> tasksViewList = client.getTaskViews();
+            List<TaskView> tasksViewList = client.taskViews();
             assertEquals(1, tasksViewList.size());
 
             List<LabelId> taskViews = tasksViewList.get(0)
@@ -95,7 +95,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.postCommand(assignLabelToTask);
 
-            List<TaskView> taskViews = client.getTaskViews();
+            List<TaskView> taskViews = client.taskViews();
             assertEquals(1, taskViews.size());
 
             List<LabelId> labelIds = taskViews.get(0)
@@ -144,7 +144,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             assignAndRemoveLabel(labelId, isCorrectId, taskId);
 
             List<TaskView> taskViews = client
-                    .getTaskViews()
+                    .taskViews()
                     .stream()
                     .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                     .collect(Collectors.toList());
@@ -186,7 +186,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
 
             assignAndRemoveLabel(labelId, isCorrectId, taskId);
 
-            List<TaskView> taskViews = client.getTaskViews();
+            List<TaskView> taskViews = client.taskViews();
             return checkAndObtainView(taskId, taskViews);
         }
     }

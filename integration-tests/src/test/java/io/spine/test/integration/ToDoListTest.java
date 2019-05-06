@@ -87,7 +87,7 @@ class ToDoListTest extends AbstractIntegrationTest {
         CompleteTask completeTask = completeTaskInstance(basicTask.getId());
         client.postCommand(completeTask);
 
-        List<TaskView> taskItems = client.getTaskViews();
+        List<TaskView> taskItems = client.taskViews();
 
         assertEquals(1, taskItems.size());
 
@@ -120,10 +120,10 @@ class ToDoListTest extends AbstractIntegrationTest {
                 basicLabel.getLabelId());
         client.postCommand(removeLabelFromTask);
 
-        List<TaskView> tasks = client.getTaskViews();
+        List<TaskView> tasks = client.taskViews();
 
         List<TaskView> labeledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()
@@ -166,7 +166,7 @@ class ToDoListTest extends AbstractIntegrationTest {
         client.postCommand(assignLabelToTask);
 
         List<TaskView> draftTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> view.getStatus() ==
                         TaskStatus.DRAFT)
@@ -206,7 +206,7 @@ class ToDoListTest extends AbstractIntegrationTest {
         client.postCommand(restoreDeletedTask);
 
         List<TaskView> labeledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()

@@ -29,7 +29,6 @@ import io.spine.examples.todolist.q.projection.given.TaskViewProjectionTestEnv;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.entity.AbstractEntity;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
-import io.spine.testing.server.blackbox.SingleTenantBlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 @DisplayName("Task view projection should")
 class TaskViewProjectionTest {
 
-    private SingleTenantBlackBoxContext boundedContext;
+    private BlackBoxBoundedContext boundedContext;
     private TaskId taskId;
     private TaskViewRepository repository;
     private TaskViewProjectionTestEnv testEnv;
@@ -63,7 +62,7 @@ class TaskViewProjectionTest {
     void getCreated() {
         TaskCreated taskCreated = testEnv.taskCreated();
         boundedContext.receivesEvent(taskCreated);
-        assertProjectionIs(view -> view.getStatus() == TaskStatus.OPEN);
+        assertProjectionMatches(view -> view.getStatus() == TaskStatus.OPEN);
     }
 
     @DisplayName("change its status to `Completed` upon receiving a `TaskCompleted` event ")
@@ -71,7 +70,7 @@ class TaskViewProjectionTest {
     void getCompleted() {
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.taskCompleted());
-        assertProjectionIs(view -> view.getStatus() == TaskStatus.COMPLETED);
+        assertProjectionMatches(view -> view.getStatus() == TaskStatus.COMPLETED);
     }
 
     @DisplayName("set its task status to `Deleted` upon receiving a `TaskDeleted` event")
@@ -79,7 +78,7 @@ class TaskViewProjectionTest {
     void testDeletedDeletes() {
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.taskDeleted());
-        assertProjectionIs(view -> view.getStatus() == TaskStatus.DELETED);
+        assertProjectionMatches(view -> view.getStatus() == TaskStatus.DELETED);
     }
 
     @DisplayName("set its entity status to `deleted` if it was deleted in the `Draft` state")
@@ -100,9 +99,9 @@ class TaskViewProjectionTest {
         String newDescription = "Walk my dog";
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.descriptionUpdated(newDescription));
-        assertProjectionIs(view -> view.getDescription()
-                                       .getValue()
-                                       .equals(newDescription));
+        assertProjectionMatches(view -> view.getDescription()
+                                            .getValue()
+                                            .equals(newDescription));
     }
 
     @DisplayName("update its due date upon receiving `TaskDueDateUpdated` event")
@@ -111,8 +110,8 @@ class TaskViewProjectionTest {
         Timestamp newDueDate = theDayAfterTomorrow();
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.dueDateUpdated(newDueDate));
-        assertProjectionIs(view -> view.getDueDate()
-                                       .equals(newDueDate));
+        assertProjectionMatches(view -> view.getDueDate()
+                                            .equals(newDueDate));
     }
 
     @DisplayName("update its priority upon receiving a `TaskPriorityUpdated` event")
@@ -121,7 +120,7 @@ class TaskViewProjectionTest {
         TaskPriority newPriority = TaskPriority.HIGH;
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.priorityUpdated(newPriority));
-        assertProjectionIs(view -> view.getPriority() == newPriority);
+        assertProjectionMatches(view -> view.getPriority() == newPriority);
     }
 
     @DisplayName("update its task status to `Open` after receiving `TaskReopened` event")
@@ -130,17 +129,17 @@ class TaskViewProjectionTest {
         boundedContext.receivesEvent(testEnv.taskCreated())
                       .receivesEvent(testEnv.taskCompleted())
                       .receivesEvent(testEnv.taskReopened());
-        assertProjectionIs(view -> view.getStatus() == TaskStatus.OPEN);
+        assertProjectionMatches(view -> view.getStatus() == TaskStatus.OPEN);
     }
 
     @DisplayName("get created with `Draft` status upon receiving a `TaskDraftCreated` event")
     @Test
     void testTaskDraftCreation() {
         boundedContext.receivesEvent(testEnv.draftCreated());
-        assertProjectionIs(view -> view.getStatus() == TaskStatus.DRAFT);
+        assertProjectionMatches(view -> view.getStatus() == TaskStatus.DRAFT);
     }
 
-    private void assertProjectionIs(Predicate<TaskView> predicate) {
+    private void assertProjectionMatches(Predicate<TaskView> predicate) {
         boolean matches = predicate.test(projectionState());
         assertTrue(matches);
     }

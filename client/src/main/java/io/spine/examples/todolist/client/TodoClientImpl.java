@@ -100,7 +100,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public List<TaskView> getTaskViews() {
+    public List<TaskView> taskViews() {
         Query query = requestFactory.query()
                                     .all(TaskView.class);
         List<Any> messages = query(query);
@@ -112,23 +112,17 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public List<Task> getTasks() {
+    public List<Task> tasks() {
         return getByType(Task.class);
     }
 
     @Override
-    public Task getTaskOr(TaskId id, @Nullable Task other) {
-        Optional<Task> found = findById(Task.class, id);
-        return found.orElse(other);
-    }
-
-    @Override
-    public List<TaskLabel> getLabels() {
+    public List<TaskLabel> labels() {
         return getByType(TaskLabel.class);
     }
 
     @Override
-    public TaskLabels getLabels(TaskId taskId) {
+    public TaskLabels labelsOf(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
         TaskLabels result = labels.orElse(TaskLabelsVBuilder.newBuilder()
                                                             .setTaskId(taskId)
@@ -137,14 +131,14 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public Optional<LabelView> getLabelView(LabelId id) {
+    public Optional<LabelView> labelView(LabelId id) {
         Optional<LabelView> result = findById(LabelView.class, id);
         return result;
     }
 
     @Nullable
     @Override
-    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
+    public TaskLabel labelOr(LabelId id, @Nullable TaskLabel other) {
         Optional<TaskLabel> found = findById(TaskLabel.class, id);
         return found.orElse(other);
     }

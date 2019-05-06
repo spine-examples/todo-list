@@ -97,7 +97,7 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
         updateDescription(newDescription, isCorrectId, createTask);
 
         List<TaskView> labelledTasks = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> !view.getLabelIdsList()
                                      .getIdsList()
@@ -160,7 +160,7 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
     /** Obtains all the task views that are in the {@code DRAFT} state. */
     private List<TaskView> fetchDrafts() {
         return client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                 .collect(toList());

@@ -51,7 +51,7 @@ class CreateDraftTest extends TodoClientTest {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        List<TaskView> drafts = client.getTaskViews()
+        List<TaskView> drafts = client.taskViews()
                                       .stream()
                                       .filter(view -> view.getStatus() == TaskStatus.DRAFT)
                                       .collect(toList());
@@ -67,7 +67,7 @@ class CreateDraftTest extends TodoClientTest {
         client.postCommand(createDraft);
 
         boolean noDraftsPresent = client
-                .getTaskViews()
+                .taskViews()
                 .stream()
                 .map(TaskView::getLabelIdsList)
                 .allMatch(list -> list.getIdsList()
@@ -81,7 +81,7 @@ class CreateDraftTest extends TodoClientTest {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        List<TaskView> taskViews = client.getTaskViews();
+        List<TaskView> taskViews = client.taskViews();
         assertEquals(1, taskViews.size());
         TaskView taskView = taskViews.get(0);
         assertEquals(TaskStatus.DRAFT, taskView.getStatus());
