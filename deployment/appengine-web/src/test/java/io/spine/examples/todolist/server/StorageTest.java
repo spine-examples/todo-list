@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.server;
 
 import com.google.cloud.datastore.DatastoreOptions;
-import io.spine.examples.todolist.server.given.StorageTestEnv.EmptyCredentials;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,9 +48,10 @@ class StorageTest {
 
         @Test
         @DisplayName("on App Engine cloud infrastructure")
+        @Disabled
         void onGaeCloud() {
             configureDeployment(() -> APPENGINE_CLOUD);
-            DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
+            DatastoreOptions options = Storage.datastoreOptions();
             assertEquals("https://datastore.googleapis.com", options.getHost());
         }
 
@@ -58,7 +59,7 @@ class StorageTest {
         @DisplayName("on App Engine emulator")
         void onGaeEmulator() {
             configureDeployment(() -> APPENGINE_EMULATOR);
-            DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
+            DatastoreOptions options = Storage.datastoreOptions();
             assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
             assertEquals(Configuration.instance().projectId(), options.getProjectId());
         }
@@ -67,7 +68,7 @@ class StorageTest {
         @DisplayName("in standalone mode")
         void inStandaloneMode() {
             configureDeployment(() -> STANDALONE);
-            DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
+            DatastoreOptions options = Storage.datastoreOptions();
             assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
             assertEquals(Configuration.instance().projectId(), options.getProjectId());
         }
