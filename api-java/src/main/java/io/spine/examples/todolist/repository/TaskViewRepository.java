@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.repository;
 
 import com.google.common.collect.ImmutableSet;
+import io.spine.base.EventMessage;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskCreated;
@@ -33,6 +34,8 @@ import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
 import io.spine.server.projection.ProjectionRepository;
+
+import java.util.function.Function;
 
 /**
  * Repository for the {@link TaskViewProjection}.
@@ -47,21 +50,30 @@ public class TaskViewRepository
     }
 
     private void reroute() {
-        eventRouting().route(TaskCreated.class,
-                             (message, context) -> ImmutableSet.of(message.getId()));
-        eventRouting().route(TaskDeleted.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
-        eventRouting().route(TaskCompleted.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
-        eventRouting().route(TaskDraftCreated.class,
-                             (message, context) -> ImmutableSet.of(message.getId()));
-        eventRouting().route(TaskDescriptionUpdated.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
-        eventRouting().route(TaskDueDateUpdated.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
-        eventRouting().route(TaskReopened.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
-        eventRouting().route(TaskPriorityUpdated.class,
-                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        toSingleProjection(TaskCreated.class, TaskCreated::getId);
+        toSingleProjection(TaskDeleted.class, TaskDeleted::getTaskId);
+        toSingleProjection(TaskCompleted.class, TaskCompleted::getTaskId);
+        toSingleProjection(TaskDraftCreated.class, TaskDraftCreated::getId);
+        toSingleProjection(TaskDescriptionUpdated.class, TaskDescriptionUpdated::getTaskId);
+        toSingleProjection(TaskDueDateUpdated.class, TaskDueDateUpdated::getTaskId);
+        toSingleProjection(TaskReopened.class, TaskReopened::getTaskId);
+        toSingleProjection(TaskPriorityUpdated.class, TaskPriorityUpdated::getTaskId);
     }
+
+    /**
+     * Reroutes events of the specified class to the projection with ID specified by the second
+     * parameter.
+     *
+     * @param eventClass
+     *         class of event to reroute
+     * @param fn
+     *         function to obtain a task ID from the specified event type
+     * @param <E>
+     *         type of event to reroute
+     */
+    private <E extends EventMessage> void toSingleProjection(Class<E> eventClass,
+                                                             Function<E, TaskId> fn) {
+        eventRouting().route(eventClass, (message, context) -> ImmutableSet.of(fn.apply(message)));
+    }
+
 }
