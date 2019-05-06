@@ -48,7 +48,7 @@ import java.util.Collection;
 /**
  * A projection which mirrors the state of a single task.
  */
-@SuppressWarnings({"unused", "Duplicates", "OverlyCoupledClass"}) // OK for this projection.
+@SuppressWarnings({"Duplicates", "OverlyCoupledClass"}) // OK for this projection.
 public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBuilder> {
 
     public TaskViewProjection(TaskId id) {
@@ -143,7 +143,10 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     }
 
     /**
-     * Tasks that are being deleted while in {@code Draft} state are deleted beyong recovery.
+     * Marks this task as both {@code archived} and {@code deleted}.
+     *
+     * <p>Such a task is never restored for reading. For example,
+     * task {@linkplain TaskStatus.DRAFT drafts} are never restored after being deleted.
      */
     private void eraseTask() {
         this.setArchived(true);
