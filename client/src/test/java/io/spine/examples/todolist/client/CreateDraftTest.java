@@ -51,10 +51,12 @@ class CreateDraftTest extends TodoClientTest {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        List<TaskView> drafts = client.taskViews()
-                                      .stream()
-                                      .filter(view -> view.getStatus() == TaskStatus.DRAFT)
-                                      .collect(toList());
+        List<TaskView> allTasks = client.taskViews();
+        assertEquals(1, allTasks.size());
+
+        List<TaskView> drafts = allTasks.stream()
+                                        .filter(view -> view.getStatus() == TaskStatus.DRAFT)
+                                        .collect(toList());
         assertEquals(1, drafts.size());
         assertEquals(createDraft.getId(), drafts.get(0)
                                                 .getId());
@@ -73,17 +75,5 @@ class CreateDraftTest extends TodoClientTest {
                 .allMatch(list -> list.getIdsList()
                                       .isEmpty());
         assertTrue(noDraftsPresent);
-    }
-
-    @Test
-    @DisplayName("a task view in the `draft` stat should be present")
-    void obtainMyListView() {
-        CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-
-        List<TaskView> taskViews = client.taskViews();
-        assertEquals(1, taskViews.size());
-        TaskView taskView = taskViews.get(0);
-        assertEquals(TaskStatus.DRAFT, taskView.getStatus());
     }
 }
