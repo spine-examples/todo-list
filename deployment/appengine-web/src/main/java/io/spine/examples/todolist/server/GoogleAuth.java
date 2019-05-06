@@ -24,11 +24,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.auth.oauth2.GoogleCredentials;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import static com.google.api.client.util.Preconditions.checkNotNull;
-import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
-import static io.spine.server.ServerEnvironment.getDeploymentType;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -52,18 +48,7 @@ final class GoogleAuth {
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
     static GoogleCredential serviceAccountCredential() {
-        if (getDeploymentType() == APPENGINE_CLOUD) {
-            return propagateIoErrors(GoogleCredential::getApplicationDefault);
-        } else {
-            String credentialsResource = Configuration.instance()
-                                                      .serviceAccCredentialsResource();
-            InputStream inputStream =
-                    readResource(credentialsResource);
-            GoogleCredential credential = propagateIoErrors(
-                    () -> GoogleCredential.fromStream(inputStream)
-            );
-            return credential;
-        }
+        return propagateIoErrors(GoogleCredential::getApplicationDefault);
     }
 
     /**
@@ -78,25 +63,7 @@ final class GoogleAuth {
      * @see #serviceAccountCredential() for an alternative API for the same credential
      */
     static GoogleCredentials serviceAccountCredentials() {
-        if (getDeploymentType() == APPENGINE_CLOUD) {
-            return propagateIoErrors(GoogleCredentials::getApplicationDefault);
-        } else {
-            String credentialsResource = Configuration.instance()
-                                                      .serviceAccCredentialsResource();
-            InputStream inputStream =
-                    readResource(credentialsResource);
-            GoogleCredentials credential = propagateIoErrors(
-                    () -> GoogleCredentials.fromStream(inputStream)
-            );
-            return credential;
-        }
-    }
-
-    private static InputStream readResource(String name) {
-        InputStream secret = GoogleAuth.class.getClassLoader()
-                                             .getResourceAsStream(name);
-        checkNotNull(secret, "%s resource is missing.", name);
-        return secret;
+        return propagateIoErrors(GoogleCredentials::getApplicationDefault);
     }
 
     private static <T> T propagateIoErrors(IoOperation<T> operation) {

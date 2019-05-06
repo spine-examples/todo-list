@@ -50,6 +50,7 @@ static def osExtension() {
     final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
     return runsOnWindows ? 'bat' : 'sh'
 }
+
 /**
  * Starts the Firebase server emulator.
  *

@@ -37,6 +37,8 @@ import io.spine.web.query.QueryBridge;
 
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
 import static io.spine.examples.todolist.server.Storage.createStorage;
+import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
+import static io.spine.server.ServerEnvironment.getDeploymentType;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -99,6 +101,13 @@ final class Application {
     }
 
     private static FirebaseClient firebaseClient() {
+        if (getDeploymentType() == APPENGINE_CLOUD) {
+            FirebaseCredentials credentials =
+                    FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
+            FirebaseClient client = restClient(databaseUrl(), credentials);
+            return client;
+        }
+
         FirebaseClient client = restClient(databaseUrl());
         return client;
     }

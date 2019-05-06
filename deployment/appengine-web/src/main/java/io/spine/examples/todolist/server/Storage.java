@@ -13,7 +13,6 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.datastore.DatastoreStorageFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredentials;
 import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
 import static io.spine.server.ServerEnvironment.getDeploymentType;
@@ -40,8 +39,7 @@ final class Storage {
      * @return new storage factory
      */
     static StorageFactory createStorage(boolean multitenant) {
-        Credentials credentials = serviceAccountCredentials();
-        Datastore datastore = datastoreOptions(credentials).getService();
+        Datastore datastore = datastoreOptions().getService();
         return DatastoreStorageFactory
                 .newBuilder()
                 .setDatastore(datastore)
@@ -56,9 +54,9 @@ final class Storage {
      * to be used along with the local Datastore emulator.
      */
     @VisibleForTesting
-    static DatastoreOptions datastoreOptions(Credentials credentials) {
-        checkNotNull(credentials);
+    static DatastoreOptions datastoreOptions() {
         if (getDeploymentType() == APPENGINE_CLOUD) {
+            Credentials credentials = serviceAccountCredentials();
             return DatastoreOptions
                     .newBuilder()
                     .setCredentials(credentials)
