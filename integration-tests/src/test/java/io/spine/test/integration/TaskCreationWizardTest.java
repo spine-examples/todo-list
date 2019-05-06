@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.LabelColor.BLUE;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.LabelColor.GREEN;
@@ -126,7 +126,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
 
         String description = "thirdCase";
         TaskPriority priority = LOW;
-        Timestamp dueDate = add(getCurrentTime(), fromSeconds(100));
+        Timestamp dueDate = add(currentTime(), fromSeconds(100));
         testEnv.setDetails(pid, description, priority, dueDate);
         String labelTitle = "thirdCase-label";
         LabelId labelId = testEnv.createNewLabel(labelTitle);

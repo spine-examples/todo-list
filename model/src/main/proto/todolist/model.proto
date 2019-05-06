@@ -89,6 +89,7 @@ message TaskLabels {
 //
 message TaskLabel {
     option (entity).kind = AGGREGATE;
+    option (entity).visibility = FULL;
 
     // Label identifier.
     LabelId id = 1;
