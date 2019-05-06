@@ -14,43 +14,21 @@ The server application is running under [AppEngine](https://cloud.google.com/app
 and the development relies on [gcloud](https://cloud.google.com/sdk/gcloud/) CLI tool. 
 
 Install `gcloud` CLI and its components:
-1. Install the gcloud CLI using this [instruction](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version).
-2. Install AppEngine component: `gcloud components install app-engine-java`.
-3. Install Datastore emulator component: `gcloud components install gcd-emulator`.
+ - Install the gcloud CLI using this [instruction](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version).
+ - Install AppEngine component: `gcloud components install app-engine-java`.
+ - Install Datastore emulator component: `gcloud components install gcd-emulator`.
 
-In order to deploy application manually, authenticate `gcloud` CLI and set current Google Cloud
-project to `spine-dev`:  
-4. Login with your Google account: `gcloud auth login`.
-5. Set the current project to work with: `gcloud config set project spine-dev`.
-
-## Credentials
-In order to deploy application to the AppEngine Standard Environment or to run the AppEngine
-emulator locally, the Google Cloud project must be initialized. This module is adjusted to work
-with `spine-dev` project and requires the respective service account key.
- 
-Google Service Account with following roles must be provided:
-- App Engine Deployer
-- App Engine Service Admin
-- Storage Admin
-- Cloud Datastore Index Admin
-- Cloud Scheduler Admin
-- Cloud Task Queue Admin
-
-To generate a key for an existing service account execute the following `gcloud` command under
-project root directory:
-```bash
-./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
-```
-Note, that a service account key file __must not__ be stored in VCS.
-
-The same service account is used during the automatic deployment on Travis build. The service
-account key is decrypted and stored under `deployment/appengine-web/src/main/resources/spine-dev.json`
-path.
+Emulating of the Firebase server relies on the [`firebase-server`](https://www.npmjs.com/package/firebase-server)
+NPM library that must be installed globally. To install `firebase-server` globally run the following
+command:
+   ```bash
+   npm install -g firebase-server
+   ```
 
 ## Running the application locally
 
-The application can be run locally by AppEngine and Datastore emulators. To run the application
-do the following:
+The application can be run locally by AppEngine, Datastore, and Firebase emulators. To run the
+application do the following:
 
 1. Assemble the application:
     ```bash
@@ -59,8 +37,9 @@ do the following:
     
 2. Start the local AppEngine server:
 
-    The following command runs the server on `localhost:8080` and also runs
-    the local Datastore emulator on `localhost:8081`:
+    The following command runs the server on `localhost:8080`. It also runs
+    the local Datastore emulator on `localhost:8081` and the local Firebase server
+    on `localhost:8082`:
     ```bash
     ./gradlew appengineRun
     ```
@@ -72,16 +51,30 @@ The configuration should connect to `localhost:5005`.
 #### Stopping the application
  
 The local server can be stopped with `./gradlew appengineStop` command or just by terminating a
-console process. When stopping the local server with a respective command, both
-AppEngine and Datastore emulators are stopped. When terminating a console process, the Datastore
-emulator stays serving.
+console process. When stopping the local server with a respective command, AppEngine, Datastore, and
+Firebase emulators are stopped. When terminating a console process, Datastore and Firebase 
+emulators stay serving.
 
 If the command to run the application locally is executed when the Datastore emulator is
 already running on the respective port, the Datastore emulator is reset.
 
 ## Application deployment
-The deployment uses the Firebase Realtime Database. It is required that the Firebase
-credentials are available under the `appengine-web/src/main/resources/spine-dev.json`.
+
+In order to run the application at AppEngine Standard Environment the Google Cloud project
+and Firebase application must be initialized. This module is adjusted to work with "spine-dev"
+GCloud and Firebase projects, the respective properties can be found in
+`appengine-web/src/main/resources/config.properties` file. The application deployment process also
+relies on the `appengine-web.xml` descriptor file replacement, descriptor replacement is described
+in `appengine-web/scripts/appengine.gradle` script.
+ 
+To use custom GCloud and Firebase projects, point them in the config properties file and adjust
+the `appengine-web/deployment/dev/appengine-web.template.xml` respectively.
+
+In order to deploy application manually, authenticate `gcloud` CLI and set current Google Cloud
+project:
+
+ - Login with your Google account: `gcloud auth login`.
+ - Set the current project to work with: `gcloud config set project <your-project-name>`.
 
 To deploy the application:
 
@@ -101,8 +94,28 @@ To deploy the application:
     ```
 
 ## Automatic deployment
-The application is also automatically deployed to the development environment. The deployment is
-performed by Travis after a merge into master branch. 
+The application is automatically deployed to the development environment. The deployment is
+performed by Travis CI after a merge into master branch using the common GCloud CLI tool. The GCloud
+CLI is authenticated with a respective service account key for the "spine-dev" project.
+
+Google Service Account with following roles must be provided:
+- App Engine Deployer
+- App Engine Service Admin
+- Storage Admin
+- Cloud Datastore Index Admin
+- Cloud Scheduler Admin
+- Cloud Task Queue Admin
+
+To generate a key for an existing service account execute the following `gcloud` command under
+project root directory:
+```bash
+./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
+```
+
+Note, that a service account key file __must not__ be stored in VCS.
+
+The service account key is decrypted during the Travic CI build and stored under the
+`deployment/appengine-web/src/main/resources/spine-dev.json` path.
 
 #### Encrypt credentials for Travis
 Travis `encrypt-file` command creates the same keys for multiple invocations. In order to create
