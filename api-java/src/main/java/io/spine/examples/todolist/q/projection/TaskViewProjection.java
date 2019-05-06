@@ -112,7 +112,6 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     void draftCreated(TaskDraftCreated event) {
-        TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getTaskId())
                  .setStatus(TaskStatus.DRAFT);
     }
