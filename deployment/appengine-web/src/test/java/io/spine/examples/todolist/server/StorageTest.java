@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class StorageTest {
 
     @Nested
-    @DisplayName("provide DatastoreOptions for")
+    @DisplayName("provide DatastoreOptions")
     class ProvideDatastoreOptions {
 
         @AfterEach

@@ -25,10 +25,13 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 import java.io.IOException;
 
+import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
+import static io.spine.server.ServerEnvironment.getDeploymentType;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.util.Exceptions.unsupported;
 
 /**
- * A factory of various forms of Google API credentials.
+ * A factory of Google API credentials.
  */
 final class GoogleAuth {
 
@@ -39,31 +42,38 @@ final class GoogleAuth {
     }
 
     /**
-     * Obtains the service account credential.
+     * Obtains the service account credential when running under AppEngine Cloud.
      *
-     * <p>When running under AppEngine, returns the default service account of this application.
-     * Otherwise, reads and returns the service account credential from
-     * the {@code spine-dev.json} resource.
+     * <p>When running under AppEngine Cloud, returns the default service account of this
+     * application.
      *
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
     static GoogleCredential serviceAccountCredential() {
+        ensureAppEngineCloud();
         return propagateIoErrors(GoogleCredential::getApplicationDefault);
     }
 
     /**
      * Obtains the service account credential.
      *
-     * <p>When running under AppEngine, returns the default service account of this application.
-     * Otherwise, reads and returns the service account credential from
-     * the {@code spine-dev.json} resource.
+     * <p>When running under AppEngine Cloud, returns the default service account of this
+     * application.
      *
      * <p>This credential is used for accessing the GCP APIs, such as the Could Datastore API.
      *
      * @see #serviceAccountCredential() for an alternative API for the same credential
      */
     static GoogleCredentials serviceAccountCredentials() {
+        ensureAppEngineCloud();
         return propagateIoErrors(GoogleCredentials::getApplicationDefault);
+    }
+
+    private static void ensureAppEngineCloud() {
+        if (getDeploymentType() != APPENGINE_CLOUD) {
+            throw unsupported("Cannot retrieve application default credentials" +
+                                      " for non-AppEngine Cloud environment.");
+        }
     }
 
     private static <T> T propagateIoErrors(IoOperation<T> operation) {
