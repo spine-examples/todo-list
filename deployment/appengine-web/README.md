@@ -14,7 +14,7 @@ The server application is running under [AppEngine](https://cloud.google.com/app
 and the development relies on [gcloud](https://cloud.google.com/sdk/gcloud/) CLI tool. 
 
 Install `gcloud` CLI and its components:
- - Install the gcloud CLI using this [instruction](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version).
+ - Install the `gcloud` CLI using this [instruction](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version).
  - Install AppEngine component: `gcloud components install app-engine-java`.
  - Install Datastore emulator component: `gcloud components install gcd-emulator`.
 

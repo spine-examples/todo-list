@@ -96,7 +96,7 @@ task startFirebase {
  * Stops the currently running Firebase emulator by killing its process by PID.
  * 
  * The PID of a process to kill is taken from the "./scripts/firebase-emulator.pid". If the
- * file exists, kills the process specified then deletes the file.
+ * file exists, kills the process specified, then deletes the file.
  */
 task stopFirebase {
     group = FIREBASE_EMULATOR_TASK_GROUP
