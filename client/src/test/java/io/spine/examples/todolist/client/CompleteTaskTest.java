@@ -55,18 +55,18 @@ class CompleteTaskTest extends TodoClientTest {
     @Test
     @DisplayName("contain a labelled completed task")
     void obtainLabelledViewWithCompletedTask() {
-        TaskView view = obtainViewWhenHandledCommandCompleteTask(true);
+        TaskView view = obtainViewAfterCommandCompleted(true);
         assertEquals(COMPLETED, view.getStatus());
     }
 
     @Test
     @DisplayName("contain a labelled uncompleted task if the command had an incorrect ID")
     void obtainLabelledViewWithUncompletedTask() {
-        TaskView view = obtainViewWhenHandledCommandCompleteTask(false);
+        TaskView view = obtainViewAfterCommandCompleted(false);
         assertNotSame(COMPLETED, view.getStatus());
     }
 
-    private TaskView obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
+    private TaskView obtainViewAfterCommandCompleted(boolean isCorrectId) {
         CreateBasicTask createTask = createTask();
         TaskId createdTaskId = createTask.getId();
 

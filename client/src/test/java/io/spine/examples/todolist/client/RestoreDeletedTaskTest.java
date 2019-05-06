@@ -54,7 +54,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("a restored labeled task view should exist")
+    @DisplayName("a restored labelled task view should exist")
     void containRestoredTask() {
         CreateBasicTask createTask = createTask();
         CreateBasicLabel createLabel = createLabel();

@@ -110,5 +110,31 @@ class DeleteTaskTest extends TodoClientTest {
         TaskView taskView = views.get(0);
         assertEquals(TaskStatus.DELETED, taskView.getStatus());
     }
+
+    @Test
+    @DisplayName("contain a deleted task with retained labels")
+    void containLabelledDeletedTasks() {
+        CreateBasicTask createTask = createTask();
+        CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createTask);
+        client.postCommand(createLabel);
+
+        TaskId taskId = createTask.getId();
+        LabelId assignedLabel = createLabel.getLabelId();
+
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, assignedLabel);
+        DeleteTask deleteTask = deleteTaskInstance(taskId);
+        client.postCommand(assignLabelToTask);
+        client.postCommand(deleteTask);
+
+        List<TaskView> views = client.taskViews();
+        assertEquals(1, views.size());
+        TaskView deletedTask = views.get(0);
+        List<LabelId> taskLabels = deletedTask.getLabelIdsList()
+                                              .getIdsList();
+        assertEquals(1, taskLabels.size());
+        LabelId labelId = taskLabels.get(0);
+        assertEquals(assignedLabel, labelId);
+    }
 }
 
