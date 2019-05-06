@@ -25,24 +25,15 @@ import {Client} from 'spine-web';
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {houseTask, houseTasks} from 'test/given/tasks';
+import {chore, chores} from 'test/given/tasks';
 import {label1, label2} from 'test/given/labels';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 import {tomorrow, yesterday} from 'test/given/dates';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
-import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {
-  AddLabels,
-  CancelTaskCreation,
-  CompleteTaskCreation,
-  SkipLabels,
-  StartTaskCreation,
-  UpdateTaskDetails
-} from 'proto/todolist/c/commands_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {LayoutModule} from 'app/layout/layout.module';
 import {NotificationService} from 'app/layout/notification.service';
@@ -52,7 +43,7 @@ describe('TaskCreationWizard', () => {
 
   class Given {
     static task(): TaskView {
-      return houseTask();
+      return chore();
     }
 
     static newDescription(): TaskDescription {
@@ -73,7 +64,7 @@ describe('TaskCreationWizard', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+    [chores()], [], [], unsubscribe
   ));
 
   let wizard: TaskCreationWizard;

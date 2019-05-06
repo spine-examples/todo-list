@@ -32,7 +32,7 @@ import {BehaviorSubject} from 'rxjs';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {houseTask} from 'test/given/tasks';
+import {chore} from 'test/given/tasks';
 
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
@@ -72,7 +72,7 @@ describe('ActiveTasksComponent', () => {
     input.dispatchEvent(keyPressed);
   }
 
-  const addedTasksSubject = new BehaviorSubject<TaskView>(houseTask());
+  const addedTasksSubject = new BehaviorSubject<TaskView>(chore());
 
   mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
     addedTasksSubject.asObservable(), unsubscribe

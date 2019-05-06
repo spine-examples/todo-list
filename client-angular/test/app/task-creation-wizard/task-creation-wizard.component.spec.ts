@@ -55,7 +55,7 @@ import {LabelsModule} from 'app/labels/labels.module';
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {houseTasks} from 'test/given/tasks';
+import {chores} from 'test/given/tasks';
 import {LabelService} from 'app/labels/label.service';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 
@@ -72,7 +72,7 @@ describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+    [chores()], [], [], unsubscribe
   ));
   const layoutService = mockLayoutService();
   const notificationService = mockNotificationService();

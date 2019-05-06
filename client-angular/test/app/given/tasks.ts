@@ -24,16 +24,16 @@ import {TaskDescription} from 'proto/todolist/values_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 
-export const HOUSE_TASK_1_ID = 'task-1';
-export const HOUSE_TASK_1_DESC = 'Wash the dishes';
+export const CHORE_1_ID = 'task-1';
+export const CHORE_1_DESC = 'Wash the dishes';
 
-export const HOUSE_TASK_2_ID = 'task-2';
-export const HOUSE_TASK_2_DESC = 'Clean the house';
+export const CHORE_2_ID = 'task-2';
+export const CHORE_2_DESC = 'Clean the house';
 
-export function houseTasks(): TaskView[] {
+export function chores(): TaskView[] {
   const tasks = [
-    taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC),
-    taskItem(HOUSE_TASK_2_ID, HOUSE_TASK_2_DESC)
+    taskItem(CHORE_1_ID, CHORE_1_DESC),
+    taskItem(CHORE_2_ID, CHORE_2_DESC)
   ];
   tasks.forEach(task => task.setStatus(TaskStatus.OPEN));
   return tasks;
@@ -61,6 +61,6 @@ export function taskItem(id: TaskId, description: TaskDescription): TaskView {
   return result;
 }
 
-export function houseTask(): TaskView {
-  return taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+export function chore(): TaskView {
+  return taskItem(CHORE_1_ID, CHORE_1_DESC);
 }

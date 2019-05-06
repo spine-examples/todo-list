@@ -28,7 +28,7 @@ import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {houseTasks} from 'test/given/tasks';
+import {chores} from 'test/given/tasks';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
@@ -44,7 +44,7 @@ describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+    [chores()], [], [], unsubscribe
   ));
 
   let component: ConfirmationComponent;

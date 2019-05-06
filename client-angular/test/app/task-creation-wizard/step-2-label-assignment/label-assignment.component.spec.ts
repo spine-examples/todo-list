@@ -31,7 +31,7 @@ import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {LabelService} from 'app/labels/label.service';
-import {houseTasks} from 'test/given/tasks';
+import {chores} from 'test/given/tasks';
 import {initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {label1, label2} from 'test/given/labels';
@@ -46,7 +46,7 @@ describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+    [chores()], [], [], unsubscribe
   ));
 
   const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);

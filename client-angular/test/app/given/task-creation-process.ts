@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {houseTask} from 'test/given/tasks';
+import {chore} from 'test/given/tasks';
 
 import {TaskCreationId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
@@ -27,13 +27,13 @@ import {LabelView, TaskView} from 'proto/todolist/q/projections_pb';
 
 export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
   const creationProcess = taskCreationProcess(stage);
-  const task = houseTask();
+  const task = chore();
   return resolveWithProcess(creationProcess, task);
 }
 
 export function initMockProcessWithLabels(labels: LabelView[]) {
   const creationProcess = taskCreationProcess(TaskCreation.Stage.LABEL_ASSIGNMENT);
-  const task = houseTask();
+  const task = chore();
 
   const labelIdsList = new LabelIdsList();
   labelIdsList.setIdsList(labels.map(label => label.getId()));
@@ -49,7 +49,7 @@ export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
   const taskCreation = new TaskCreation();
   taskCreation.setId(taskCreationId);
   taskCreation.setStage(creationStage);
-  taskCreation.setTaskId(houseTask().getId());
+  taskCreation.setTaskId(chore().getId());
   return taskCreation;
 }
 

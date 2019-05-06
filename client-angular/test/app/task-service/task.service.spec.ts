@@ -24,11 +24,11 @@ import {Client, Message} from 'spine-web';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
+  chore,
   HOUSE_TASK_1_DESC,
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
-  HOUSE_TASK_2_ID,
-  houseTask
+  HOUSE_TASK_2_ID
 } from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
 import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
@@ -40,7 +40,7 @@ describe('TaskService', () => {
   const unsubscribe = jasmine.createSpy();
   const notificationService = mockNotificationService();
 
-  const addedTasksSubject = new BehaviorSubject<TaskView>(houseTask());
+  const addedTasksSubject = new BehaviorSubject<TaskView>(chore());
 
   function makeCommandFail() {
     mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
@@ -70,7 +70,7 @@ describe('TaskService', () => {
   }));
 
   afterEach(() => {
-    addedTasksSubject.next(houseTask());
+    addedTasksSubject.next(chore());
     mockClient.sendCommand.and.callThrough();
   });
 
@@ -132,7 +132,7 @@ describe('TaskService', () => {
   });
 
   it('should fetch a single task view by ID', fakeAsync(() => {
-    const theTask = houseTask();
+    const theTask = chore();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theTask));
     service.fetchById(theTask.getId())
       .then(taskView => expect(taskView).toEqual(theTask))
@@ -145,14 +145,14 @@ describe('TaskService', () => {
     const errorMessage = 'Task details lookup rejected';
     mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
 
-    service.fetchById(houseTask().getId())
+    service.fetchById(chore().getId())
       .then(() => fail('Task details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
   }));
 
   it('should produce an error when no matching task is found during lookup', fakeAsync(() => {
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
-    const taskId = houseTask().getId();
+    const taskId = chore().getId();
 
     service.fetchById(taskId)
       .then(() => fail('Task details lookup should have been rejected'))
