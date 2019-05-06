@@ -114,7 +114,7 @@ project root directory:
 
 Note, that a service account key file __must not__ be stored in VCS.
 
-The service account key is decrypted during the Travic CI build and stored under the
+The service account key is decrypted during the Travis CI build and stored under the
 `deployment/appengine-web/src/main/resources/spine-dev.json` path.
 
 #### Encrypt credentials for Travis

@@ -25,11 +25,7 @@ require("firebase/database");
  * The configuration of the Firebase application.
  */
 let config = {
-    apiKey: "AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU",
-    authDomain: "spine-dev.firebaseapp.com",
-    databaseURL: "https://spine-dev.firebaseio.com",
-    projectId: "spine-dev",
-    storageBucket: "",
-    messagingSenderId: "165066236051"
+    authDomain: 'ws://localhost:8082',
+    databaseURL: 'ws://localhost:8082'
 };
-export let application = firebase.initializeApp(config, "spine-dev");
+export let application = firebase.initializeApp(config);

@@ -11,8 +11,6 @@ a description only).
 
 In order to launch the Web application successfully:
  - make sure that Node.js is installed (it also includes `npm`);
- - if the server uses a custom Firebase project (not `spine-dev`), point the client to that project
- in `client/web/lib/firebase_client.js`;
  
 ## Running the application
 
@@ -20,6 +18,7 @@ In order to launch the Web application successfully:
     ```bash
     ./gradlew :appengine-web:appengineRun
     ```
+    
     The local backend server will start on `localhost:8080`. For details about running the
     application server locally see `deeployment/appengine-web/README.md`. 
 2. Build the application with `./gradlew :client:web:build` command. It will install all module
@@ -28,6 +27,9 @@ In order to launch the Web application successfully:
 3. To run the client, open the `client/web/app/index.html` with the most convenient 
    way (e.g. from IDEA).
     
-   By default, the application expects a backend server available at `localhost:8080`. It also
-   relies upon `spine-dev` Firebase project — that you should replace with your own.
-   
+   By default, the application expects a backend server available at `localhost:8080` and Firebase
+   server available at `localhost:8082`.
+
+In order to run the application with a custom backend server, point the `spine-web` client to this
+host URL in `client/web/lib/client.js`. To use a custom Firebase project, point the client to that
+project in `client/web/lib/firebase_client.js`.
