@@ -30,6 +30,7 @@ import io.spine.base.CommandMessage;
 import io.spine.base.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
+import io.spine.client.EntityStateWithVersion;
 import io.spine.client.Query;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
@@ -102,8 +103,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     public List<TaskView> getTaskViews() {
         Query query = requestFactory.query()
                                     .all(TaskView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
+        List<Any> messages = query(query);
         List<TaskView> result = messages
                 .stream()
                 .map(any -> unpack(any, TaskView.class))
@@ -201,8 +201,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     private <M extends Message> List<M> getByType(Class<M> cls) {
         Query query = requestFactory.query()
                                     .all(cls);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
+        List<Any> messages = query(query);
 
         @SuppressWarnings("unchecked") // Logically correct.
                 List<M> result = messages.stream()
@@ -214,8 +213,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
         Query query = requestFactory.query()
                                     .byIds(messageClass, ImmutableSet.of(id));
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
+        List<Any> messages = query(query);
         checkState(messages.size() <= 1,
                    "Too many %s-s with ID %s:%s %s",
                    messageClass.getSimpleName(), Identifier.toString(id),
@@ -233,6 +231,15 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                      .usePlaintext()
                                                      .build();
         return result;
+    }
+
+    /** Queries the read-side with the specified query. */
+    private List<Any> query(Query query) {
+        return queryService.read(query)
+                           .getMessagesList()
+                           .stream()
+                           .map(EntityStateWithVersion::getState)
+                           .collect(toList());
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {

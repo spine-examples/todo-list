@@ -76,6 +76,22 @@ message TaskDraftCreated {
     google.protobuf.Timestamp draft_creation_time = 3 [(required) = true];
 }
 
+// An even that signifies that a task creation process ended and no task was created.
+//
+message TaskCreationCanceled {
+
+    // ID the task.
+    TaskId task_id = 1;
+}
+
+// An even that signifies that a label assignment step of the task creation process was skipped.
+//
+message LabelAssignmentSkipped {
+
+    // ID of the task.
+    TaskId task_id = 1;
+}
+
 // An event fired upon a task description update.
 //
 // The task referenced by the event may be either in a finalized or in a draft state.

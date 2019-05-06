@@ -150,7 +150,7 @@ class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
         assertThat(cause, instanceOf(CannotUpdateTaskPriority.class));
 
         Rejections.CannotUpdateTaskPriority cannotUpdateTaskPriority =
-                ((CannotUpdateTaskPriority) cause).getMessageThrown();
+                ((CannotUpdateTaskPriority) cause).messageThrown();
         PriorityUpdateRejected rejectionDetails =
                 cannotUpdateTaskPriority.getRejectionDetails();
         TaskId actualTaskId = rejectionDetails.getCommandDetails()

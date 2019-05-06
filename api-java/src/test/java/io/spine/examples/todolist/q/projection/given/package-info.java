@@ -18,16 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
-
 /**
- * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
+ * This package provides test environment for
+ * {@link io.spine.examples.todolist.q.projection.TaskViewProjection} tests.
  */
-class EnrichmentNotFoundException extends RuntimeException {
-
-    private static final long serialVersionUID = 0L;
-
-    EnrichmentNotFoundException(String message) {
-        super(message);
-    }
-}
+package io.spine.examples.todolist.q.projection.given;

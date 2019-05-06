@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static java.util.stream.Collectors.toList;
@@ -59,7 +59,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
     @Test
     @DisplayName("contain an updated draft")
     void containUpdatedDraft() {
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp newDueDate = currentTime();
         TaskView view = getUpdatedDraft(newDueDate, true);
 
         assertEquals(newDueDate, view.getDueDate());
@@ -68,7 +68,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
     @Test
     @DisplayName("contain an unchanged draft if the command had an incorrect ID")
     void containUnchangedDraft() {
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp newDueDate = currentTime();
         TaskView view = getUpdatedDraft(newDueDate, false);
 
         assertNotEquals(newDueDate, view.getDueDate());
@@ -98,7 +98,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
     @Test
     @DisplayName("contain an updated labelled task")
     void containUpdatedLabelledTask() {
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp newDueDate = currentTime();
         TaskView view = getUpdatedLabelledTask(newDueDate, true);
         assertEquals(newDueDate, view.getDueDate());
     }
@@ -106,7 +106,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
     @Test
     @DisplayName("contain an unchanged labelled task if the command had an incorrect ID")
     void containUnchangedLabelledTask() {
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp newDueDate = currentTime();
         TaskView view = getUpdatedLabelledTask(newDueDate, false);
         assertNotEquals(newDueDate, view.getDueDate());
     }

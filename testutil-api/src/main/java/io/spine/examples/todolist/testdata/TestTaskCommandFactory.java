@@ -55,7 +55,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 
 /**
  * A factory of the task commands for the test needs.
@@ -73,7 +73,7 @@ public class TestTaskCommandFactory {
             .setValue(newUuid())
             .build();
     public static final String DESCRIPTION = "Task description.";
-    public static final Timestamp DUE_DATE = getCurrentTime();
+    public static final Timestamp DUE_DATE = currentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
     private TestTaskCommandFactory() {

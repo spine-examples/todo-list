@@ -173,7 +173,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(priority)
                     .build();
-            Timestamp dueDate = Time.getCurrentTime();
+            Timestamp dueDate = Time.currentTime();
             TimestampChange dueDateChange = TimestampChange
                     .newBuilder()
                     .setNewValue(dueDate)

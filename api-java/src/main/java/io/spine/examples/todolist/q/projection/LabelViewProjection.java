@@ -39,7 +39,7 @@ public class LabelViewProjection extends Projection<LabelId, LabelView, LabelVie
     }
 
     @Subscribe
-    public void labelCreated(LabelCreated event) {
+    void labelCreated(LabelCreated event) {
         builder().setId(event.getId())
                  .setTitle(event.getDetails()
                                 .getTitle())
@@ -47,7 +47,7 @@ public class LabelViewProjection extends Projection<LabelId, LabelView, LabelVie
     }
 
     @Subscribe
-    public void labelDetailsUpdated(LabelDetailsUpdated event) {
+    void labelDetailsUpdated(LabelDetailsUpdated event) {
         LabelDetails labelDetails = event.getLabelDetailsChange()
                                          .getNewDetails();
         builder().setId(event.getLabelId())

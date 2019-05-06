@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -146,7 +146,7 @@ class ToDoListTest extends AbstractIntegrationTest {
         CreateDraft draftTask = createDraft();
         client.postCommand(draftTask);
 
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp newDueDate = currentTime();
         Timestamp previousDueDate = Timestamp.getDefaultInstance();
         UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(draftTask.getId(), previousDueDate, newDueDate);

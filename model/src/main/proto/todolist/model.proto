@@ -38,6 +38,7 @@ import "todolist/values.proto";
 
 message Task {
     option (entity).kind = AGGREGATE;
+    option (entity).visibility = FULL;
 
     // Task identifier.
     TaskId id = 1;
@@ -68,6 +69,7 @@ message Task {
 
 message TaskLabels {
     option (entity).kind = AGGREGATE;
+    option (entity).visibility = FULL;
 
     // Task identifier.
     TaskId task_id = 1;
@@ -87,6 +89,7 @@ message TaskLabels {
 //
 message TaskLabel {
     option (entity).kind = AGGREGATE;
+    option (entity).visibility = FULL;
 
     // Label identifier.
     LabelId id = 1;

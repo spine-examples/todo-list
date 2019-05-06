@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.context;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelViewRepository;
@@ -29,15 +28,10 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.enrich.Enricher;
-import io.spine.server.event.EventBus;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
-import java.util.Optional;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -84,11 +78,10 @@ public final class BoundedContexts {
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        EventBus.Builder eventBus = createEventBus(storageFactory,
-                                                   labelAggregateRepo,
-                                                   taskRepo,
-                                                   taskLabelsRepo);
-        BoundedContext boundedContext = createBoundedContext(eventBus);
+        BoundedContext boundedContext = BoundedContext
+                .newBuilder()
+                .setStorageFactorySupplier(() -> storageFactory)
+                .build();
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
@@ -98,36 +91,5 @@ public final class BoundedContexts {
         boundedContext.register(taskCreationRepo);
 
         return boundedContext;
-    }
-
-    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   LabelAggregateRepository labelRepo,
-                                                   TaskRepository taskRepo,
-                                                   TaskLabelsRepository labelsRepo) {
-        Enricher enricher = TodoListEnrichments
-                .newBuilder()
-                .setLabelRepository(labelRepo)
-                .setTaskRepository(taskRepo)
-                .setTaskLabelsRepository(labelsRepo)
-                .build()
-                .createEnricher();
-        EventBus.Builder eventBus = EventBus
-                .newBuilder()
-                .setEnricher(enricher)
-                .setStorageFactory(storageFactory);
-        return eventBus;
-    }
-
-    @VisibleForTesting
-    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
-        Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
-        if (!storageFactory.isPresent()) {
-            throw newIllegalStateException("EventBus does not specify a StorageFactory.");
-        }
-        return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(storageFactory::get)
-                             .setName(NAME)
-                             .setEventBus(eventBus)
-                             .build();
     }
 }

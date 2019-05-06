@@ -25,7 +25,7 @@ import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
@@ -43,7 +43,7 @@ class TaskViewTest extends ViewTest {
             .newBuilder()
             .setDescription(newDescription("my task description"))
             .setPriority(NORMAL)
-            .setDueDate(getCurrentTime())
+            .setDueDate(currentTime())
             .build();
     private final TaskItemView taskView = new TaskItemView(TaskId.getDefaultInstance());
 
