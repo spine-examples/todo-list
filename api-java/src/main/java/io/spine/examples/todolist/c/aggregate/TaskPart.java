@@ -123,7 +123,7 @@ public class TaskPart extends AggregatePart<TaskId,
                 .setDescription(cmd.getDescription());
         TaskCreated result = TaskCreated
                 .newBuilder()
-                .setId(taskId)
+                .setTaskId(taskId)
                 .setDetails(taskDetails)
                 .build();
         return singletonList(result);
@@ -282,7 +282,7 @@ public class TaskPart extends AggregatePart<TaskId,
         TaskId taskId = cmd.getId();
         TaskDraftCreated draftCreated = TaskDraftCreated
                 .newBuilder()
-                .setId(taskId)
+                .setTaskId(taskId)
                 .setDraftCreationTime(currentTime())
                 .build();
         return singletonList(draftCreated);
@@ -343,7 +343,7 @@ public class TaskPart extends AggregatePart<TaskId,
     @Apply
     private void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId())
+        builder().setId(event.getTaskId())
                  .setCreated(currentTime())
                  .setDescription(taskDetails.getDescription())
                  .setPriority(taskDetails.getPriority())
@@ -403,7 +403,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
     @Apply
     private void draftCreated(TaskDraftCreated event) {
-        builder().setId(event.getId())
+        builder().setId(event.getTaskId())
                  .setCreated(event.getDraftCreationTime())
                  .setDescription(event.getDetails()
                                       .getDescription())

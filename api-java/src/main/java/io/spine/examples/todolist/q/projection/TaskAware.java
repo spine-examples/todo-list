@@ -18,29 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.repository;
+package io.spine.examples.todolist.q.projection;
 
+import com.google.errorprone.annotations.Immutable;
+import io.spine.base.EventMessage;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.q.projection.TaskAware;
-import io.spine.examples.todolist.q.projection.TaskView;
-import io.spine.examples.todolist.q.projection.TaskViewProjection;
-import io.spine.server.projection.ProjectionRepository;
-
-import static java.util.Collections.singleton;
 
 /**
- * Repository for the {@link TaskViewProjection}.
+ * An event that is related to a single task and is aware of to which one exactly.
  */
-public class TaskViewRepository
-        extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
+@SuppressWarnings("InterfaceNeverImplemented") /* Implemented by some of the events.*/
+@Immutable
+public interface TaskAware extends EventMessage {
 
-    @Override
-    public void onRegistered() {
-        super.onRegistered();
-        reroute();
-    }
-
-    private void reroute() {
-        eventRouting().route(TaskAware.class, (message, context) -> singleton(message.getTaskId()));
-    }
+    /** Obtains an ID of the task that this event is related to. */
+    TaskId getTaskId();
 }

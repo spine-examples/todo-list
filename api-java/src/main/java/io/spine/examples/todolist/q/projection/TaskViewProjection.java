@@ -58,7 +58,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     @Subscribe
     void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId())
+        builder().setId(event.getTaskId())
                  .setDescription(taskDetails.getDescription())
                  .setDueDate(taskDetails.getDueDate())
                  .setStatus(TaskStatus.OPEN);
@@ -113,7 +113,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     @Subscribe
     void draftCreated(TaskDraftCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId())
+        builder().setId(event.getTaskId())
                  .setStatus(TaskStatus.DRAFT);
     }
 

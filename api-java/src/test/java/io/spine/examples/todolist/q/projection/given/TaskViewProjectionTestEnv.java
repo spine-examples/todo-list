@@ -161,7 +161,7 @@ public final class TaskViewProjectionTestEnv {
         Timestamp creationTime = Timestamps.fromMillis(today.getEpochSecond());
         TaskDraftCreated result = TaskDraftCreated
                 .newBuilder()
-                .setId(taskId)
+                .setTaskId(taskId)
                 .setDetails(details)
                 .setDraftCreationTime(creationTime)
                 .build();
@@ -172,7 +172,7 @@ public final class TaskViewProjectionTestEnv {
         TaskDetails details = details(description);
         TaskCreated result = TaskCreated
                 .newBuilder()
-                .setId(taskId)
+                .setTaskId(taskId)
                 .setDetails(details)
                 .build();
         return result;
