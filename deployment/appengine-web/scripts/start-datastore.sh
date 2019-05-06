@@ -5,4 +5,4 @@
 # To start the emulator from the Gradle task, do the following:
 # "./scripts/start-datastore.sh spine-dev 8081".execute()
 #
-gcloud beta emulators datastore start --project=$1 --host-port=localhost:$2 --consistency 1.0 --no-store-on-disk
+gcloud beta emulators datastore start --host-port=localhost:$1 --consistency 1.0 --no-store-on-disk
