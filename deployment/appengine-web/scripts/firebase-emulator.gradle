@@ -36,10 +36,10 @@ final def FIREBASE_EMULATOR_TASK_GROUP = "Firebase emulator"
 final def localPort = 8082
 
 /** The path to the Firebase Realtime Database security rules. */
-final def rulesFilePath = "$projectDir/scripts/firebase-rules.json"
+final def rulesFilePath = "$projectDir${File.separatorChar}scripts${File.separatorChar}firebase-rules.json"
 
 /** The path to the temporary file storing the identifier of a currently running emulator process. */
-final def pidFilePath = "$projectDir/scripts/firebase-emulator.pid"
+final def pidFilePath = "$projectDir${File.separatorChar}scripts${File.separatorChar}firebase-emulator.pid"
 
 /**
  * Returns an extension of a script file depending on the environment operation system.
@@ -52,6 +52,18 @@ static def osExtension() {
 }
 
 /**
+ * Kills the process by PID.
+ *
+ * @param pid the PID of a process to kill
+ */
+void killProcess(final pid) {
+    final def script = "$projectDir${File.separatorChar}scripts${File.separatorChar}kill-process.${osExtension()}"
+    final def params = " ${pid}"
+
+    "${script}${params}".execute()
+}
+
+/**
  * Starts the Firebase server emulator.
  *
  * @param port          the local port to run the emulator on
@@ -59,20 +71,8 @@ static def osExtension() {
  * @param pidFilePath   the path to the file to store the PID of the emulator
  */
 void startFirebase(final port, final rulesFilePath, final pidFilePath) {
-    final def script = "$projectDir/scripts/start-firebase.${osExtension()}"
+    final def script = "$projectDir${File.separatorChar}scripts${File.separatorChar}start-firebase.${osExtension()}"
     final def params = " ${port} ${rulesFilePath} ${pidFilePath}"
-
-    "${script}${params}".execute()
-}
-
-/**
- * Kills the process by PID.
- *
- * @param pid the PID of a process to kill
- */
-void killProcess(final pid) {
-    final def script = "$projectDir/scripts/kill-process.${osExtension()}"
-    final def params = " ${pid}"
 
     "${script}${params}".execute()
 }
