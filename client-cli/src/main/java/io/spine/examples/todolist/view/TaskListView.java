@@ -42,14 +42,14 @@ import static java.lang.String.valueOf;
  *
  * <p>Mainly consists of
  * {@linkplain TransitionAction transition actions}.
- * The action gives short info about the task and leads to a {@link TaskItemView}.
+ * The action gives short info about the task and leads to a {@link ViewOfTask}.
  */
-public final class MyTasksListView extends ActionListView {
+public final class TaskListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
     @VisibleForTesting
-    MyTasksListView() {
+    TaskListView() {
         super("My tasks list");
     }
 
@@ -72,7 +72,7 @@ public final class MyTasksListView extends ActionListView {
     }
 
     /**
-     * Creates {@link TransitionActionProducer} with {@code MyTasksListView} destination.
+     * Creates {@link TransitionActionProducer} with {@code TaskListView} destination.
      *
      * @param name
      *         the name for the action
@@ -82,9 +82,9 @@ public final class MyTasksListView extends ActionListView {
      *         the type of the source view
      * @return the new producer
      */
-    public static <S extends View> TransitionActionProducer<S, MyTasksListView>
+    public static <S extends View> TransitionActionProducer<S, TaskListView>
     newOpenTaskListProducer(String name, Shortcut shortcut) {
-        return transitionProducer(name, shortcut, new MyTasksListView());
+        return transitionProducer(name, shortcut, new TaskListView());
     }
 
     @VisibleForTesting
@@ -98,13 +98,13 @@ public final class MyTasksListView extends ActionListView {
     }
 
     @VisibleForTesting
-    static TransitionActionProducer<MyTasksListView, TaskItemView>
+    static TransitionActionProducer<TaskListView, ViewOfTask>
     newOpenTaskViewProducer(TaskView task, int viewIndex) {
         String name = task.getDescription()
                           .getValue();
         String shortcutValue = valueOf(viewIndex + 1);
         Shortcut shortcut = new Shortcut(shortcutValue);
-        TaskItemView destination = new TaskItemView(task.getId());
+        ViewOfTask destination = new ViewOfTask(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }

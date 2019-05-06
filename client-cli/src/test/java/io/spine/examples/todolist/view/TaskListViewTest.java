@@ -35,14 +35,14 @@ import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
-import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
-import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
+import static io.spine.examples.todolist.view.TaskListView.newOpenTaskViewProducer;
+import static io.spine.examples.todolist.view.TaskListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@DisplayName("MyTasksListView should")
-class MyTasksListViewTest extends ViewTest {
+@DisplayName("TaskListView should")
+class TaskListViewTest extends ViewTest {
 
     private static final int VIEW_INDEX = 0;
 
@@ -58,7 +58,7 @@ class MyTasksListViewTest extends ViewTest {
         bot.screen()
            .renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
-        MyTasksListView view = new MyTasksListView();
+        TaskListView view = new TaskListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
         view.addAction(newOpenTaskViewProducer(taskView, 1));
         Set<Action> actionsToBeRemoved = view.getActions();
@@ -86,7 +86,7 @@ class MyTasksListViewTest extends ViewTest {
         String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        TransitionActionProducer<MyTasksListView, TaskItemView> producer =
+        TransitionActionProducer<TaskListView, ViewOfTask> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
         String expectedDescription = taskView.getDescription()

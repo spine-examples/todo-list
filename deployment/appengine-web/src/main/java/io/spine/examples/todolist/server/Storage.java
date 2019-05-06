@@ -14,7 +14,6 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.datastore.DatastoreStorageFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredentials;
 import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
 import static io.spine.server.ServerEnvironment.getDeploymentType;
@@ -59,15 +58,16 @@ final class Storage {
     @VisibleForTesting
     static DatastoreOptions datastoreOptions(Credentials credentials) {
         checkNotNull(credentials);
+        String projectId = Configuration.instance()
+                                        .projectId();
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return DatastoreOptions
                     .newBuilder()
                     .setCredentials(credentials)
-                    .setProjectId(newUuid())
+                    .setProjectId(projectId)
                     .build();
         }
-        String projectId = Configuration.instance()
-                                        .projectId();
+
         return DatastoreOptions
                 .newBuilder()
                 .setProjectId(projectId)

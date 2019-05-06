@@ -29,9 +29,9 @@ import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
-import static io.spine.examples.todolist.view.TaskItemView.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.view.TaskItemView.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.view.TaskItemView.PRIORITY_VALUE;
+import static io.spine.examples.todolist.view.ViewOfTask.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.ViewOfTask.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.ViewOfTask.PRIORITY_VALUE;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,7 +45,7 @@ class TaskViewTest extends ViewTest {
             .setPriority(NORMAL)
             .setDueDate(currentTime())
             .build();
-    private final TaskItemView taskView = new TaskItemView(TaskId.getDefaultInstance());
+    private final ViewOfTask taskView = new ViewOfTask(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
