@@ -18,6 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+spine {
+    enableJavaScript()
+    enableJava {
+        codegen {
+            protobuf = false
+            spine = false
+        }
+    }
+}
+
 ext {
     bundleFile = "$projectDir/bundle.js"
 }
