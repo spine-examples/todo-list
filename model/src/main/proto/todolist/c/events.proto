@@ -49,12 +49,29 @@ import "todolist/changes.proto";
 // The task referenced by the event is neither completed nor deleted.
 //
 message TaskCreated {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the created task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Details of the created task.
     TaskDetails details = 2;
+}
+
+// An event fired upon a task priority update.
+//
+// The task referenced by the event may be either in a finalized or in a draft state.
+//
+message TaskPriorityUpdated {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
+
+    // An identifier of the updated task.
+    TaskId task_id = 1;
+
+    // The change of the task priority.
+    PriorityChange priority_change = 2 [(required) = true];
 }
 
 // An event signalizing about the task draft creation.
@@ -63,9 +80,11 @@ message TaskCreated {
 // The task referenced by the event is neither completed nor deleted.
 //
 message TaskDraftCreated {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the created task draft.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Details of the created task draft.
     TaskDetails details = 2;
@@ -81,6 +100,8 @@ message TaskDraftCreated {
 // The task referenced by the event may be either in a finalized or in a draft state.
 //
 message TaskDescriptionUpdated {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the updated task.
     TaskId task_id = 1;
@@ -89,47 +110,13 @@ message TaskDescriptionUpdated {
     DescriptionChange description_change = 2 [(valid) = true];
 }
 
-// An event fired upon a task priority update.
-//
-// The task referenced by the event may be either in a finalized or in a draft state.
-//
-message TaskPriorityUpdated {
-
-    // An identifier of the updated task.
-    TaskId task_id = 1;
-
-    // The change of the task priority.
-    PriorityChange priority_change = 2 [(required) = true];
-}
-
-// An event fired upon a task due date update.
-//
-// The task referenced by the event may be either in a finalized or in a draft state.
-//
-message TaskDueDateUpdated {
-
-    // An identifier of the updated task.
-    TaskId task_id = 1;
-
-    // The task due date change.
-    change.TimestampChange due_date_change = 2 [(required) = true];
-}
-
-// An event fired upon task draft finalization.
-//
-// The task referenced by the event is always finalized.
-//
-message TaskDraftFinalized {
-
-    // An identifier of the task draft finalized.
-    TaskId task_id = 1;
-}
-
 // An event fired upon task completion.
 //
 // The task referenced by the event is always completed.
 //
 message TaskCompleted {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the completed task.
     TaskId task_id = 1;
@@ -140,6 +127,8 @@ message TaskCompleted {
 // The task referenced by the event is always finalized and incomplete.
 //
 message TaskReopened {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the reopened task.
     TaskId task_id = 1;
@@ -150,8 +139,51 @@ message TaskReopened {
 // The task referenced by the event is always deleted.
 //
 message TaskDeleted {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
 
     // An identifier of the deleted task.
+    TaskId task_id = 1;
+}
+
+// An event fired upon a task due date update.
+//
+// The task referenced by the event may be either in a finalized or in a draft state.
+//
+message TaskDueDateUpdated {
+    option (is).generate = true;
+    option (is).java_type = "io.spine.examples.todolist.q.projection.TaskAware";
+
+    // An identifier of the updated task.
+    TaskId task_id = 1;
+
+    // The task due date change.
+    change.TimestampChange due_date_change = 2 [(required) = true];
+}
+
+// An even that signifies that a task creation process ended and no task was created.
+//
+message TaskCreationCanceled {
+
+    // ID the task.
+    TaskId task_id = 1;
+}
+
+// An even that signifies that a label assignment step of the task creation process was skipped.
+//
+message LabelAssignmentSkipped {
+
+    // ID of the task.
+    TaskId task_id = 1;
+}
+
+// An event fired upon task draft finalization.
+//
+// The task referenced by the event is always finalized.
+//
+message TaskDraftFinalized {
+
+    // An identifier of the task draft finalized.
     TaskId task_id = 1;
 }
 

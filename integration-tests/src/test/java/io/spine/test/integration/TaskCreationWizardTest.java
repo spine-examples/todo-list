@@ -30,7 +30,8 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.q.projection.LabelColorView;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.test.AbstractIntegrationTest;
 import io.spine.test.integration.given.TaskCreationWizardTestEnv;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.LabelColor.BLUE;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.LabelColor.GREEN;
@@ -49,10 +50,8 @@ import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
-import static java.lang.String.format;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisplayName("TaskCreationWizard should")
 class TaskCreationWizardTest extends AbstractIntegrationTest {
@@ -127,7 +126,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
 
         String description = "thirdCase";
         TaskPriority priority = LOW;
-        Timestamp dueDate = add(getCurrentTime(), fromSeconds(100));
+        Timestamp dueDate = add(currentTime(), fromSeconds(100));
         testEnv.setDetails(pid, description, priority, dueDate);
         String labelTitle = "thirdCase-label";
         LabelId labelId = testEnv.createNewLabel(labelTitle);
@@ -156,22 +155,18 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     }
 
     private void assertAssignedLabel(TaskId taskId, String labelTitle, LabelColor labelColor) {
-        String color = LabelColorView.valueOf(labelColor);
-        boolean match =
-                client.getLabelledTasksView()
-                      .stream()
-                      .filter(label -> labelTitle.equals(label.getLabelTitle()))
-                      .peek(label -> {
-                          String actualColor = label.getLabelColor();
-                          assertTrue(color.equalsIgnoreCase(actualColor));
-                      })
-                      .flatMap(label -> label.getLabelledTasks()
-                                             .getItemsList()
-                                             .stream())
-                      .anyMatch(task -> taskId.equals(task.getId()));
-        if (!match) {
-            fail(format("Task %s has no label with title \"%s\" and color %s.",
-                        taskId.getValue(), labelTitle, labelColor));
-        }
+        TaskView task = client.taskViews()
+                              .stream()
+                              .filter(view -> view.getId()
+                                                  .equals(taskId))
+                              .findAny()
+                              .orElseThrow(() -> newIllegalStateException("Task not found."));
+        LabelId labelId = task.getLabelIdsList()
+                              .getIdsList()
+                              .get(0);
+        LabelView label = client.labelView(labelId)
+                                .orElseThrow(() -> newIllegalStateException("Label not found."));
+        assertEquals(labelColor, label.getColor());
+        assertEquals(labelTitle, label.getTitle());
     }
 }

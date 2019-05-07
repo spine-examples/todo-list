@@ -22,29 +22,27 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("After execution of RemoveLabelFromTask command")
+@DisplayName("After execution of RemoveLabelFromTask command the list of task views should")
 class RemoveLabelFromTaskTest extends TodoClientTest {
 
     private TodoClient client;
@@ -56,137 +54,96 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
         client = getClient();
     }
 
-    @Nested
-    @DisplayName("LabelledTasksView should")
-    class RemoveLabelFromTaskFromLabelledTasksView {
+    @Test
+    @DisplayName("be empty")
+    void containEmptyView() {
+        CreateBasicTask createTask = createTask();
+        CreateBasicLabel createLabel = createLabel();
 
-        @Test
-        @DisplayName("be empty")
-        void containEmptyView() {
-            CreateBasicTask createTask = createTask();
-            CreateBasicLabel createLabel = createLabel();
+        TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
 
-            TaskId taskId = createTask.getId();
-            LabelId labelId = createLabel.getLabelId();
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
 
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
+        RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
+        client.postCommand(removeLabelFromTask);
 
-            RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
-            client.postCommand(removeLabelFromTask);
+        List<TaskView> tasksViewList = client.taskViews();
+        assertEquals(1, tasksViewList.size());
 
-            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            assertEquals(1, tasksViewList.size());
-
-            List<TaskItem> taskViews = tasksViewList.get(0)
-                                                    .getLabelledTasks()
-                                                    .getItemsList();
-            assertTrue(taskViews.isEmpty());
-        }
-
-        @Test
-        @DisplayName("contain the task view")
-        void containView() {
-            CreateBasicTask createTask = createTask();
-            CreateBasicLabel createLabel = createLabel();
-
-            TaskId taskId = createTask.getId();
-            LabelId labelId = createLabel.getLabelId();
-
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
-
-            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            assertEquals(1, tasksViewList.size());
-
-            LabelledTasksView labelledTasksView = getLabelledTasksView(labelId, tasksViewList);
-            List<TaskItem> taskViews = labelledTasksView.getLabelledTasks()
-                                                        .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(taskId, view.getId());
-            assertFalse(taskViews.isEmpty());
-        }
+        List<LabelId> taskViews = tasksViewList.get(0)
+                                               .getLabelIdsList()
+                                               .getIdsList();
+        assertTrue(taskViews.isEmpty());
     }
 
-    @Nested
-    @DisplayName("DraftTasksView should")
-    class RemoveLabelFromTaskFromDraftTasksView {
+    @Test
+    @DisplayName("contain the task view")
+    void containView() {
+        CreateBasicTask createTask = createTask();
+        CreateBasicLabel createLabel = createLabel();
 
-        @Test
-        @DisplayName("contain the task view without label")
-        void containViewWithoutLabels() {
-            CreateBasicLabel createBasicLabel = createLabel();
-            LabelId labelId = createBasicLabel.getLabelId();
+        TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
 
-            TaskItem view = obtainTaskItemWhenHandledRemoveLabeledFromTask(labelId, true);
-            assertNotEquals(labelId, view.getLabelId());
-        }
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
 
-        @Test
-        @DisplayName("contain the task view with labels when command has wrong task ID")
-        void containLabelledViewWhenTaskIdIsWrong() {
-            CreateBasicLabel createBasicLabel = createLabel();
-            LabelId labelId = createBasicLabel.getLabelId();
+        List<TaskView> taskViews = client.taskViews();
+        assertEquals(1, taskViews.size());
 
-            TaskItem view = obtainTaskItemWhenHandledRemoveLabeledFromTask(labelId, false);
-            assertEquals(labelId, view.getLabelId());
-        }
-
-        private TaskItem
-        obtainTaskItemWhenHandledRemoveLabeledFromTask(LabelId labelId, boolean isCorrectId) {
-            CreateDraft createDraft = createDraft();
-            client.postCommand(createDraft);
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
-            client.postCommand(updateTaskPriority);
-            TaskId taskId = createDraft.getId();
-
-            assignAndRemoveLabel(labelId, isCorrectId, taskId);
-
-            List<TaskItem> taskViews = client.getDraftTasksView()
-                                             .getDraftTasks()
-                                             .getItemsList();
-            return checkAndObtainView(taskId, taskViews);
-        }
+        List<LabelId> labelIds = taskViews.get(0)
+                                          .getLabelIdsList()
+                                          .getIdsList();
+        assertEquals(1, labelIds.size());
+        assertEquals(labelId, labelIds.get(0));
     }
 
-    @Nested
-    @DisplayName("MyListView should")
-    class RemoveLabelFromTaskFromMyListView {
+    @Test
+    @DisplayName("contain an unlabelled draft")
+    void containViewWithoutLabels() {
+        CreateBasicLabel createBasicLabel = createLabel();
+        LabelId labelId = createBasicLabel.getLabelId();
 
-        @Test
-        @DisplayName("contain the task view without label")
-        void containViewWithLabels() {
-            CreateBasicLabel createLabel = createLabel();
-            LabelId labelId = createLabel.getLabelId();
+        TaskView view = obtainViewWithRemovedLabel(labelId, true);
+        assertTrue(view.getLabelIdsList()
+                       .getIdsList()
+                       .isEmpty());
+    }
 
-            TaskItem view = obtainTaskItemWhenHandledRemoveLabelFromTask(labelId, true);
-            assertNotEquals(labelId, view.getLabelId());
-        }
+    @Test
+    @DisplayName("contain a labelled draft if the command had an incorrect ID")
+    void containLabelledViewWhenTaskIdIsWrong() {
+        CreateBasicLabel createBasicLabel = createLabel();
+        LabelId labelId = createBasicLabel.getLabelId();
 
-        @Test
-        @DisplayName("contain the task view with labels when command has wrong task ID")
-        void containViewsWithoutLabels() {
-            CreateBasicLabel createLabel = createLabel();
-            LabelId labelId = createLabel.getLabelId();
+        TaskView view = obtainViewWithRemovedLabel(labelId, false);
+        assertEquals(labelId, view.getLabelIdsList()
+                                  .getIds(0));
+    }
 
-            TaskItem view = obtainTaskItemWhenHandledRemoveLabelFromTask(labelId, false);
-            assertEquals(labelId, view.getLabelId());
-        }
+    @Test
+    @DisplayName("contain an unlabelled task view")
+    void containViewWithLabels() {
+        CreateBasicLabel createLabel = createLabel();
+        LabelId labelId = createLabel.getLabelId();
 
-        private TaskItem
-        obtainTaskItemWhenHandledRemoveLabelFromTask(LabelId labelId, boolean isCorrectId) {
-            CreateBasicTask createTask = createTask();
-            TaskId taskId = createTask.getId();
+        TaskView view = obtainViewWithRemovedLabel(labelId, true);
+        List<LabelId> labels = view.getLabelIdsList()
+                                   .getIdsList();
+        assertTrue(labels.isEmpty());
+    }
 
-            assignAndRemoveLabel(labelId, isCorrectId, taskId);
+    @Test
+    @DisplayName("contain the task view with labels when command has wrong task ID")
+    void containViewsWithoutLabels() {
+        CreateBasicLabel createLabel = createLabel();
+        LabelId labelId = createLabel.getLabelId();
 
-            List<TaskItem> taskViews = client.getMyListView()
-                                             .getMyList()
-                                             .getItemsList();
-            return checkAndObtainView(taskId, taskViews);
-        }
+        TaskView view = obtainViewWithRemovedLabel(labelId, false);
+        assertEquals(labelId, view.getLabelIdsList()
+                                  .getIds(0));
     }
 
     private void assignAndRemoveLabel(LabelId labelId, boolean isCorrectId, TaskId taskId) {
@@ -199,11 +156,28 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
         client.postCommand(removeLabelFromTask);
     }
 
-    private static TaskItem checkAndObtainView(TaskId taskId, List<TaskItem> taskViews) {
+    private static TaskView checkAndObtainView(TaskId taskId, List<TaskView> taskViews) {
         assertEquals(1, taskViews.size());
 
-        TaskItem view = taskViews.get(0);
+        TaskView view = taskViews.get(0);
         assertEquals(taskId, view.getId());
         return view;
+    }
+
+    private TaskView obtainViewWithRemovedLabel(LabelId labelId, boolean isCorrectId) {
+        CreateDraft createDraft = createDraft();
+        client.postCommand(createDraft);
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+        client.postCommand(updateTaskPriority);
+        TaskId taskId = createDraft.getId();
+
+        assignAndRemoveLabel(labelId, isCorrectId, taskId);
+
+        List<TaskView> taskViews = client
+                .taskViews()
+                .stream()
+                .filter(view -> view.getStatus() == TaskStatus.DRAFT)
+                .collect(Collectors.toList());
+        return checkAndObtainView(taskId, taskViews);
     }
 }

@@ -31,7 +31,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
@@ -135,14 +135,17 @@ abstract class TodoClientTest {
         return result;
     }
 
-    static LabelledTasksView getLabelledTasksView(LabelId labelId,
-                                                  Iterable<LabelledTasksView> tasksViewList) {
-        for (LabelledTasksView labelledView : tasksViewList) {
-            if (labelId.equals(labelledView.getId())) {
+    static TaskView getLabelledTasksView(LabelId labelId,
+                                         Iterable<TaskView> tasksViewList) {
+        for (TaskView labelledView : tasksViewList) {
+            boolean labelIdMatches = labelledView.getLabelIdsList()
+                                                 .getIdsList()
+                                                 .contains(labelId);
+            if (labelIdMatches) {
                 return labelledView;
             }
         }
-        return LabelledTasksView.getDefaultInstance();
+        return TaskView.getDefaultInstance();
     }
 
     CreateBasicTask createTask() {

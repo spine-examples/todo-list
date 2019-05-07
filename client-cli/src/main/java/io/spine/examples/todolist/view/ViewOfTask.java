@@ -23,6 +23,7 @@ package io.spine.examples.todolist.view;
 import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,37 +36,32 @@ import static java.lang.System.lineSeparator;
 /**
  * An {@link EntityView} of a {@link TaskItem}.
  *
- * <p>Renders the task and provides actions for working with the task.
+ * <p>Renders a single task and provides actions for working with it.
  */
-final class TaskView extends EntityView<TaskId, TaskItem> {
+final class ViewOfTask extends EntityView<TaskId, TaskView> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
 
-    TaskView(TaskId id) {
+    ViewOfTask(TaskId id) {
         super(id, "My task details");
     }
 
     @Override
-    protected TaskItem load(TaskId id) {
+    protected TaskView load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        List<TaskItem> tasks = getClient().getMyListView()
-                                          .getMyList()
-                                          .getItemsList();
-        Optional<TaskItem> optionalTask = tasks.stream()
-                                               .filter(task -> task.getId()
-                                                                   .equals(id))
-                                               .findFirst();
-        if (optionalTask.isPresent()) {
-            return optionalTask.get();
-        }
-
-        throw newIllegalStateException("There is no task with ID `%s`.", id);
+        List<TaskView> tasks = getClient().taskViews();
+        Optional<TaskView> task = tasks.stream()
+                                       .filter(view -> view.getId()
+                                                           .equals(id))
+                                       .findFirst();
+        return task
+                .orElseThrow(() -> newIllegalStateException("There is no task with ID `%s`.", id));
     }
 
     @Override
-    protected String renderState(TaskItem state) {
+    protected String renderState(TaskView state) {
         String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())

@@ -164,7 +164,7 @@ public class TaskCreationWizardTestEnv {
 
     public Task taskById(TaskId id) {
         Optional<Task> taskOptional =
-                client.getTasks()
+                client.tasks()
                       .stream()
                       .filter(task -> id.equals(task.getId()))
                       .findAny();

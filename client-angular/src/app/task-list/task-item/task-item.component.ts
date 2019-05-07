@@ -20,7 +20,7 @@
 
 import {Component, Input} from '@angular/core';
 
-import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class TaskItemComponent {
   }
 
   @Input()
-  task: TaskItem;
+  task: TaskView;
 
   expanded: boolean;
 

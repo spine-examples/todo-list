@@ -22,14 +22,13 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.examples.todolist.q.projection.TaskListView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,8 +38,8 @@ import java.util.List;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("After execution of RestoreDeletedTask command")
 class RestoreDeletedTaskTest extends TodoClientTest {
@@ -55,7 +54,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("LabelledTasksView should contain restored task")
+    @DisplayName("a restored labelled task view should exist")
     void containRestoredTask() {
         CreateBasicTask createTask = createTask();
         CreateBasicLabel createLabel = createLabel();
@@ -69,23 +68,23 @@ class RestoreDeletedTaskTest extends TodoClientTest {
         client.postCommand(restoreDeletedTask);
 
         int expectedListSize = 1;
-        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-        assertEquals(expectedListSize, tasksViewList.size());
-
-        List<TaskItem> taskViews = tasksViewList.get(0)
-                                                .getLabelledTasks()
-                                                .getItemsList();
-        assertEquals(expectedListSize, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
+        List<TaskView> labelledTasks = client
+                .taskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
+        assertEquals(expectedListSize, labelledTasks.size());
+        TaskView view = labelledTasks.get(0);
 
         assertEquals(taskId, view.getId());
-        assertEquals(labelId, view.getLabelId());
+        assertEquals(labelId, view.getLabelIdsList()
+                                  .getIds(0));
     }
 
     @Test
-    @DisplayName("LabelledTasksView should not contain restored task " +
-            "when command has wrong task ID")
+    @DisplayName("a labelled task should not be restored if the command had a wrong ID")
     void containEmptyView() {
         CreateBasicTask createTask = createTask();
         CreateBasicLabel createLabel = createLabel();
@@ -98,14 +97,15 @@ class RestoreDeletedTaskTest extends TodoClientTest {
         RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(createWrongTaskId());
         client.postCommand(restoreDeletedTask);
 
-        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-        assertEquals(1, tasksViewList.size());
+        List<TaskView> taskViews = client.taskViews();
+        assertEquals(1, taskViews.size());
 
-        TaskListView taskListView = tasksViewList.get(0)
-                                                 .getLabelledTasks();
-        List<TaskItem> taskViews = taskListView.getItemsList();
-
-        assertTrue(taskViews.isEmpty());
+        TaskView view = taskViews.get(0);
+        LabelId assignedLabel = view.getLabelIdsList()
+                                    .getIdsList()
+                                    .get(0);
+        assertEquals(labelId, assignedLabel);
+        assertEquals(TaskStatus.DELETED, view.getStatus());
     }
 
     private void assignAndDeleteTask(LabelId labelId, TaskId taskId) {

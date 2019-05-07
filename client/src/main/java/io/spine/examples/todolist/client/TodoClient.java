@@ -26,12 +26,12 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A client interface.
@@ -51,56 +51,25 @@ public interface TodoClient {
     void postCommand(CommandMessage commandMessage);
 
     /**
-     * Obtains the single {@link MyListView}.
+     * Obtains all {@linkplain TaskView task views}.
      *
-     * @return the {@code MyListView}
+     * @return all task views
      */
-    MyListView getMyListView();
-
-    /**
-     * Obtains the list of the {@link LabelledTasksView}.
-     *
-     * @return the list of the {@code LabelledTasksView}
-     */
-    List<LabelledTasksView> getLabelledTasksView();
-
-    /**
-     * Obtains the single {@link DraftTasksView}.
-     *
-     * @return the {@code DraftTasksView}
-     */
-    DraftTasksView getDraftTasksView();
+    List<TaskView> taskViews();
 
     /**
      * Obtains all {@linkplain Task tasks} in the system.
      *
      * @return the list of the {@code Task}
      */
-    List<Task> getTasks();
-
-    /**
-     * Obtains a single {@link Task} by its ID.
-     *
-     * <p>If the system contains no task with such ID, the {@code other} value is returned.
-     *
-     * <p>Returns {@code null} iff the task is not found by ID and the {@code other} value is
-     * {@code null}.
-     *
-     * @param id
-     *         the task ID to search by
-     * @param other
-     *         the default value of the task
-     * @return the task with the requested ID or {@code other} if the task is not found
-     */
-    @Nullable
-    Task getTaskOr(TaskId id, @Nullable Task other);
+    List<Task> tasks();
 
     /**
      * Obtains all {@linkplain TaskLabel labels} in the system.
      *
      * @return the list of the {@code TaskLabel}
      */
-    List<TaskLabel> getLabels();
+    List<TaskLabel> labels();
 
     /**
      * Obtains the labels assigned to the task with the given ID.
@@ -109,7 +78,18 @@ public interface TodoClient {
      *         the task ID to search by
      * @return the labels of the specified task
      */
-    TaskLabels getLabels(TaskId taskId);
+    TaskLabels labelsOf(TaskId taskId);
+
+    /**
+     * Obtains an {@code Optional} containing the view of the label with the specified ID.
+     *
+     * If the specified ID does not correspond to any label, an empty {@code Optional} is returned.
+     *
+     * @param id
+     *         ID of the label to obtain
+     * @return a view of the label with the specified ID.
+     */
+    Optional<LabelView> labelView(LabelId id);
 
     /**
      * Obtains a single {@link TaskLabel} by its ID.
@@ -126,7 +106,7 @@ public interface TodoClient {
      * @return the label with the requested ID or {@code other} if the label is not found
      */
     @Nullable
-    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other);
+    TaskLabel labelOr(LabelId id, @Nullable TaskLabel other);
 
     /**
      * Shutdown the connection channel.

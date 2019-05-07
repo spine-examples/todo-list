@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -116,7 +116,7 @@ class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     @Test
     @DisplayName("update the task due date")
     void updateDueDate() {
-        Timestamp updatedDueDate = getCurrentTime();
+        Timestamp updatedDueDate = currentTime();
         UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(entityId(), Timestamp.getDefaultInstance(),
                                           updatedDueDate);
@@ -130,8 +130,8 @@ class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     @Test
     @DisplayName("produce CannotUpdateTaskDueDate rejection")
     void produceRejection() {
-        Timestamp expectedDueDate = getCurrentTime();
-        Timestamp newDueDate = getCurrentTime();
+        Timestamp expectedDueDate = currentTime();
+        Timestamp newDueDate = currentTime();
 
         UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(entityId(), expectedDueDate, newDueDate);
@@ -142,7 +142,7 @@ class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
         assertThat(cause, instanceOf(CannotUpdateTaskDueDate.class));
 
         Rejections.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
-                ((CannotUpdateTaskDueDate) cause).getMessageThrown();
+                ((CannotUpdateTaskDueDate) cause).messageThrown();
 
         TaskDueDateUpdateRejected details = cannotUpdateTaskDueDate.getRejectionDetails();
         TaskId actualTaskId = details.getCommandDetails()

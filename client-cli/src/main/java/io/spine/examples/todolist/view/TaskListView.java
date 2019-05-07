@@ -27,8 +27,7 @@ import io.spine.cli.action.TransitionAction;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.cli.view.ActionListView;
 import io.spine.cli.view.View;
-import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,18 +38,18 @@ import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.lang.String.valueOf;
 
 /**
- * A view of {@link MyListView}.
+ * A view of all tasks.
  *
- * <p>{@link MyListView} mainly consists of
+ * <p>Mainly consists of
  * {@linkplain TransitionAction transition actions}.
- * The action gives short info about the task and leads to a {@link TaskView}.
+ * The action gives short info about the task and leads to a {@link ViewOfTask}.
  */
-public final class MyTasksListView extends ActionListView {
+public final class TaskListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
     @VisibleForTesting
-    MyTasksListView() {
+    TaskListView() {
         super("My tasks list");
     }
 
@@ -61,8 +60,8 @@ public final class MyTasksListView extends ActionListView {
     public void render(Screen screen) {
         clearActions();
 
-        MyListView myListView = getClient().getMyListView();
-        Collection<TransitionActionProducer> producers = taskActionProducersFor(myListView);
+        List<TaskView> views = getClient().taskViews();
+        Collection<TransitionActionProducer> producers = taskActionProducersFor(views);
 
         if (producers.isEmpty()) {
             screen.println(EMPTY_TASKS_LIST_MSG);
@@ -73,7 +72,7 @@ public final class MyTasksListView extends ActionListView {
     }
 
     /**
-     * Creates {@link TransitionActionProducer} with {@code MyTasksListView} destination.
+     * Creates {@link TransitionActionProducer} with {@code TaskListView} destination.
      *
      * @param name
      *         the name for the action
@@ -83,31 +82,29 @@ public final class MyTasksListView extends ActionListView {
      *         the type of the source view
      * @return the new producer
      */
-    public static <S extends View> TransitionActionProducer<S, MyTasksListView>
+    public static <S extends View> TransitionActionProducer<S, TaskListView>
     newOpenTaskListProducer(String name, Shortcut shortcut) {
-        return transitionProducer(name, shortcut, new MyTasksListView());
+        return transitionProducer(name, shortcut, new TaskListView());
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
+    static Collection<TransitionActionProducer> taskActionProducersFor(List<TaskView> taskViews) {
         Collection<TransitionActionProducer> producers = new ArrayList<>();
-        List<TaskItem> tasks = myListView.getMyList()
-                                         .getItemsList();
-        for (TaskItem task : tasks) {
-            int index = tasks.indexOf(task);
-            producers.add(newOpenTaskViewProducer(task, index));
+        for (int i = 0; i < taskViews.size(); i++) {
+            TaskView task = taskViews.get(i);
+            producers.add(newOpenTaskViewProducer(task, i));
         }
         return producers;
     }
 
     @VisibleForTesting
-    static TransitionActionProducer<MyTasksListView, TaskView>
-    newOpenTaskViewProducer(TaskItem task, int viewIndex) {
+    static TransitionActionProducer<TaskListView, ViewOfTask>
+    newOpenTaskViewProducer(TaskView task, int viewIndex) {
         String name = task.getDescription()
                           .getValue();
         String shortcutValue = valueOf(viewIndex + 1);
         Shortcut shortcut = new Shortcut(shortcutValue);
-        TaskView destination = new TaskView(task.getId());
+        ViewOfTask destination = new ViewOfTask(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }

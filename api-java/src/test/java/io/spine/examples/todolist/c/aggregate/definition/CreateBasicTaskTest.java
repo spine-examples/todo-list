@@ -64,7 +64,7 @@ class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
                                                    .getClass());
         TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
-        assertEquals(entityId(), taskCreated.getId());
+        assertEquals(entityId(), taskCreated.getTaskId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription()
                                              .getValue());

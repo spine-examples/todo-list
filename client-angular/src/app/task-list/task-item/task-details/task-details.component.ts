@@ -19,7 +19,7 @@
  */
 
 import {Component, Input} from '@angular/core';
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 
 /**
  * Component responsible for displaying a single task.
@@ -31,5 +31,5 @@ import {TaskItem} from 'proto/todolist/q/projections_pb';
 export class TaskDetailsComponent {
 
   @Input()
-  task: TaskItem;
+  task: TaskView;
 }

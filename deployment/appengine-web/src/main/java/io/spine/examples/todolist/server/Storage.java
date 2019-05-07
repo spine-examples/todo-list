@@ -58,14 +58,16 @@ final class Storage {
     @VisibleForTesting
     static DatastoreOptions datastoreOptions(Credentials credentials) {
         checkNotNull(credentials);
+        String projectId = Configuration.instance()
+                                        .projectId();
         if (getDeploymentType() == APPENGINE_CLOUD) {
             return DatastoreOptions
                     .newBuilder()
                     .setCredentials(credentials)
+                    .setProjectId(projectId)
                     .build();
         }
-        String projectId = Configuration.instance()
-                                        .projectId();
+
         return DatastoreOptions
                 .newBuilder()
                 .setProjectId(projectId)

@@ -22,7 +22,7 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
-import {TaskItem, TaskPriority, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskPriority, TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**
@@ -55,17 +55,17 @@ export class ActiveTasksComponent implements OnInit {
   @ViewChild('lowList')
   private lowList: TaskListComponent;
 
-  activeFilter: (t: TaskItem) => boolean =
-    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
+  activeFilter: (t: TaskView) => boolean =
+    (taskView) => taskView.getStatus() === TaskStatus.OPEN || taskView.getStatus() === TaskStatus.FINALIZED;
 
-  urgentFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH;
+  urgentFilter: (t: TaskView) => boolean =
+    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.HIGH;
 
-  lowPriorityFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW;
+  lowPriorityFilter: (t: TaskView) => boolean =
+    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.LOW;
 
-  normalPriorityFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED;
+  normalPriorityFilter: (t: TaskView) => boolean =
+    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a

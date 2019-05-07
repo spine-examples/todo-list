@@ -18,33 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.testdata;
-
-import io.spine.server.BoundedContext;
-import io.spine.server.event.EventBus;
-import io.spine.server.storage.StorageFactorySwitch;
-
 /**
- * Provides bounded context for the test needs.
+ * This package provides test environment for
+ * {@link io.spine.examples.todolist.q.projection.TaskViewProjection} tests.
  */
-public final class TestBoundedContextFactory {
+@ParametersAreNonnullByDefault
+@CheckReturnValue
+package io.spine.examples.todolist.q.projection.given;
 
-    private TestBoundedContextFactory() {
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    /**
-     * Provides a new {@link BoundedContext} instance
-     * built with the specified {@link EventBus.Builder} and {@link StorageFactorySwitch}.
-     *
-     * @param eventBus
-     *         {@code EventBus.Builder} instance
-     * @return the {@code BoundedContext} instance
-     */
-    public static BoundedContext boundedContextInstance(EventBus.Builder eventBus,
-                                                        StorageFactorySwitch storageFactory) {
-        return BoundedContext.newBuilder()
-                             .setEventBus(eventBus)
-                             .setStorageFactorySupplier(storageFactory)
-                             .build();
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

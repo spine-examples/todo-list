@@ -67,7 +67,7 @@ class CreateDraftTest extends TaskCommandTest<CreateDraft> {
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
         TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
-        assertEquals(entityId(), taskDraftCreated.getId());
+        assertEquals(entityId(), taskDraftCreated.getTaskId());
     }
 
     @Test
@@ -97,7 +97,7 @@ class CreateDraftTest extends TaskCommandTest<CreateDraft> {
                                                          envelopeOf(createDraftCmd)));
         Throwable cause = Throwables.getRootCause(t);
         CannotCreateDraft rejection = (CannotCreateDraft) cause;
-        TaskId actualId = rejection.getMessageThrown()
+        TaskId actualId = rejection.messageThrown()
                                    .getRejectionDetails()
                                    .getCommandDetails()
                                    .getTaskId();

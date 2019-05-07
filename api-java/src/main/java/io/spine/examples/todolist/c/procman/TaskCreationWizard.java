@@ -35,18 +35,17 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
+import io.spine.examples.todolist.c.events.LabelAssignmentSkipped;
+import io.spine.examples.todolist.c.events.TaskCreationCanceled;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDetails;
 import io.spine.server.command.Assign;
 import io.spine.server.command.Command;
-import io.spine.server.model.Nothing;
 import io.spine.server.procman.ProcessManager;
 
 import java.util.Collection;
@@ -122,8 +121,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         return transit(TASK_DEFINITION, () -> {
             TaskId taskId = command.getTaskId();
-            CreateDraft createDraft = CreateDraftVBuilder
-                    .newBuilder()
+            CreateDraft createDraft = CreateDraft
+                    .vBuilder()
                     .setId(taskId)
                     .build();
             initProcess(command);
@@ -164,16 +163,23 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    Nothing handle(SkipLabels command, CommandContext context) throws CannotMoveToStage {
-        return transit(CONFIRMATION, this::nothing);
+    LabelAssignmentSkipped handle(SkipLabels command, CommandContext context)
+            throws CannotMoveToStage {
+        return transit(CONFIRMATION, () -> {
+            LabelAssignmentSkipped assignmentSkipped = LabelAssignmentSkipped
+                    .vBuilder()
+                    .setTaskId(taskId())
+                    .build();
+            return assignmentSkipped;
+        });
     }
 
     @Command
     FinalizeDraft handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
-            FinalizeDraft finalizeDraft = FinalizeDraftVBuilder
-                    .newBuilder()
+            FinalizeDraft finalizeDraft = FinalizeDraft
+                    .vBuilder()
                     .setId(taskId())
                     .build();
             completeProcess();
@@ -182,10 +188,14 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    Nothing handle(CancelTaskCreation command) throws CannotMoveToStage {
+    TaskCreationCanceled handle(CancelTaskCreation command) throws CannotMoveToStage {
         return transit(CANCELED, () -> {
             completeProcess();
-            return nothing();
+            TaskCreationCanceled taskCreationCanceled = TaskCreationCanceled
+                    .vBuilder()
+                    .setTaskId(taskId())
+                    .build();
+            return taskCreationCanceled;
         });
     }
 

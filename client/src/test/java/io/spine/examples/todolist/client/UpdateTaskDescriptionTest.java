@@ -26,14 +26,11 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -41,10 +38,11 @@ import java.util.List;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("After execution of UpdateTaskDescription command")
+@DisplayName("After execution of UpdateTaskDescription command task views should")
 class UpdateTaskDescriptionTest extends TodoClientTest {
 
     private TodoClient client;
@@ -56,161 +54,77 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
         client = getClient();
     }
 
-    @Nested
-    @DisplayName("LabelledTasksView should")
-    class UpdateTaskDescriptionInLabelledTasksView {
-
-        @Test
-        @DisplayName("contain the task view with updated task description")
-        void containUpdatedView() {
-            TaskItem view = obtainViewWhenHandledCommandUpdateTaskDescription(
-                    UPDATED_TASK_DESCRIPTION, true);
-            assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription()
-                                                       .getValue());
-        }
-
-        @Test
-        @DisplayName("contain the task view with non-updated task description " +
-                "when command ID does not match the aggregate")
-        void containNonUpdatedView() {
-            TaskItem view = obtainViewWhenHandledCommandUpdateTaskDescription(
-                    UPDATED_TASK_DESCRIPTION, false);
-            TaskDescription actualDescription = view.getDescription();
-            assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
-            assertEquals(DESCRIPTION, actualDescription.getValue());
-        }
-
-        private TaskItem obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
-                                                                           boolean isCorrectId) {
-            CreateBasicTask createTask = createBasicTask();
-            client.postCommand(createTask);
-
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
-            client.postCommand(updateTaskPriority);
-
-            CreateBasicLabel createLabel = createBasicLabel();
-            client.postCommand(createLabel);
-            LabelId labelId = createLabel.getLabelId();
-            TaskId taskId = createTask.getId();
-
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
-
-            updateDescription(newDescription, isCorrectId, createTask);
-
-            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            assertEquals(1, tasksViewList.get(0)
-                                         .getLabelledTasks()
-                                         .getItemsCount());
-            TaskItem view = tasksViewList.get(0)
-                                         .getLabelledTasks()
-                                         .getItems(0);
-            assertEquals(labelId, view.getLabelId());
-            assertEquals(taskId, view.getId());
-
-            return view;
-        }
+    @Test
+    @DisplayName("contain an updated labelled task")
+    void containUpdatedView() {
+        TaskView view = obtainViewWithUpdatedDescription(
+                UPDATED_TASK_DESCRIPTION, true);
+        assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription()
+                                                   .getValue());
     }
 
-    @Nested
-    @DisplayName("DraftTasksView should")
-    class UpdateTaskDescriptionInDraftTasksView {
-
-        @Test
-        @DisplayName("contain the task view with non-updated task description " +
-                "when command ID does not match the aggregate")
-        void containNonUpdatedView() {
-            TaskItem view = obtainViewWhenHandledUpdateTaskDescription(
-                    UPDATED_TASK_DESCRIPTION, false);
-            assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
-        }
-
-        @Test
-        @DisplayName("contain the task view with updated task description")
-        void containUpdatedView() {
-            TaskItem view = obtainViewWhenHandledUpdateTaskDescription(
-                    UPDATED_TASK_DESCRIPTION, true);
-            assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription()
-                                                       .getValue());
-        }
-
-        private TaskItem obtainViewWhenHandledUpdateTaskDescription(String newDescription,
-                                                                    boolean isCorrectId) {
-            CreateDraft createDraft = createDraft();
-            client.postCommand(createDraft);
-            TaskId createdTaskId = createDraft.getId();
-
-            TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-            String previousDescription = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList()
-                                               .get(0)
-                                               .getDescription()
-                                               .getValue();
-            UpdateTaskDescription updateTaskDescription =
-                    updateTaskDescriptionInstance(updatedTaskId,
-                                                  previousDescription,
-                                                  newDescription);
-            client.postCommand(updateTaskDescription);
-
-            List<TaskItem> taskViews = client.getDraftTasksView()
-                                             .getDraftTasks()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(createdTaskId, view.getId());
-
-            return view;
-        }
+    @Test
+    @DisplayName("not contain an updated labelled task if the command had an incorrect ID")
+    void containNonUpdatedView() {
+        TaskView view = obtainViewWithUpdatedDescription(
+                UPDATED_TASK_DESCRIPTION, false);
+        TaskDescription actualDescription = view.getDescription();
+        assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
+        assertEquals(DESCRIPTION, actualDescription.getValue());
     }
 
-    @Nested
-    @DisplayName("MyListView should")
-    class UpdateTaskDescriptionInMyListView {
-
-        @Test
-        @DisplayName("contain the task view with updated task description")
-        void containUpdatedView() {
-            TaskItem view = obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(
-                    UPDATED_TASK_DESCRIPTION, true);
-            TaskDescription actualDescription = view.getDescription();
-            assertEquals(UPDATED_TASK_DESCRIPTION, actualDescription.getValue());
-        }
-
-        @Test
-        @DisplayName("contain the task view with non-updated task description " +
-                "when command ID does not match the aggregate")
-        void containNonUpdatedView() {
-            TaskItem view = obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(
-                    UPDATED_TASK_DESCRIPTION, false);
-            TaskDescription actualDescription = view.getDescription();
-            assertEquals(DESCRIPTION, actualDescription.getValue());
-            assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
-        }
-
-        private TaskItem
-        obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(String newDescription,
-                                                              boolean isCorrectId) {
-            CreateBasicTask createTask = createBasicTask();
-            client.postCommand(createTask);
-
-            updateDescription(newDescription, isCorrectId, createTask);
-
-            List<TaskItem> taskViews = client.getMyListView()
-                                             .getMyList()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(createTask.getId(), view.getId());
-
-            return view;
-        }
-
+    @Test
+    @DisplayName("contain a draft with and unchanged ID if the command had an incorrect ID")
+    void containNonUpdatedDraft() {
+        TaskView view = obtainViewWithUpdatedDescription(
+                UPDATED_TASK_DESCRIPTION, false);
+        assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
     }
 
-    private void updateDescription(String newDescription, boolean isCorrectId,
+    @Test
+    @DisplayName("contain a draft with updated task description")
+    void containUpdatedDraft() {
+        TaskView view = obtainViewWithUpdatedDescription(
+                UPDATED_TASK_DESCRIPTION, true);
+        assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription()
+                                                   .getValue());
+    }
+
+    private TaskView obtainViewWithUpdatedDescription(String newDescription, boolean isCorrectId) {
+        CreateBasicTask createTask = createBasicTask();
+        client.postCommand(createTask);
+
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+        client.postCommand(updateTaskPriority);
+
+        CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
+        LabelId labelId = createLabel.getLabelId();
+        TaskId taskId = createTask.getId();
+
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
+
+        updateDescription(newDescription, isCorrectId, createTask);
+
+        List<TaskView> labelledTasks = client
+                .taskViews()
+                .stream()
+                .filter(view -> !view.getLabelIdsList()
+                                     .getIdsList()
+                                     .isEmpty())
+                .collect(toList());
+        assertEquals(1, labelledTasks.size());
+        TaskView view = labelledTasks.get(0);
+        assertEquals(labelId, view.getLabelIdsList()
+                                  .getIds(0));
+        assertEquals(taskId, view.getId());
+
+        return view;
+    }
+
+    private void updateDescription(String newDescription,
+                                   boolean isCorrectId,
                                    CreateBasicTask createTask) {
         TaskId idOfCreatedTask = createTask.getId();
         TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : createWrongTaskId();

@@ -19,7 +19,7 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client, CommandHandlingError, Type} from 'spine-web';
+import {Client, Type} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -28,7 +28,7 @@ import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
-import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/layout/notification.service';
 
@@ -42,7 +42,7 @@ import {NotificationService} from 'app/layout/notification.service';
  */
 interface TaskState {
   taskId: TaskId;
-  previousState?: TaskItem;
+  previousState?: TaskView;
 }
 
 /**
@@ -64,7 +64,7 @@ export class TaskService implements OnDestroy {
   /**
    * Obtains an `Observable` of tasks all tasks in the list.
    */
-  get tasks$(): Observable<TaskItem[]> {
+  get tasks$(): Observable<TaskView[]> {
     this.assureTasksInitialized();
     return this._tasks$.asObservable();
   }
@@ -72,38 +72,23 @@ export class TaskService implements OnDestroy {
   /**
    * Obtains the current value of the task list.
    */
-  get tasks(): TaskItem[] {
+  get tasks(): TaskView[] {
     this.assureTasksInitialized();
     return this._tasks$.getValue();
   }
 
-  private _tasks$: BehaviorSubject<TaskItem[]>;
+  private _tasks$: BehaviorSubject<TaskView[]>;
   private _unsubscribe: () => void;
   private optimisticallyChanged: TaskState[] = [];
 
   /** Obtains a new task item with all the fields taken from the specified one. */
-  private static copy(task: TaskItem): TaskItem {
-    const result = new TaskItem();
+  private static copy(task: TaskView): TaskView {
+    const result = new TaskView();
     result.setId(task.getId());
     result.setDescription(task.getDescription());
     result.setStatus(task.getStatus());
     result.setPriority(task.getPriority());
     return result;
-  }
-
-  /**
-   * Based on the error that has occurred during command handling, decides whether the optimistic
-   * operation associated with the command should be undone.
-   *
-   * @param err error that has occurred during command handling.
-   *
-   * Visible for testing.
-   */
-  static shouldUndoOptimisticOperation(err: CommandHandlingError): boolean {
-    if (err.hasOwnProperty('assuresCommandNeglected')) {
-      return err.assuresCommandNeglected();
-    }
-    return false;
   }
 
   /**
@@ -113,7 +98,7 @@ export class TaskService implements OnDestroy {
    */
   private assureTasksInitialized(): void {
     if (!this._tasks$) {
-      this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
+      this._tasks$ = new BehaviorSubject<TaskView[]>([]);
       this.subscribeToTasks().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
   }
@@ -130,9 +115,9 @@ export class TaskService implements OnDestroy {
   deleteTask(taskId: TaskId): void {
     const cmd = new DeleteTask();
     cmd.setId(taskId);
-    const toBroadcast: TaskItem[] = this.tasks.map(task => {
+    const toBroadcast: TaskView[] = this.tasks.map(task => {
       if (task.getId() === taskId) {
-        const changedTask: TaskItem = TaskService.copy(task);
+        const changedTask: TaskView = TaskService.copy(task);
         task.setStatus(TaskStatus.DELETED);
         this.optimisticallyChanged.push({
           taskId,
@@ -190,16 +175,15 @@ export class TaskService implements OnDestroy {
     taskDescription.setValue(description);
     cmd.setDescription(taskDescription);
 
-    const createdTask = new TaskItem();
+    const createdTask = new TaskView();
     createdTask.setId(id);
     createdTask.setDescription(taskDescription);
-    createdTask.setStatus(TaskStatus.OPEN);
     createdTask.setStatus(TaskStatus.OPEN);
 
     this.optimisticallyChanged.push({
       taskId: id
     });
-    const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
+    const tasksToBroadcast: TaskView[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);
     this.sendTaskCommand(cmd, id);
   }
@@ -236,10 +220,8 @@ export class TaskService implements OnDestroy {
    * Visible for testing
    */
   recoverPreviousState(err, taskId: TaskId): void {
-    if (TaskService.shouldUndoOptimisticOperation(err)) {
-      this.undoOptimisticOperation(taskId);
-      this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
-    }
+    this.undoOptimisticOperation(taskId);
+    this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     this.removeFromOptimisticallyChanged(taskId);
   }
 
@@ -254,7 +236,7 @@ export class TaskService implements OnDestroy {
   private undoOptimisticOperation(taskToUndo: TaskId): void {
     if (taskToUndo) {
       const lastBroadcastTasks = this.tasks;
-      const toBroadcast: TaskItem[] = [];
+      const toBroadcast: TaskView[] = [];
       const toUndo: TaskState = this.optimisticallyChanged.find(value => value.taskId === taskToUndo);
       lastBroadcastTasks.forEach(task => {
         if (task.getId() === toUndo.taskId) {
@@ -294,8 +276,7 @@ export class TaskService implements OnDestroy {
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
    *
-   * The tasks are retrieved from the `MyListView` projection, which is an application-wide
-   * singleton storing active and completed task items.
+   * The tasks are retrieved are `TaskView` projections.
    *
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
    * the `unsubscribe` function.
@@ -303,27 +284,34 @@ export class TaskService implements OnDestroy {
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
   private subscribeToTasks(): Promise<() => void> {
-    const refreshTasks = {
-      next: (view: MyListView): void => {
+    const taskAdded = {
+      next: (view: TaskView): void => {
         if (view) {
-          const taskItems: TaskItem[] = view.getMyList().getItemsList();
-          this._tasks$.next(taskItems);
+          const alreadyBroadcast = this.tasks
+            .map(value => value.getId().getValue())
+            .includes(view.getId().getValue());
+          if (!alreadyBroadcast) {
+            const presentItems: TaskView[] = this.tasks.slice();
+            presentItems.push(view);
+            this._tasks$.next(presentItems);
+          }
         }
       }
     };
-    const type = Type.forClass(MyListView);
+
+    const type = Type.forClass(TaskView);
     return new Promise((resolve, reject) =>
       this.spineWebClient.subscribeToEntities({ofType: type})
         .then((subscriptionObject) => {
-          subscriptionObject.itemAdded.subscribe(refreshTasks);
-          subscriptionObject.itemChanged.subscribe(refreshTasks);
+          subscriptionObject.itemAdded.subscribe(taskAdded);
 
+          //TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
           resolve(subscriptionObject.unsubscribe);
         })
         .catch(err => {
           console.log(
             'Cannot subscribe to entities of type (`%s`): %s',
-            MyListView.typeUrl(), err
+            (TaskView).typeUrl(), err
           );
           reject(err);
         })

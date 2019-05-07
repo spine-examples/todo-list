@@ -73,7 +73,7 @@ import io.spine.server.command.Assign;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureDeleted;
@@ -123,7 +123,7 @@ public class TaskPart extends AggregatePart<TaskId,
                 .setDescription(cmd.getDescription());
         TaskCreated result = TaskCreated
                 .newBuilder()
-                .setId(taskId)
+                .setTaskId(taskId)
                 .setDetails(taskDetails)
                 .build();
         return singletonList(result);
@@ -282,8 +282,8 @@ public class TaskPart extends AggregatePart<TaskId,
         TaskId taskId = cmd.getId();
         TaskDraftCreated draftCreated = TaskDraftCreated
                 .newBuilder()
-                .setId(taskId)
-                .setDraftCreationTime(getCurrentTime())
+                .setTaskId(taskId)
+                .setDraftCreationTime(currentTime())
                 .build();
         return singletonList(draftCreated);
     }
@@ -341,69 +341,69 @@ public class TaskPart extends AggregatePart<TaskId,
      *****************/
 
     @Apply
-    void taskCreated(TaskCreated event) {
+    private void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId())
-                 .setCreated(getCurrentTime())
+        builder().setId(event.getTaskId())
+                 .setCreated(currentTime())
                  .setDescription(taskDetails.getDescription())
                  .setPriority(taskDetails.getPriority())
                  .setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    void taskDescriptionUpdated(TaskDescriptionUpdated event) {
+    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         TaskDescription newDescription = event.getDescriptionChange()
                                               .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Apply
-    void taskDueDateUpdated(TaskDueDateUpdated event) {
+    private void taskDueDateUpdated(TaskDueDateUpdated event) {
         Timestamp newDueDate = event.getDueDateChange()
                                     .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Apply
-    void taskPriorityUpdated(TaskPriorityUpdated event) {
+    private void taskPriorityUpdated(TaskPriorityUpdated event) {
         TaskPriority newPriority = event.getPriorityChange()
                                         .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Apply
-    void taskReopened(TaskReopened event) {
+    private void taskReopened(TaskReopened event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void taskDeleted(TaskDeleted event) {
+    private void taskDeleted(TaskDeleted event) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    void deletedTaskRestored(DeletedTaskRestored event) {
+    private void deletedTaskRestored(DeletedTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void labelledTaskRestored(LabelledTaskRestored event) {
+    private void labelledTaskRestored(LabelledTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    void taskCompleted(TaskCompleted event) {
+    private void taskCompleted(TaskCompleted event) {
         builder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    void taskDraftFinalized(TaskDraftFinalized event) {
+    private void taskDraftFinalized(TaskDraftFinalized event) {
         builder().setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    void draftCreated(TaskDraftCreated event) {
-        builder().setId(event.getId())
+    private void draftCreated(TaskDraftCreated event) {
+        builder().setId(event.getTaskId())
                  .setCreated(event.getDraftCreationTime())
                  .setDescription(event.getDetails()
                                       .getDescription())

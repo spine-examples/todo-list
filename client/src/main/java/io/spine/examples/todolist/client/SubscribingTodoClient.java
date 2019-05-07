@@ -22,7 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 /**
  * A TodoList gRPC client able to make calls to the {@code SubscriptionService}.
@@ -30,13 +30,13 @@ import io.spine.examples.todolist.q.projection.MyListView;
 public interface SubscribingTodoClient extends TodoClient {
 
     /**
-     * Subscribes the given {@code observer} onto the updates of the {@link MyListView} entity.
+     * Subscribes the given {@code observer} onto the updates of the {@link TaskView} entity.
      *
      * @param observer
      *         the result observer
      * @return the new {@link Subscription}
      */
-    Subscription subscribeToTasks(StreamObserver<MyListView> observer);
+    Subscription subscribeToTasks(StreamObserver<TaskView> observer);
 
     /**
      * Cancels the given {@code subscription}.

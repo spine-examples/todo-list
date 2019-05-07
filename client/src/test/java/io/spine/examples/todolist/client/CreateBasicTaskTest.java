@@ -22,9 +22,9 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,29 +50,36 @@ class CreateBasicTaskTest extends TodoClientTest {
     }
 
     @Test
-    @DisplayName("LabelledTasksView should be empty")
+    @DisplayName("task views should be unlabelled")
     void obtainEmptyLabelledTasksView() {
         CreateBasicTask createBasicTask = createBasicTask();
         client.postCommand(createBasicTask);
 
-        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        assertTrue(labelledTasksView.isEmpty());
+        boolean noLabelsPresent = client
+                .taskViews()
+                .stream()
+                .map(view -> view.getLabelIdsList()
+                                 .getIdsList())
+                .allMatch(List::isEmpty);
+        assertTrue(noLabelsPresent);
     }
 
     @Test
-    @DisplayName("DraftTaskItem should be empty")
+    @DisplayName("no drafts should be present")
     void obtainEmptyDraftViewList() {
         CreateBasicTask createBasicTask = createBasicTask();
         client.postCommand(createBasicTask);
 
-        List<TaskItem> taskViews = client.getDraftTasksView()
-                                         .getDraftTasks()
-                                         .getItemsList();
-        assertTrue(taskViews.isEmpty());
+        boolean noDrafts = client
+                .taskViews()
+                .stream()
+                .allMatch(view -> view.getStatus() != TaskStatus.DRAFT);
+
+        assertTrue(noDrafts);
     }
 
     @Test
-    @DisplayName("MyListView should contain the created task")
+    @DisplayName("List of task views should contain the created task")
     void obtainMyListView() {
         CreateBasicTask createFirstTask = createBasicTask();
         client.postCommand(createFirstTask);
@@ -80,14 +87,12 @@ class CreateBasicTaskTest extends TodoClientTest {
         CreateBasicTask createSecondTask = createBasicTask();
         client.postCommand(createSecondTask);
 
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
+        List<TaskView> taskViews = client.taskViews();
         assertEquals(2, taskViews.size());
 
-        TaskItem firstView = taskViews.get(0);
-        TaskItem secondView = taskViews.get(1);
         List<TaskId> taskIds = new ArrayList<>(2);
+        TaskView firstView = taskViews.get(0);
+        TaskView secondView = taskViews.get(1);
         taskIds.add(firstView.getId());
         taskIds.add(secondView.getId());
 
@@ -105,7 +110,7 @@ class CreateBasicTaskTest extends TodoClientTest {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
-        List<Task> allTasks = client.getTasks();
+        List<Task> allTasks = client.tasks();
 
         assertEquals(1, allTasks.size());
         Task singleTask = allTasks.get(0);

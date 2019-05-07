@@ -18,16 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.q.projection;
+
+import com.google.errorprone.annotations.Immutable;
+import io.spine.base.EventMessage;
+import io.spine.examples.todolist.TaskId;
 
 /**
- * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
+ * An event that is related to a single task and is aware of to which one exactly.
  */
-class EnrichmentNotFoundException extends RuntimeException {
+@SuppressWarnings("InterfaceNeverImplemented") /* Implemented by some of the events.*/
+@Immutable
+public interface TaskAware extends EventMessage {
 
-    private static final long serialVersionUID = 0L;
-
-    EnrichmentNotFoundException(String message) {
-        super(message);
-    }
+    /** Obtains an ID of the task that this event is related to. */
+    TaskId getTaskId();
 }

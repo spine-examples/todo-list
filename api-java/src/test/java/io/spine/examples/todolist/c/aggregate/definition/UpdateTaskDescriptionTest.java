@@ -156,7 +156,7 @@ class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
         Rejections.CannotUpdateTaskDescription rejection =
-                ((CannotUpdateTaskDescription) cause).getMessageThrown();
+                ((CannotUpdateTaskDescription) cause).messageThrown();
         DescriptionUpdateRejected rejectionDetails = rejection.getRejectionDetails();
         TaskId actualTaskId = rejectionDetails.getCommandDetails()
                                               .getTaskId();

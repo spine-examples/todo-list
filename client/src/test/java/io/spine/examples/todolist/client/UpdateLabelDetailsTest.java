@@ -28,31 +28,26 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.q.projection.LabelColorView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.examples.todolist.testdata.TestLabelCommandFactory;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("After execution of UpdateLabelDetails command")
+@DisplayName("After execution of UpdateLabelDetails command the list of task views should")
 class UpdateLabelDetailsTest extends TodoClientTest {
 
-    private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();
+    private static final LabelColor EXPECTED_COLOR = LabelColor.BLUE;
+    private static final String NEW_TITLE = "New title";
 
     private TodoClient client;
 
@@ -63,223 +58,107 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         client = getClient();
     }
 
-    @Nested
-    @DisplayName("LabelledTasksView should")
-    class UpdateLabelDetailsInLabelledTasksView {
+    @Test
+    @DisplayName("contain an updated labelled task")
+    void containUpdatedLabelledTask() {
+        LabelColor updatedColor = LabelColor.BLUE;
+        TaskView view = obtainViewWithUpdatedLabelDetails(
+                updatedColor,
+                UPDATED_LABEL_TITLE,
+                true);
+        LabelId assignedLabelId = view.getLabelIdsList()
+                                      .getIds(0);
+        LabelView label = findLabel(assignedLabelId);
+        assertEquals(UPDATED_LABEL_TITLE, label.getTitle());
+        assertEquals(EXPECTED_COLOR, label.getColor());
+    }
 
-        @Test
-        @DisplayName("contain the task view with updated label details")
-        void containUpdatedView() {
-            LabelColor updatedColor = LabelColor.BLUE;
-            LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
-                    updatedColor,
-                    UPDATED_LABEL_TITLE,
-                    true);
-            assertEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
-            assertEquals(EXPECTED_COLOR, view.getLabelColor());
-        }
+    @Test
+    @DisplayName("contain an unchanged labelled task if the command had an incorrect ID")
+    void containNonUpdatedView() {
+        LabelColor updatedColor = LabelColor.BLUE;
+        TaskView view = obtainViewWithUpdatedLabelDetails(
+                updatedColor,
+                UPDATED_LABEL_TITLE,
+                false);
+        LabelId labelId = view.getLabelIdsList()
+                              .getIds(0);
+        LabelView label = findLabel(labelId);
+        assertNotEquals(UPDATED_LABEL_TITLE, label.getTitle());
+        assertNotEquals(EXPECTED_COLOR, label.getColor());
+    }
 
-        @Test
-        @DisplayName("contain the task view with non-updated label details " +
-                "when command has wrong task ID")
-        void containNonUpdatedView() {
-            LabelColor updatedColor = LabelColor.BLUE;
-            LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
-                    updatedColor,
-                    UPDATED_LABEL_TITLE,
-                    false);
-            assertNotEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
-            assertNotEquals(EXPECTED_COLOR, view.getLabelColor());
-        }
-
-        private LabelledTasksView
-        obtainViewWhenHandledCommandUpdateLabelDetails(LabelColor updatedColor,
+    private TaskView obtainViewWithUpdatedLabelDetails(LabelColor updatedColor,
                                                        String updatedTitle,
                                                        boolean correctId) {
-            CreateBasicTask createTask = createBasicTask();
-            client.postCommand(createTask);
+        CreateBasicTask createTask = createBasicTask();
+        client.postCommand(createTask);
 
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
-            client.postCommand(updateTaskPriority);
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+        client.postCommand(updateTaskPriority);
 
-            CreateBasicLabel createLabel = createBasicLabel();
-            client.postCommand(createLabel);
+        CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
 
-            TaskId taskId = createTask.getId();
-            LabelId labelId = createLabel.getLabelId();
+        TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
 
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
 
-            LabelDetails detailsWithCorrectId = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(LabelColor.GRAY)
-                    .setTitle(createLabel.getLabelTitle())
-                    .build();
-            LabelDetails newLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(updatedColor)
-                    .setTitle(updatedTitle)
-                    .build();
-            LabelDetails previousLabelDetails =
-                    correctId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
-            LabelId updatedLabelId = correctId ? labelId : createWrongTaskLabelId();
-            UpdateLabelDetails updateLabelDetails =
-                    updateLabelDetailsInstance(updatedLabelId,
-                                               previousLabelDetails,
-                                               newLabelDetails);
-            client.postCommand(updateLabelDetails);
-
-            List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-            int expectedListSize = correctId ? 1 : 2;
-            assertEquals(expectedListSize, labelledTasksViewList.size());
-
-            LabelledTasksView view = getLabelledTasksView(labelId, labelledTasksViewList);
-            return view;
-        }
+        LabelDetails detailsWithCorrectId = LabelDetailsVBuilder
+                .newBuilder()
+                .setColor(LabelColor.GRAY)
+                .setTitle(createLabel.getLabelTitle())
+                .build();
+        LabelDetails newLabelDetails = LabelDetailsVBuilder
+                .newBuilder()
+                .setColor(updatedColor)
+                .setTitle(updatedTitle)
+                .build();
+        LabelDetails previousLabelDetails =
+                correctId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
+        LabelId updatedLabelId = correctId ? labelId : createWrongTaskLabelId();
+        UpdateLabelDetails updateLabelDetails =
+                updateLabelDetailsInstance(updatedLabelId,
+                                           previousLabelDetails,
+                                           newLabelDetails);
+        client.postCommand(updateLabelDetails);
+        TaskView view = getLabelledTasksView(labelId, client.taskViews());
+        return view;
     }
 
-    @Nested
-    @DisplayName("MyListView should")
-    class UpdateLabelDetailsInMyListView {
+    @Test
+    @DisplayName("contain the task view with updated label details")
+    void containUpdatedView() {
+        CreateBasicLabel createBasicLabel = createBasicLabel();
+        client.postCommand(createBasicLabel);
 
-        @Test
-        @DisplayName("contain the task view with updated label details")
-        void containUpdatedView() {
-            LabelColor newColor = LabelColor.BLUE;
-            TaskItem view = obtainTaskItemWhenHandledUpdateLabelDetailsCommand(newColor, true);
-            assertEquals(LabelColor.BLUE, view.getLabelColor());
-        }
-
-        @Test
-        @DisplayName("contain the task view with non-updated label details " +
-                "when command has wrong task ID")
-        void containNonUpdatedView() {
-            LabelColor newColor = LabelColor.BLUE;
-            TaskItem view = obtainTaskItemWhenHandledUpdateLabelDetailsCommand(newColor, false);
-            assertNotEquals(newColor, view.getLabelColor());
-        }
-
-        private TaskItem obtainTaskItemWhenHandledUpdateLabelDetailsCommand(LabelColor newColor,
-                                                                            boolean correctId) {
-            CreateBasicTask createTask = createBasicTask();
-            client.postCommand(createTask);
-
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
-            client.postCommand(updateTaskPriority);
-
-            CreateBasicLabel createLabel = createBasicLabel();
-            client.postCommand(createLabel);
-
-            TaskId idOfCreatedTask = createTask.getId();
-            LabelId idOfCreatedLabel = createLabel.getLabelId();
-
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask,
-                                                                            idOfCreatedLabel);
-            client.postCommand(assignLabelToTask);
-
-            LabelId idOfUpdatedLabel = correctId ? idOfCreatedLabel : createWrongTaskLabelId();
-
-            LabelDetails previousLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(LabelColor.GRAY)
-                    .setTitle(LABEL_TITLE)
-                    .build();
-            LabelDetails newLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setTitle(TestLabelCommandFactory.UPDATED_LABEL_TITLE)
-                    .setColor(newColor)
-                    .build();
-            UpdateLabelDetails updateLabelDetails =
-                    updateLabelDetailsInstance(idOfUpdatedLabel,
-                                               previousLabelDetails,
-                                               newLabelDetails);
-            client.postCommand(updateLabelDetails);
-
-            List<TaskItem> taskViews = client.getMyListView()
-                                             .getMyList()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(idOfCreatedTask, view.getId());
-
-            return view;
-        }
+        LabelColor newLabelColor = LabelColor.RED;
+        TaskView view = obtainViewWithUpdatedLabelDetails(newLabelColor, NEW_TITLE, true);
+        LabelId labelId = view.getLabelIdsList()
+                              .getIds(0);
+        LabelView label = findLabel(labelId);
+        assertEquals(newLabelColor, label.getColor());
     }
 
-    @Nested
-    @DisplayName("DraftTasksView should")
-    class UpdateLabelDetailsInDraftTasksView {
+    @Test
+    @DisplayName("contain the task view with non-updated label details " +
+            "when command has wrong task ID")
+    void containNonUpdatedLabel() {
+        CreateBasicLabel createBasicLabel = createBasicLabel();
+        client.postCommand(createBasicLabel);
 
-        @Test
-        @DisplayName("contain the task view with updated label details")
-        void containUpdatedView() {
-            CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.postCommand(createBasicLabel);
+        LabelColor newLabelColor = LabelColor.RED;
+        TaskView view = obtainViewWithUpdatedLabelDetails(newLabelColor, NEW_TITLE, false);
+        LabelId labelId = view.getLabelIdsList()
+                              .getIds(0);
+        LabelView label = findLabel(labelId);
+        assertNotEquals(newLabelColor, label.getColor());
+    }
 
-            LabelColor newLabelColor = LabelColor.RED;
-            TaskItem view = obtainTaskItemWhenHandledUpdateLabelDetails(newLabelColor, true);
-            assertEquals(newLabelColor, view.getLabelColor());
-        }
-
-        @Test
-        @DisplayName("contain the task view with non-updated label details " +
-                "when command has wrong task ID")
-        void containNonUpdatedView() {
-            CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.postCommand(createBasicLabel);
-
-            LabelColor newLabelColor = LabelColor.RED;
-            TaskItem view = obtainTaskItemWhenHandledUpdateLabelDetails(newLabelColor, false);
-            assertNotEquals(newLabelColor, view.getLabelColor());
-        }
-
-        private TaskItem
-        obtainTaskItemWhenHandledUpdateLabelDetails(LabelColor newLabelColor, boolean correctId) {
-            CreateDraft createDraft = createDraft();
-            client.postCommand(createDraft);
-
-            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
-            client.postCommand(updateTaskPriority);
-
-            CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.postCommand(createBasicLabel);
-
-            TaskId taskId = createDraft.getId();
-            LabelId labelId = createBasicLabel.getLabelId();
-
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.postCommand(assignLabelToTask);
-
-            LabelId updatedLabelId = correctId ? labelId : createWrongTaskLabelId();
-
-            LabelDetails previousLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setTitle(createBasicLabel.getLabelTitle())
-                    .setColor(LabelColor.GRAY)
-                    .build();
-            LabelDetails newLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setTitle(UPDATED_LABEL_TITLE)
-                    .setColor(newLabelColor)
-                    .build();
-            UpdateLabelDetails updateLabelDetails =
-                    updateLabelDetailsInstance(updatedLabelId,
-                                               previousLabelDetails,
-                                               newLabelDetails);
-            client.postCommand(updateLabelDetails);
-
-            List<TaskItem> taskViews = client.getDraftTasksView()
-                                             .getDraftTasks()
-                                             .getItemsList();
-            assertEquals(1, taskViews.size());
-
-            TaskItem view = taskViews.get(0);
-            assertEquals(taskId, view.getId());
-            assertEquals(labelId, view.getLabelId());
-
-            return view;
-        }
+    private LabelView findLabel(LabelId labelId) {
+        return client.labelView(labelId)
+                     .orElseThrow(() -> newIllegalStateException("Label not found"));
     }
 }

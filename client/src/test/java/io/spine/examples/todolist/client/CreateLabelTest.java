@@ -50,7 +50,7 @@ class CreateLabelTest extends TodoClientTest {
         CreateBasicLabel createBasicLabel = createLabel();
         client.postCommand(createBasicLabel);
 
-        List<TaskLabel> labels = client.getLabels();
+        List<TaskLabel> labels = client.labels();
         assertEquals(1, labels.size());
         TaskLabel label = labels.get(0);
         assertEquals(createBasicLabel.getLabelId(), label.getId());
@@ -64,7 +64,7 @@ class CreateLabelTest extends TodoClientTest {
         client.postCommand(createBasicLabel);
 
         LabelId labelId = createBasicLabel.getLabelId();
-        TaskLabel label = client.getLabelOr(labelId, null);
+        TaskLabel label = client.labelOr(labelId, null);
         assertNotNull(label);
         assertEquals(labelId, label.getId());
         assertEquals(createBasicLabel.getLabelTitle(), label.getTitle());

@@ -30,6 +30,7 @@ import io.spine.base.CommandMessage;
 import io.spine.base.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
+import io.spine.client.EntityStateWithVersion;
 import io.spine.client.Query;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
@@ -50,9 +51,8 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskLabelsVBuilder;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.LabelView;
+import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.time.ZoneOffsets;
 
 import javax.annotation.Nullable;
@@ -69,7 +69,6 @@ import static java.util.stream.Collectors.toList;
 /**
  * An implementation of the TodoList gRPC client.
  */
-@SuppressWarnings("OverlyCoupledClass")
 final class TodoClientImpl implements SubscribingTodoClient {
 
     private static final int TIMEOUT = 10;
@@ -101,59 +100,29 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public MyListView getMyListView() {
+    public List<TaskView> taskViews() {
         Query query = requestFactory.query()
-                                    .all(MyListView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
-        return messages.isEmpty()
-               ? MyListView.getDefaultInstance()
-               : unpack(messages.get(0), MyListView.class);
-    }
-
-    @Override
-    public List<LabelledTasksView> getLabelledTasksView() {
-        Query query = requestFactory.query()
-                                    .all(LabelledTasksView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
-        List<LabelledTasksView> result = messages
+                                    .all(TaskView.class);
+        List<Any> messages = query(query);
+        List<TaskView> result = messages
                 .stream()
-                .map(any -> unpack(any, LabelledTasksView.class))
+                .map(any -> unpack(any, TaskView.class))
                 .collect(toList());
-
         return result;
     }
 
     @Override
-    public DraftTasksView getDraftTasksView() {
-        Query query = requestFactory.query()
-                                    .all(DraftTasksView.class);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
-        return messages.isEmpty()
-               ? DraftTasksView.getDefaultInstance()
-               : unpack(messages.get(0), DraftTasksView.class);
-    }
-
-    @Override
-    public List<Task> getTasks() {
+    public List<Task> tasks() {
         return getByType(Task.class);
     }
 
     @Override
-    public Task getTaskOr(TaskId id, @Nullable Task other) {
-        Optional<Task> found = findById(Task.class, id);
-        return found.orElse(other);
-    }
-
-    @Override
-    public List<TaskLabel> getLabels() {
+    public List<TaskLabel> labels() {
         return getByType(TaskLabel.class);
     }
 
     @Override
-    public TaskLabels getLabels(TaskId taskId) {
+    public TaskLabels labelsOf(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
         TaskLabels result = labels.orElse(TaskLabelsVBuilder.newBuilder()
                                                             .setTaskId(taskId)
@@ -161,17 +130,23 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return result;
     }
 
+    @Override
+    public Optional<LabelView> labelView(LabelId id) {
+        Optional<LabelView> result = findById(LabelView.class, id);
+        return result;
+    }
+
     @Nullable
     @Override
-    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
+    public TaskLabel labelOr(LabelId id, @Nullable TaskLabel other) {
         Optional<TaskLabel> found = findById(TaskLabel.class, id);
         return found.orElse(other);
     }
 
     @Override
-    public Subscription subscribeToTasks(StreamObserver<MyListView> observer) {
+    public Subscription subscribeToTasks(StreamObserver<TaskView> observer) {
         Topic topic = requestFactory.topic()
-                                    .allOf(MyListView.class);
+                                    .allOf(TaskView.class);
         return subscribeTo(topic, observer);
     }
 
@@ -220,8 +195,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     private <M extends Message> List<M> getByType(Class<M> cls) {
         Query query = requestFactory.query()
                                     .all(cls);
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
+        List<Any> messages = query(query);
 
         @SuppressWarnings("unchecked") // Logically correct.
                 List<M> result = messages.stream()
@@ -233,8 +207,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
         Query query = requestFactory.query()
                                     .byIds(messageClass, ImmutableSet.of(id));
-        List<Any> messages = queryService.read(query)
-                                         .getMessagesList();
+        List<Any> messages = query(query);
         checkState(messages.size() <= 1,
                    "Too many %s-s with ID %s:%s %s",
                    messageClass.getSimpleName(), Identifier.toString(id),
@@ -252,6 +225,15 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                      .usePlaintext()
                                                      .build();
         return result;
+    }
+
+    /** Queries the read-side with the specified query. */
+    private List<Any> query(Query query) {
+        return queryService.read(query)
+                           .getMessagesList()
+                           .stream()
+                           .map(EntityStateWithVersion::getState)
+                           .collect(toList());
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {

@@ -24,7 +24,7 @@ import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.ActionListView;
 
 import static io.spine.cli.action.TransitionAction.transitionProducer;
-import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
+import static io.spine.examples.todolist.view.TaskListView.newOpenTaskListProducer;
 
 /**
  * Menu of actions that are related to
