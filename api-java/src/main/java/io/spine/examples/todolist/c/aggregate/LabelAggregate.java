@@ -58,11 +58,12 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
-        LabelDetails.Builder labelDetails = LabelDetails
-                .newBuilder()
-                .setTitle(cmd.getLabelTitle());
+        LabelDetails labelDetails = LabelDetails
+                .vBuilder()
+                .setTitle(cmd.getLabelTitle())
+                .build();
         LabelCreated result = LabelCreated
-                .newBuilder()
+                .vBuilder()
                 .setId(cmd.getLabelId())
                 .setDetails(labelDetails)
                 .build();
@@ -74,7 +75,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
             throws CannotUpdateLabelDetails {
         TaskLabel state = state();
         LabelDetails actualLabelDetails = LabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setColor(state.getColor())
                 .setTitle(state.getTitle())
                 .build();
@@ -92,7 +93,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
         LabelId labelId = cmd.getId();
         LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated
-                .newBuilder()
+                .vBuilder()
                 .setLabelId(labelId)
                 .setLabelDetailsChange(labelDetailsChange)
                 .build();

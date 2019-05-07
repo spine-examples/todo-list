@@ -117,12 +117,13 @@ public class TaskPart extends AggregatePart<TaskId,
     @Assign
     List<? extends Message> handle(CreateBasicTask cmd) {
         TaskId taskId = cmd.getId();
-        TaskDetails.Builder taskDetails = TaskDetails
-                .newBuilder()
+        TaskDetails taskDetails = TaskDetails
+                .vBuilder()
                 .setStatus(TaskStatus.OPEN)
-                .setDescription(cmd.getDescription());
+                .setDescription(cmd.getDescription())
+                .build();
         TaskCreated result = TaskCreated
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setDetails(taskDetails)
                 .build();
@@ -148,7 +149,7 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setDescriptionChange(descriptionChange)
                 .build();
@@ -178,7 +179,7 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setDueDateChange(cmd.getDueDateChange())
                 .build();
@@ -208,7 +209,7 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setPriorityChange(priorityChange)
                 .build();
@@ -227,7 +228,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskReopened taskReopened = TaskReopened
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .build();
         return singletonList(taskReopened);
@@ -246,7 +247,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDeleted taskDeleted = TaskDeleted
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .build();
         return singletonList(taskDeleted);
@@ -265,7 +266,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskCompleted taskCompleted = TaskCompleted
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .build();
         return singletonList(taskCompleted);
@@ -281,7 +282,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDraftCreated draftCreated = TaskDraftCreated
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setDraftCreationTime(currentTime())
                 .build();
@@ -300,7 +301,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .build();
         return singletonList(taskDraftFinalized);
@@ -316,7 +317,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .build();
         List<Message> result = newLinkedList();
@@ -327,7 +328,7 @@ public class TaskPart extends AggregatePart<TaskId,
                                                .getIdsList();
         for (LabelId labelId : labelIdsList) {
             LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored
-                    .newBuilder()
+                    .vBuilder()
                     .setTaskId(taskId)
                     .setLabelId(labelId)
                     .build();

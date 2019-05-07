@@ -43,7 +43,7 @@ import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.server.projection.Projection;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * A projection which mirrors the state of a single task.
@@ -118,11 +118,11 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     void labelAssignedToTask(LabelAssignedToTask event) {
-        Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                            .getIdsList());
+        List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
+                                                      .getIdsList());
         list.add(event.getLabelId());
         LabelIdsList labelIdsList = LabelIdsList
-                .newBuilder()
+                .vBuilder()
                 .addAllIds(list)
                 .build();
         builder().setId(event.getTaskId())
@@ -131,11 +131,11 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     void labelRemovedFromTask(LabelRemovedFromTask event) {
-        Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                            .getIdsList());
+        List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
+                                                      .getIdsList());
         list.remove(event.getLabelId());
         LabelIdsList labelIdsList = LabelIdsList
-                .newBuilder()
+                .vBuilder()
                 .addAllIds(list)
                 .build();
         builder().setLabelIdsList(labelIdsList);
