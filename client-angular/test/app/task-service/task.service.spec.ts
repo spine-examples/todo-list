@@ -23,13 +23,7 @@ import {Client, Message} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {
-  chore,
-  HOUSE_TASK_1_DESC,
-  HOUSE_TASK_1_ID,
-  HOUSE_TASK_2_DESC,
-  HOUSE_TASK_2_ID
-} from 'test/given/tasks';
+import {chore, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
 import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
 import {mockNotificationService} from 'test/given/layout-service';
@@ -89,9 +83,9 @@ describe('TaskService', () => {
     const idToComplete = service.tasks[0].getId();
     service.completeTask(idToComplete);
     const tasks: TaskView[] = service.tasks;
-    const firstHouseTask = tasks.find(task => task.getId() === idToComplete);
-    expect(firstHouseTask).toBeTruthy();
-    expect(firstHouseTask.getStatus()).toBe(TaskStatus.COMPLETED);
+    const firstChore = tasks.find(task => task.getId() === idToComplete);
+    expect(firstChore).toBeTruthy();
+    expect(firstChore.getStatus()).toBe(TaskStatus.COMPLETED);
   });
 
   it('should roll optimistic completions back if the command handling fails', fakeAsync(() => {
@@ -107,9 +101,9 @@ describe('TaskService', () => {
     const idToDelete = service.tasks[0].getId();
     service.deleteTask(idToDelete);
     const tasks: TaskView[] = service.tasks;
-    const firstHouseTask = tasks.find(task => task.getId() === idToDelete);
-    expect(firstHouseTask).toBeTruthy();
-    expect(firstHouseTask.getStatus()).toBe(TaskStatus.DELETED);
+    const firstChore = tasks.find(task => task.getId() === idToDelete);
+    expect(firstChore).toBeTruthy();
+    expect(firstChore.getStatus()).toBe(TaskStatus.DELETED);
   });
 
   it('should rollback deleted tasks if the deletion command fails', fakeAsync(() => {
@@ -124,10 +118,10 @@ describe('TaskService', () => {
   it('should fetch an expected list of tasks', () => {
     service.tasks$.toPromise().then(fetchedTasks => {
       expect(fetchedTasks.length).toBe(2);
-      expect(fetchedTasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
-      expect(fetchedTasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
-      expect(fetchedTasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
-      expect(fetchedTasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
+      expect(fetchedTasks[0].getId().getValue()).toBe(CHORE_1_ID);
+      expect(fetchedTasks[0].getDescription().getValue()).toBe(CHORE_1_DESC);
+      expect(fetchedTasks[1].getId().getValue()).toBe(CHORE_2_ID);
+      expect(fetchedTasks[1].getDescription().getValue()).toBe(CHORE_2_DESC);
     });
   });
 
