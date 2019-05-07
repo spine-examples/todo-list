@@ -47,14 +47,16 @@ plugins {
     id 'net.ltgt.errorprone' version '0.8' apply false
 }
 
-subprojects {
+allprojects {
     apply plugin: 'io.spine.tools.gradle.bootstrap'
     apply plugin: 'idea'
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'pmd'
 
     spine.enableJava()
+}
 
+subprojects {
     dependencies {
         errorprone deps.build.errorProneCore
         errorproneJavac deps.build.errorProneJavac
