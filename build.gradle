@@ -18,12 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript { final scriptHandler ->
+buildscript { scriptHandler ->
     apply from: "$rootDir/config/gradle/dependencies.gradle"
     apply from: 'version.gradle'
 
     defaultRepositories(scriptHandler)
-
     dependencies {
         classpath deps.build.guava
         classpath(deps.build.gradlePlugins.protobuf) {
@@ -39,156 +38,54 @@ buildscript { final scriptHandler ->
         classpath "io.spine.tools:spine-model-verifier:$spineVersion"
         classpath "io.spine.tools:spine-proto-js-plugin:$spineBaseVersion"
     }
+
     forceConfiguration(scriptHandler)
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '2.1'
+    id 'io.spine.tools.gradle.bootstrap' version '1.0.0-pre7' apply false
+    id 'net.ltgt.errorprone' version '0.8' apply false
 }
 
-// Apply configure-less Gretty multiple web-app setup.
-// Do not move this declaration into `allprojects`. It doesn't work for Gretty.
-//
-// To run the web farm use:
-//     gradle farmRun
-//
-// For more information see: http://akhikhl.github.io/gretty-doc/Multiple-web-apps-configureless-setup.html
-// To run only selected farms see: http://akhikhl.github.io/gretty-doc/Configuring-default-farm.html
-apply plugin: 'org.gretty'
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
-
-allprojects {
-    apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
-                            See https://github.com/google/protobuf-gradle-plugin#adding-the-plugin-to-your-project */
-    apply plugin: 'jacoco'
+subprojects {
+    apply plugin: 'io.spine.tools.gradle.bootstrap'
     apply plugin: 'idea'
+    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'pmd'
 
-    group = 'io.spine.examples.todolist'       // Generated output GroupId
-    version = appVersion  // Version in generated output. This is the version of the code.
-    // For the deployment version see `project.ext.getDeploymentVersion`.
+    spine.enableJava()
 
-    defaultRepositories(project)
+    dependencies {
+        errorprone deps.build.errorProneCore
+        errorproneJavac deps.build.errorProneJavac
+
+        implementation deps.build.guava
+        implementation deps.build.checkerAnnotations
+
+        runtimeOnly "org.slf4j:slf4j-jdk14:$deps.versions.slf4j"
+
+        testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
+        testRuntimeOnly deps.test.junit5Runner
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
+    compileTestJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
+    apply from: deps.scripts.javacArgs
+    apply from: deps.scripts.pmd
 }
-
-// Suppress building the root project.
-rootProject.jar.enabled = false
 
 ext {
     isTravis = System.env.TRAVIS == 'true'
 }
 
-subprojects {
-    project.ext {
-        sourcesRootDir = "${projectDir}/src"
-        generatedRootDir = "${projectDir}/generated"
-
-        generatedJavaDir = "${generatedRootDir}/main/java"
-        generatedTestJavaDir = "${generatedRootDir}/test/java"
-
-        generatedGrpcDir = "${generatedRootDir}/main/grpc"
-        generatedTestGrpcDir = "${generatedRootDir}/test/grpc"
-
-        generatedSpineDir = "${generatedRootDir}/main/spine"
-        generatedTestSpineDir = "${generatedRootDir}/test/spine"
-
-        protobufPlugin = "${rootDir}/scripts/protobuf.gradle"
-    }
-
-    apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
-                            See https://github.com/google/protobuf-gradle-plugin#adding-the-plugin-to-your-project */
-    apply plugin: 'com.google.protobuf'
-    apply plugin: 'net.ltgt.errorprone'
-    apply plugin: 'pmd'
-
-    apply from: deps.scripts.javacArgs
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    dependencies {
-        implementation "io.spine:spine-base:$spineBaseVersion"
-        implementation "io.spine:spine-client:$spineVersion"
-        implementation deps.build.protobuf
-        implementation deps.test.slf4j
-        implementation deps.build.jsr305Annotations
-        implementation deps.build.guava
-        implementation "com.google.code.gson:gson:$gsonVersion"
-
-        compile deps.build.slf4j
-
-        errorprone deps.build.errorProneCore
-        errorproneJavac deps.build.errorProneJavac
-
-        testImplementation deps.test.junit5Api
-        testImplementation deps.test.junit5Runner
-        testImplementation deps.test.hamcrest
-        testImplementation "io.spine:spine-testlib:${spineBaseVersion}"
-        testImplementation "io.spine:spine-testutil-core:${spineVersion}"
-        testImplementation "io.spine:spine-testutil-client:${spineVersion}"
-        testImplementation "io.spine:spine-testutil-server:${spineVersion}"
-    }
-
-    test {
-        useJUnitPlatform {
-            includeEngines 'junit-jupiter'
-        }
-    }
-
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    }
-
-    sourceSets {
-        main {
-            java.srcDirs = [generatedJavaDir, generatedSpineDir, "${sourcesRootDir}/main/java"]
-            resources.srcDirs = ["${generatedRootDir}/main/resources", "${sourcesRootDir}/main/resources"]
-        }
-        test {
-            java.srcDirs = [generatedTestJavaDir, generatedTestSpineDir, "${sourcesRootDir}/test/java"]
-            resources.srcDirs = ["${generatedRootDir}/test/resources", "${sourcesRootDir}/test/resources"]
-        }
-    }
-
-    idea {
-        module {
-            sourceDirs += file(generatedJavaDir);
-            sourceDirs += file(generatedGrpcDir);
-            sourceDirs += file(generatedSpineDir);
-
-            testSourceDirs += file(generatedTestJavaDir)
-            testSourceDirs += file(generatedTestGrpcDir)
-        }
-    }
-
-    idea.module.iml {
-        beforeMerged { module ->
-            module.dependencies.clear()
-        }
-        whenMerged { module ->
-            module.dependencies*.exported = true
-        }
-    }
-
-    apply from: deps.scripts.pmd
-}
-
-idea.project.ipr {
-    beforeMerged { final project ->
-        project.modulePaths.clear()
-    }
-    withXml { final provider ->
-        provider.node.component
-                .find { it.@name == 'VcsDirectoryMappings' }
-                .mapping.@vcs = 'Git'
-    }
-}
-
-// This Travis configuration is copied from Protobuf Gradle Plugin build.
-// See: https://github.com/google/protobuf-gradle-plugin/blob/master/build.gradle
 if (isTravis) {
     // To limit the memory usage when running in Travis.
     // Travis tend to kill tasks that use too much memory.
@@ -209,5 +106,3 @@ if (isTravis) {
         }
     }
 }
-
-apply from: deps.scripts.jacoco
