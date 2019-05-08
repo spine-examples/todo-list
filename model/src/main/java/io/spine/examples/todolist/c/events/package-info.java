@@ -24,7 +24,7 @@
 
 @ParametersAreNonnullByDefault
 @CheckReturnValue
-package spine.examples.todolist;
+package io.spine.examples.todolist.c.events;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 
