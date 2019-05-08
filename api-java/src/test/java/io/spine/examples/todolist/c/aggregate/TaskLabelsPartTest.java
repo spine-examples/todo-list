@@ -149,13 +149,7 @@ class TaskLabelsPartTest {
             createBasicTask();
             assignLabelToTask();
 
-            List<? extends Message> messageList = taskLabelsPart.handle(message());
-
-            assertEquals(1, messageList.size());
-            assertEquals(LabelRemovedFromTask.class, messageList.get(0)
-                                                                .getClass());
-            LabelRemovedFromTask labelRemovedFromTask =
-                    (LabelRemovedFromTask) messageList.get(0);
+            LabelRemovedFromTask labelRemovedFromTask = taskLabelsPart.handle(message());
 
             assertEquals(entityId(), labelRemovedFromTask.getTaskId());
             assertEquals(labelId, labelRemovedFromTask.getLabelId());

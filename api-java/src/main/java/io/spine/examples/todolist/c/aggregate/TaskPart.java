@@ -71,7 +71,6 @@ import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.base.Time.currentTime;
@@ -93,7 +92,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * The aggregate managing the state of a {@link Task}.
@@ -412,25 +410,5 @@ public class TaskPart extends AggregatePart<TaskId,
                  .setDescription(event.getDetails()
                                       .getDescription())
                  .setTaskStatus(TaskStatus.DRAFT);
-    }
-
-    private LabelledTaskRestored labelledTaskRestored(LabelId labelId) {
-        LabelledTaskRestored result = LabelledTaskRestored
-                .vBuilder()
-                .setLabelId(labelId)
-                .setTaskId(builder().getId())
-                .build();
-        return result;
-    }
-
-    private Set<LabelledTaskRestored> labelledTasksRestored(List<LabelId> list) {
-        if (list.isEmpty()) {
-            return null;
-        }
-        Set<LabelledTaskRestored> result = list
-                .stream()
-                .map(this::labelledTaskRestored)
-                .collect(toSet());
-        return result;
     }
 }
