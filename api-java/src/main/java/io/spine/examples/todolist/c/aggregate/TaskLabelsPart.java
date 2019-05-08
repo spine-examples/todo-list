@@ -37,7 +37,6 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
@@ -101,26 +100,25 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                      .getIdsList());
-        list.add(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
+        LabelIdsList newLabelsList = LabelIdsList
                 .vBuilder()
-                .addAllIds(list)
+                .mergeFrom(builder().getLabelIdsList())
+                .addIds(event.getLabelId())
                 .build();
         builder().setTaskId(event.getTaskId());
-        builder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(newLabelsList);
     }
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                      .getIdsList());
-        list.remove(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
+        int indexToRemove = builder().getLabelIdsList()
+                                     .getIdsList()
+                                     .indexOf(event.getLabelId());
+        LabelIdsList newLabelsList = LabelIdsList
                 .vBuilder()
-                .addAllIds(list)
+                .mergeFrom(builder().getLabelIdsList())
+                .removeIds(indexToRemove)
                 .build();
-        builder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(newLabelsList);
     }
 }
