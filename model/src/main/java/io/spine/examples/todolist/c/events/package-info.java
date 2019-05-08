@@ -18,19 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.q.projection;
-
-import com.google.errorprone.annotations.Immutable;
-import io.spine.base.EventMessage;
-import io.spine.examples.todolist.TaskId;
-
 /**
- * An event that is related to a single task and is aware of to which one exactly.
+ * This package contains Java interfaces that are implemented by the domain events.
  */
-@SuppressWarnings("InterfaceNeverImplemented") /* Implemented by some of the events.*/
-@Immutable
-public interface TaskAware extends EventMessage {
 
-    /** Obtains an ID of the task that this event is related to. */
-    TaskId getTaskId();
-}
+@ParametersAreNonnullByDefault
+@CheckReturnValue
+package io.spine.examples.todolist.c.events;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

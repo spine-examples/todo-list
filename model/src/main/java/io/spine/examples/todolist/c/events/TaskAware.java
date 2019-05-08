@@ -18,23 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-spine.enableJava().client()
+package io.spine.examples.todolist.c.events;
 
-apply from: "$rootDir/scripts/publish.gradle"
+import com.google.errorprone.annotations.Immutable;
+import io.spine.base.EventMessage;
+import io.spine.examples.todolist.TaskId;
 
-dependencies {
-    compile project(path: ':model')
+/**
+ * An event that is related to a single task and is aware of to which one exactly.
+ */
+@Immutable
+public interface TaskAware extends EventMessage {
 
-    implementation deps.grpc.grpcProtobuf
-
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
-}
-
-// Do not run `client` tests in parallel so instantiated server and client do not overlap with 
-// their counterparts from the other thread.
-if (isTravis) {
-    tasks.withType(Test) {
-        maxParallelForks = 1
-    }
+    /** Obtains an ID of the task that this event is related to. */
+    TaskId getTaskId();
 }

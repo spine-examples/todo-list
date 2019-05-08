@@ -34,6 +34,7 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.client.TodoClient;
@@ -122,11 +123,11 @@ public class TaskCreationWizardTestEnv {
     }
 
     public void skipLabels(TaskCreationId pid) {
-        AddLabels addLabels = AddLabels
-                .newBuilder()
+        SkipLabels skipLabels = SkipLabels
+                .vBuilder()
                 .setId(pid)
                 .build();
-        client.postCommand(addLabels);
+        client.postCommand(skipLabels);
     }
 
     public void complete(TaskCreationId pid) {

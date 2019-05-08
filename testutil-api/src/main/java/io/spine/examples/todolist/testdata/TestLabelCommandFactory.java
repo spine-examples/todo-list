@@ -37,7 +37,7 @@ public final class TestLabelCommandFactory {
     public static final String LABEL_TITLE = "label title";
     public static final String UPDATED_LABEL_TITLE = "updated label title";
     public static final LabelId LABEL_ID = LabelId
-            .newBuilder()
+            .vBuilder()
             .setValue(newUuid())
             .build();
 
@@ -61,7 +61,7 @@ public final class TestLabelCommandFactory {
      */
     public static CreateBasicLabel createLabelInstance(LabelId labelId) {
         CreateBasicLabel result = CreateBasicLabel
-                .newBuilder()
+                .vBuilder()
                 .setLabelId(labelId)
                 .setLabelTitle(LABEL_TITLE)
                 .build();
@@ -75,12 +75,12 @@ public final class TestLabelCommandFactory {
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
         LabelDetails previousLabelDetails = LabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setTitle(LABEL_TITLE)
                 .setColor(LabelColor.GRAY)
                 .build();
         LabelDetails newLabelDetails = LabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setTitle(UPDATED_LABEL_TITLE)
                 .setColor(LabelColor.GREEN)
                 .build();
@@ -94,12 +94,12 @@ public final class TestLabelCommandFactory {
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
         LabelDetails previousLabelDetails = LabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setTitle(LABEL_TITLE)
                 .setColor(LabelColor.GRAY)
                 .build();
         LabelDetails newLabelDetails = LabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setTitle(UPDATED_LABEL_TITLE)
                 .setColor(LabelColor.GREEN)
                 .build();
@@ -119,12 +119,12 @@ public final class TestLabelCommandFactory {
                                                                 LabelDetails previousLabelDetails,
                                                                 LabelDetails newLabelDetails) {
         LabelDetailsChange labelDetailsChange = LabelDetailsChange
-                .newBuilder()
+                .vBuilder()
                 .setPreviousDetails(previousLabelDetails)
                 .setNewDetails(newLabelDetails)
                 .build();
         UpdateLabelDetails result = UpdateLabelDetails
-                .newBuilder()
+                .vBuilder()
                 .setId(id)
                 .setLabelDetailsChange(labelDetailsChange)
                 .build();

@@ -37,8 +37,6 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
@@ -73,7 +71,7 @@ public class TaskLabelsPart
         }
 
         LabelRemovedFromTask labelRemoved = LabelRemovedFromTask
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
                 .build();
@@ -93,7 +91,7 @@ public class TaskLabelsPart
         }
 
         LabelAssignedToTask labelAssigned = LabelAssignedToTask
-                .newBuilder()
+                .vBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
                 .build();
@@ -102,26 +100,25 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                            .getIdsList());
-        list.add(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
-                .newBuilder()
-                .addAllIds(list)
+        LabelIdsList newLabelsList = LabelIdsList
+                .vBuilder()
+                .mergeFrom(builder().getLabelIdsList())
+                .addIds(event.getLabelId())
                 .build();
         builder().setTaskId(event.getTaskId());
-        builder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(newLabelsList);
     }
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                            .getIdsList());
-        list.remove(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
-                .newBuilder()
-                .addAllIds(list)
+        int indexToRemove = builder().getLabelIdsList()
+                                     .getIdsList()
+                                     .indexOf(event.getLabelId());
+        LabelIdsList newLabelsList = LabelIdsList
+                .vBuilder()
+                .mergeFrom(builder().getLabelIdsList())
+                .removeIds(indexToRemove)
                 .build();
-        builder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(newLabelsList);
     }
 }

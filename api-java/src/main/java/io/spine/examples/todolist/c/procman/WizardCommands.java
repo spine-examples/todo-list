@@ -250,7 +250,7 @@ final class WizardCommands {
      */
     private static CommandMessage setColorToLabel(LabelId labelId, LabelDetails label) {
         LabelDetails previousDetails =
-                label.toBuilder()
+                label.toVBuilder()
                      .setColor(GRAY)
                      .build();
         LabelDetailsChange change = LabelDetailsChangeVBuilder

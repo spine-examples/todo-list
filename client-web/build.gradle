@@ -18,11 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+apply from: "$rootDir/scripts/js.gradle"
+
+spine {
+    enableJavaScript()
+    enableJava {
+        codegen {
+            protobuf = false
+            spine = false
+        }
+    }
+}
+
 ext {
     bundleFile = "$projectDir/bundle.js"
 }
 
-apply from: "$rootDir/scripts/js.gradle"
 
 /**
  * Compiles the JS into the `bundle.js` artifact.

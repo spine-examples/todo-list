@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.q.projection.TaskAware;
+import io.spine.examples.todolist.c.events.TaskAware;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
 import io.spine.server.projection.ProjectionRepository;
