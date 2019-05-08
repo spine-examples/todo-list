@@ -38,6 +38,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
 import static io.spine.base.Time.currentTime;
@@ -52,6 +57,7 @@ import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("TaskCreationWizard should")
 class TaskCreationWizardTest extends AbstractIntegrationTest {
@@ -161,12 +167,19 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
                                                   .equals(taskId))
                               .findAny()
                               .orElseThrow(() -> newIllegalStateException("Task not found."));
-        LabelId labelId = task.getLabelIdsList()
-                              .getIdsList()
-                              .get(0);
-        LabelView label = client.labelView(labelId)
-                                .orElseThrow(() -> newIllegalStateException("Label not found."));
-        assertEquals(labelColor, label.getColor());
-        assertEquals(labelTitle, label.getTitle());
+
+        List<LabelView> taskLabels = task.getLabelIdsList()
+                                         .getIdsList()
+                                         .stream()
+                                         .map(id -> client.labelView(id))
+                                         .map(Optional::get)
+                                         .collect(Collectors.toList());
+
+        Predicate<LabelView> titlesMatch = label -> label.getTitle().equals(labelTitle);
+        Predicate<LabelView> colorsMatch = label -> label.getColor() == labelColor;
+        boolean labelIsAssigned = taskLabels
+                .stream()
+                .anyMatch(titlesMatch.and(colorsMatch));
+        assertTrue(labelIsAssigned);
     }
 }
