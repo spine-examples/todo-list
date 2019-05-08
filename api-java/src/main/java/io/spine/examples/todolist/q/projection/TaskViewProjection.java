@@ -118,15 +118,13 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     void labelAssignedToTask(LabelAssignedToTask event) {
-        List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
-                                                      .getIdsList());
-        list.add(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
+        LabelIdsList newLabelsList = LabelIdsList
                 .vBuilder()
-                .addAllIds(list)
+                .mergeFrom(builder().getLabelIdsList())
+                .addIds(event.getLabelId())
                 .build();
         builder().setId(event.getTaskId())
-                 .setLabelIdsList(labelIdsList);
+                 .setLabelIdsList(newLabelsList);
     }
 
     @Subscribe

@@ -71,16 +71,6 @@ subprojects {
         testRuntimeOnly deps.test.junit5Runner
     }
 
-    compileJava {
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    }
-
-    compileTestJava {
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    }
-
     test {
         useJUnitPlatform {
             includeEngines 'junit-jupiter'

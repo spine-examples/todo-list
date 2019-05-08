@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package spine.examples.todolist;
+package io.spine.examples.todolist.c.events;
 
 import com.google.errorprone.annotations.Immutable;
 import io.spine.base.EventMessage;
