@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
@@ -56,6 +55,7 @@ import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.util.Exceptions.newIllegalStateException;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -173,7 +173,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
                                          .stream()
                                          .map(id -> client.labelView(id))
                                          .map(Optional::get)
-                                         .collect(Collectors.toList());
+                                         .collect(toList());
 
         Predicate<LabelView> titlesMatch = label -> label.getTitle().equals(labelTitle);
         Predicate<LabelView> colorsMatch = label -> label.getColor() == labelColor;
