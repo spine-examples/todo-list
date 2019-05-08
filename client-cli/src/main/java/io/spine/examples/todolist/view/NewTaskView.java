@@ -84,7 +84,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     }
 
     private static TaskId generatedId() {
-        return TaskId.newBuilder()
+        return TaskId.vBuilder()
                      .setValue(newUuid())
                      .build();
     }

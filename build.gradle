@@ -52,6 +52,7 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'pmd'
+    apply plugin: 'jacoco'
 
     spine.enableJava()
 }
@@ -108,3 +109,5 @@ if (isTravis) {
         }
     }
 }
+
+apply from: deps.scripts.jacoco
