@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
+import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import io.spine.change.TimestampChange;
@@ -68,12 +69,11 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
-import io.spine.server.tuple.Pair;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
@@ -107,9 +107,9 @@ import static java.util.stream.Collectors.toSet;
         "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/,
         "unused" /* Methods are used reflectively by Spine. */})
 public class TaskPart extends AggregatePart<TaskId,
-                                            Task,
-                                            TaskVBuilder,
-                                            TaskAggregateRoot> {
+        Task,
+        TaskVBuilder,
+        TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
         super(root);
@@ -310,7 +310,7 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Assign
-    Pair<DeletedTaskRestored, Optional<Set<LabelledTaskRestored>>> handle(RestoreDeletedTask cmd)
+    List<? extends Message> handle(RestoreDeletedTask cmd)
             throws CannotRestoreDeletedTask {
         TaskStatus currentStatus = state().getTaskStatus();
         boolean isValid = ensureDeleted(currentStatus);
@@ -323,19 +323,21 @@ public class TaskPart extends AggregatePart<TaskId,
                 .vBuilder()
                 .setTaskId(taskId)
                 .build();
+        List<Message> result = newLinkedList();
+        result.add(deletedTaskRestored);
 
         TaskLabels taskLabels = getPartState(TaskLabels.class);
         List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
                                                .getIdsList();
-        if (labelIdsList.isEmpty()) {
-            return new Pair<>(deletedTaskRestored, Optional.empty());
-        } else {
-            Set<LabelledTaskRestored> labelledTasksRestored = labelIdsList
-                    .stream()
-                    .map(this::labelledTaskRestored)
-                    .collect(toSet());
-            return new Pair<>(deletedTaskRestored, Optional.of(labelledTasksRestored));
+        for (LabelId labelId : labelIdsList) {
+            LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored
+                    .vBuilder()
+                    .setTaskId(taskId)
+                    .setLabelId(labelId)
+                    .build();
+            result.add(labelledTaskRestored);
         }
+        return result;
     }
 
     /*
@@ -418,6 +420,17 @@ public class TaskPart extends AggregatePart<TaskId,
                 .setLabelId(labelId)
                 .setTaskId(builder().getId())
                 .build();
+        return result;
+    }
+
+    private Set<LabelledTaskRestored> labelledTasksRestored(List<LabelId> list) {
+        if (list.isEmpty()) {
+            return null;
+        }
+        Set<LabelledTaskRestored> result = list
+                .stream()
+                .map(this::labelledTaskRestored)
+                .collect(toSet());
         return result;
     }
 }
