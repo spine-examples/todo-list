@@ -32,6 +32,7 @@ import io.spine.examples.todolist.TaskDetailsUpdateRejected;
 import io.spine.examples.todolist.TaskDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -151,7 +152,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         }
         WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
-            Collection<? extends CommandMessage> existingLabelsCommands =
+            Collection<AssignLabelToTask> existingLabelsCommands =
                     commands.assignExistingLabels(command);
             Collection<? extends CommandMessage> newLabelsCommands =
                     commands.assignNewLabels(command);
