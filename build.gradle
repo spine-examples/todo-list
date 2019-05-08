@@ -81,6 +81,12 @@ subprojects {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
+    test {
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter'
+        }
+    }
+    
     apply from: deps.scripts.javacArgs
     apply from: deps.scripts.pmd
 }
