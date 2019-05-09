@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.c.procman;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.spine.base.CommandMessage;
 import io.spine.change.TimestampChange;
@@ -35,12 +34,16 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabelVBuilder;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 
 import java.util.Collection;
@@ -88,7 +91,7 @@ final class WizardCommands {
      *         the source command
      * @return new commands generated from the given {@code src} command
      */
-     Collection<? extends CommandMessage> updateTaskDetails(UpdateTaskDetails src) {
+    Collection<? extends CommandMessage> updateTaskDetails(UpdateTaskDetails src) {
         ImmutableSet.Builder<CommandMessage> commands = ImmutableSet.builder();
         DescriptionChange descriptionChange = src.getDescriptionChange();
         if (isNotDefault(descriptionChange)) {
@@ -115,7 +118,7 @@ final class WizardCommands {
      *         the description change for the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskDescription(DescriptionChange descriptionChange) {
+    private UpdateTaskDescription updateTaskDescription(DescriptionChange descriptionChange) {
         checkArgument(isNotDefault(descriptionChange));
         UpdateTaskDescription updateCommand = UpdateTaskDescriptionVBuilder
                 .newBuilder()
@@ -132,9 +135,9 @@ final class WizardCommands {
      *         the priority change for the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskPriority(PriorityChange priorityChange) {
+    private UpdateTaskPriority updateTaskPriority(PriorityChange priorityChange) {
         checkArgument(isNotDefault(priorityChange));
-        CommandMessage updateCommand = UpdateTaskPriorityVBuilder
+        UpdateTaskPriority updateCommand = UpdateTaskPriorityVBuilder
                 .newBuilder()
                 .setId(taskId)
                 .setPriorityChange(priorityChange)
@@ -149,9 +152,9 @@ final class WizardCommands {
      *         the priority to set to the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskDueDate(TimestampChange dueDateChange) {
+    private UpdateTaskDueDate updateTaskDueDate(TimestampChange dueDateChange) {
         checkArgument(isNotDefault(dueDateChange));
-        CommandMessage updateCommand = UpdateTaskDueDateVBuilder
+        UpdateTaskDueDate updateCommand = UpdateTaskDueDateVBuilder
                 .newBuilder()
                 .setId(taskId)
                 .setDueDateChange(dueDateChange)
@@ -167,8 +170,8 @@ final class WizardCommands {
      *         the command that defines the labels to assign
      * @return the commands assigning those tasks
      */
-    Collection<? extends CommandMessage> assignExistingLabels(AddLabels src) {
-        Collection<? extends CommandMessage> commands =
+    Collection<AssignLabelToTask> assignExistingLabels(AddLabels src) {
+        Collection<AssignLabelToTask> commands =
                 src.getExistingLabelsList()
                    .stream()
                    .map(this::assignLabel)
@@ -210,11 +213,10 @@ final class WizardCommands {
                 .newBuilder()
                 .setValue(newUuid())
                 .build();
-        CommandMessage createBasicLabel = createLabel(labelId, label);
-        CommandMessage updateLabelDetails = setColorToLabel(labelId, label);
-        CommandMessage assignLabelToTask = assignLabel(labelId);
-        return ImmutableList.of(createBasicLabel, updateLabelDetails, assignLabelToTask)
-                            .stream();
+        CreateBasicLabel createBasicLabel = createLabel(labelId, label);
+        UpdateLabelDetails updateLabelDetails = setColorToLabel(labelId, label);
+        AssignLabelToTask assignLabelToTask = assignLabel(labelId);
+        return Stream.of(createBasicLabel, updateLabelDetails, assignLabelToTask);
     }
 
     /**
@@ -227,8 +229,8 @@ final class WizardCommands {
      * @return a command creating a basic label with the given ID and title; note that the label
      *         color is ignored for now
      */
-    private static CommandMessage createLabel(LabelId labelId, LabelDetails label) {
-        CommandMessage createBasicLabel = CreateBasicLabelVBuilder
+    private static CreateBasicLabel createLabel(LabelId labelId, LabelDetails label) {
+        CreateBasicLabel createBasicLabel = CreateBasicLabelVBuilder
                 .newBuilder()
                 .setLabelId(labelId)
                 .setLabelTitle(label.getTitle())
@@ -248,7 +250,7 @@ final class WizardCommands {
      *         the new label details
      * @return a command updating the label details
      */
-    private static CommandMessage setColorToLabel(LabelId labelId, LabelDetails label) {
+    private static UpdateLabelDetails setColorToLabel(LabelId labelId, LabelDetails label) {
         LabelDetails previousDetails =
                 label.toVBuilder()
                      .setColor(GRAY)
@@ -258,7 +260,7 @@ final class WizardCommands {
                 .setPreviousDetails(previousDetails)
                 .setNewDetails(label)
                 .build();
-        CommandMessage updateLabelDetails = UpdateLabelDetailsVBuilder
+        UpdateLabelDetails updateLabelDetails = UpdateLabelDetailsVBuilder
                 .newBuilder()
                 .setId(labelId)
                 .setLabelDetailsChange(change)
@@ -267,14 +269,14 @@ final class WizardCommands {
     }
 
     /**
-     * Creates an {@link AssignLabelToTask} command which assigns the label with the given ID to
+     * Creates an {@code AssignLabelToTask} command which assigns the label with the given ID to
      * the target task.
      *
      * @param labelId
      *         the ID of the label to assign
      * @return new instance of a command message
      */
-    private CommandMessage assignLabel(LabelId labelId) {
+    private AssignLabelToTask assignLabel(LabelId labelId) {
         return AssignLabelToTaskVBuilder.newBuilder()
                                         .setId(taskId)
                                         .setLabelId(labelId)

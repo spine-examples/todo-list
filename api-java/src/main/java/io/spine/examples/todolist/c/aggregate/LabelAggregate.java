@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.Message;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
@@ -37,9 +36,6 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
-
-import java.util.Collections;
-import java.util.List;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
 
@@ -57,7 +53,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     }
 
     @Assign
-    List<? extends Message> handle(CreateBasicLabel cmd) {
+    LabelCreated handle(CreateBasicLabel cmd) {
         LabelDetails labelDetails = LabelDetails
                 .vBuilder()
                 .setTitle(cmd.getLabelTitle())
@@ -67,11 +63,11 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
                 .setId(cmd.getLabelId())
                 .setDetails(labelDetails)
                 .build();
-        return Collections.singletonList(result);
+        return result;
     }
 
     @Assign
-    List<? extends Message> handle(UpdateLabelDetails cmd)
+    LabelDetailsUpdated handle(UpdateLabelDetails cmd)
             throws CannotUpdateLabelDetails {
         TaskLabel state = state();
         LabelDetails actualLabelDetails = LabelDetails
@@ -92,12 +88,11 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
         }
 
         LabelId labelId = cmd.getId();
-        LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated
+        LabelDetailsUpdated result = LabelDetailsUpdated
                 .vBuilder()
                 .setLabelId(labelId)
                 .setLabelDetailsChange(labelDetailsChange)
                 .build();
-        List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
         return result;
     }
 

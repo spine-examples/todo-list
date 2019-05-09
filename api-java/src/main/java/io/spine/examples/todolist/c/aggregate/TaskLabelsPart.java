@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
-import com.google.protobuf.Message;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.Task;
@@ -37,13 +36,10 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
-import java.util.List;
-
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTaskStatusToRemoveLabel;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
-import static java.util.Collections.singletonList;
 
 /**
  * The aggregate managing the state of a {@link TaskLabels}.
@@ -57,7 +53,7 @@ public class TaskLabelsPart
     }
 
     @Assign
-    List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
+    LabelRemovedFromTask handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         LabelId labelId = cmd.getLabelId();
         TaskId taskId = cmd.getId();
 
@@ -70,16 +66,16 @@ public class TaskLabelsPart
             throwCannotRemoveLabelFromTask(cmd);
         }
 
-        LabelRemovedFromTask labelRemoved = LabelRemovedFromTask
+        LabelRemovedFromTask result = LabelRemovedFromTask
                 .vBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
                 .build();
-        return singletonList(labelRemoved);
+        return result;
     }
 
     @Assign
-    List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
+    LabelAssignedToTask handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         TaskId taskId = cmd.getId();
         LabelId labelId = cmd.getLabelId();
 
@@ -90,12 +86,12 @@ public class TaskLabelsPart
             throwCannotAssignLabelToTask(cmd);
         }
 
-        LabelAssignedToTask labelAssigned = LabelAssignedToTask
+        LabelAssignedToTask result = LabelAssignedToTask
                 .vBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
                 .build();
-        return singletonList(labelAssigned);
+        return result;
     }
 
     @Apply
