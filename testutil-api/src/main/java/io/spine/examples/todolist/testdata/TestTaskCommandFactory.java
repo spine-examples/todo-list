@@ -73,8 +73,7 @@ public class TestTaskCommandFactory {
             .setValue(newUuid())
             .build();
     public static final String DESCRIPTION = "Task description.";
-    public static final Timestamp DUE_DATE = currentTime();
-    public static final String UPDATED_LABEL_TITLE = "labelTitle";
+    private static final Timestamp DUE_DATE = currentTime();
 
     private TestTaskCommandFactory() {
     }
@@ -86,6 +85,11 @@ public class TestTaskCommandFactory {
      */
     public static CreateBasicTask createTaskInstance() {
         CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
+        return result;
+    }
+
+    public static CreateBasicTask createTaskInstance(TaskId taskId) {
+        CreateBasicTask result = createTaskInstance(taskId, DESCRIPTION);
         return result;
     }
 

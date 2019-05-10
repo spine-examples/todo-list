@@ -20,87 +20,64 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
-import com.google.protobuf.Message;
-import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDraftCreated;
-import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
-class CreateDraftTest extends TaskCommandTest<CreateDraft> {
+class CreateDraftTest extends TodoListCommandTestBase {
 
     CreateDraftTest() {
-        super(createDraftInstance());
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
+        super(new TaskRepository(), new TaskViewRepository());
     }
 
     @Test
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
-        CreateDraft createDraftCmd = createDraftInstance(entityId());
-        List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                              envelopeOf(createDraftCmd));
-        assertEquals(1, messageList.size());
-        assertEquals(TaskDraftCreated.class, messageList.get(0)
-                                                        .getClass());
-        TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
-        assertEquals(entityId(), taskDraftCreated.getTaskId());
+        CreateDraft createDraftCmd = createDraftInstance();
+        boundedContext().receivesCommand(createDraftCmd)
+                        .assertEmitted(TaskDraftCreated.class);
     }
 
     @Test
     @DisplayName("create the draft")
     void createDraft() {
-        CreateDraft createDraftCmd = createDraftInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(createDraftCmd));
-        Task state = aggregate.state();
+        CreateDraft createDraft = createDraftInstance(taskId());
+        boundedContext().receivesCommand(createDraft);
 
-        assertEquals(entityId(), state.getId());
-        assertEquals(DRAFT, state.getTaskStatus());
+        TaskView expected = TaskView
+                .vBuilder()
+                .setId(taskId())
+                .setStatus(DRAFT)
+                .build();
+        isEqualToAfterReceiving(expected, createDraft);
     }
 
     @Test
     @DisplayName("throw CannotCreateDraft rejection upon " +
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
-        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
+        CreateBasicTask createTask = createTaskInstance();
+        TaskId taskId = createTask.getId();
+        DeleteTask deleteTask = deleteTaskInstance(taskId);
+        CreateDraft createDraft = createDraftInstance(taskId);
 
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-
-        CreateDraft createDraftCmd = createDraftInstance(entityId());
-        Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate,
-                                                         envelopeOf(createDraftCmd)));
-        Throwable cause = Throwables.getRootCause(t);
-        CannotCreateDraft rejection = (CannotCreateDraft) cause;
-        TaskId actualId = rejection.messageThrown()
-                                   .getRejectionDetails()
-                                   .getCommandDetails()
-                                   .getTaskId();
-        assertEquals(entityId(), actualId);
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(deleteTask)
+                        .receivesCommand(createDraft)
+                        .assertRejectedWith(Rejections.CannotCreateDraft.class);
     }
 }

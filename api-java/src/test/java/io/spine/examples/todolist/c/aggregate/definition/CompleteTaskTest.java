@@ -20,103 +20,84 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
-import com.google.protobuf.Message;
-import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
-import io.spine.examples.todolist.c.rejection.CannotCompleteTask;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static io.spine.examples.todolist.TaskStatus.COMPLETED;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
-class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
+class CompleteTaskTest extends TodoListCommandTestBase {
 
     CompleteTaskTest() {
-        super(completeTaskInstance());
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
+        super(new TaskRepository(), new TaskViewRepository());
     }
 
     @Test
     @DisplayName("produce TaskCompleted event")
     void produceEvent() {
-        dispatchCreateTaskCmd();
-
-        List<? extends Message> messageList = dispatchCompleteTaskCmd();
-
-        assertEquals(1, messageList.size());
-        assertEquals(TaskCompleted.class, messageList.get(0)
-                                                     .getClass());
-        TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
-
-        assertEquals(entityId(), taskCompleted.getTaskId());
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(completeTask(createTask.getId()))
+                        .assertEmitted(TaskCompleted.class);
     }
 
     @Test
     @DisplayName("complete the task")
     void completeTheTask() {
-        dispatchCreateTaskCmd();
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        CompleteTask completeTask = completeTask(taskId());
 
-        dispatchCompleteTaskCmd();
-        Task state = aggregate.state();
+        TaskView expected = TaskView
+                .vBuilder()
+                .setId(taskId())
+                .setStatus(TaskStatus.COMPLETED)
+                .build();
 
-        assertEquals(entityId(), state.getId());
-        assertEquals(COMPLETED, state.getTaskStatus());
+        isEqualToAfterReceiving(expected, createTask, completeTask);
     }
 
     @Test
     @DisplayName("throw CannotCompleteTask rejection upon an attempt to complete the deleted task")
     void cannotCompleteDeletedTask() {
-        dispatchCreateTaskCmd();
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        CompleteTask completeTask = completeTask(taskId());
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
 
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-
-        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
-        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(deleteTask)
+                        .receivesCommand(completeTask)
+                        .assertRejectedWith(Rejections.CannotCompleteTask.class);
     }
 
     @Test
     @DisplayName("throw CannotCompleteTask rejection upon " +
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
-        CreateDraft createDraftCmd = createDraftInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(createDraftCmd));
+        CreateDraft createDraft = createDraftInstance(taskId());
+        CompleteTask completeTask = completeTask(createDraft.getId());
 
-        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
-        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
+        boundedContext().receivesCommand(createDraft)
+                        .receivesCommand(completeTask)
+                        .assertRejectedWith(Rejections.CannotCompleteTask.class);
     }
 
-    private void dispatchCreateTaskCmd() {
-        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
-    }
-
-    private List<? extends Message> dispatchCompleteTaskCmd() {
-        CompleteTask completeTaskCmd = completeTaskInstance(entityId());
-        return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
+    private static CompleteTask completeTask(TaskId taskId) {
+        CompleteTask result = CompleteTask.vBuilder()
+                                          .setId(taskId)
+                                          .build();
+        return result;
     }
 }

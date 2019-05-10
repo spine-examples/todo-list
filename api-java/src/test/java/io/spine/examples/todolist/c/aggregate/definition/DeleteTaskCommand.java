@@ -20,87 +20,80 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
-import com.google.protobuf.Message;
-import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDeleted;
-import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
-import io.spine.server.type.CommandEnvelope;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskViewProjection;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
+import io.spine.testing.server.entity.EntitySubject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static io.spine.examples.todolist.TaskStatus.DELETED;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
-class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
+class DeleteTaskCommand extends TodoListCommandTestBase {
 
     DeleteTaskCommand() {
-        super(deleteTaskInstance());
+        super(new TaskRepository(), new TaskViewRepository());
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
+    @Test
+    @DisplayName("produce TaskDeleted event")
+    void produceEvent() {
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
+
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(deleteTask)
+                        .assertEmitted(TaskDeleted.class);
     }
 
     @Test
     @DisplayName("delete the task")
     void deleteTask() {
-        dispatchCreateTaskCmd();
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
 
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-        Task state = aggregate.state();
+        TaskView expected = TaskView
+                .vBuilder()
+                .setId(taskId())
+                .setStatus(DELETED)
+                .build();
+        isEqualToAfterReceiving(expected, createTask, deleteTask);
+    }
 
-        assertEquals(entityId(), state.getId());
-        assertEquals(DELETED, state.getTaskStatus());
+    @Test
+    @DisplayName("set both archived and deleted flags to true if sent to the task in `Draft` state")
+    void deleteDraft() {
+        CreateDraft createDraft = createDraftInstance(taskId());
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
+        EntitySubject projectionSubject = boundedContext()
+                .receivesCommand(createDraft)
+                .receivesCommand(deleteTask)
+                .assertEntity(TaskViewProjection.class, taskId());
+        projectionSubject.deletedFlag()
+                         .isTrue();
+        projectionSubject.archivedFlag()
+                         .isTrue();
     }
 
     @Test
     @DisplayName("throw CannotDeleteTask rejection upon an attempt to " +
             "delete the already deleted task")
     void cannotDeleteAlreadyDeletedTask() {
-        dispatchCreateTaskCmd();
-
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
-        dispatchCommand(aggregate, deleteTaskEnvelope);
-
-        Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate, deleteTaskEnvelope));
-        assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
-    }
-
-    @Test
-    @DisplayName("produce TaskDeleted event")
-    void produceEvent() {
-        dispatchCreateTaskCmd();
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-
-        List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-        assertEquals(1, messageList.size());
-        assertEquals(TaskDeleted.class, messageList.get(0)
-                                                   .getClass());
-        TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
-        assertEquals(entityId(), taskDeleted.getTaskId());
-    }
-
-    private void dispatchCreateTaskCmd() {
-        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(deleteTask)
+                        .receivesCommand(deleteTask)
+                        .assertRejectedWith(Rejections.CannotDeleteTask.class);
     }
 }

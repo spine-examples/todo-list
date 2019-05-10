@@ -20,86 +20,64 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
-import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.rejection.CannotFinalizeDraft;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
-class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
+class FinalizeDraftTest extends TodoListCommandTestBase {
 
     FinalizeDraftTest() {
-        super(finalizeDraftInstance());
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
+        super(new TaskRepository(), new TaskViewRepository());
     }
 
     @Test
-    @DisplayName("finalize the task")
+    @DisplayName("finalize the draft")
     void finalizeTask() {
-        CreateDraft createDraftCmd = createDraftInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(createDraftCmd));
+        CreateDraft createDraft = createDraftInstance(taskId());
+        FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
 
-        Task state = aggregate.state();
-
-        assertEquals(entityId(), state.getId());
-        assertEquals(DRAFT, state.getTaskStatus());
-
-        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(finalizeDraftCmd));
-        state = aggregate.state();
-
-        assertEquals(entityId(), state.getId());
-        assertEquals(FINALIZED, state.getTaskStatus());
+        TaskView expected = TaskView
+                .vBuilder()
+                .setId(taskId())
+                .setStatus(FINALIZED)
+                .build();
+        isEqualToAfterReceiving(expected, createDraft, finalizeDraft);
     }
 
     @Test
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize the deleted task")
     void cannotFinalizeDeletedTask() {
-        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
-
-        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-
-        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
-        Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate,
-                                                         envelopeOf(finalizeDraftCmd)));
-        assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
+        CreateBasicTask createTask = createTaskInstance();
+        DeleteTask deleteTask = deleteTaskInstance(taskId());
+        FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(deleteTask)
+                        .receivesCommand(finalizeDraft)
+                        .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
     }
 
     @Test
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize " +
             "the task which is not a draft")
     void cannotFinalizeNotDraftTask() {
-        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
-        Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate,
-                                                         envelopeOf(finalizeDraftCmd)));
-        assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
+        CreateBasicTask createTask = createTaskInstance();
+        FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
+        boundedContext().receivesCommand(createTask)
+                        .receivesCommand(finalizeDraft)
+                        .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
     }
 }
