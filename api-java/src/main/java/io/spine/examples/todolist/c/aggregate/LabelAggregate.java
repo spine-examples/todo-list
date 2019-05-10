@@ -46,7 +46,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
 
     @VisibleForTesting
-    static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
+    public static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
     protected LabelAggregate(LabelId id) {
         super(id);
