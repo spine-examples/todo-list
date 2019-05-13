@@ -34,11 +34,12 @@ import static io.spine.base.Identifier.newUuid;
 import static java.util.Arrays.asList;
 
 /**
- * An abstract base for API tests that are related to tasks.
+ * An abstract base for all commands that are related to tasks.
  *
- * <p>Contains a task ID, which is an ID that is used in all of the tested.
+ * <p>Contains a task ID, which identifies a task under tests.
  *
- * <p>Provides a way to send commands and check whether the entity state has an expected result.
+ * <p>Provides a way to send commands and check whether the entity state is equal to the
+ * expected result.
  */
 class TaskCommandTestBase {
 
