@@ -25,7 +25,6 @@ import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
@@ -37,13 +36,9 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
-import io.spine.examples.todolist.client.TodoClient;
-
-import java.util.Optional;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The task creation wizard test environment.
@@ -52,41 +47,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TaskCreationWizardTestEnv {
 
-    private final TodoClient client;
-
-    private TaskCreationWizardTestEnv(TodoClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Creates a new instance of {@code TaskCreationWizardTestEnv} with the given client.
-     *
-     * @param todoClient
-     *         the {@code TodoClient} to connect to the TodoList server
-     * @return new instance of {@code TaskCreationWizardTestEnv}
-     */
-    public static TaskCreationWizardTestEnv with(TodoClient todoClient) {
-        return new TaskCreationWizardTestEnv(todoClient);
+    /** Prevents instantiation of this utility class. */
+    private TaskCreationWizardTestEnv() {
     }
 
     // Command sending methods
     // -----------------------
 
-    public void createDraft(TaskCreationId pid, TaskId taskId) {
+    public static StartTaskCreation createDraft(TaskCreationId pid, TaskId taskId) {
         StartTaskCreation startCreation = StartTaskCreation
                 .newBuilder()
                 .setId(pid)
                 .setTaskId(taskId)
                 .build();
-        client.postCommand(startCreation);
+        return startCreation;
     }
 
-    public void setDetails(TaskCreationId pid, String description) {
-        setDetails(pid, description, TP_UNDEFINED, Timestamp.getDefaultInstance());
+    public static UpdateTaskDetails setDetails(TaskCreationId pid, String description) {
+        return setDetails(pid, description, TP_UNDEFINED, Timestamp.getDefaultInstance());
     }
 
-    public void setDetails(TaskCreationId pid, String description,
-                           TaskPriority priority, Timestamp dueDate) {
+    public static UpdateTaskDetails setDetails(TaskCreationId pid, String description,
+                                               TaskPriority priority, Timestamp dueDate) {
         TaskDescription descValue = TaskDescription
                 .newBuilder()
                 .setValue(description)
@@ -110,43 +92,43 @@ public class TaskCreationWizardTestEnv {
                 .setPriorityChange(priorityChange)
                 .setDueDateChange(dueDateChange)
                 .build();
-        client.postCommand(setDescription);
+        return setDescription;
     }
 
-    public void addLabel(TaskCreationId pid, LabelId labelId) {
+    public static AddLabels addLabel(TaskCreationId pid, LabelId labelId) {
         AddLabels addLabels = AddLabels
                 .newBuilder()
                 .setId(pid)
                 .addExistingLabels(labelId)
                 .build();
-        client.postCommand(addLabels);
+        return addLabels;
     }
 
-    public void skipLabels(TaskCreationId pid) {
+    public static SkipLabels skipLabels(TaskCreationId pid) {
         SkipLabels skipLabels = SkipLabels
                 .vBuilder()
                 .setId(pid)
                 .build();
-        client.postCommand(skipLabels);
+        return skipLabels;
     }
 
-    public void complete(TaskCreationId pid) {
+    public static CompleteTaskCreation complete(TaskCreationId pid) {
         CompleteTaskCreation completeTaskCreation = CompleteTaskCreation
                 .newBuilder()
                 .setId(pid)
                 .build();
-        client.postCommand(completeTaskCreation);
+        return completeTaskCreation;
     }
 
-    public void cancel(TaskCreationId pid) {
-        CancelTaskCreation completeTaskCreation = CancelTaskCreation
+    public static CancelTaskCreation cancel(TaskCreationId pid) {
+        CancelTaskCreation cancelTaskCreation = CancelTaskCreation
                 .newBuilder()
                 .setId(pid)
                 .build();
-        client.postCommand(completeTaskCreation);
+        return cancelTaskCreation;
     }
 
-    public LabelId createNewLabel(String title) {
+    public static CreateBasicLabel createNewLabel(String title) {
         LabelId id = LabelId
                 .newBuilder()
                 .setValue(newUuid())
@@ -156,22 +138,7 @@ public class TaskCreationWizardTestEnv {
                 .setLabelId(id)
                 .setLabelTitle(title)
                 .build();
-        client.postCommand(cmd);
-        return id;
-    }
-
-    // Query methods
-    // -------------
-
-    public Task taskById(TaskId id) {
-        Optional<Task> taskOptional =
-                client.tasks()
-                      .stream()
-                      .filter(task -> id.equals(task.getId()))
-                      .findAny();
-        assertTrue(taskOptional.isPresent());
-        Task actualTask = taskOptional.get();
-        return actualTask;
+        return cmd;
     }
 
     // Value generating static methods
