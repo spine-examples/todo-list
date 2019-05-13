@@ -20,15 +20,10 @@
 
 package io.spine.examples.todolist.c.procman;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Timestamp;
-import io.spine.base.CommandMessage;
 import io.spine.base.Time;
 import io.spine.change.TimestampChange;
-import io.spine.client.ActorRequestFactory;
-import io.spine.core.Command;
 import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
@@ -54,94 +49,60 @@ import io.spine.examples.todolist.c.commands.CompleteTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.SkipLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.StartTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
-import io.spine.examples.todolist.c.rejection.CannotAddLabels;
-import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
-import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDetails;
-import io.spine.server.BoundedContext;
-import io.spine.server.commandbus.CommandBus;
-import io.spine.server.commandbus.CommandDispatcher;
-import io.spine.server.procman.ProcessManager;
-import io.spine.server.type.CommandClass;
-import io.spine.server.type.CommandEnvelope;
-import io.spine.testing.client.TestActorRequestFactory;
-import io.spine.testing.server.procman.PmDispatcher;
-import org.hamcrest.Matcher;
+import io.spine.examples.todolist.c.events.LabelAssignmentSkipped;
+import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.repository.LabelAggregateRepository;
+import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
+import io.spine.examples.todolist.repository.TaskLabelsRepository;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
-import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
-import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
-import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
-import static io.spine.server.type.CommandClass.from;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.spine.testing.client.blackbox.Count.once;
+import static io.spine.testing.client.blackbox.Count.thrice;
+import static io.spine.testing.client.blackbox.Count.twice;
+import static io.spine.testing.server.blackbox.VerifyCommands.emittedCommand;
+import static io.spine.testing.server.blackbox.VerifyCommands.emittedCommands;
 
 @DisplayName("Task creation wizard on ")
 class TaskCreationWizardTest {
-
-    private static final ActorRequestFactory requestFactory =
-            new TestActorRequestFactory(TaskCreationWizardTest.class);
 
     @Nested
     @DisplayName("StartTaskCreation command should")
     class StartTaskCreationTest extends CommandTest {
 
-        @BeforeEach
-        @Override
-        protected void setUp() {
-            super.setUp();
-        }
-
         @Test
-        @DisplayName("start task creation process")
+        @DisplayName("produce a command to create draft and change the stage")
         void testStartWizard() {
-            TaskId taskId = newTaskId();
-            StartTaskCreation cmd = StartTaskCreationVBuilder
-                    .newBuilder()
-                    .setId(getId())
+            startWizard();
+            TaskCreation expectedWizardState = TaskCreation
+                    .vBuilder()
+                    .setId(processId)
                     .setTaskId(taskId)
+                    .setStage(TASK_DEFINITION)
                     .build();
-            dispatch(cmd);
-            CommandMessage producedCommand = memoizingHandler().received.pop();
-            assertThat(producedCommand, instanceOf(CreateDraft.class));
-            CreateDraft createDraftCmd = (CreateDraft) producedCommand;
-            assertEquals(taskId, createDraftCmd.getId());
-            assertEquals(taskId, getTaskId());
-
-            assertEquals(TASK_DEFINITION, getStage());
+            boundedContext.assertThat(emittedCommand(CreateDraft.class, once()));
+            boundedContext.assertEntity(TaskCreationWizard.class, processId)
+                          .hasStateThat()
+                          .comparingExpectedFieldsOnly()
+                          .isEqualTo(expectedWizardState);
         }
     }
 
@@ -180,30 +141,16 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setDescriptionChange(descriptionChange)
                     .setPriorityChange(priorityChange)
                     .setDueDateChange(dueDateChange)
                     .build();
 
-            dispatch(cmd);
-
-            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
-
-            assertThat(producedCommands, containsInAnyOrder(
-                    UpdateTaskDescriptionVBuilder.newBuilder()
-                                                 .setId(getTaskId())
-                                                 .setDescriptionChange(descriptionChange)
-                                                 .build(),
-                    UpdateTaskPriorityVBuilder.newBuilder()
-                                              .setId(getTaskId())
-                                              .setPriorityChange(priorityChange)
-                                              .build(),
-                    UpdateTaskDueDateVBuilder.newBuilder()
-                                             .setId(getTaskId())
-                                             .setDueDateChange(dueDateChange)
-                                             .build()));
-            assertEquals(LABEL_ASSIGNMENT, getStage());
+            boundedContext.receivesCommand(cmd)
+                          .assertThat(emittedCommands(UpdateTaskDescription.class,
+                                                      UpdateTaskPriority.class,
+                                                      UpdateTaskDueDate.class));
         }
 
         @Test
@@ -216,12 +163,11 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setPriorityChange(priorityChange)
                     .build();
-            Throwable t = assertThrows(Throwable.class, () -> dispatch(cmd));
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDetails.class));
-            assertEquals(TASK_DEFINITION, getStage());
+            boundedContext.receivesCommand(cmd)
+                          .assertRejectedWith(Rejections.CannotUpdateTaskDetails.class);
         }
 
         @Test
@@ -238,10 +184,9 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setDescriptionChange(descriptionChange)
                     .build();
-            dispatch(cmd1);
 
             TaskPriority priority = TaskPriority.HIGH;
             PriorityChange priorityChange = PriorityChange
@@ -250,27 +195,18 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd2 = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setPriorityChange(priorityChange)
                     .build();
-            dispatch(cmd2);
-            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
 
-            assertThat(producedCommands, containsInAnyOrder(
-                    UpdateTaskDescriptionVBuilder.newBuilder()
-                                                 .setId(getTaskId())
-                                                 .setDescriptionChange(descriptionChange)
-                                                 .build(),
-                    UpdateTaskPriorityVBuilder.newBuilder()
-                                              .setId(getTaskId())
-                                              .setPriorityChange(priorityChange)
-                                              .build()
-            ));
-            assertEquals(LABEL_ASSIGNMENT, getStage());
+            boundedContext.receivesCommand(cmd1)
+                          .receivesCommand(cmd2)
+                          .assertThat(emittedCommands(UpdateTaskDescription.class,
+                                                      UpdateTaskPriority.class));
         }
 
         @Test
-        @DisplayName("mofify task data even when on later stages")
+        @DisplayName("modify task data even when on later stages")
         void modifyPreviousData() {
             String descriptionValue = "Description 1";
             TaskDescription description = TaskDescriptionVBuilder
@@ -283,17 +219,14 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setDescriptionChange(descriptionChange)
                     .build();
-            dispatch(cmd1);
 
             SkipLabels cmd2 = SkipLabelsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            dispatch(cmd2);
-            assertEquals(CONFIRMATION, getStage());
 
             String newDescriptionValue = "Description 2";
             TaskDescription newDescription = TaskDescriptionVBuilder
@@ -306,19 +239,14 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails newUpdate = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setDescriptionChange(newDescriptionChange)
                     .build();
-            dispatch(newUpdate);
 
-            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
-            assertThat(producedCommands, hasItem(
-                    UpdateTaskDescriptionVBuilder.newBuilder()
-                                                 .setId(getTaskId())
-                                                 .setDescriptionChange(newDescriptionChange)
-                                                 .build()
-            ));
-            assertEquals(CONFIRMATION, getStage());
+            boundedContext.receivesCommand(cmd1)
+                          .receivesCommand(cmd2)
+                          .receivesCommand(newUpdate)
+                          .assertThat(emittedCommand(UpdateTaskDescription.class, twice()));
         }
     }
 
@@ -345,22 +273,14 @@ class TaskCreationWizardTest {
                     .build();
             AddLabels cmd = AddLabelsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .addAllExistingLabels(existingLabelIds)
                     .addNewLabels(newLabel)
                     .build();
-            dispatch(cmd);
-
-            Collection<Matcher<? super CommandMessage>> expectedCommands = ImmutableList.of(
-                    instanceOf(AssignLabelToTask.class), // 3 label assignments
-                    instanceOf(AssignLabelToTask.class),
-                    instanceOf(AssignLabelToTask.class),
-                    instanceOf(CreateBasicLabel.class),  // 1 label creation with details updates
-                    instanceOf(UpdateLabelDetails.class)
-            );
-            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
-            assertThat(producedCommands, containsInAnyOrder(expectedCommands));
-            assertEquals(CONFIRMATION, getStage());
+            boundedContext.receivesCommand(cmd);
+            boundedContext.assertThat(emittedCommand(AssignLabelToTask.class, thrice()))
+                          .assertThat(emittedCommand(CreateBasicLabel.class, once()))
+                          .assertThat(emittedCommand(UpdateLabelDetails.class, once()));
         }
 
         @Test
@@ -368,11 +288,10 @@ class TaskCreationWizardTest {
         void testNoLabels() {
             AddLabels cmd = AddLabelsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            Throwable t = assertThrows(Throwable.class, () -> dispatch(cmd));
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotAddLabels.class));
-            assertEquals(LABEL_ASSIGNMENT, getStage());
+            boundedContext.receivesCommand(cmd)
+                          .assertRejectedWith(Rejections.CannotAddLabels.class);
         }
     }
 
@@ -389,14 +308,14 @@ class TaskCreationWizardTest {
         }
 
         @Test
-        @DisplayName("skip labels creation and procede to the next stage")
+        @DisplayName("skip labels creation and proceed to the next stage")
         void testSkipLabels() {
             SkipLabels cmd = SkipLabelsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            dispatch(cmd);
-            assertEquals(CONFIRMATION, getStage());
+            boundedContext.receivesCommand(cmd)
+                          .assertEmitted(LabelAssignmentSkipped.class);
         }
     }
 
@@ -418,18 +337,13 @@ class TaskCreationWizardTest {
         void testCompleteWizard() {
             CompleteTaskCreation cmd = CompleteTaskCreationVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            dispatch(cmd);
-            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
-            CommandMessage producedCommand = producedCommands.pop();
-            FinalizeDraft expectedCmd = FinalizeDraftVBuilder
-                    .newBuilder()
-                    .setId(getTaskId())
-                    .build();
-            assertEquals(expectedCmd, producedCommand);
-            assertEquals(COMPLETED, getStage());
-            assertArchived();
+            boundedContext.receivesCommand(cmd)
+                          .assertThat(emittedCommand(FinalizeDraft.class, once()))
+                          .assertEntity(TaskCreationWizard.class, processId)
+                          .archivedFlag()
+                          .isTrue();
         }
     }
 
@@ -450,11 +364,12 @@ class TaskCreationWizardTest {
         void testCancelProc() {
             CancelTaskCreation cmd = CancelTaskCreationVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            dispatch(cmd);
-            assertEquals(CANCELED, getStage());
-            assertArchived();
+            boundedContext.receivesCommand(cmd)
+                          .assertEntity(TaskCreationWizard.class, processId)
+                          .archivedFlag()
+                          .isTrue();
         }
     }
 
@@ -474,65 +389,37 @@ class TaskCreationWizardTest {
         void throwOnIncorrectStage() {
             CompleteTaskCreation cmd = CompleteTaskCreationVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            Throwable t = assertThrows(Throwable.class, () -> dispatch(cmd));
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotMoveToStage.class));
+            boundedContext.receivesCommand(cmd)
+                          .assertRejectedWith(Rejections.CannotMoveToStage.class);
         }
     }
 
+    @SuppressWarnings({"PackageVisibleField" /* improves readability */, "WeakerAccess"})
     private abstract static class CommandTest {
 
-        private TaskCreationWizard wizard;
+        BlackBoxBoundedContext boundedContext;
+        TaskId taskId;
+        TaskCreationId processId;
 
-        private MemoizingCommandHandler memoizingHandler;
-
+        @BeforeEach
         void setUp() {
-            wizard = new TaskCreationWizard(newId());
-            memoizingHandler = new MemoizingCommandHandler();
-            prepareCommandBus();
-        }
-
-        TaskCreationId getId() {
-            return wizard.id();
-        }
-
-        TaskId getTaskId() {
-            return wizard.state()
-                         .getTaskId();
-        }
-
-        TaskCreation.Stage getStage() {
-            return wizard.state()
-                         .getStage();
-        }
-
-        MemoizingCommandHandler memoizingHandler() {
-            return memoizingHandler;
-        }
-
-        void assertArchived() {
-            boolean archived = wizard.isArchived();
-            boolean deleted = wizard.isDeleted();
-            assertTrue(archived, "Should be archived");
-            assertFalse(deleted, "Should not be deleted");
-        }
-
-        void dispatch(CommandMessage command) {
-            Command cmd = requestFactory.command()
-                                        .create(command);
-            CommandEnvelope envelope = CommandEnvelope.of(cmd);
-            PmDispatcher.dispatch(wizard, envelope);
+            boundedContext = BlackBoxBoundedContext
+                    .singleTenant()
+                    .with(new TaskCreationWizardRepository(), new TaskRepository(),
+                          new LabelAggregateRepository(), new TaskLabelsRepository());
+            taskId = newTaskId();
+            processId = newId();
         }
 
         void startWizard() {
             StartTaskCreation cmd = StartTaskCreationVBuilder
                     .newBuilder()
-                    .setId(getId())
-                    .setTaskId(newTaskId())
+                    .setId(processId)
+                    .setTaskId(taskId)
                     .build();
-            dispatch(cmd);
-            clearReceivedCommands();
+            boundedContext.receivesCommand(cmd);
         }
 
         void addDescription() {
@@ -546,101 +433,36 @@ class TaskCreationWizardTest {
                     .build();
             UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .setDescriptionChange(descriptionChange)
                     .build();
-            dispatch(cmd);
-            clearReceivedCommands();
+            boundedContext.receivesCommand(cmd);
         }
 
         void skipLabels() {
             SkipLabels cmd = SkipLabelsVBuilder
                     .newBuilder()
-                    .setId(getId())
+                    .setId(processId)
                     .build();
-            dispatch(cmd);
-            clearReceivedCommands();
+            boundedContext.receivesCommand(cmd);
         }
 
-        private void clearReceivedCommands() {
-            memoizingHandler().received.clear();
-        }
-
-        /**
-         * Injects the fake CommandBus instance via Reflection.
-         *
-         * <p>This is suitable when tested handler posts subsequent commands to a command bus (which
-         * doesn't exist at a test time) and you don't care about them.
-         */
-        private void prepareCommandBus() {
-            CommandBus commandBus = createCommandBus();
-            try {
-                Method method = ProcessManager.class.getDeclaredMethod("setCommandBus",
-                                                                       CommandBus.class);
-                method.setAccessible(true);
-                method.invoke(wizard, commandBus);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw illegalStateWithCauseOf(e);
-            }
-        }
-
-        private CommandBus createCommandBus() {
-            BoundedContext emptyContext = BoundedContext
-                    .newBuilder()
-                    .setCommandBus(CommandBus.newBuilder())
-                    .build();
-            CommandBus commandBus = emptyContext.commandBus();
-            commandBus.register(memoizingHandler);
-            return commandBus;
-        }
-
-        private static final class MemoizingCommandHandler implements CommandDispatcher<Object> {
-
-            private final ArrayDeque<CommandMessage> received = new ArrayDeque<>();
-
-            @SuppressWarnings("BadImport") // Actually enhances readability.
-            @Override
-            public Set<CommandClass> messageClasses() {
-                return ImmutableSet.of(
-                        from(CreateDraft.class),
-                        from(UpdateTaskDueDate.class),
-                        from(UpdateTaskPriority.class),
-                        from(UpdateTaskDescription.class),
-                        from(CreateBasicLabel.class),
-                        from(UpdateLabelDetails.class),
-                        from(AssignLabelToTask.class),
-                        from(FinalizeDraft.class)
-                );
-            }
-
-            @Override
-            public Object dispatch(CommandEnvelope envelope) {
-                received.push(envelope.message());
-                return MemoizingCommandHandler.class.getName();
-            }
-
-            @Override
-            public void onError(CommandEnvelope envelope, RuntimeException exception) {
-                // NoOp for test.
-            }
-        }
-
-        private static TaskCreationId newId() {
+        TaskCreationId newId() {
             return TaskCreationIdVBuilder.newBuilder()
                                          .setValue(newUuid())
                                          .build();
         }
-    }
 
-    private static TaskId newTaskId() {
-        return TaskIdVBuilder.newBuilder()
-                             .setValue(newUuid())
-                             .build();
-    }
+        TaskId newTaskId() {
+            return TaskIdVBuilder.newBuilder()
+                                 .setValue(newUuid())
+                                 .build();
+        }
 
-    private static LabelId newLabelId() {
-        return LabelIdVBuilder.newBuilder()
-                              .setValue(newUuid())
-                              .build();
+        LabelId newLabelId() {
+            return LabelIdVBuilder.newBuilder()
+                                  .setValue(newUuid())
+                                  .build();
+        }
     }
 }
