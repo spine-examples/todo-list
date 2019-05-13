@@ -116,32 +116,6 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides a pre-configured {@link UpdateTaskDescription} instance.
-     *
-     * @return the {@code UpdateTaskDescription} instance
-     */
-    public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID,
-                                                                     DESCRIPTION,
-                                                                     DESCRIPTION);
-        return result;
-    }
-
-    /**
-     * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
-     *
-     * @param taskId
-     *         an identifier of the updated task
-     * @return the {@code UpdateTaskDescription} instance
-     */
-    public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
-        UpdateTaskDescription result = updateTaskDescriptionInstance(taskId,
-                                                                     DESCRIPTION,
-                                                                     DESCRIPTION);
-        return result;
-    }
-
-    /**
      * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
      *
      * @param id
@@ -182,18 +156,6 @@ public class TestTaskCommandFactory {
      *
      * @return the {@code UpdateTaskDueDate} instance
      */
-    public static UpdateTaskDueDate updateTaskDueDateInstance() {
-        UpdateTaskDueDate result = updateTaskDueDateInstance(TASK_ID,
-                                                             Timestamp.getDefaultInstance(),
-                                                             DUE_DATE);
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link UpdateTaskDueDate} command instance.
-     *
-     * @return the {@code UpdateTaskDueDate} instance
-     */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId taskId) {
         UpdateTaskDueDate result = updateTaskDueDateInstance(taskId,
                                                              Timestamp.getDefaultInstance(),
@@ -224,18 +186,6 @@ public class TestTaskCommandFactory {
                 .setId(id)
                 .setDueDateChange(dueDateChange)
                 .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link UpdateTaskPriority} command instance.
-     *
-     * @return the {@code UpdateTaskPriority} instance
-     */
-    public static UpdateTaskPriority updateTaskPriorityInstance() {
-        UpdateTaskPriority result = updateTaskPriorityInstance(TASK_ID,
-                                                               TaskPriority.TP_UNDEFINED,
-                                                               TaskPriority.HIGH);
         return result;
     }
 
@@ -303,31 +253,11 @@ public class TestTaskCommandFactory {
      *
      * @return the {@code ReopenTask} instance
      */
-    public static ReopenTask reopenTaskInstance() {
-        ReopenTask result = reopenTaskInstance(TASK_ID);
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link ReopenTask} command instance.
-     *
-     * @return the {@code ReopenTask} instance
-     */
     public static ReopenTask reopenTaskInstance(TaskId id) {
         ReopenTask result = ReopenTaskVBuilder
                 .newBuilder()
                 .setId(id)
                 .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link DeleteTask} command instance.
-     *
-     * @return the {@code DeleteTask} instance
-     */
-    public static DeleteTask deleteTaskInstance() {
-        DeleteTask result = deleteTaskInstance(TASK_ID);
         return result;
     }
 
@@ -349,31 +279,11 @@ public class TestTaskCommandFactory {
      *
      * @return the {@code RestoreDeletedTask} instance
      */
-    public static RestoreDeletedTask restoreDeletedTaskInstance() {
-        RestoreDeletedTask result = restoreDeletedTaskInstance(TASK_ID);
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link RestoreDeletedTask} command instance.
-     *
-     * @return the {@code RestoreDeletedTask} instance
-     */
     public static RestoreDeletedTask restoreDeletedTaskInstance(TaskId id) {
         RestoreDeletedTask result = RestoreDeletedTaskVBuilder
                 .newBuilder()
                 .setId(id)
                 .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link FinalizeDraft} command instance.
-     *
-     * @return the {@code FinalizeDraft} instance
-     */
-    public static FinalizeDraft finalizeDraftInstance() {
-        FinalizeDraft result = finalizeDraftInstance(TASK_ID);
         return result;
     }
 

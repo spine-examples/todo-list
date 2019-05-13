@@ -119,12 +119,10 @@ class UpdateTaskDescriptionTest extends TodoListCommandTestBase {
         String incorrectDescription = createTask.getDescription()
                                                 .getValue() + "random suffix";
 
-        CompleteTask completeTask = completeTaskInstance(taskId());
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), incorrectDescription, NEW_DESCRIPTION);
 
         boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
                         .receivesCommand(updateDescription)
                         .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
     }
