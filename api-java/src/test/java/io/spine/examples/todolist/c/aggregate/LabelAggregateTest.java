@@ -20,247 +20,147 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.protobuf.Message;
-import io.spine.base.CommandMessage;
-import io.spine.change.ValueMismatch;
-import io.spine.core.Command;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsUpdateRejected;
-import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
-import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.Rejections;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
-import io.spine.server.entity.Repository;
-import io.spine.server.type.CommandEnvelope;
-import io.spine.testing.client.TestActorRequestFactory;
-import io.spine.testing.server.aggregate.AggregateCommandTest;
+import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static io.spine.examples.todolist.c.aggregate.LabelAggregate.DEFAULT_LABEL_COLOR;
-import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_ID;
-import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
-import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
-import static io.spine.protobuf.AnyPacker.pack;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("LabelAggregate should")
 class LabelAggregateTest {
 
+    private BlackBoxBoundedContext boundedContext;
+
+    @BeforeEach
+    void setUp() {
+        boundedContext = BlackBoxBoundedContext.singleTenant()
+                                               .with(new LabelAggregateRepository());
+    }
+
     @Nested
     @DisplayName("interpret CreateBasicLabel command and")
-    class CreateBasicLabelCommand extends LabelAggregateCommandTest<CreateBasicLabel> {
+    class CreateBasicLabelCommand {
 
         CreateBasicLabelCommand() {
-            super(createLabelInstance());
+            super();
         }
 
         @Test
         @DisplayName("produce LabelCreated event")
-        void produceLabel() {
-            List<? extends Message> messageList = createBasicLabel();
-
-            assertEquals(1, messageList.size());
-            assertEquals(LabelCreated.class, messageList.get(0)
-                                                        .getClass());
-
-            LabelCreated labelCreated = (LabelCreated) messageList.get(0);
-
-            assertEquals(entityId(), labelCreated.getId());
-            assertEquals(LABEL_TITLE, labelCreated.getDetails()
-                                                  .getTitle());
+        void produceEvent() {
+            CreateBasicLabel createLabel = createLabelInstance();
+            boundedContext.receivesCommand(createLabel)
+                          .assertEmitted(LabelCreated.class);
         }
 
         @Test
         @DisplayName("create the basic label")
         void createLabel() {
-            createBasicLabel();
+            CreateBasicLabel createLabel = createLabelInstance();
+            LabelId labelId = createLabel.getLabelId();
 
-            TaskLabel state = aggregate.state();
+            TaskLabel expected = TaskLabel
+                    .vBuilder()
+                    .setId(labelId)
+                    .setTitle(createLabel.getLabelTitle())
+                    .build();
 
-            assertEquals(entityId(), state.getId());
-            assertEquals(DEFAULT_LABEL_COLOR, state.getColor());
-            assertEquals(LABEL_TITLE, state.getTitle());
+            boundedContext.receivesCommand(createLabel)
+                          .assertEntity(LabelAggregate.class, labelId)
+                          .hasStateThat()
+                          .comparingExpectedFieldsOnly()
+                          .isEqualTo(expected);
         }
     }
 
     @Nested
     @DisplayName("interpret UpdateLabelDetails command and")
-    class UpdateLabelDetailsCommand extends LabelAggregateCommandTest<UpdateLabelDetails> {
+    class UpdateLabelDetailsCommand {
 
         UpdateLabelDetailsCommand() {
-            super(updateLabelDetailsInstance());
-        }
-
-        @Override
-        public void setUp() {
-            super.setUp();
-            createBasicLabel();
-        }
-
-        @CanIgnoreReturnValue
-        private List<? extends Message> dispatchUpdateLabelDetails(UpdateLabelDetails details) {
-            return dispatchCommand(aggregate, envelopeOf(details));
+            super();
         }
 
         @Test
         @DisplayName("produce LabelDetailsUpdated event")
         void produceEvent() {
-            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId());
-            List<? extends Message> messageList =
-                    dispatchUpdateLabelDetails(updateLabelDetails);
-
-            assertEquals(1, messageList.size());
-            assertEquals(LabelDetailsUpdated.class, messageList.get(0)
-                                                               .getClass());
-
-            LabelDetailsUpdated labelDetailsUpdated =
-                    (LabelDetailsUpdated) messageList.get(0);
-            LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
-                                                      .getNewDetails();
-            assertEquals(entityId(), labelDetailsUpdated.getLabelId());
-            assertEquals(LabelColor.GREEN, details.getColor());
-            assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
+            CreateBasicLabel createLabel = createLabelInstance();
+            LabelId labelId = createLabel.getLabelId();
+            UpdateLabelDetails updateDetails = updateLabelDetailsInstance(labelId);
+            boundedContext.receivesCommand(createLabel)
+                          .receivesCommand(updateDetails)
+                          .assertEmitted(LabelDetailsUpdated.class);
         }
 
         @Test
         @DisplayName("update the label details twice")
         void updateLabelDetailsTwice() {
-            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId());
-            dispatchUpdateLabelDetails(updateLabelDetails);
+            CreateBasicLabel createLabel = createLabelInstance();
+            LabelId labelId = createLabel.getLabelId();
+            UpdateLabelDetails firstUpdate = updateLabelDetailsInstance(labelId);
+            LabelDetails afterFirstUpdate = firstUpdate.getLabelDetailsChange()
+                                                       .getNewDetails();
+            LabelDetails newDetails = newDetails();
+            UpdateLabelDetails secondUpdate =
+                    updateLabelDetailsInstance(labelId, afterFirstUpdate, newDetails);
 
-            TaskLabel state = aggregate.state();
-            assertEquals(entityId(), state.getId());
-            assertEquals(LabelColor.GREEN, state.getColor());
-            assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
-
-            LabelColor previousLabelColor = LabelColor.GREEN;
-            LabelDetails previousLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setTitle(UPDATED_LABEL_TITLE)
-                    .setColor(previousLabelColor)
+            TaskLabel expected = TaskLabel
+                    .vBuilder()
+                    .setId(labelId)
+                    .setTitle(newDetails.getTitle())
+                    .setColor(newDetails.getColor())
                     .build();
-            LabelColor updatedLabelColor = LabelColor.BLUE;
-            String updatedTitle = "updated title";
-            LabelDetails newLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(updatedLabelColor)
-                    .setTitle(updatedTitle)
-                    .build();
-            updateLabelDetails = updateLabelDetailsInstance(entityId(), previousLabelDetails,
-                                                            newLabelDetails);
-            dispatchUpdateLabelDetails(updateLabelDetails);
 
-            state = aggregate.state();
-            assertEquals(entityId(), state.getId());
-            assertEquals(updatedLabelColor, state.getColor());
-            assertEquals(updatedTitle, state.getTitle());
+            boundedContext.receivesCommand(createLabel)
+                          .receivesCommand(firstUpdate)
+                          .receivesCommand(secondUpdate)
+                          .assertEntity(LabelAggregate.class, labelId)
+                          .hasStateThat()
+                          .isEqualTo(expected);
         }
 
-        @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
-        // Method called to throw exception.
-        @Test
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
+        @Test
         void cannotUpdateLabelDetails() {
-            LabelDetails expectedLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(LabelColor.BLUE)
-                    .setTitle(LABEL_TITLE)
+            CreateBasicLabel createLabel = createLabelInstance();
+            LabelId labelId = createLabel.getLabelId();
+
+            String incorrectTitle = createLabel.getLabelTitle() + "a redundant suffix";
+
+            LabelDetails newDetails = newDetails();
+
+            LabelDetails previousDetails = LabelDetails
+                    .vBuilder()
+                    .setTitle(incorrectTitle)
                     .build();
-            LabelDetails newLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
+
+            UpdateLabelDetails updateDetails =
+                    updateLabelDetailsInstance(labelId, previousDetails, newDetails);
+            boundedContext.receivesCommand(createLabel)
+                          .receivesCommand(updateDetails)
+                          .assertRejectedWith(Rejections.CannotUpdateLabelDetails.class);
+        }
+
+        private LabelDetails newDetails() {
+            return LabelDetails
+                    .vBuilder()
+                    .setTitle("New title")
                     .setColor(LabelColor.RED)
-                    .setTitle(UPDATED_LABEL_TITLE)
                     .build();
-            UpdateLabelDetails updateLabelDetails =
-                    updateLabelDetailsInstance(entityId(), expectedLabelDetails, newLabelDetails);
-            CannotUpdateLabelDetails rejection =
-                    assertThrows(CannotUpdateLabelDetails.class,
-                                 () -> aggregate.handle(updateLabelDetails));
-            Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                    rejection.messageThrown();
-            LabelDetailsUpdateRejected rejectionDetails =
-                    cannotUpdateLabelDetails.getRejectionDetails();
-            LabelId actualLabelId = rejectionDetails.getCommandDetails()
-                                                    .getLabelId();
-            assertEquals(entityId(), actualLabelId);
-
-            ValueMismatch mismatch = rejectionDetails.getLabelDetailsMismatch();
-            assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
-            assertEquals(pack(newLabelDetails), mismatch.getNewValue());
-
-            LabelDetails actualLabelDetails = LabelDetailsVBuilder
-                    .newBuilder()
-                    .setColor(LabelColor.GRAY)
-                    .setTitle(LABEL_TITLE)
-                    .build();
-            assertEquals(pack(actualLabelDetails), mismatch.getActual());
-        }
-    }
-
-    @SuppressWarnings("PackageVisibleField") // for brevity of descendants.
-    private abstract static class LabelAggregateCommandTest<C extends CommandMessage>
-            extends AggregateCommandTest<LabelId, C, TaskLabel, LabelAggregate> {
-
-        private final TestActorRequestFactory requestFactory =
-                new TestActorRequestFactory(getClass());
-
-        LabelAggregate aggregate;
-
-        LabelAggregateCommandTest(C commandMessage) {
-            super(LABEL_ID, commandMessage);
-        }
-
-        @BeforeEach
-        void init() {
-            setUp();
-        }
-
-        @Override
-        public void setUp() {
-            super.setUp();
-            aggregate = new LabelAggregate(entityId());
-        }
-
-        @Override
-        protected Repository<LabelId, LabelAggregate> createRepository() {
-            return new LabelAggregateRepository();
-        }
-
-        @CanIgnoreReturnValue
-        List<? extends Message> createBasicLabel() {
-            CreateBasicLabel createBasicLabel = createLabelInstance();
-            Command command = createNewCommand(createBasicLabel);
-            return dispatchCommand(aggregate, CommandEnvelope.of(command));
-        }
-
-        CommandEnvelope envelopeOf(CommandMessage commandMessage) {
-            Command command = createNewCommand(commandMessage);
-            CommandEnvelope envelope = CommandEnvelope.of(command);
-            return envelope;
-        }
-
-        private Command createNewCommand(CommandMessage commandMessage) {
-            Command command = requestFactory.command()
-                                            .create(commandMessage);
-            return command;
         }
     }
 }
