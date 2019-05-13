@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.client.Subscription;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
@@ -33,6 +34,8 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.q.projection.LabelView;
 import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.grpc.MemoizingObserver;
+import io.spine.grpc.StreamObservers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,12 +49,13 @@ import static com.google.common.truth.Truth8.assertThat;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
+import static io.spine.examples.todolist.TaskStatus.OPEN;
 import static java.util.stream.Collectors.toList;
 
 @DisplayName("Todo client should")
 class ClientTest extends TodoClientTest {
 
-    private TodoClient client;
+    private SubscribingTodoClient client;
 
     @BeforeEach
     @Override
@@ -185,6 +189,28 @@ class ClientTest extends TodoClientTest {
                 .build();
 
         assertThat(client.taskViews()).containsExactly(expected);
+    }
+
+    @DisplayName("subscribe to task views")
+    @Test
+    void receiveWorkingSubscription() throws InterruptedException {
+        MemoizingObserver<TaskView> observer = StreamObservers.memoizingObserver();
+        Subscription subscription = client.subscribeToTasks(observer);
+
+        CreateBasicTask createTask = createBasicTask();
+        client.postCommand(createTask);
+        Thread.sleep(1_000);
+
+
+        List<TaskView> responses = observer.responses();
+        assertThat(responses).hasSize(1);
+
+        TaskView taskView = responses.get(0);
+        assertThat(taskView.getId()).isEqualTo(createTask.getId());
+        assertThat(taskView.getStatus()).isEqualTo(OPEN);
+        assertThat(taskView.getDescription()).isEqualTo(createTask.getDescription());
+
+        client.unSubscribe(subscription);
     }
 
     private static LabelId randomLabelId() {

@@ -51,14 +51,14 @@ abstract class TodoClientTest {
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private Server server;
-    private TodoClient client;
+    private SubscribingTodoClient client;
 
     @BeforeEach
     void setUp() throws InterruptedException {
         BoundedContext boundedContext = BoundedContexts.create();
         server = newServer(PORT, boundedContext);
         startServer();
-        client = TodoClient.instance(HOST, PORT);
+        client = SubscribingTodoClient.instance(HOST, PORT);
     }
 
     @AfterEach
@@ -118,7 +118,7 @@ abstract class TodoClientTest {
                              .build();
     }
 
-    public TodoClient getClient() {
+    public SubscribingTodoClient getClient() {
         return client;
     }
 }
