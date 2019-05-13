@@ -39,7 +39,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
-class DeleteTaskCommand extends TodoListCommandTestBase {
+class DeleteTaskCommand extends TaskCommandTestBase {
 
     DeleteTaskCommand() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -67,7 +67,7 @@ class DeleteTaskCommand extends TodoListCommandTestBase {
                 .setId(taskId())
                 .setStatus(DELETED)
                 .build();
-        isEqualToAfterReceiving(expected, createTask, deleteTask);
+        isEqualToExpectedAfterReceiving(expected, createTask, deleteTask);
     }
 
     @Test

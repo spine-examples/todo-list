@@ -42,7 +42,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 
 @DisplayName("ReopenTask command should be interpreted by TaskPart and")
-class ReopenTaskCommandTest extends TodoListCommandTestBase {
+class ReopenTaskCommandTest extends TaskCommandTestBase {
 
     ReopenTaskCommandTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -73,7 +73,7 @@ class ReopenTaskCommandTest extends TodoListCommandTestBase {
                 .setId(taskId())
                 .setStatus(OPEN)
                 .build();
-        isEqualToAfterReceiving(expected, createTask, completeTask, reopenTask);
+        isEqualToExpectedAfterReceiving(expected, createTask, completeTask, reopenTask);
     }
 
     @Test

@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 
 @DisplayName("UpdateTaskDescription command should be interpreted by TaskPart and")
-class UpdateTaskDescriptionTest extends TodoListCommandTestBase {
+class UpdateTaskDescriptionTest extends TaskCommandTestBase {
 
     private static final String NEW_DESCRIPTION = "Wash my dog.";
 
@@ -73,7 +73,7 @@ class UpdateTaskDescriptionTest extends TodoListCommandTestBase {
                 .setDescription(updateDescription.getDescriptionChange()
                                                  .getNewValue())
                 .build();
-        isEqualToAfterReceiving(expected, createTask, updateDescription);
+        isEqualToExpectedAfterReceiving(expected, createTask, updateDescription);
     }
 
     @Test

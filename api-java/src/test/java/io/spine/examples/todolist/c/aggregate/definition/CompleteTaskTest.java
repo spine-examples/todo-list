@@ -39,7 +39,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
-class CompleteTaskTest extends TodoListCommandTestBase {
+class CompleteTaskTest extends TaskCommandTestBase {
 
     CompleteTaskTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -66,7 +66,7 @@ class CompleteTaskTest extends TodoListCommandTestBase {
                 .setStatus(TaskStatus.COMPLETED)
                 .build();
 
-        isEqualToAfterReceiving(expected, createTask, completeTask);
+        isEqualToExpectedAfterReceiving(expected, createTask, completeTask);
     }
 
     @Test

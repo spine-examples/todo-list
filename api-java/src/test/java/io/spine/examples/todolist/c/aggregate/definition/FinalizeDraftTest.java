@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 
 @DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
-class FinalizeDraftTest extends TodoListCommandTestBase {
+class FinalizeDraftTest extends TaskCommandTestBase {
 
     FinalizeDraftTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -55,7 +55,7 @@ class FinalizeDraftTest extends TodoListCommandTestBase {
                 .setId(taskId())
                 .setStatus(FINALIZED)
                 .build();
-        isEqualToAfterReceiving(expected, createDraft, finalizeDraft);
+        isEqualToExpectedAfterReceiving(expected, createDraft, finalizeDraft);
     }
 
     @Test

@@ -49,7 +49,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restore
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
-class RestoreDeletedTaskTest extends TodoListCommandTestBase {
+class RestoreDeletedTaskTest extends TaskCommandTestBase {
 
     RestoreDeletedTaskTest() {
         super(new TaskRepository(), new TaskViewRepository(), new TaskLabelsRepository());
@@ -92,12 +92,12 @@ class RestoreDeletedTaskTest extends TodoListCommandTestBase {
                 .setId(taskId())
                 .setStatus(OPEN)
                 .build();
-        isEqualToAfterReceiving(expected,
-                                createTask,
-                                createLabel,
-                                assignLabelToTask,
-                                deleteTask,
-                                restoreTask);
+        isEqualToExpectedAfterReceiving(expected,
+                                        createTask,
+                                        createLabel,
+                                        assignLabelToTask,
+                                        deleteTask,
+                                        restoreTask);
     }
 
     @Test

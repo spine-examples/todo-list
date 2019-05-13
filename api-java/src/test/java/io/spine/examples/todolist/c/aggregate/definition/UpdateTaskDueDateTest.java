@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 
 @DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
-class UpdateTaskDueDateTest extends TodoListCommandTestBase {
+class UpdateTaskDueDateTest extends TaskCommandTestBase {
 
     UpdateTaskDueDateTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -67,7 +67,7 @@ class UpdateTaskDueDateTest extends TodoListCommandTestBase {
                 .setDueDate(updateTaskDueDate.getDueDateChange()
                                              .getNewValue())
                 .build();
-        isEqualToAfterReceiving(expected, createTask, updateTaskDueDate);
+        isEqualToExpectedAfterReceiving(expected, createTask, updateTaskDueDate);
     }
 
     @Test

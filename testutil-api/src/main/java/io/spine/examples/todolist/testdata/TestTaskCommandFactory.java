@@ -231,15 +231,6 @@ public class TestTaskCommandFactory {
      *
      * @return the {@code CompleteTask} instance
      */
-    public static CompleteTask completeTaskInstance() {
-        return completeTaskInstance(TASK_ID);
-    }
-
-    /**
-     * Provides a pre-configured {@link CompleteTask} command instance.
-     *
-     * @return the {@code CompleteTask} instance
-     */
     public static CompleteTask completeTaskInstance(TaskId id) {
         CompleteTask result = CompleteTaskVBuilder
                 .newBuilder()

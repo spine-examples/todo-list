@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
-class CreateDraftTest extends TodoListCommandTestBase {
+class CreateDraftTest extends TaskCommandTestBase {
 
     CreateDraftTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -63,7 +63,7 @@ class CreateDraftTest extends TodoListCommandTestBase {
                 .setId(taskId())
                 .setStatus(DRAFT)
                 .build();
-        isEqualToAfterReceiving(expected, createDraft);
+        isEqualToExpectedAfterReceiving(expected, createDraft);
     }
 
     @Test

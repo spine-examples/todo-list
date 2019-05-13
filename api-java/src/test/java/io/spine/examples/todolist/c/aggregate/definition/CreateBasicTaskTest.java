@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
-class CreateBasicTaskTest extends TodoListCommandTestBase {
+class CreateBasicTaskTest extends TaskCommandTestBase {
 
     CreateBasicTaskTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -53,6 +53,6 @@ class CreateBasicTaskTest extends TodoListCommandTestBase {
                 .vBuilder()
                 .setId(taskId())
                 .build();
-        isEqualToAfterReceiving(expected, createBasicTask);
+        isEqualToExpectedAfterReceiving(expected, createBasicTask);
     }
 }

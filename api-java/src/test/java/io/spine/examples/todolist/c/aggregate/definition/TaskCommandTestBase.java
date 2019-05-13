@@ -34,19 +34,19 @@ import static io.spine.base.Identifier.newUuid;
 import static java.util.Arrays.asList;
 
 /**
- * An abstract base for all API tests.
+ * An abstract base for API tests that are related to tasks.
  *
  * <p>Contains a task ID, which is an ID that is used in all of the tested.
  *
  * <p>Provides a way to send commands and check whether the entity state has an expected result.
  */
-class TodoListCommandTestBase {
+class TaskCommandTestBase {
 
     private BlackBoxBoundedContext boundedContext;
     private final List<Repository<?, ?>> repositories;
     private TaskId taskId;
 
-    TodoListCommandTestBase(Repository<?, ?>... repositories) {
+    TaskCommandTestBase(Repository<?, ?>... repositories) {
         this.repositories = asList(repositories);
     }
 
@@ -73,12 +73,14 @@ class TodoListCommandTestBase {
 
     /**
      * Posts all of the specified events into the bounded context and checks whether the actual
-     * {@code TaskView} entity state matches the specified one.
+     * {@code TaskView} entity state is equal to the specified one.
      *
-     * @param expected task view against which the actual entity is matched for equality
-     * @param commandMessages commands to post to the bounded context
+     * @param expected
+     *         task view against which the actual entity is matched for equality
+     * @param commandMessages
+     *         commands to post to the bounded context
      */
-    void isEqualToAfterReceiving(TaskView expected, CommandMessage... commandMessages) {
+    void isEqualToExpectedAfterReceiving(TaskView expected, CommandMessage... commandMessages) {
         for (CommandMessage command : commandMessages) {
             boundedContext().receivesCommand(command);
         }

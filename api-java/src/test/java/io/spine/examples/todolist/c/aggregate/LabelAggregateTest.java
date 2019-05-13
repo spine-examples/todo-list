@@ -54,10 +54,6 @@ class LabelAggregateTest {
     @DisplayName("interpret CreateBasicLabel command and")
     class CreateBasicLabelCommand {
 
-        CreateBasicLabelCommand() {
-            super();
-        }
-
         @Test
         @DisplayName("produce LabelCreated event")
         void produceEvent() {
@@ -89,10 +85,6 @@ class LabelAggregateTest {
     @Nested
     @DisplayName("interpret UpdateLabelDetails command and")
     class UpdateLabelDetailsCommand {
-
-        UpdateLabelDetailsCommand() {
-            super();
-        }
 
         @Test
         @DisplayName("produce LabelDetailsUpdated event")

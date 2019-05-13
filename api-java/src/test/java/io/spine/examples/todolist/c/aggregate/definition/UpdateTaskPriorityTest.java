@@ -39,7 +39,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
-class UpdateTaskPriorityTest extends TodoListCommandTestBase {
+class UpdateTaskPriorityTest extends TaskCommandTestBase {
 
     UpdateTaskPriorityTest() {
         super(new TaskRepository(), new TaskViewRepository());
@@ -66,7 +66,7 @@ class UpdateTaskPriorityTest extends TodoListCommandTestBase {
                 .setPriority(updateTaskPriority.getPriorityChange()
                                                .getNewValue())
                 .build();
-        isEqualToAfterReceiving(expected, createTask, updateTaskPriority);
+        isEqualToExpectedAfterReceiving(expected, createTask, updateTaskPriority);
     }
 
     @Test
