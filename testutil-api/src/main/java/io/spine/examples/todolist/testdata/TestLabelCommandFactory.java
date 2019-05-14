@@ -88,25 +88,6 @@ public final class TestLabelCommandFactory {
     }
 
     /**
-     * Provides a pre-configured {@link UpdateLabelDetails} command instance.
-     *
-     * @return the {@code UpdateLabelDetails} instance.
-     */
-    public static UpdateLabelDetails updateLabelDetailsInstance() {
-        LabelDetails previousLabelDetails = LabelDetails
-                .vBuilder()
-                .setTitle(LABEL_TITLE)
-                .setColor(LabelColor.GRAY)
-                .build();
-        LabelDetails newLabelDetails = LabelDetails
-                .vBuilder()
-                .setTitle(UPDATED_LABEL_TITLE)
-                .setColor(LabelColor.GREEN)
-                .build();
-        return updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
-    }
-
-    /**
      * Provides the {@link UpdateLabelDetails} event by specified label color and title.
      *
      * @param previousLabelDetails

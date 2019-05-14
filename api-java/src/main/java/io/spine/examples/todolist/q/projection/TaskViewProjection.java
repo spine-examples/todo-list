@@ -29,6 +29,7 @@ import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskStatus;
+import io.spine.examples.todolist.c.events.DeletedTaskRestored;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
@@ -87,6 +88,11 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
         } else {
             builder().setStatus(TaskStatus.DELETED);
         }
+    }
+
+    @Subscribe
+    void taskRestored(DeletedTaskRestored restored) {
+        builder().setStatus(TaskStatus.OPEN);
     }
 
     @Subscribe

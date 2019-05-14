@@ -21,54 +21,62 @@
 package io.spine.test.integration;
 
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.q.projection.LabelView;
-import io.spine.examples.todolist.q.projection.TaskView;
-import io.spine.test.AbstractIntegrationTest;
-import io.spine.test.integration.given.TaskCreationWizardTestEnv;
+import io.spine.examples.todolist.c.commands.CancelTaskCreation;
+import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.SkipLabels;
+import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
+import io.spine.examples.todolist.repository.LabelAggregateRepository;
+import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
+import io.spine.examples.todolist.repository.TaskLabelsRepository;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
+import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
 import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.LabelColor.BLUE;
-import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.LabelColor.GREEN;
 import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.addLabel;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.cancel;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.complete;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.createDraft;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.createNewLabel;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
-import static io.spine.util.Exceptions.newIllegalStateException;
-import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.setDetails;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.skipLabels;
 
 @DisplayName("TaskCreationWizard should")
-class TaskCreationWizardTest extends AbstractIntegrationTest {
+class TaskCreationWizardTest {
 
-    private TodoClient client;
-    private TaskCreationWizardTestEnv testEnv;
+    private BlackBoxBoundedContext boundedContext;
 
     @BeforeEach
     void before() {
-        client = getClient();
-        testEnv = TaskCreationWizardTestEnv.with(client);
+        boundedContext = BlackBoxBoundedContext
+                .singleTenant()
+                .with(new TaskCreationWizardRepository(), new TaskRepository(),
+                      new LabelAggregateRepository(), new TaskLabelsRepository(),
+                      new TaskViewRepository());
     }
 
     @Test
@@ -76,16 +84,29 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     void firstCase() {
         TaskCreationId pid = newPid();
         TaskId taskId = newTaskId();
-        testEnv.createDraft(pid, taskId);
+        StartTaskCreation createDraft = createDraft(pid, taskId);
         String description = "firstCase";
-        testEnv.setDetails(pid, description);
-        testEnv.skipLabels(pid);
-        testEnv.complete(pid);
+        UpdateTaskDetails updateDetails = setDetails(pid, description);
+        SkipLabels skipLabels = skipLabels(pid);
+        CompleteTaskCreation completeCreation = complete(pid);
 
-        Task actualTask = testEnv.taskById(taskId);
-        assertEquals(FINALIZED, actualTask.getTaskStatus());
-        assertEquals(description, actualTask.getDescription()
-                                            .getValue());
+        Task expected = Task
+                .newBuilder()
+                .setId(taskId)
+                .setDescription(updateDetails.getDescriptionChange()
+                                             .getNewValue())
+                .setTaskStatus(FINALIZED)
+                .build();
+
+        boundedContext.receivesCommand(createDraft)
+                      .receivesCommand(updateDetails)
+                      .receivesCommand(skipLabels)
+                      .receivesCommand(completeCreation)
+                      .assertEntity(TaskPart.class, taskId)
+                      .hasStateThat()
+                      .comparingExpectedFieldsOnly()
+                      .isEqualTo(expected);
+
     }
 
     @Test
@@ -93,8 +114,8 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     void secondCase() {
         TaskCreationId pid = newPid();
         TaskId taskId = newTaskId();
-        testEnv.createDraft(pid, taskId);
-        testEnv.setDetails(pid, "secondCase");
+        StartTaskCreation createDraft = createDraft(pid, taskId);
+        UpdateTaskDetails setDetails = setDetails(pid, "secondCase");
         LabelDetails redLabel = LabelDetails
                 .newBuilder()
                 .setTitle("red label")
@@ -117,10 +138,19 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
                 .addNewLabels(greenLabel)
                 .addNewLabels(blueLabel)
                 .build();
-        client.postCommand(addLabels);
-        assertAssignedLabel(taskId, redLabel.getTitle(), RED);
-        assertAssignedLabel(taskId, greenLabel.getTitle(), GREEN);
-        assertAssignedLabel(taskId, blueLabel.getTitle(), BLUE);
+
+        TaskLabels expected = TaskLabels
+                .newBuilder()
+                .setTaskId(taskId)
+                .build();
+
+        boundedContext.receivesCommand(createDraft)
+                      .receivesCommand(setDetails)
+                      .receivesCommand(addLabels)
+                      .assertEntity(TaskLabelsPart.class, taskId)
+                      .hasStateThat()
+                      .comparingExpectedFieldsOnly()
+                      .isEqualTo(expected);
     }
 
     @Test
@@ -128,22 +158,33 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     void thirdCase() {
         TaskCreationId pid = newPid();
         TaskId taskId = newTaskId();
-        testEnv.createDraft(pid, taskId);
+        StartTaskCreation createDraft = createDraft(pid, taskId);
 
         String description = "thirdCase";
-        TaskPriority priority = LOW;
         Timestamp dueDate = add(currentTime(), fromSeconds(100));
-        testEnv.setDetails(pid, description, priority, dueDate);
+        TaskPriority priority = LOW;
+        UpdateTaskDetails updateDetails = setDetails(pid, description, priority, dueDate);
         String labelTitle = "thirdCase-label";
-        LabelId labelId = testEnv.createNewLabel(labelTitle);
-        testEnv.addLabel(pid, labelId);
-        testEnv.complete(pid);
+        CreateBasicLabel createBasicLabel = createNewLabel(labelTitle);
+        AddLabels addLabels = addLabel(pid, createBasicLabel.getLabelId());
+        CompleteTaskCreation completeTaskCreation = complete(pid);
 
-        Task task = testEnv.taskById(taskId);
-        assertEquals(description, task.getDescription()
-                                      .getValue());
-        assertEquals(priority, task.getPriority());
-        assertAssignedLabel(taskId, labelTitle, GRAY);
+        Task expected = Task
+                .newBuilder()
+                .setId(taskId)
+                .setTaskStatus(FINALIZED)
+                .setPriority(priority)
+                .setDueDate(dueDate)
+                .build();
+
+        boundedContext.receivesCommand(createDraft)
+                      .receivesCommand(updateDetails)
+                      .receivesCommand(addLabels)
+                      .receivesCommand(completeTaskCreation)
+                      .assertEntity(TaskPart.class, taskId)
+                      .hasStateThat()
+                      .comparingExpectedFieldsOnly()
+                      .isEqualTo(expected);
     }
 
     @Test
@@ -151,35 +192,25 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
     void forthCase() {
         TaskCreationId pid = newPid();
         TaskId taskId = newTaskId();
-        testEnv.createDraft(pid, taskId);
-        String description = "forthCase";
-        testEnv.setDetails(pid, description);
-        testEnv.cancel(pid);
+        StartTaskCreation createDraft = createDraft(pid, taskId);
+        String description = "fourthCase";
+        UpdateTaskDetails setDetails = setDetails(pid, description);
+        CancelTaskCreation cancel = cancel(pid);
 
-        Task actualTask = testEnv.taskById(taskId);
-        assertEquals(DRAFT, actualTask.getTaskStatus());
-    }
+        Task expected = Task
+                .newBuilder()
+                .setId(taskId)
+                .setDescription(setDetails.getDescriptionChange()
+                                          .getNewValue())
+                .setTaskStatus(DRAFT)
+                .build();
 
-    private void assertAssignedLabel(TaskId taskId, String labelTitle, LabelColor labelColor) {
-        TaskView task = client.taskViews()
-                              .stream()
-                              .filter(view -> view.getId()
-                                                  .equals(taskId))
-                              .findAny()
-                              .orElseThrow(() -> newIllegalStateException("Task not found."));
-
-        List<LabelView> taskLabels = task.getLabelIdsList()
-                                         .getIdsList()
-                                         .stream()
-                                         .map(id -> client.labelView(id))
-                                         .map(Optional::get)
-                                         .collect(toList());
-
-        Predicate<LabelView> titlesMatch = label -> label.getTitle().equals(labelTitle);
-        Predicate<LabelView> colorsMatch = label -> label.getColor() == labelColor;
-        boolean labelIsAssigned = taskLabels
-                .stream()
-                .anyMatch(titlesMatch.and(colorsMatch));
-        assertTrue(labelIsAssigned);
+        boundedContext.receivesCommand(createDraft)
+                      .receivesCommand(setDetails)
+                      .receivesCommand(cancel)
+                      .assertEntity(TaskPart.class, taskId)
+                      .hasStateThat()
+                      .comparingExpectedFieldsOnly()
+                      .isEqualTo(expected);
     }
 }

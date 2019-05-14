@@ -21,17 +21,14 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.PriorityChangeVBuilder;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
@@ -41,10 +38,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.TaskPriority.HIGH;
-import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static io.spine.examples.todolist.client.TodoClientImpl.HOST;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
@@ -54,18 +48,17 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 abstract class TodoClientTest {
 
-    static final String UPDATED_TASK_DESCRIPTION = "Updated.";
-    static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
+    private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private Server server;
-    private TodoClient client;
+    private SubscribingTodoClient client;
 
     @BeforeEach
     void setUp() throws InterruptedException {
         BoundedContext boundedContext = BoundedContexts.create();
         server = newServer(PORT, boundedContext);
         startServer();
-        client = TodoClient.instance(HOST, PORT);
+        client = SubscribingTodoClient.instance(HOST, PORT);
     }
 
     @AfterEach
@@ -96,10 +89,26 @@ abstract class TodoClientTest {
                              .build();
     }
 
+    static AssignLabelToTask assignLabelToTask(TaskId taskId, LabelId labelId) {
+        AssignLabelToTask result = AssignLabelToTask
+                .vBuilder()
+                .setId(taskId)
+                .setLabelId(labelId)
+                .build();
+        return result;
+    }
+
     static CreateDraft createDraft() {
         return CommandBuilder.task()
                              .createDraft()
                              .build();
+    }
+
+    static FinalizeDraft finalizeDraft(TaskId taskId) {
+        FinalizeDraft result = FinalizeDraft.vBuilder()
+                                            .setId(taskId)
+                                            .build();
+        return result;
     }
 
     static CreateBasicTask createBasicTask() {
@@ -109,61 +118,7 @@ abstract class TodoClientTest {
                              .build();
     }
 
-    static TaskId createWrongTaskId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
-    }
-
-    static LabelId createWrongTaskLabelId() {
-        return LabelId.newBuilder()
-                      .setValue(newUuid())
-                      .build();
-    }
-
-    static UpdateTaskPriority setInitialTaskPriority(TaskId taskId) {
-        PriorityChange taskPriorityChange = PriorityChangeVBuilder
-                .newBuilder()
-                .setPreviousValue(TP_UNDEFINED)
-                .setNewValue(HIGH)
-                .build();
-        UpdateTaskPriority result = UpdateTaskPriorityVBuilder
-                .newBuilder()
-                .setId(taskId)
-                .setPriorityChange(taskPriorityChange)
-                .build();
-        return result;
-    }
-
-    static TaskView getLabelledTasksView(LabelId labelId,
-                                         Iterable<TaskView> tasksViewList) {
-        for (TaskView labelledView : tasksViewList) {
-            boolean labelIdMatches = labelledView.getLabelIdsList()
-                                                 .getIdsList()
-                                                 .contains(labelId);
-            if (labelIdMatches) {
-                return labelledView;
-            }
-        }
-        return TaskView.getDefaultInstance();
-    }
-
-    CreateBasicTask createTask() {
-        CreateBasicTask createTask = createBasicTask();
-        getClient().postCommand(createTask);
-        TaskId newTaskId = createTask.getId();
-        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(newTaskId);
-        getClient().postCommand(updateTaskPriority);
-        return createTask;
-    }
-
-    CreateBasicLabel createLabel() {
-        CreateBasicLabel createLabel = createBasicLabel();
-        getClient().postCommand(createLabel);
-        return createLabel;
-    }
-
-    public TodoClient getClient() {
+    public SubscribingTodoClient getClient() {
         return client;
     }
 }

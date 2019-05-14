@@ -20,64 +20,39 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.protobuf.Message;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
-import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
-class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
+class CreateBasicTaskTest extends TaskCommandTestBase {
 
     CreateBasicTaskTest() {
-        super(createTaskInstance());
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
+        super(new TaskRepository(), new TaskViewRepository());
     }
 
     @Test
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
-        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                              envelopeOf(createTaskCmd));
-        assertNotNull(aggregate.state()
-                               .getCreated());
-        assertNotNull(aggregate.id());
-        assertEquals(1, messageList.size());
-        assertEquals(TaskCreated.class, messageList.get(0)
-                                                   .getClass());
-        TaskCreated taskCreated = (TaskCreated) messageList.get(0);
-
-        assertEquals(entityId(), taskCreated.getTaskId());
-        assertEquals(DESCRIPTION, taskCreated.getDetails()
-                                             .getDescription()
-                                             .getValue());
+        CreateBasicTask createTask = createTaskInstance(taskId());
+        boundedContext().receivesCommand(createTask)
+                        .assertEmitted(TaskCreated.class);
     }
 
     @Test
     @DisplayName("create the task")
     void createTask() {
-        CreateBasicTask createBasicTask = createTaskInstance();
-        dispatchCommand(aggregate, envelopeOf(createBasicTask));
-
-        Task state = aggregate.state();
-        assertEquals(state.getId(), createBasicTask.getId());
-        assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
+        CreateBasicTask createBasicTask = createTaskInstance(taskId());
+        TaskView expected = TaskView
+                .vBuilder()
+                .setId(taskId())
+                .build();
+        isEqualToExpectedAfterReceiving(expected, createBasicTask);
     }
 }
