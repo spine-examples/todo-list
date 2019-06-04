@@ -44,7 +44,7 @@ repositories {
 dependencies {
     implementation project(':server')
 
-    implementation 'com.google.appengine:appengine-api-1.0-sdk:1.9.67'
+    implementation deps.build.appengineApi
     implementation "io.spine:spine-web:$spineWebVersion"
     implementation "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
     implementation "io.spine.gcloud:spine-datastore:$spineVersion"
