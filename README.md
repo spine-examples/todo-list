@@ -1,14 +1,17 @@
-# todo-list
+# ToDo List example application
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/39e3e7d9707f4da58c950c3dbf172cfd)](https://www.codacy.com/app/SpineEventEngine/todo-list?utm_source=github.com&utm_medium=referral&utm_content=SpineEventEngine/todo-list&utm_campaign=badger)
+This repository contains an example project of a ToDo List service with multiple client applications.
 
-ToDo List example application
-
----
-
+Client applications are:
+ * Web client based
+ * Command-line application, written in Java.
+ * Mobile app for Android platform.
+ 
+The example also shows multiple deployment options and storage options.
+ 
 ## Guide
 
-`todo-list` repository defines a guide of how to create a Spine-base system (based on the example 
+This repository defines a guide of how to create a Spine-base system (based on the example 
 of TodoList application).
 
 To explore the guide, checkout the given tags:
