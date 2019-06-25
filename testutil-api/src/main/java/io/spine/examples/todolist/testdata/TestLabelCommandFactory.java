@@ -37,7 +37,7 @@ public final class TestLabelCommandFactory {
     public static final String LABEL_TITLE = "label title";
     public static final String UPDATED_LABEL_TITLE = "updated label title";
     public static final LabelId LABEL_ID = LabelId
-            .vBuilder()
+            .newBuilder()
             .setValue(newUuid())
             .build();
 
@@ -61,7 +61,7 @@ public final class TestLabelCommandFactory {
      */
     public static CreateBasicLabel createLabelInstance(LabelId labelId) {
         CreateBasicLabel result = CreateBasicLabel
-                .vBuilder()
+                .newBuilder()
                 .setLabelId(labelId)
                 .setLabelTitle(LABEL_TITLE)
                 .build();
@@ -75,12 +75,12 @@ public final class TestLabelCommandFactory {
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
         LabelDetails previousLabelDetails = LabelDetails
-                .vBuilder()
+                .newBuilder()
                 .setTitle(LABEL_TITLE)
                 .setColor(LabelColor.GRAY)
                 .build();
         LabelDetails newLabelDetails = LabelDetails
-                .vBuilder()
+                .newBuilder()
                 .setTitle(UPDATED_LABEL_TITLE)
                 .setColor(LabelColor.GREEN)
                 .build();
@@ -100,12 +100,12 @@ public final class TestLabelCommandFactory {
                                                                 LabelDetails previousLabelDetails,
                                                                 LabelDetails newLabelDetails) {
         LabelDetailsChange labelDetailsChange = LabelDetailsChange
-                .vBuilder()
+                .newBuilder()
                 .setPreviousDetails(previousLabelDetails)
                 .setNewDetails(newLabelDetails)
                 .build();
         UpdateLabelDetails result = UpdateLabelDetails
-                .vBuilder()
+                .newBuilder()
                 .setId(id)
                 .setLabelDetailsChange(labelDetailsChange)
                 .build();

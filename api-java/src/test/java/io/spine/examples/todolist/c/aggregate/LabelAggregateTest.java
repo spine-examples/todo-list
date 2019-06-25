@@ -69,7 +69,7 @@ class LabelAggregateTest {
             LabelId labelId = createLabel.getLabelId();
 
             TaskLabel expected = TaskLabel
-                    .vBuilder()
+                    .newBuilder()
                     .setId(labelId)
                     .setTitle(createLabel.getLabelTitle())
                     .build();
@@ -110,7 +110,7 @@ class LabelAggregateTest {
                     updateLabelDetailsInstance(labelId, afterFirstUpdate, newDetails);
 
             TaskLabel expected = TaskLabel
-                    .vBuilder()
+                    .newBuilder()
                     .setId(labelId)
                     .setTitle(newDetails.getTitle())
                     .setColor(newDetails.getColor())
@@ -136,7 +136,7 @@ class LabelAggregateTest {
             LabelDetails newDetails = newDetails();
 
             LabelDetails previousDetails = LabelDetails
-                    .vBuilder()
+                    .newBuilder()
                     .setTitle(incorrectTitle)
                     .build();
 
@@ -149,7 +149,7 @@ class LabelAggregateTest {
 
         private LabelDetails newDetails() {
             return LabelDetails
-                    .vBuilder()
+                    .newBuilder()
                     .setTitle("New title")
                     .setColor(LabelColor.RED)
                     .build();

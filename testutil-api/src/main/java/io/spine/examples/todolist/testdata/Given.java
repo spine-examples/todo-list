@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.testdata;
 
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskDescriptionVBuilder;
 
 /**
  * Utilities for creating Protobuf messages with a single field.
@@ -40,7 +39,7 @@ public final class Given {
      * @return the task description
      */
     public static TaskDescription newDescription(String value) {
-        return TaskDescriptionVBuilder.newBuilder()
+        return TaskDescription.newBuilder()
                                       .setValue(value)
                                       .build();
     }

@@ -27,10 +27,9 @@ import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.CommandAction.CommandActionProducer;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.CommandView;
-import io.spine.examples.todolist.TaskDescriptionVBuilder;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
@@ -42,7 +41,7 @@ import static java.util.Collections.singletonList;
  *
  * <p>To create a task in the way, user should specify a task description only.
  */
-public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
+public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTask> {
 
     static final String EMPTY_VALUE = "empty";
     static final String DESCRIPTION_LABEL = "Description:";
@@ -74,7 +73,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     }
 
     @Override
-    protected String renderState(CreateBasicTaskVBuilder state) {
+    protected String renderState(CreateBasicTask state) {
         String rawDescription = state.getDescription()
                                      .getValue();
         String resultDescription = rawDescription.isEmpty()
@@ -84,7 +83,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     }
 
     private static TaskId generatedId() {
-        return TaskId.vBuilder()
+        return TaskId.newBuilder()
                      .setValue(newUuid())
                      .build();
     }
@@ -94,7 +93,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
      */
     @VisibleForTesting
     static class DescriptionEditOperation implements EditOperation<CreateBasicTask,
-            CreateBasicTaskVBuilder> {
+            CreateBasicTask> {
 
         private static final String PROMPT = "Please enter the task description";
 
@@ -102,9 +101,9 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
          * Prompts a user for a task description and updates state of the specified builder.
          */
         @Override
-        public void start(Screen screen, CreateBasicTaskVBuilder builder) {
+        public void start(Screen screen, CreateBasicTask builder) {
             String description = screen.promptUser(PROMPT);
-            builder.setDescription(TaskDescriptionVBuilder.newBuilder()
+            builder.setDescription(TaskDescription.newBuilder()
                                                           .setValue(description)
                                                           .build());
         }
@@ -114,9 +113,9 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
      * The action for posting {@link CreateBasicTask} command to a server.
      */
     private static class CreateTask extends CommandAction<CreateBasicTask,
-                                                          CreateBasicTaskVBuilder> {
+                                                          CreateBasicTask> {
 
-        private CreateTask(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+        private CreateTask(CommandView<CreateBasicTask, CreateBasicTask> source) {
             super(source);
         }
 
@@ -130,11 +129,11 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
      * Producer of {@code NewTaskView}.
      */
     private static class NewTaskProducer extends CommandActionProducer<CreateBasicTask,
-                                                                       CreateBasicTaskVBuilder,
+                                                                       CreateBasicTask,
                                                                        CreateTask> {
 
         @Override
-        public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+        public CreateTask create(CommandView<CreateBasicTask, CreateBasicTask> source) {
             return new CreateTask(source);
         }
     }

@@ -69,7 +69,7 @@ message TaskDetails {
     TaskPriority priority = 2;
 
     // Status of the task.
-    TaskStatus status = 3 [(required) = true, (valid) = true];
+    TaskStatus status = 3 [(required) = true, (validate) = true];
 
     google.protobuf.Timestamp due_date = 4;
 }
@@ -121,7 +121,7 @@ message TaskDueDateUpdateRejected {
 message TaskDetailsUpdateRejected {
 
     // The task creation process ID.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 
     // The requested new task description.
     TaskDescription new_description = 2;
@@ -154,7 +154,7 @@ message CreateBasicTaskRejected {
 message AddLabelsRejected {
 
     // The ID of the rejected task creation.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 
     // The IDs of the existing labels that were assigned to the task.
     repeated LabelId existing_labels = 2;

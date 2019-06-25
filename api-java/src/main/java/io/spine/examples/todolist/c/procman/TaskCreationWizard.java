@@ -27,9 +27,7 @@ import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskCreationVBuilder;
 import io.spine.examples.todolist.TaskDetailsUpdateRejected;
-import io.spine.examples.todolist.TaskDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -78,13 +76,13 @@ import static io.spine.validate.Validate.isDefault;
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} It is
+ *         {@linkplain io.spine.server.entity.AbstractEntity#isArchived() archived} It is
  *         required that the process is in the <b>Confirmation</b> stage before moving to this
  *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (which persists as a draft) and finalize it
  *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
- *         is {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
+ *         is {@linkplain io.spine.server.entity.AbstractEntity#isArchived() archived} on this
  *         stage.
  * </ol>
  *
@@ -111,7 +109,7 @@ import static io.spine.validate.Validate.isDefault;
         "OverlyCoupledClass" /* OK for process manager entity. */})
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
                                                        TaskCreation,
-                                                       TaskCreationVBuilder> {
+                                                       TaskCreation.Builder> {
 
     protected TaskCreationWizard(TaskCreationId id) {
         super(id);
@@ -123,7 +121,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         return transit(TASK_DEFINITION, () -> {
             TaskId taskId = command.getTaskId();
             CreateDraft createDraft = CreateDraft
-                    .vBuilder()
+                    .newBuilder()
                     .setId(taskId)
                     .build();
             initProcess(command);
@@ -168,7 +166,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         return transit(CONFIRMATION, () -> {
             LabelAssignmentSkipped assignmentSkipped = LabelAssignmentSkipped
-                    .vBuilder()
+                    .newBuilder()
                     .setTaskId(taskId())
                     .build();
             return assignmentSkipped;
@@ -180,9 +178,9 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
             FinalizeDraft finalizeDraft = FinalizeDraft
-                    .vBuilder()
+                    .newBuilder()
                     .setId(taskId())
-                    .build();
+                    .vBuild();
             completeProcess();
             return finalizeDraft;
         });
@@ -193,9 +191,9 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         return transit(CANCELED, () -> {
             completeProcess();
             TaskCreationCanceled taskCreationCanceled = TaskCreationCanceled
-                    .vBuilder()
+                    .newBuilder()
                     .setTaskId(taskId())
-                    .build();
+                    .vBuild();
             return taskCreationCanceled;
         });
     }
@@ -319,7 +317,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
 
     private static void throwCannotUpdateTaskDetails(UpdateTaskDetails command)
             throws CannotUpdateTaskDetails {
-        TaskDetailsUpdateRejected details = TaskDetailsUpdateRejectedVBuilder
+        TaskDetailsUpdateRejected details = TaskDetailsUpdateRejected
                 .newBuilder()
                 .setId(command.getId())
                 .setNewDescription(command.getDescriptionChange()
@@ -328,7 +326,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
                                        .getNewValue())
                 .setNewDueDate(command.getDueDateChange()
                                       .getNewValue())
-                .build();
+                .buildPartial();
         CannotUpdateTaskDetails rejection = CannotUpdateTaskDetails
                 .newBuilder()
                 .setRejectionDetails(details)

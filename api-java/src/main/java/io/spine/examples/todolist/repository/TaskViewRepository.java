@@ -20,11 +20,13 @@
 
 package io.spine.examples.todolist.repository;
 
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.events.TaskAware;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
 import io.spine.server.projection.ProjectionRepository;
+import io.spine.server.route.EventRouting;
 
 import static java.util.Collections.singleton;
 
@@ -34,13 +36,10 @@ import static java.util.Collections.singleton;
 public class TaskViewRepository
         extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
 
+    @OverridingMethodsMustInvokeSuper
     @Override
-    public void onRegistered() {
-        super.onRegistered();
-        reroute();
-    }
-
-    private void reroute() {
-        eventRouting().route(TaskAware.class, (message, context) -> singleton(message.getTaskId()));
+    protected void setupEventRouting(EventRouting<TaskId> routing) {
+        super.setupEventRouting(routing);
+        routing.route(TaskAware.class, (message, context) -> singleton(message.getTaskId()));
     }
 }

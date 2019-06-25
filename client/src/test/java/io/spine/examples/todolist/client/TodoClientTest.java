@@ -91,7 +91,7 @@ abstract class TodoClientTest {
 
     static AssignLabelToTask assignLabelToTask(TaskId taskId, LabelId labelId) {
         AssignLabelToTask result = AssignLabelToTask
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
                 .build();
@@ -105,7 +105,7 @@ abstract class TodoClientTest {
     }
 
     static FinalizeDraft finalizeDraft(TaskId taskId) {
-        FinalizeDraft result = FinalizeDraft.vBuilder()
+        FinalizeDraft result = FinalizeDraft.newBuilder()
                                             .setId(taskId)
                                             .build();
         return result;

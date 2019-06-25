@@ -43,7 +43,7 @@ public final class TestTaskLabelsCommandFactory {
      */
     public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, LabelId labelId) {
         AssignLabelToTask result = AssignLabelToTask
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
                 .build();
@@ -77,7 +77,7 @@ public final class TestTaskLabelsCommandFactory {
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, LabelId labelId) {
         RemoveLabelFromTask result = RemoveLabelFromTask
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
                 .build();

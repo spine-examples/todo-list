@@ -35,7 +35,6 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskStatus;
-import io.spine.examples.todolist.TaskVBuilder;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -102,11 +101,10 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
                                                  The {@code AggregatePart} does it with methods
                                                  annotated as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
-        "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/,
-        "unused" /* Methods are used reflectively by Spine. */})
+        "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/})
 public class TaskPart extends AggregatePart<TaskId,
                                             Task,
-                                            TaskVBuilder,
+                                            Task.Builder,
                                             TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
@@ -117,15 +115,15 @@ public class TaskPart extends AggregatePart<TaskId,
     TaskCreated handle(CreateBasicTask cmd) {
         TaskId taskId = cmd.getId();
         TaskDetails taskDetails = TaskDetails
-                .vBuilder()
+                .newBuilder()
                 .setStatus(TaskStatus.OPEN)
                 .setDescription(cmd.getDescription())
-                .build();
+                .buildPartial();
         TaskCreated result = TaskCreated
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setDetails(taskDetails)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -149,10 +147,10 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated result = TaskDescriptionUpdated
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setDescriptionChange(descriptionChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -179,10 +177,10 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated result = TaskDueDateUpdated
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setDueDateChange(cmd.getDueDateChange())
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -209,10 +207,10 @@ public class TaskPart extends AggregatePart<TaskId,
         }
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated result = TaskPriorityUpdated
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setPriorityChange(priorityChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -228,9 +226,9 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskReopened result = TaskReopened
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -247,9 +245,9 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDeleted result = TaskDeleted
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -266,9 +264,9 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskCompleted result = TaskCompleted
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -282,10 +280,10 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDraftCreated result = TaskDraftCreated
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setDraftCreationTime(currentTime())
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -301,9 +299,9 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         TaskDraftFinalized result = TaskDraftFinalized
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -318,21 +316,21 @@ public class TaskPart extends AggregatePart<TaskId,
 
         TaskId taskId = cmd.getId();
         DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
 
-        TaskLabels taskLabels = getPartState(TaskLabels.class);
+        TaskLabels taskLabels = partState(TaskLabels.class);
         List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
                                                .getIdsList();
         for (LabelId labelId : labelIdsList) {
             LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored
-                    .vBuilder()
+                    .newBuilder()
                     .setTaskId(taskId)
                     .setLabelId(labelId)
-                    .build();
+                    .vBuild();
             result.add(labelledTaskRestored);
         }
         return result;

@@ -44,13 +44,11 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
-import io.spine.core.UserIdVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.q.projection.LabelView;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.time.ZoneOffsets;
@@ -124,7 +122,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     @Override
     public TaskLabels labelsOf(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
-        TaskLabels result = labels.orElse(TaskLabelsVBuilder.newBuilder()
+        TaskLabels result = labels.orElse(TaskLabels.newBuilder()
                                                             .setTaskId(taskId)
                                                             .build());
         return result;
@@ -237,7 +235,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {
-        UserId userId = UserIdVBuilder
+        UserId userId = UserId
                 .newBuilder()
                 .setValue(newUuid())
                 .build();

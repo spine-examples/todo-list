@@ -62,7 +62,7 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setDueDate(updateTaskDueDate.getDueDateChange()
                                              .getNewValue())

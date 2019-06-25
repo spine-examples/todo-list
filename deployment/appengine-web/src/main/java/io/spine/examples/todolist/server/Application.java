@@ -22,13 +22,10 @@ package io.spine.examples.todolist.server;
 
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.net.Url;
-import io.spine.net.UrlVBuilder;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
-import io.spine.server.storage.StorageFactory;
 import io.spine.web.firebase.DatabaseUrl;
-import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
@@ -68,8 +65,8 @@ final class Application {
     }
 
     private static Application create() {
-        StorageFactory storageFactory = createStorage(false);
-        BoundedContext boundedContext = BoundedContexts.create(storageFactory);
+        BoundedContext boundedContext =
+                BoundedContexts.create(spec -> createStorage(spec.isMultitenant()));
 
         log.log("Initializing C/Q services.");
         CommandService commandService =
@@ -124,11 +121,11 @@ final class Application {
     private static DatabaseUrl databaseUrl() {
         String firebaseDatabaseUrl = Configuration.instance()
                                            .firebaseDatabaseUrl();
-        Url url = UrlVBuilder
+        Url url = Url
                 .newBuilder()
                 .setSpec(firebaseDatabaseUrl)
                 .build();
-        DatabaseUrl databaseUrl = DatabaseUrlVBuilder
+        DatabaseUrl databaseUrl = DatabaseUrl
                 .newBuilder()
                 .setUrl(url)
                 .build();

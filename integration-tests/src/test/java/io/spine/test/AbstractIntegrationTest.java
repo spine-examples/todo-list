@@ -31,6 +31,7 @@ import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
+import io.spine.server.ContextSpec;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -48,6 +49,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
@@ -118,11 +120,12 @@ public abstract class AbstractIntegrationTest {
         return properties;
     }
 
-    private static StorageFactory createStorageFactory() {
-        return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(createDataSource())
-                                 .setMultitenant(false)
-                                 .build();
+    private static Function<ContextSpec, StorageFactory> createStorageFactory() {
+        return spec -> JdbcStorageFactory
+                .newBuilder()
+                .setDataSource(createDataSource())
+                .setMultitenant(spec.isMultitenant())
+                .build();
     }
 
     private static DataSource createDataSource() {

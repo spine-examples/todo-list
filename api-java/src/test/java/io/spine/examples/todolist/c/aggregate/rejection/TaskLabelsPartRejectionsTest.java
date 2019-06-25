@@ -21,16 +21,11 @@
 package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskCreationIdVBuilder;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTaskVBuilder;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
@@ -56,7 +51,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @DisplayName("throw CannotRemoveLabelFromTask rejection")
     void throwCannotRemoveLabelFromTaskRejection() {
         TaskId taskId = taskId();
-        RemoveLabelFromTask cmd = RemoveLabelFromTaskVBuilder
+        RemoveLabelFromTask cmd = RemoveLabelFromTask
                 .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId())
@@ -75,7 +70,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @DisplayName("throw CannotAssignLabelToTask rejection")
     void throwCannotAssignLabelToTaskRejection() {
         TaskId taskId = taskId();
-        AssignLabelToTask cmd = AssignLabelToTaskVBuilder
+        AssignLabelToTask cmd = AssignLabelToTask
                 .newBuilder()
                 .setLabelId(labelId())
                 .setId(taskId)
@@ -93,7 +88,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotAddLabels rejection")
     void throwCannotAddLabelsToTaskRejection() {
-        TaskCreationId taskCreationId = TaskCreationIdVBuilder
+        TaskCreationId taskCreationId = TaskCreationId
                 .newBuilder()
                 .setValue(newUuid())
                 .build();
@@ -111,7 +106,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     }
 
     private static TaskId taskId() {
-        TaskId result = TaskIdVBuilder
+        TaskId result = TaskId
                 .newBuilder()
                 .setValue(newUuid())
                 .build();
@@ -119,7 +114,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     }
 
     private static LabelId labelId() {
-        LabelId result = LabelIdVBuilder
+        LabelId result = LabelId
                 .newBuilder()
                 .setValue(newUuid())
                 .build();

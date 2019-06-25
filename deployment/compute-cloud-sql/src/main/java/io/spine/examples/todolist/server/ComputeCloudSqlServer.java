@@ -27,7 +27,6 @@ import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import org.slf4j.Logger;
 
@@ -71,15 +70,11 @@ public class ComputeCloudSqlServer {
 
     @VisibleForTesting
     static BoundedContext createBoundedContext() {
-        StorageFactory storageFactory = createStorageFactory();
-        return BoundedContexts.create(storageFactory);
-    }
-
-    private static StorageFactory createStorageFactory() {
-        return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(createDataSource())
-                                 .setMultitenant(false)
-                                 .build();
+        return BoundedContexts.create(spec -> JdbcStorageFactory
+                .newBuilder()
+                .setDataSource(createDataSource())
+                .setMultitenant(spec.isMultitenant())
+                .build());
     }
 
     private static DataSource createDataSource() {

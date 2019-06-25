@@ -45,7 +45,7 @@ class ConstraintViolationFormatterTest {
     @Test
     @DisplayName("format constraint violations")
     void formatConstraintViolations() {
-        NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
+        NaturalNumberVBuilder builder = NaturalNumber.newBuilder();
         int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
         FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
                                                        .getFields()

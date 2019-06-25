@@ -32,7 +32,7 @@ import io.spine.server.projection.Projection;
  * A projection which mirrors the state of a single label.
  */
 @SuppressWarnings("unused") // Methods used reflectively by Spine.
-public class LabelViewProjection extends Projection<LabelId, LabelView, LabelViewVBuilder> {
+public class LabelViewProjection extends Projection<LabelId, LabelView, LabelView.Builder> {
 
     public LabelViewProjection(LabelId id) {
         super(id);
@@ -40,9 +40,7 @@ public class LabelViewProjection extends Projection<LabelId, LabelView, LabelVie
 
     @Subscribe
     void labelCreated(LabelCreated event) {
-        builder().setId(event.getId())
-                 .setTitle(event.getDetails()
-                                .getTitle())
+        builder().setTitle(event.getDetails().getTitle())
                  .setColor(LabelColor.GRAY);
     }
 
@@ -50,8 +48,7 @@ public class LabelViewProjection extends Projection<LabelId, LabelView, LabelVie
     void labelDetailsUpdated(LabelDetailsUpdated event) {
         LabelDetails labelDetails = event.getLabelDetailsChange()
                                          .getNewDetails();
-        builder().setId(event.getLabelId())
-                 .setTitle(labelDetails.getTitle())
+        builder().setTitle(labelDetails.getTitle())
                  .setColor(labelDetails.getColor());
     }
 }

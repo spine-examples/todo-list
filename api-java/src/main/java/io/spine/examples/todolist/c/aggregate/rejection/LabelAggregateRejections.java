@@ -22,9 +22,7 @@ package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelDetailsUpdateRejected;
-import io.spine.examples.todolist.LabelDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.RejectedLabelCommandDetails;
-import io.spine.examples.todolist.RejectedLabelCommandDetailsVBuilder;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
@@ -56,11 +54,11 @@ public final class LabelAggregateRejections {
         checkNotNull(cmd);
         checkNotNull(mismatch);
 
-        RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetailsVBuilder
+        RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetails
                 .newBuilder()
                 .setLabelId(cmd.getId())
                 .build();
-        LabelDetailsUpdateRejected detailsUpdateRejected = LabelDetailsUpdateRejectedVBuilder
+        LabelDetailsUpdateRejected detailsUpdateRejected = LabelDetailsUpdateRejected
                 .newBuilder()
                 .setCommandDetails(commandDetails)
                 .setLabelDetailsMismatch(mismatch)

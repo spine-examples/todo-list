@@ -59,7 +59,7 @@ class CreateDraftTest extends TaskCommandTestBase {
         boundedContext().receivesCommand(createDraft);
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(DRAFT)
                 .build();

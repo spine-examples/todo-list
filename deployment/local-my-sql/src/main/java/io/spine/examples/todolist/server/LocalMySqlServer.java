@@ -27,7 +27,6 @@ import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import org.slf4j.Logger;
 
@@ -94,15 +93,11 @@ public class LocalMySqlServer {
 
     @VisibleForTesting
     static BoundedContext createBoundedContext(String[] args) {
-        StorageFactory storageFactory = createStorageFactory(args);
-        return BoundedContexts.create(storageFactory);
-    }
-
-    private static StorageFactory createStorageFactory(String[] args) {
-        return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(createDataSource(args))
-                                 .setMultitenant(false)
-                                 .build();
+        return BoundedContexts.create(spec -> JdbcStorageFactory
+                .newBuilder()
+                .setDataSource(createDataSource(args))
+                .setMultitenant(spec.isMultitenant())
+                .build());
     }
 
     private static DataSource createDataSource(String[] args) {

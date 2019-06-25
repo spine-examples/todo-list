@@ -88,7 +88,7 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(OPEN)
                 .build();

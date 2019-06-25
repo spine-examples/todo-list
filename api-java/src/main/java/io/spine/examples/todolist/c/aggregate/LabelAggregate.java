@@ -27,7 +27,6 @@ import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.TaskLabelVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
@@ -43,7 +42,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
  * The aggregate managing the state of a {@link TaskLabel}.
  */
 @SuppressWarnings("unused") // A lot of reflectively used handler methods.
-public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
+public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
 
     @VisibleForTesting
     public static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
@@ -55,11 +54,11 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     @Assign
     LabelCreated handle(CreateBasicLabel cmd) {
         LabelDetails labelDetails = LabelDetails
-                .vBuilder()
+                .newBuilder()
                 .setTitle(cmd.getLabelTitle())
                 .build();
         LabelCreated result = LabelCreated
-                .vBuilder()
+                .newBuilder()
                 .setId(cmd.getLabelId())
                 .setDetails(labelDetails)
                 .build();
@@ -71,7 +70,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
             throws CannotUpdateLabelDetails {
         TaskLabel state = state();
         LabelDetails actualLabelDetails = LabelDetails
-                .vBuilder()
+                .newBuilder()
                 .setColor(state.getColor())
                 .setTitle(state.getTitle())
                 .build();
@@ -89,7 +88,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
         LabelId labelId = cmd.getId();
         LabelDetailsUpdated result = LabelDetailsUpdated
-                .vBuilder()
+                .newBuilder()
                 .setLabelId(labelId)
                 .setLabelDetailsChange(labelDetailsChange)
                 .build();

@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import static com.google.api.client.util.Preconditions.checkNotNull;
 import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
-import static io.spine.server.ServerEnvironment.getDeploymentType;
+import static io.spine.server.ServerEnvironment.deploymentType;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -52,7 +52,7 @@ final class GoogleAuth {
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
     static GoogleCredential serviceAccountCredential() {
-        if (getDeploymentType() == APPENGINE_CLOUD) {
+        if (deploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredential::getApplicationDefault);
         } else {
             String credentialsResource = Configuration.instance()
@@ -78,7 +78,7 @@ final class GoogleAuth {
      * @see #serviceAccountCredential() for an alternative API for the same credential
      */
     static GoogleCredentials serviceAccountCredentials() {
-        if (getDeploymentType() == APPENGINE_CLOUD) {
+        if (deploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredentials::getApplicationDefault);
         } else {
             String credentialsResource = Configuration.instance()

@@ -49,9 +49,9 @@ class EditCommandActionTest {
 
     private Bot bot;
     private final ACommandView view = new ACommandView();
-    private final Set<EditOperation<Comment, CommentVBuilder>> edits =
+    private final Set<EditOperation<Comment, Comment>> edits =
             singleton(new CommentEditOperation());
-    private final EditCommandAction<Comment, CommentVBuilder> action =
+    private final EditCommandAction<Comment, Comment> action =
             editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
 
     @BeforeEach
@@ -115,7 +115,7 @@ class EditCommandActionTest {
         bot.assertAllAnswersWereGiven();
     }
 
-    private static class ACommandView extends CommandView<Comment, CommentVBuilder> {
+    private static class ACommandView extends CommandView<Comment, Comment> {
 
         private boolean wasRendered;
 
@@ -130,15 +130,15 @@ class EditCommandActionTest {
         }
 
         @Override
-        protected String renderState(CommentVBuilder state) {
+        protected String renderState(Comment state) {
             return "";
         }
     }
 
-    private static class CommentEditOperation implements EditOperation<Comment, CommentVBuilder> {
+    private static class CommentEditOperation implements EditOperation<Comment, Comment> {
 
         @Override
-        public void start(Screen screen, CommentVBuilder builder) {
+        public void start(Screen screen, Comment builder) {
             String commentValue = screen.promptUser("Enter a comment");
             builder.setValue(commentValue);
         }

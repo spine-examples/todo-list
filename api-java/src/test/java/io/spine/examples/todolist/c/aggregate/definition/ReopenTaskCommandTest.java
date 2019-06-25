@@ -69,7 +69,7 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         ReopenTask reopenTask = reopenTaskInstance(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(OPEN)
                 .build();

@@ -106,7 +106,7 @@ public class TaskCreationWizardTestEnv {
 
     public static SkipLabels skipLabels(TaskCreationId pid) {
         SkipLabels skipLabels = SkipLabels
-                .vBuilder()
+                .newBuilder()
                 .setId(pid)
                 .build();
         return skipLabels;

@@ -68,7 +68,7 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), previousDescription, NEW_DESCRIPTION);
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setDescription(updateDescription.getDescriptionChange()
                                                  .getNewValue())

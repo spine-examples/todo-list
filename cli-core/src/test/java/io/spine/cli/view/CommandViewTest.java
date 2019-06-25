@@ -22,7 +22,6 @@ package io.spine.cli.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.CreateProject;
-import io.spine.cli.CreateProjectVBuilder;
 import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
@@ -62,7 +61,7 @@ class CommandViewTest {
     void renderStateRepresentation() {
         view.renderBody(bot.screen());
         String expectedBody =
-                view.renderState(CreateProjectVBuilder.newBuilder()) + lineSeparator();
+                view.renderState(CreateProject.newBuilder()) + lineSeparator();
         bot.assertOutput(expectedBody);
     }
 
@@ -88,7 +87,7 @@ class CommandViewTest {
         @DisplayName("obtain classes for the generic parameters")
         void obtainClassesForGenericParams() {
             assertEquals(CreateProject.class, COMMAND_MESSAGE.argumentIn(ACommandView.class));
-            assertEquals(CreateProjectVBuilder.class,
+            assertEquals(CreateProject.class,
                          STATE_BUILDER.argumentIn(ACommandView.class));
         }
     }
@@ -104,7 +103,7 @@ class CommandViewTest {
         }
     }
 
-    private static class ACommandView extends CommandView<CreateProject, CreateProjectVBuilder> {
+    private static class ACommandView extends CommandView<CreateProject, CreateProject> {
 
         private boolean wasRendered = false;
 
@@ -119,7 +118,7 @@ class CommandViewTest {
         }
 
         @Override
-        protected String renderState(CreateProjectVBuilder state) {
+        protected String renderState(CreateProject state) {
             return "state";
         }
     }

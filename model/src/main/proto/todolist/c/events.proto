@@ -103,7 +103,7 @@ message TaskDescriptionUpdated {
     TaskId task_id = 1;
 
     // The change of the task description.
-    DescriptionChange description_change = 2 [(valid) = true];
+    DescriptionChange description_change = 2 [(validate) = true];
 }
 
 // An event fired upon task completion.

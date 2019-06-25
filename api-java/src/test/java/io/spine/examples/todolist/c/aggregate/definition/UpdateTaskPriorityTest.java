@@ -61,7 +61,7 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance(taskId());
         UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId());
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setPriority(updateTaskPriority.getPriorityChange()
                                                .getNewValue())

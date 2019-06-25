@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.context;
 
-import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelViewRepository;
 import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
@@ -28,8 +27,11 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.ContextSpec;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
+
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -40,9 +42,6 @@ public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";
-
-    private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(BoundedContextNames.newName(NAME), false);
 
     /** Prevents instantiation of this utility class. */
     private BoundedContexts() {
@@ -55,7 +54,7 @@ public final class BoundedContexts {
      * @return the {@link BoundedContext} instance
      */
     public static BoundedContext create() {
-        BoundedContext result = create(IN_MEMORY_FACTORY);
+        BoundedContext result = create(InMemoryStorageFactory::newInstance);
         return result;
     }
 
@@ -67,7 +66,7 @@ public final class BoundedContexts {
      *         the storage factory to use
      * @return the bounded context created with the storage factory
      */
-    public static BoundedContext create(StorageFactory storageFactory) {
+    public static BoundedContext create(Function<ContextSpec, StorageFactory> storageFactory) {
         checkNotNull(storageFactory);
 
         LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
@@ -79,8 +78,8 @@ public final class BoundedContexts {
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
         BoundedContext boundedContext = BoundedContext
-                .newBuilder()
-                .setStorageFactorySupplier(() -> storageFactory)
+                .singleTenant(NAME)
+                .setStorage(storageFactory)
                 .build();
 
         boundedContext.register(taskRepo);
