@@ -57,12 +57,12 @@ public final class LabelAggregateRejections {
         RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetails
                 .newBuilder()
                 .setLabelId(cmd.getId())
-                .build();
+                .buildPartial();
         LabelDetailsUpdateRejected detailsUpdateRejected = LabelDetailsUpdateRejected
                 .newBuilder()
                 .setCommandDetails(commandDetails)
                 .setLabelDetailsMismatch(mismatch)
-                .build();
+                .buildPartial();
         CannotUpdateLabelDetails rejection = CannotUpdateLabelDetails
                 .newBuilder()
                 .setRejectionDetails(detailsUpdateRejected)

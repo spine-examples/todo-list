@@ -39,7 +39,7 @@ public final class TestLabelCommandFactory {
     public static final LabelId LABEL_ID = LabelId
             .newBuilder()
             .setValue(newUuid())
-            .build();
+            .vBuild();
 
     private TestLabelCommandFactory() {
     }
@@ -64,7 +64,7 @@ public final class TestLabelCommandFactory {
                 .newBuilder()
                 .setLabelId(labelId)
                 .setLabelTitle(LABEL_TITLE)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -78,12 +78,12 @@ public final class TestLabelCommandFactory {
                 .newBuilder()
                 .setTitle(LABEL_TITLE)
                 .setColor(LabelColor.GRAY)
-                .build();
+                .vBuild();
         LabelDetails newLabelDetails = LabelDetails
                 .newBuilder()
                 .setTitle(UPDATED_LABEL_TITLE)
                 .setColor(LabelColor.GREEN)
-                .build();
+                .vBuild();
         return updateLabelDetailsInstance(labelId, previousLabelDetails, newLabelDetails);
     }
 
@@ -103,12 +103,12 @@ public final class TestLabelCommandFactory {
                 .newBuilder()
                 .setPreviousDetails(previousLabelDetails)
                 .setNewDetails(newLabelDetails)
-                .build();
+                .buildPartial();
         UpdateLabelDetails result = UpdateLabelDetails
                 .newBuilder()
                 .setId(id)
                 .setLabelDetailsChange(labelDetailsChange)
-                .build();
+                .vBuild();
         return result;
     }
 }

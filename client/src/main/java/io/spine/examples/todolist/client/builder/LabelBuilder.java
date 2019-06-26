@@ -51,7 +51,7 @@ public final class LabelBuilder {
      */
     public static final class CreateBasicLabelBuilder {
 
-        private final CreateBasicLabel builder = CreateBasicLabel.newBuilder();
+        private final CreateBasicLabel.Builder builder = CreateBasicLabel.newBuilder();
 
         /**
          * Sets the title to the {@link CreateBasicLabel.Builder}.
@@ -73,14 +73,14 @@ public final class LabelBuilder {
         public CreateBasicLabel build() {
             LabelId id = generateId();
             builder.setLabelId(id);
-            return builder.build();
+            return builder.vBuild();
         }
 
         private static LabelId generateId() {
             LabelId id = LabelId
                     .newBuilder()
                     .setValue(newUuid())
-                    .build();
+                    .vBuild();
             return id;
         }
     }

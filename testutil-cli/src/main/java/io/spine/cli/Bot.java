@@ -21,7 +21,7 @@
 package io.spine.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * A bot for user input imitation.
@@ -69,7 +69,7 @@ public final class Bot {
      * {@link Screen#promptUser(String) prompted} certain number of times.
      */
     public void assertAllAnswersWereGiven() {
-        assertTrue(!screen.hasAnswers());
+        assertFalse(screen.hasAnswers());
     }
 
     /**

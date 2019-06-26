@@ -23,7 +23,7 @@ package io.spine.cli.action;
 import com.google.protobuf.Message;
 import io.spine.cli.Application;
 import io.spine.cli.view.CommandView;
-import io.spine.validate.ValidatingBuilder;
+import io.spine.protobuf.ValidatingBuilder;
 
 /**
  * A {@code CommandAction} posts a command obtained from a {@link CommandView} to a server.
@@ -33,8 +33,7 @@ import io.spine.validate.ValidatingBuilder;
  * @param <B>
  *         the validating builder type for the command message
  */
-public abstract class CommandAction<M extends Message,
-                                    B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public abstract class CommandAction<M extends Message, B extends ValidatingBuilder<M>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
     private static final String ACTION_NAME = "Finish";
@@ -53,7 +52,7 @@ public abstract class CommandAction<M extends Message,
     @Override
     public void execute() {
         B sourceState = getSource().getState();
-        M commandMessage = sourceState.build();
+        M commandMessage = sourceState.vBuild();
         post(commandMessage);
 
         sourceState.clear();
@@ -82,7 +81,7 @@ public abstract class CommandAction<M extends Message,
      */
     public abstract static class CommandActionProducer<
             M extends Message,
-            B extends ValidatingBuilder<M, ? extends Message.Builder>,
+            B extends ValidatingBuilder<M>,
             T extends CommandAction<M, B>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 

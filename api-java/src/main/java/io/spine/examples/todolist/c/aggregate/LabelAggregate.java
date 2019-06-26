@@ -56,12 +56,12 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         LabelDetails labelDetails = LabelDetails
                 .newBuilder()
                 .setTitle(cmd.getLabelTitle())
-                .build();
+                .buildPartial();
         LabelCreated result = LabelCreated
                 .newBuilder()
                 .setId(cmd.getLabelId())
                 .setDetails(labelDetails)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -73,7 +73,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
                 .newBuilder()
                 .setColor(state.getColor())
                 .setTitle(state.getTitle())
-                .build();
+                .vBuild();
         LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
         LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
@@ -91,7 +91,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
                 .newBuilder()
                 .setLabelId(labelId)
                 .setLabelDetailsChange(labelDetailsChange)
-                .build();
+                .vBuild();
         return result;
     }
 

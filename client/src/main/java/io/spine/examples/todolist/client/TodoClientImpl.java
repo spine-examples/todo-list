@@ -124,7 +124,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
         TaskLabels result = labels.orElse(TaskLabels.newBuilder()
                                                             .setTaskId(taskId)
-                                                            .build());
+                                                            .vBuild());
         return result;
     }
 
@@ -228,7 +228,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     /** Queries the read-side with the specified query. */
     private List<Any> query(Query query) {
         return queryService.read(query)
-                           .getMessagesList()
+                           .getMessageList()
                            .stream()
                            .map(EntityStateWithVersion::getState)
                            .collect(toList());
@@ -238,7 +238,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         UserId userId = UserId
                 .newBuilder()
                 .setValue(newUuid())
-                .build();
+                .vBuild();
         ActorRequestFactory result = ActorRequestFactory
                 .newBuilder()
                 .setActor(userId)
@@ -272,7 +272,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         @Override
         public void onNext(SubscriptionUpdate value) {
             value.getEntityUpdates()
-                 .getUpdatesList()
+                 .getUpdateList()
                  .stream()
                  .map(EntityStateUpdate::getState)
                  .map(any -> (M) unpack(any))

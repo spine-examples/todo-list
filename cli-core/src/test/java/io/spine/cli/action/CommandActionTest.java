@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
 import static io.spine.validate.Validate.isDefault;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,7 +63,7 @@ class CommandActionTest {
                 .newBuilder()
                 .setValue("Some ID")
                 .build();
-        CreateProject viewState = view.getState();
+        CreateProject.Builder viewState = view.getState();
         viewState.setProjectId(expectedId);
         action.execute();
 
@@ -78,18 +79,18 @@ class CommandActionTest {
                 .newBuilder()
                 .setValue("Non-default ID")
                 .build();
-        CreateProject viewState = view.getState();
+        CreateProject.Builder viewState = view.getState();
         viewState.setProjectId(nonDefaultId);
         action.execute();
-        assertTrue(isDefault(viewState.internalBuild()));
+        assertTrue(isDefault(viewState.buildPartial()));
     }
 
     private static class CreateProjectAction
-            extends CommandAction<CreateProject, CreateProject> {
+            extends CommandAction<CreateProject, CreateProject.Builder> {
 
         private CreateProject commandMessageBeforeExecution;
 
-        private CreateProjectAction(CommandView<CreateProject, CreateProject> source) {
+        private CreateProjectAction(CommandView<CreateProject, CreateProject.Builder> source) {
             super(source);
         }
 
@@ -104,7 +105,7 @@ class CommandActionTest {
     }
 
     private static class CreateProjectView
-            extends CommandView<CreateProject, CreateProject> {
+            extends CommandView<CreateProject, CreateProject.Builder> {
 
         private boolean rendered;
 
@@ -118,7 +119,7 @@ class CommandActionTest {
         }
 
         @Override
-        protected String renderState(CreateProject state) {
+        protected String renderState(CreateProject.Builder state) {
             return String.valueOf(rendered);
         }
 

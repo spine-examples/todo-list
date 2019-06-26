@@ -25,6 +25,19 @@ ext {
     compiledProto = "$projectDir/generated"
 }
 
+spine {
+    enableJavaScript()
+    enableJava {
+        codegen {
+            protobuf = false
+            spine = false
+        }
+    }
+}
+
+project.compileJava.enabled = false
+project.compileTestJava.enabled = false
+
 apply from: deps.scripts.jsBuildTasks
 
 // Do not update the package version as we are not going to publish it.
@@ -53,22 +66,6 @@ protobuf {
             task.plugins {
                 task.generateDescriptorSet = false
             }
-            task.builtins {
-                // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
-                // TODO https://github.com/SpineEventEngine/todo-list/issues/62
-
-                // Do not use Java builtin output in this project.
-                remove java
-
-                js {
-                    option "import_style=commonjs"
-                }
-
-                task.generateDescriptorSet = true
-                final def testClassifier = task.sourceSet.name == "test" ? "_test" : ""
-                final def descriptorName = "${project.group}_${project.name}_${project.version}${testClassifier}.desc"
-                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/${descriptorName}"
-            }
             compileProtoToJs.dependsOn task
         }
     }
@@ -77,8 +74,6 @@ protobuf {
 compileProtoToJs {
     outputs.files compiledProto
 }
-
-apply plugin: 'io.spine.tools.proto-js-plugin'
 
 protoJs {
     generateParsersTask().dependsOn compileProtoToJs
@@ -98,6 +93,3 @@ idea.module {
         }
     }
 }
-
-project.compileJava.enabled = false
-project.compileTestJava.enabled = false

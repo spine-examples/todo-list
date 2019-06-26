@@ -124,11 +124,11 @@ final class Application {
         Url url = Url
                 .newBuilder()
                 .setSpec(firebaseDatabaseUrl)
-                .build();
+                .buildPartial();
         DatabaseUrl databaseUrl = DatabaseUrl
                 .newBuilder()
                 .setUrl(url)
-                .build();
+                .vBuild();
         return databaseUrl;
     }
 }

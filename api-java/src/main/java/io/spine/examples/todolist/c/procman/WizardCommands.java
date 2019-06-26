@@ -204,7 +204,7 @@ final class WizardCommands {
         LabelId labelId = LabelId
                 .newBuilder()
                 .setValue(newUuid())
-                .build();
+                .vBuild();
         CreateBasicLabel createBasicLabel = createLabel(labelId, label);
         UpdateLabelDetails updateLabelDetails = setColorToLabel(labelId, label);
         AssignLabelToTask assignLabelToTask = assignLabel(labelId);
@@ -272,6 +272,6 @@ final class WizardCommands {
         return AssignLabelToTask.newBuilder()
                                         .setId(taskId)
                                         .setLabelId(labelId)
-                                        .build();
+                                        .vBuild();
     }
 }

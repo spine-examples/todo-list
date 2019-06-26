@@ -184,7 +184,7 @@ class ClientTest extends TodoClientTest {
         client.postCommand(finalizeDraft);
 
         TaskView expected = freshDraft(taskId)
-                .to()
+                .toBuilder()
                 .setStatus(FINALIZED)
                 .build();
 

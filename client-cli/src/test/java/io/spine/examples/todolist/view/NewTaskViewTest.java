@@ -50,7 +50,7 @@ class NewTaskViewTest extends ViewTest {
     @Test
     @DisplayName("handle empty description")
     void handleEmptyDescription() {
-        CreateBasicTaskVBuilder cleanBuilder = CreateBasicTask.newBuilder();
+        CreateBasicTask.Builder cleanBuilder = CreateBasicTask.newBuilder();
         String expectedRepresentation = DESCRIPTION_LABEL + ' ' + EMPTY_VALUE;
         assertEquals(expectedRepresentation, view.renderState(cleanBuilder));
     }
@@ -58,9 +58,9 @@ class NewTaskViewTest extends ViewTest {
     @Test
     @DisplayName("handle non-empty description")
     void handleNonEmptyDescription() {
-        CreateBasicTask state =
-                CreateBasicTask.newBuilder()
-                                       .setDescription(VALID_DESCRIPTION);
+        CreateBasicTask.Builder state = CreateBasicTask
+                .newBuilder()
+                .setDescription(VALID_DESCRIPTION);
         String expectedRepresentation =
                 DESCRIPTION_LABEL + ' ' + VALID_DESCRIPTION.getValue();
         assertEquals(expectedRepresentation, view.renderState(state));
@@ -92,7 +92,7 @@ class NewTaskViewTest extends ViewTest {
         void editDescription() {
             bot.addAnswer(VALID_DESCRIPTION.getValue());
 
-            CreateBasicTask state = view.getState();
+            CreateBasicTask.Builder state = view.getState();
             descriptionEdit.start(bot.screen(), state);
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());

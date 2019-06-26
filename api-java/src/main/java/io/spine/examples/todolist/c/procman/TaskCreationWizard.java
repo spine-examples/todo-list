@@ -123,7 +123,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             CreateDraft createDraft = CreateDraft
                     .newBuilder()
                     .setId(taskId)
-                    .build();
+                    .vBuild();
             initProcess(command);
             return createDraft;
         });
@@ -168,7 +168,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             LabelAssignmentSkipped assignmentSkipped = LabelAssignmentSkipped
                     .newBuilder()
                     .setTaskId(taskId())
-                    .build();
+                    .vBuild();
             return assignmentSkipped;
         });
     }

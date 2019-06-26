@@ -372,32 +372,32 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Apply
-    private void taskReopened(TaskReopened event) {
+    private void taskReopened(@SuppressWarnings("unused") TaskReopened event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskDeleted(TaskDeleted event) {
+    private void taskDeleted(@SuppressWarnings("unused") TaskDeleted event) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    private void deletedTaskRestored(DeletedTaskRestored event) {
+    private void deletedTaskRestored(@SuppressWarnings("unused") DeletedTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void labelledTaskRestored(LabelledTaskRestored event) {
+    private void labelledTaskRestored(@SuppressWarnings("unused") LabelledTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskCompleted(TaskCompleted event) {
+    private void taskCompleted(@SuppressWarnings("unused") TaskCompleted event) {
         builder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    private void taskDraftFinalized(TaskDraftFinalized event) {
+    private void taskDraftFinalized(@SuppressWarnings("unused") TaskDraftFinalized event) {
         builder().setTaskStatus(TaskStatus.FINALIZED);
     }
 

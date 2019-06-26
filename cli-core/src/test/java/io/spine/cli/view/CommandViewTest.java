@@ -87,7 +87,7 @@ class CommandViewTest {
         @DisplayName("obtain classes for the generic parameters")
         void obtainClassesForGenericParams() {
             assertEquals(CreateProject.class, COMMAND_MESSAGE.argumentIn(ACommandView.class));
-            assertEquals(CreateProject.class,
+            assertEquals(CreateProject.Builder.class,
                          STATE_BUILDER.argumentIn(ACommandView.class));
         }
     }
@@ -103,7 +103,7 @@ class CommandViewTest {
         }
     }
 
-    private static class ACommandView extends CommandView<CreateProject, CreateProject> {
+    private static class ACommandView extends CommandView<CreateProject, CreateProject.Builder> {
 
         private boolean wasRendered = false;
 
@@ -118,7 +118,7 @@ class CommandViewTest {
         }
 
         @Override
-        protected String renderState(CreateProject state) {
+        protected String renderState(CreateProject.Builder state) {
             return "state";
         }
     }

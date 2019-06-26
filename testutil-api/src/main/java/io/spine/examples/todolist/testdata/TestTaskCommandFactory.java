@@ -45,18 +45,18 @@ import static io.spine.base.Time.currentTime;
 /**
  * A factory of the task commands for the test needs.
  */
-@SuppressWarnings({"ClassWithTooManyMethods", "OverlyCoupledClass"})
+@SuppressWarnings("OverlyCoupledClass")
 // It's necessary to provide all task-related commands.
 public class TestTaskCommandFactory {
 
     public static final TaskId TASK_ID = TaskId
             .newBuilder()
             .setValue(newUuid())
-            .build();
+            .vBuild();
     public static final LabelId LABEL_ID = LabelId
             .newBuilder()
             .setValue(newUuid())
-            .build();
+            .vBuild();
     public static final String DESCRIPTION = "Task description.";
     private static final Timestamp DUE_DATE = currentTime();
 
@@ -91,12 +91,12 @@ public class TestTaskCommandFactory {
         TaskDescription taskDescription = TaskDescription
                 .newBuilder()
                 .setValue(description)
-                .build();
+                .vBuild();
         CreateBasicTask result = CreateBasicTask
                 .newBuilder()
                 .setId(id)
                 .setDescription(taskDescription)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -117,7 +117,7 @@ public class TestTaskCommandFactory {
         TaskDescription newValue = TaskDescription
                 .newBuilder()
                 .setValue(newDescription)
-                .build();
+                .vBuild();
         DescriptionChange.Builder change = DescriptionChange
                 .newBuilder()
                 .setNewValue(newValue);
@@ -125,7 +125,7 @@ public class TestTaskCommandFactory {
             TaskDescription previousValue = TaskDescription
                     .newBuilder()
                     .setValue(previousDescription)
-                    .build();
+                    .vBuild();
             change.setPreviousValue(previousValue);
         }
         UpdateTaskDescription result = UpdateTaskDescription
@@ -165,12 +165,12 @@ public class TestTaskCommandFactory {
                 .newBuilder()
                 .setPreviousValue(previousDueDate)
                 .setNewValue(updatedDueDate)
-                .build();
+                .vBuild();
         UpdateTaskDueDate result = UpdateTaskDueDate
                 .newBuilder()
                 .setId(id)
                 .setDueDateChange(dueDateChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -202,12 +202,12 @@ public class TestTaskCommandFactory {
                 .newBuilder()
                 .setPreviousValue(previousPriority)
                 .setNewValue(newPriority)
-                .build();
+                .buildPartial();
         UpdateTaskPriority result = UpdateTaskPriority
                 .newBuilder()
                 .setId(id)
                 .setPriorityChange(taskPriorityChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -220,7 +220,7 @@ public class TestTaskCommandFactory {
         CompleteTask result = CompleteTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -233,7 +233,7 @@ public class TestTaskCommandFactory {
         ReopenTask result = ReopenTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -246,7 +246,7 @@ public class TestTaskCommandFactory {
         DeleteTask result = DeleteTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -259,7 +259,7 @@ public class TestTaskCommandFactory {
         RestoreDeletedTask result = RestoreDeletedTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -272,7 +272,7 @@ public class TestTaskCommandFactory {
         FinalizeDraft result = FinalizeDraft
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -295,7 +295,7 @@ public class TestTaskCommandFactory {
         CreateDraft result = CreateDraft
                 .newBuilder()
                 .setId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 }

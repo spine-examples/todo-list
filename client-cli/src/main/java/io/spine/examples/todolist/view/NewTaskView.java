@@ -41,7 +41,7 @@ import static java.util.Collections.singletonList;
  *
  * <p>To create a task in the way, user should specify a task description only.
  */
-public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTask> {
+public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTask.Builder> {
 
     static final String EMPTY_VALUE = "empty";
     static final String DESCRIPTION_LABEL = "Description:";
@@ -73,7 +73,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     }
 
     @Override
-    protected String renderState(CreateBasicTask state) {
+    protected String renderState(CreateBasicTask.Builder state) {
         String rawDescription = state.getDescription()
                                      .getValue();
         String resultDescription = rawDescription.isEmpty()
@@ -83,17 +83,18 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     }
 
     private static TaskId generatedId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
+        return TaskId
+                .newBuilder()
+                .setValue(newUuid())
+                .vBuild();
     }
 
     /**
      * The operation that updates the {@linkplain CreateBasicTask#getDescription() description}.
      */
     @VisibleForTesting
-    static class DescriptionEditOperation implements EditOperation<CreateBasicTask,
-            CreateBasicTask> {
+    static class DescriptionEditOperation
+            implements EditOperation<CreateBasicTask, CreateBasicTask.Builder> {
 
         private static final String PROMPT = "Please enter the task description";
 
@@ -101,21 +102,22 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
          * Prompts a user for a task description and updates state of the specified builder.
          */
         @Override
-        public void start(Screen screen, CreateBasicTask builder) {
+        public void start(Screen screen, CreateBasicTask.Builder builder) {
             String description = screen.promptUser(PROMPT);
-            builder.setDescription(TaskDescription.newBuilder()
-                                                          .setValue(description)
-                                                          .build());
+            builder.setDescription(TaskDescription
+                                           .newBuilder()
+                                           .setValue(description)
+                                           .vBuild());
         }
     }
 
     /**
      * The action for posting {@link CreateBasicTask} command to a server.
      */
-    private static class CreateTask extends CommandAction<CreateBasicTask,
-                                                          CreateBasicTask> {
+    private static class CreateTask
+            extends CommandAction<CreateBasicTask, CreateBasicTask.Builder> {
 
-        private CreateTask(CommandView<CreateBasicTask, CreateBasicTask> source) {
+        private CreateTask(CommandView<CreateBasicTask, CreateBasicTask.Builder> source) {
             super(source);
         }
 
@@ -129,11 +131,11 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
      * Producer of {@code NewTaskView}.
      */
     private static class NewTaskProducer extends CommandActionProducer<CreateBasicTask,
-                                                                       CreateBasicTask,
+                                                                       CreateBasicTask.Builder,
                                                                        CreateTask> {
 
         @Override
-        public CreateTask create(CommandView<CreateBasicTask, CreateBasicTask> source) {
+        public CreateTask create(CommandView<CreateBasicTask, CreateBasicTask.Builder> source) {
             return new CreateTask(source);
         }
     }

@@ -39,8 +39,9 @@ public final class Given {
      * @return the task description
      */
     public static TaskDescription newDescription(String value) {
-        return TaskDescription.newBuilder()
-                                      .setValue(value)
-                                      .build();
+        return TaskDescription
+                .newBuilder()
+                .setValue(value)
+                .vBuild();
     }
 }

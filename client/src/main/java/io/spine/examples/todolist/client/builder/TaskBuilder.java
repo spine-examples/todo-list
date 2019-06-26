@@ -62,7 +62,7 @@ public final class TaskBuilder {
      */
     public static final class CreateBasicTaskBuilder {
 
-        private final CreateBasicTask builder = CreateBasicTask.newBuilder();
+        private final CreateBasicTask.Builder builder = CreateBasicTask.newBuilder();
 
         /**
          * Sets the description to the {@link CreateBasicTask.Builder}.
@@ -84,7 +84,7 @@ public final class TaskBuilder {
         public CreateBasicTask build() {
             TaskId id = generateId();
             builder.setId(id);
-            return builder.build();
+            return builder.vBuild();
         }
     }
 
@@ -93,7 +93,7 @@ public final class TaskBuilder {
      */
     public static final class CreateTaskDraftBuilder {
 
-        private final CreateDraft builder = CreateDraft.newBuilder();
+        private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
         /**
          * Builds the {@link CreateDraft} command.
@@ -103,7 +103,7 @@ public final class TaskBuilder {
         public CreateDraft build() {
             TaskId id = generateId();
             builder.setId(id);
-            return builder.build();
+            return builder.vBuild();
         }
     }
 
@@ -111,7 +111,7 @@ public final class TaskBuilder {
         TaskId id = TaskId
                 .newBuilder()
                 .setValue(newUuid())
-                .build();
+                .vBuild();
         return id;
     }
 }

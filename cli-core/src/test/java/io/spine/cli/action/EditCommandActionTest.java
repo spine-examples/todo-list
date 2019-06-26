@@ -49,9 +49,9 @@ class EditCommandActionTest {
 
     private Bot bot;
     private final ACommandView view = new ACommandView();
-    private final Set<EditOperation<Comment, Comment>> edits =
+    private final Set<EditOperation<Comment, Comment.Builder>> edits =
             singleton(new CommentEditOperation());
-    private final EditCommandAction<Comment, Comment> action =
+    private final EditCommandAction<Comment, Comment.Builder> action =
             editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
 
     @BeforeEach
@@ -71,8 +71,7 @@ class EditCommandActionTest {
     @Test
     @DisplayName("create the action with one more edit")
     void createActionWithEdits() {
-        Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
-                                                  edits).create(view);
+        Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }
@@ -115,7 +114,7 @@ class EditCommandActionTest {
         bot.assertAllAnswersWereGiven();
     }
 
-    private static class ACommandView extends CommandView<Comment, Comment> {
+    private static class ACommandView extends CommandView<Comment, Comment.Builder> {
 
         private boolean wasRendered;
 
@@ -130,17 +129,19 @@ class EditCommandActionTest {
         }
 
         @Override
-        protected String renderState(Comment state) {
+        protected String renderState(Comment.Builder state) {
             return "";
         }
     }
 
-    private static class CommentEditOperation implements EditOperation<Comment, Comment> {
+    private static class CommentEditOperation implements EditOperation<Comment, Comment.Builder> {
 
         @Override
-        public void start(Screen screen, Comment builder) {
+        @SuppressWarnings("CheckReturnValue") // Builder.vBuild() called for validation only.
+        public void start(Screen screen, Comment.Builder builder) {
             String commentValue = screen.promptUser("Enter a comment");
             builder.setValue(commentValue);
+            builder.vBuild();
         }
     }
 }
