@@ -39,6 +39,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 final class Tracing {
 
     /**
+     * Prevents the utility class instantiation.
+     */
+    private Tracing() {
+    }
+
+    /**
      * Creates a {@link TracerFactory} for the given context.
      *
      * @param context
