@@ -22,11 +22,8 @@ package io.spine.examples.todolist.client.builder;
 
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
 
@@ -65,7 +62,7 @@ public final class TaskBuilder {
      */
     public static final class CreateBasicTaskBuilder {
 
-        private final CreateBasicTaskVBuilder builder = CreateBasicTask.vBuilder();
+        private final CreateBasicTask.Builder builder = CreateBasicTask.newBuilder();
 
         /**
          * Sets the description to the {@link CreateBasicTask.Builder}.
@@ -87,7 +84,7 @@ public final class TaskBuilder {
         public CreateBasicTask build() {
             TaskId id = generateId();
             builder.setId(id);
-            return builder.build();
+            return builder.vBuild();
         }
     }
 
@@ -96,7 +93,7 @@ public final class TaskBuilder {
      */
     public static final class CreateTaskDraftBuilder {
 
-        private final CreateDraftVBuilder builder = CreateDraft.vBuilder();
+        private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
         /**
          * Builds the {@link CreateDraft} command.
@@ -106,15 +103,15 @@ public final class TaskBuilder {
         public CreateDraft build() {
             TaskId id = generateId();
             builder.setId(id);
-            return builder.build();
+            return builder.vBuild();
         }
     }
 
     private static TaskId generateId() {
-        TaskId id = TaskIdVBuilder
+        TaskId id = TaskId
                 .newBuilder()
                 .setValue(newUuid())
-                .build();
+                .vBuild();
         return id;
     }
 }

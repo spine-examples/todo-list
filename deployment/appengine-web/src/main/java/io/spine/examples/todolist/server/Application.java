@@ -22,13 +22,10 @@ package io.spine.examples.todolist.server;
 
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.net.Url;
-import io.spine.net.UrlVBuilder;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
-import io.spine.server.storage.StorageFactory;
 import io.spine.web.firebase.DatabaseUrl;
-import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
@@ -36,7 +33,6 @@ import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.query.QueryBridge;
 
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
-import static io.spine.examples.todolist.server.Storage.createStorage;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -68,10 +64,9 @@ final class Application {
     }
 
     private static Application create() {
-        StorageFactory storageFactory = createStorage(false);
-        BoundedContext boundedContext = BoundedContexts.create(storageFactory);
-
-        log.log("Initializing C/Q services.");
+        BoundedContext boundedContext =
+                BoundedContexts.create(Storage::createStorage, Tracing::createTracing);
+        log.log("Initializing Command/Query services.");
         CommandService commandService =
                 CommandService.newBuilder()
                               .add(boundedContext)
@@ -124,14 +119,14 @@ final class Application {
     private static DatabaseUrl databaseUrl() {
         String firebaseDatabaseUrl = Configuration.instance()
                                            .firebaseDatabaseUrl();
-        Url url = UrlVBuilder
+        Url url = Url
                 .newBuilder()
                 .setSpec(firebaseDatabaseUrl)
-                .build();
-        DatabaseUrl databaseUrl = DatabaseUrlVBuilder
+                .buildPartial();
+        DatabaseUrl databaseUrl = DatabaseUrl
                 .newBuilder()
                 .setUrl(url)
-                .build();
+                .vBuild();
         return databaseUrl;
     }
 }

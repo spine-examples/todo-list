@@ -22,37 +22,22 @@ package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
 import io.spine.change.TimestampChange;
-import io.spine.change.TimestampChangeVBuilder;
-import io.spine.examples.todolist.DescriptionChangeVBuilder;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.PriorityChangeVBuilder;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskDescriptionVBuilder;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CompleteTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.commands.DeleteTaskVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.commands.ReopenTaskVBuilder;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.RestoreDeletedTaskVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.base.Time.currentTime;
@@ -60,18 +45,18 @@ import static io.spine.base.Time.currentTime;
 /**
  * A factory of the task commands for the test needs.
  */
-@SuppressWarnings({"ClassWithTooManyMethods", "OverlyCoupledClass"})
+@SuppressWarnings("OverlyCoupledClass")
 // It's necessary to provide all task-related commands.
 public class TestTaskCommandFactory {
 
-    public static final TaskId TASK_ID = TaskIdVBuilder
+    public static final TaskId TASK_ID = TaskId
             .newBuilder()
             .setValue(newUuid())
-            .build();
-    public static final LabelId LABEL_ID = LabelIdVBuilder
+            .vBuild();
+    public static final LabelId LABEL_ID = LabelId
             .newBuilder()
             .setValue(newUuid())
-            .build();
+            .vBuild();
     public static final String DESCRIPTION = "Task description.";
     private static final Timestamp DUE_DATE = currentTime();
 
@@ -103,15 +88,15 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance(TaskId id, String description) {
-        TaskDescription taskDescription = TaskDescriptionVBuilder
+        TaskDescription taskDescription = TaskDescription
                 .newBuilder()
                 .setValue(description)
-                .build();
-        CreateBasicTask result = CreateBasicTaskVBuilder
+                .vBuild();
+        CreateBasicTask result = CreateBasicTask
                 .newBuilder()
                 .setId(id)
                 .setDescription(taskDescription)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -129,25 +114,25 @@ public class TestTaskCommandFactory {
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
                                                                       String previousDescription,
                                                                       String newDescription) {
-        TaskDescription newValue = TaskDescriptionVBuilder
+        TaskDescription newValue = TaskDescription
                 .newBuilder()
                 .setValue(newDescription)
-                .build();
-        DescriptionChangeVBuilder change = DescriptionChangeVBuilder
+                .vBuild();
+        DescriptionChange.Builder change = DescriptionChange
                 .newBuilder()
                 .setNewValue(newValue);
         if (!previousDescription.isEmpty()) {
-            TaskDescription previousValue = TaskDescriptionVBuilder
+            TaskDescription previousValue = TaskDescription
                     .newBuilder()
                     .setValue(previousDescription)
-                    .build();
+                    .vBuild();
             change.setPreviousValue(previousValue);
         }
-        UpdateTaskDescription result = UpdateTaskDescriptionVBuilder
+        UpdateTaskDescription result = UpdateTaskDescription
                 .newBuilder()
                 .setId(id)
-                .setDescriptionChange(change.build())
-                .build();
+                .setDescriptionChange(change.buildPartial())
+                .vBuild();
         return result;
     }
 
@@ -176,16 +161,16 @@ public class TestTaskCommandFactory {
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
                                                               Timestamp previousDueDate,
                                                               Timestamp updatedDueDate) {
-        TimestampChange dueDateChange = TimestampChangeVBuilder
+        TimestampChange dueDateChange = TimestampChange
                 .newBuilder()
                 .setPreviousValue(previousDueDate)
                 .setNewValue(updatedDueDate)
-                .build();
-        UpdateTaskDueDate result = UpdateTaskDueDateVBuilder
+                .vBuild();
+        UpdateTaskDueDate result = UpdateTaskDueDate
                 .newBuilder()
                 .setId(id)
                 .setDueDateChange(dueDateChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -213,16 +198,16 @@ public class TestTaskCommandFactory {
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
                                                                 TaskPriority previousPriority,
                                                                 TaskPriority newPriority) {
-        PriorityChange taskPriorityChange = PriorityChangeVBuilder
+        PriorityChange taskPriorityChange = PriorityChange
                 .newBuilder()
                 .setPreviousValue(previousPriority)
                 .setNewValue(newPriority)
-                .build();
-        UpdateTaskPriority result = UpdateTaskPriorityVBuilder
+                .buildPartial();
+        UpdateTaskPriority result = UpdateTaskPriority
                 .newBuilder()
                 .setId(id)
                 .setPriorityChange(taskPriorityChange)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -232,10 +217,10 @@ public class TestTaskCommandFactory {
      * @return the {@code CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance(TaskId id) {
-        CompleteTask result = CompleteTaskVBuilder
+        CompleteTask result = CompleteTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -245,10 +230,10 @@ public class TestTaskCommandFactory {
      * @return the {@code ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance(TaskId id) {
-        ReopenTask result = ReopenTaskVBuilder
+        ReopenTask result = ReopenTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -258,10 +243,10 @@ public class TestTaskCommandFactory {
      * @return the {@code DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance(TaskId id) {
-        DeleteTask result = DeleteTaskVBuilder
+        DeleteTask result = DeleteTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -271,10 +256,10 @@ public class TestTaskCommandFactory {
      * @return the {@code RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance(TaskId id) {
-        RestoreDeletedTask result = RestoreDeletedTaskVBuilder
+        RestoreDeletedTask result = RestoreDeletedTask
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -284,10 +269,10 @@ public class TestTaskCommandFactory {
      * @return the {@code FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance(TaskId id) {
-        FinalizeDraft result = FinalizeDraftVBuilder
+        FinalizeDraft result = FinalizeDraft
                 .newBuilder()
                 .setId(id)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -307,10 +292,10 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateDraft} instance
      */
     public static CreateDraft createDraftInstance(TaskId taskId) {
-        CreateDraft result = CreateDraftVBuilder
+        CreateDraft result = CreateDraft
                 .newBuilder()
                 .setId(taskId)
-                .build();
+                .vBuild();
         return result;
     }
 }

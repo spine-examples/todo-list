@@ -39,16 +39,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  * <p>Requests from any origin are allowed. The requests are allowed to contain credentials and
  * the {@code Content-Type} header.
  */
-@WebFilter(
-        filterName = CrossOriginResourceSharingFilter.NAME,
-        servletNames = {
-                TodoCommandServlet.NAME,
-                TodoQueryServlet.NAME,
-                TodoSubscribeServlet.NAME,
-                TodoSubscriptionCancelServlet.NAME,
-                TodoSubscriptionKeepUpServlet.NAME
-        }
-)
+@WebFilter(filterName = CrossOriginResourceSharingFilter.NAME, urlPatterns = "*")
 public final class CrossOriginResourceSharingFilter extends HttpFilter {
 
     private static final long serialVersionUID = 0L;

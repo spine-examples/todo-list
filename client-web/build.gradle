@@ -20,16 +20,6 @@
 
 apply from: "$rootDir/scripts/js.gradle"
 
-spine {
-    enableJavaScript()
-    enableJava {
-        codegen {
-            protobuf = false
-            spine = false
-        }
-    }
-}
-
 ext {
     bundleFile = "$projectDir/bundle.js"
 }

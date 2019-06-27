@@ -27,36 +27,25 @@ import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskCreationIdVBuilder;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskDescriptionVBuilder;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.c.commands.AddLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
-import io.spine.examples.todolist.c.commands.CancelTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
-import io.spine.examples.todolist.c.commands.CompleteTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SkipLabels;
-import io.spine.examples.todolist.c.commands.SkipLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.c.commands.StartTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
-import io.spine.examples.todolist.c.commands.UpdateTaskDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.LabelAssignmentSkipped;
@@ -93,7 +82,7 @@ class TaskCreationWizardTest {
         void testStartWizard() {
             startWizard();
             TaskCreation expectedWizardState = TaskCreation
-                    .vBuilder()
+                    .newBuilder()
                     .setId(processId())
                     .setTaskId(taskId())
                     .setStage(TASK_DEFINITION)
@@ -121,7 +110,7 @@ class TaskCreationWizardTest {
         @DisplayName("issue task mutation commands")
         void testSetDetails() {
             String descriptionValue = "Task for test";
-            TaskDescription description = TaskDescriptionVBuilder
+            TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
                     .build();
@@ -139,7 +128,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(dueDate)
                     .build();
-            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
@@ -161,7 +150,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(priority)
                     .build();
-            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setPriorityChange(priorityChange)
@@ -174,7 +163,7 @@ class TaskCreationWizardTest {
         @DisplayName("allow omitting task description change on further updates")
         void allowOmitDescInFurtherUpdates() {
             String descriptionValue = "Task for test";
-            TaskDescription description = TaskDescriptionVBuilder
+            TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
                     .build();
@@ -182,7 +171,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(description)
                     .build();
-            UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd1 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
@@ -193,7 +182,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(priority)
                     .build();
-            UpdateTaskDetails cmd2 = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd2 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setPriorityChange(priorityChange)
@@ -209,7 +198,7 @@ class TaskCreationWizardTest {
         @DisplayName("modify task data even when on later stages")
         void modifyPreviousData() {
             String descriptionValue = "Description 1";
-            TaskDescription description = TaskDescriptionVBuilder
+            TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
                     .build();
@@ -217,19 +206,19 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(description)
                     .build();
-            UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd1 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
                     .build();
 
-            SkipLabels cmd2 = SkipLabelsVBuilder
+            SkipLabels cmd2 = SkipLabels
                     .newBuilder()
                     .setId(processId())
                     .build();
 
             String newDescriptionValue = "Description 2";
-            TaskDescription newDescription = TaskDescriptionVBuilder
+            TaskDescription newDescription = TaskDescription
                     .newBuilder()
                     .setValue(newDescriptionValue)
                     .build();
@@ -237,7 +226,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(newDescription)
                     .build();
-            UpdateTaskDetails newUpdate = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails newUpdate = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(newDescriptionChange)
@@ -266,12 +255,12 @@ class TaskCreationWizardTest {
         @DisplayName("create and assign requested labels")
         void testAddLabels() {
             List<LabelId> existingLabelIds = ImmutableList.of(newLabelId(), newLabelId());
-            LabelDetails newLabel = LabelDetailsVBuilder
+            LabelDetails newLabel = LabelDetails
                     .newBuilder()
                     .setTitle("testAddLabels")
                     .setColor(LabelColor.GREEN)
                     .build();
-            AddLabels cmd = AddLabelsVBuilder
+            AddLabels cmd = AddLabels
                     .newBuilder()
                     .setId(processId())
                     .addAllExistingLabels(existingLabelIds)
@@ -286,7 +275,7 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("throw CannotAddLabels if no labels specified")
         void testNoLabels() {
-            AddLabels cmd = AddLabelsVBuilder
+            AddLabels cmd = AddLabels
                     .newBuilder()
                     .setId(processId())
                     .build();
@@ -310,7 +299,7 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("skip labels creation and proceed to the next stage")
         void testSkipLabels() {
-            SkipLabels cmd = SkipLabelsVBuilder
+            SkipLabels cmd = SkipLabels
                     .newBuilder()
                     .setId(processId())
                     .build();
@@ -335,7 +324,7 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("complete task creation process")
         void testCompleteWizard() {
-            CompleteTaskCreation cmd = CompleteTaskCreationVBuilder
+            CompleteTaskCreation cmd = CompleteTaskCreation
                     .newBuilder()
                     .setId(processId())
                     .build();
@@ -362,7 +351,7 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("cancel task creation process")
         void testCancelProc() {
-            CancelTaskCreation cmd = CancelTaskCreationVBuilder
+            CancelTaskCreation cmd = CancelTaskCreation
                     .newBuilder()
                     .setId(processId())
                     .build();
@@ -387,7 +376,7 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("throw CannotMoveToStage rejection if trying to move on incorrect stage")
         void throwOnIncorrectStage() {
-            CompleteTaskCreation cmd = CompleteTaskCreationVBuilder
+            CompleteTaskCreation cmd = CompleteTaskCreation
                     .newBuilder()
                     .setId(processId())
                     .build();
@@ -413,7 +402,7 @@ class TaskCreationWizardTest {
         }
 
         void startWizard() {
-            StartTaskCreation cmd = StartTaskCreationVBuilder
+            StartTaskCreation cmd = StartTaskCreation
                     .newBuilder()
                     .setId(processId)
                     .setTaskId(taskId)
@@ -422,7 +411,7 @@ class TaskCreationWizardTest {
         }
 
         void addDescription() {
-            TaskDescription description = TaskDescriptionVBuilder
+            TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue("task for test")
                     .build();
@@ -430,7 +419,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(description)
                     .build();
-            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
+            UpdateTaskDetails cmd = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId)
                     .setDescriptionChange(descriptionChange)
@@ -439,7 +428,7 @@ class TaskCreationWizardTest {
         }
 
         void skipLabels() {
-            SkipLabels cmd = SkipLabelsVBuilder
+            SkipLabels cmd = SkipLabels
                     .newBuilder()
                     .setId(processId)
                     .build();
@@ -447,19 +436,19 @@ class TaskCreationWizardTest {
         }
 
         TaskCreationId newId() {
-            return TaskCreationIdVBuilder.newBuilder()
+            return TaskCreationId.newBuilder()
                                          .setValue(newUuid())
                                          .build();
         }
 
         TaskId newTaskId() {
-            return TaskIdVBuilder.newBuilder()
+            return TaskId.newBuilder()
                                  .setValue(newUuid())
                                  .build();
         }
 
         LabelId newLabelId() {
-            return LabelIdVBuilder.newBuilder()
+            return LabelId.newBuilder()
                                   .setValue(newUuid())
                                   .build();
         }

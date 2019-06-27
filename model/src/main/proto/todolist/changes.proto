@@ -41,7 +41,7 @@ message DescriptionChange {
     TaskDescription previous_value = 1;
 
     // The new task description.
-    TaskDescription new_value = 2 [(valid) = true];
+    TaskDescription new_value = 2 [(validate) = true];
 }
 
 // Definition of a change in a task priority field.

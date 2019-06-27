@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.context;
 
-import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelViewRepository;
 import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
@@ -28,8 +27,14 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.server.ContextSpec;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
+import io.spine.server.trace.TracerFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -40,9 +45,6 @@ public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";
-
-    private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(BoundedContextNames.newName(NAME), false);
 
     /** Prevents instantiation of this utility class. */
     private BoundedContexts() {
@@ -55,19 +57,35 @@ public final class BoundedContexts {
      * @return the {@link BoundedContext} instance
      */
     public static BoundedContext create() {
-        BoundedContext result = create(IN_MEMORY_FACTORY);
+        BoundedContext result = create(InMemoryStorageFactory::newInstance);
         return result;
     }
 
     /**
-     * Creates a new instance of the {@link BoundedContext}
-     * using the specified {@link StorageFactory}.
+     * Creates a new instance of the {@link BoundedContext} using the specified
+     * {@link StorageFactory}.
      *
      * @param storageFactory
      *         the storage factory to use
      * @return the bounded context created with the storage factory
      */
-    public static BoundedContext create(StorageFactory storageFactory) {
+    public static BoundedContext create(Function<ContextSpec, StorageFactory> storageFactory) {
+        return create(storageFactory, null);
+    }
+
+    /**
+     * Creates a new instance of the {@link BoundedContext} using the specified
+     * {@link StorageFactory} and {@link TracerFactory}.
+     *
+     * @param storageFactory
+     *         the storage factory to use
+     * @param tracerFactory
+     *         the tracer factory to use
+     * @return the bounded context created with the specified parameters
+     */
+    public static BoundedContext
+    create(Function<ContextSpec, StorageFactory> storageFactory,
+           @Nullable Function<ContextSpec, TracerFactory> tracerFactory) {
         checkNotNull(storageFactory);
 
         LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
@@ -78,10 +96,13 @@ public final class BoundedContexts {
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        BoundedContext boundedContext = BoundedContext
-                .newBuilder()
-                .setStorageFactorySupplier(() -> storageFactory)
-                .build();
+        BoundedContextBuilder builder = BoundedContext
+                .singleTenant(NAME)
+                .setStorage(storageFactory);
+        if (tracerFactory != null) {
+            builder.setTracerFactorySupplier(tracerFactory);
+        }
+        BoundedContext boundedContext = builder.build();
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);

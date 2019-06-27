@@ -21,7 +21,7 @@
 package io.spine.cli;
 
 import com.google.protobuf.Message;
-import io.spine.validate.ValidatingBuilder;
+import io.spine.protobuf.ValidatingBuilder;
 
 /**
  * An operation, that edits {@link ValidatingBuilder} state.
@@ -32,7 +32,7 @@ import io.spine.validate.ValidatingBuilder;
  *         the type of the validating builder for the message
  */
 public interface EditOperation<M extends Message,
-                               B extends ValidatingBuilder<M, ? extends Message.Builder>> {
+                               B extends ValidatingBuilder<M>> {
 
     /**
      * Starts editing of the specified validating builder.

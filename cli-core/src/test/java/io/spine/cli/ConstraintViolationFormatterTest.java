@@ -45,7 +45,7 @@ class ConstraintViolationFormatterTest {
     @Test
     @DisplayName("format constraint violations")
     void formatConstraintViolations() {
-        NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
+        NaturalNumber.Builder builder = NaturalNumber.newBuilder();
         int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
         FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
                                                        .getFields()
@@ -54,8 +54,8 @@ class ConstraintViolationFormatterTest {
         String expectedErrorMsg = String.format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
 
         int invalidFieldValue = -1;
-        ValidationException ex = assertThrows(ValidationException.class,
-                                              () -> builder.setValue(invalidFieldValue));
+        builder.setValue(invalidFieldValue);
+        ValidationException ex = assertThrows(ValidationException.class, builder::vBuild);
         List<String> errorMessages = format(ex.getConstraintViolations());
         assertEquals(1, errorMessages.size());
         assertEquals(expectedErrorMsg, errorMessages.get(0));

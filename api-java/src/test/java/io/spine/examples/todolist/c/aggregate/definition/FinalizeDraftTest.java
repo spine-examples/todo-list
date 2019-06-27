@@ -51,7 +51,7 @@ class FinalizeDraftTest extends TaskCommandTestBase {
         FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(FINALIZED)
                 .build();

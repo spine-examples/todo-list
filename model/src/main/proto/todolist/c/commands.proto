@@ -55,7 +55,7 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    TaskDescription description = 2 [(valid) = true];
+    TaskDescription description = 2 [(validate) = true];
 }
 
 // Update a description of an existing task.
@@ -70,7 +70,7 @@ message UpdateTaskDescription {
     TaskId id = 1;
 
     // The change of the task description.
-    DescriptionChange description_change = 2 [(valid) = true];
+    DescriptionChange description_change = 2 [(validate) = true];
 }
 
 // Update a due date of an existing task.
@@ -249,10 +249,10 @@ message UpdateLabelDetails {
 message StartTaskCreation {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 
     // The ID of the task to create.
-    TaskId task_id = 2 [(required) = true, (valid) = true];
+    TaskId task_id = 2 [(required) = true, (validate) = true];
 }
 
 // Update the basic details of the created task.
@@ -260,14 +260,14 @@ message StartTaskCreation {
 message UpdateTaskDetails {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 
     // The task description change.
     //
     // This field is required for the initial task definition but becomes optional for the
     // further updates.
     //
-    DescriptionChange description_change = 2 [(valid) = true];
+    DescriptionChange description_change = 2 [(validate) = true];
 
     // The priority change for the task.
     //
@@ -298,13 +298,13 @@ message UpdateTaskDetails {
 message AddLabels {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 
     // The IDs of the existing labels to assign to the task.
-    repeated LabelId existing_labels = 2 [(valid) = true];
+    repeated LabelId existing_labels = 2 [(validate) = true];
 
     // The details of the new labels to create and assign to the task.
-    repeated LabelDetails new_labels = 3 [(valid) = true];
+    repeated LabelDetails new_labels = 3 [(validate) = true];
 }
 
 // Skip adding labels to the created task and proceed to other creation stages.
@@ -315,7 +315,7 @@ message AddLabels {
 message SkipLabels {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 }
 
 // Complete the task creation process.
@@ -327,7 +327,7 @@ message SkipLabels {
 message CompleteTaskCreation {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 }
 
 // Cancel the task creation process.
@@ -339,5 +339,5 @@ message CompleteTaskCreation {
 message CancelTaskCreation {
 
     // The ID of the task creation process.
-    TaskCreationId id = 1 [(required) = true, (valid) = true];
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
 }

@@ -22,6 +22,8 @@ ext {
     jlineVersion = '3.3.0'
 }
 
+spine.enableJava().client()
+
 dependencies {
     implementation "org.jline:jline:$jlineVersion"
 

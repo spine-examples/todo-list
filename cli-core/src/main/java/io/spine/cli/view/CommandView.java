@@ -26,9 +26,10 @@ import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.EditCommandAction;
+import io.spine.protobuf.Messages;
+import io.spine.protobuf.ValidatingBuilder;
 import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ConstraintViolation;
-import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidationException;
 
 import java.util.Collection;
@@ -37,7 +38,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.cli.ConstraintViolationFormatter.format;
-import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
+import static io.spine.cli.view.CommandView.GenericParameter.COMMAND_MESSAGE;
 
 /**
  * A {@code CommandView} is a view where the end-user prepares and sends a command to a server.
@@ -46,9 +47,9 @@ import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
  *
  * <p>List of actions in a {@code CommandView} may looks like this:
  * <ol>
- *     <li>prepare a command (EditCommandAction)</li>
- *     <li>send a command to a server (CommandAction)</li>
- *     <li>move back (TransitionAction)</li>
+ * <li>prepare a command (EditCommandAction)</li>
+ * <li>send a command to a server (CommandAction)</li>
+ * <li>move back (TransitionAction)</li>
  * </ol>
  *
  * @param <M>
@@ -56,8 +57,7 @@ import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
  * @param <B>
  *         the validating builder type for the command message
  */
-public abstract class CommandView<M extends Message,
-                                  B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public abstract class CommandView<M extends Message, B extends ValidatingBuilder<M>>
         extends AbstractView {
 
     private final B state;
@@ -118,12 +118,12 @@ public abstract class CommandView<M extends Message,
         return state;
     }
 
+    @SuppressWarnings("unchecked") // Logically checked.
     private B newBuilderInstance() {
-        @SuppressWarnings("unchecked")   // It's safe, as we rely on the definition of this class.
-                Class<? extends CommandView<M, B>> aClass =
+        Class<? extends CommandView<M, B>> viewClass =
                 (Class<? extends CommandView<M, B>>) getClass();
-        Class<B> builderClass = TypeInfo.getBuilderClass(aClass);
-        B builder = ValidatingBuilder.newInstance(builderClass);
+        Class<M> builderClass = TypeInfo.messageClass(viewClass);
+        B builder = (B) Messages.builderFor(builderClass);
         return builder;
     }
 
@@ -163,13 +163,14 @@ public abstract class CommandView<M extends Message,
          * Obtains the class of the {@linkplain ValidatingBuilder} for the given
          * {@link CommandView} descendant class.
          */
-        private static <M extends Message,
-                        B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        Class<B> getBuilderClass(Class<? extends CommandView<M, B>> entityClass) {
-            checkNotNull(entityClass);
+        private static <M extends Message>
+        Class<M> messageClass(Class<? extends CommandView<M, ?>> viewClass) {
+            checkNotNull(viewClass);
             @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
-                    Class<B> builderClass = (Class<B>) STATE_BUILDER.argumentIn(entityClass);
+            Class<M> builderClass = (Class<M>) COMMAND_MESSAGE.argumentIn(viewClass);
             return builderClass;
         }
+
+
     }
 }

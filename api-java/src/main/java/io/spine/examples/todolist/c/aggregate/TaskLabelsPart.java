@@ -25,7 +25,6 @@ import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
@@ -44,9 +43,8 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
 /**
  * The aggregate managing the state of a {@link TaskLabels}.
  */
-@SuppressWarnings("unused") // Reflectively used applier methods.
 public class TaskLabelsPart
-        extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
+        extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
 
     public TaskLabelsPart(TaskAggregateRoot root) {
         super(root);
@@ -57,7 +55,7 @@ public class TaskLabelsPart
         LabelId labelId = cmd.getLabelId();
         TaskId taskId = cmd.getId();
 
-        Task taskState = getPartState(Task.class);
+        Task taskState = partState(Task.class);
         boolean isLabelAssigned = state().getLabelIdsList()
                                          .getIdsList()
                                          .contains(labelId);
@@ -67,10 +65,10 @@ public class TaskLabelsPart
         }
 
         LabelRemovedFromTask result = LabelRemovedFromTask
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -79,7 +77,7 @@ public class TaskLabelsPart
         TaskId taskId = cmd.getId();
         LabelId labelId = cmd.getLabelId();
 
-        Task state = getPartState(Task.class);
+        Task state = partState(Task.class);
         boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
@@ -87,20 +85,20 @@ public class TaskLabelsPart
         }
 
         LabelAssignedToTask result = LabelAssignedToTask
-                .vBuilder()
+                .newBuilder()
                 .setTaskId(taskId)
                 .setLabelId(labelId)
-                .build();
+                .vBuild();
         return result;
     }
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
         LabelIdsList newLabelsList = LabelIdsList
-                .vBuilder()
+                .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
                 .addIds(event.getLabelId())
-                .build();
+                .vBuild();
         builder().setTaskId(event.getTaskId());
         builder().setLabelIdsList(newLabelsList);
     }
@@ -111,10 +109,10 @@ public class TaskLabelsPart
                                      .getIdsList()
                                      .indexOf(event.getLabelId());
         LabelIdsList newLabelsList = LabelIdsList
-                .vBuilder()
+                .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
                 .removeIds(indexToRemove)
-                .build();
+                .vBuild();
         builder().setLabelIdsList(newLabelsList);
     }
 }

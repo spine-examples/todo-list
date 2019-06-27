@@ -94,7 +94,7 @@ class TaskCommandTestBase {
 
     private static TaskId randomTaskId() {
         TaskId result = TaskId
-                .vBuilder()
+                .newBuilder()
                 .setValue(newUuid())
                 .build();
         return result;

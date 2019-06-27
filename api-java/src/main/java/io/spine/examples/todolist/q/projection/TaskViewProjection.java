@@ -50,7 +50,7 @@ import java.util.List;
  * A projection which mirrors the state of a single task.
  */
 @SuppressWarnings({"Duplicates", "OverlyCoupledClass"}) // OK for this projection.
-public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBuilder> {
+public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Builder> {
 
     public TaskViewProjection(TaskId id) {
         super(id);
@@ -125,7 +125,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     @Subscribe
     void labelAssignedToTask(LabelAssignedToTask event) {
         LabelIdsList newLabelsList = LabelIdsList
-                .vBuilder()
+                .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
                 .addIds(event.getLabelId())
                 .build();
@@ -139,7 +139,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
                                                       .getIdsList());
         list.remove(event.getLabelId());
         LabelIdsList labelIdsList = LabelIdsList
-                .vBuilder()
+                .newBuilder()
                 .addAllIds(list)
                 .build();
         builder().setLabelIdsList(labelIdsList);
@@ -149,7 +149,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
      * Marks this task as both {@code archived} and {@code deleted}.
      *
      * <p>Such a task is never restored for reading. For example,
-     * task {@linkplain TaskStatus.DRAFT drafts} are never restored after being deleted.
+     * task {@linkplain TaskStatus#DRAFT drafts} are never restored after being deleted.
      */
     private void eraseTask() {
         this.setArchived(true);

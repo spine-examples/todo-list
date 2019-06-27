@@ -81,7 +81,7 @@ class ClientTest extends TodoClientTest {
     @DisplayName("fallback to a provided label when querying for a non-existing label")
     void defaultLabelWhenNoLabel() {
         TaskLabel expectedLabel = TaskLabel
-                .vBuilder()
+                .newBuilder()
                 .setId(randomLabelId())
                 .setTitle("Chores")
                 .build();
@@ -138,7 +138,7 @@ class ClientTest extends TodoClientTest {
 
         LabelId labelId = createLabel.getLabelId();
         LabelView expected = LabelView
-                .vBuilder()
+                .newBuilder()
                 .setId(labelId)
                 .setTitle(createLabel.getLabelTitle())
                 .setColor(LabelAggregate.DEFAULT_LABEL_COLOR)
@@ -184,7 +184,7 @@ class ClientTest extends TodoClientTest {
         client.postCommand(finalizeDraft);
 
         TaskView expected = freshDraft(taskId)
-                .toVBuilder()
+                .toBuilder()
                 .setStatus(FINALIZED)
                 .build();
 
@@ -214,14 +214,14 @@ class ClientTest extends TodoClientTest {
     }
 
     private static LabelId randomLabelId() {
-        LabelId result = LabelId.vBuilder()
+        LabelId result = LabelId.newBuilder()
                                 .setValue(newUuid())
                                 .build();
         return result;
     }
 
     private static TaskId randomTaskId() {
-        TaskId result = TaskId.vBuilder()
+        TaskId result = TaskId.newBuilder()
                               .setValue(newUuid())
                               .build();
         return result;
@@ -233,7 +233,7 @@ class ClientTest extends TodoClientTest {
      */
     private static TaskView freshDraft(TaskId taskId) {
         return TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setStatus(DRAFT)
                 .build();

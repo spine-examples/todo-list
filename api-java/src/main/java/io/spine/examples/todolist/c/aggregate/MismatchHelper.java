@@ -53,24 +53,24 @@ final class MismatchHelper {
                                        TaskPriority newPriority,
                                        Version version) {
         TaskPriorityValue actualPriorityValue = TaskPriorityValue
-                .vBuilder()
+                .newBuilder()
                 .setPriorityValue(actualPriority)
-                .build();
+                .buildPartial();
         TaskPriorityValue expectedPriorityValue = TaskPriorityValue
-                .vBuilder()
+                .newBuilder()
                 .setPriorityValue(expectedPriority)
-                .build();
+                .buildPartial();
         TaskPriorityValue newPriorityValue = TaskPriorityValue
-                .vBuilder()
+                .newBuilder()
                 .setPriorityValue(newPriority)
-                .build();
+                .buildPartial();
         ValueMismatch result = ValueMismatch
-                .vBuilder()
+                .newBuilder()
                 .setExpected(AnyPacker.pack(expectedPriorityValue))
                 .setActual(AnyPacker.pack(actualPriorityValue))
                 .setNewValue(AnyPacker.pack(newPriorityValue))
                 .setVersion(version.getNumber())
-                .build();
+                .vBuild();
         return result;
     }
 }

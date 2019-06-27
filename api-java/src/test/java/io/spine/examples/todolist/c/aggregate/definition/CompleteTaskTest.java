@@ -61,7 +61,7 @@ class CompleteTaskTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTask(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(TaskStatus.COMPLETED)
                 .build();
@@ -95,7 +95,7 @@ class CompleteTaskTest extends TaskCommandTestBase {
     }
 
     private static CompleteTask completeTask(TaskId taskId) {
-        CompleteTask result = CompleteTask.vBuilder()
+        CompleteTask result = CompleteTask.newBuilder()
                                           .setId(taskId)
                                           .build();
         return result;

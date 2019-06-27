@@ -22,9 +22,7 @@ package io.spine.cli.action;
 
 import io.spine.cli.Bot;
 import io.spine.cli.CreateProject;
-import io.spine.cli.CreateProjectVBuilder;
 import io.spine.cli.ProjectId;
-import io.spine.cli.ProjectIdVBuilder;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,11 +59,11 @@ class CommandActionTest {
     @Test
     @DisplayName("execute command and render a source view")
     void executeCommandAndRenderSource() {
-        ProjectId expectedId = ProjectIdVBuilder
+        ProjectId expectedId = ProjectId
                 .newBuilder()
                 .setValue("Some ID")
                 .build();
-        CreateProjectVBuilder viewState = view.getState();
+        CreateProject.Builder viewState = view.getState();
         viewState.setProjectId(expectedId);
         action.execute();
 
@@ -77,22 +75,22 @@ class CommandActionTest {
     @Test
     @DisplayName("clear state of source view after successful execution")
     void clearSourceState() {
-        ProjectId nonDefaultId = ProjectIdVBuilder
+        ProjectId nonDefaultId = ProjectId
                 .newBuilder()
                 .setValue("Non-default ID")
                 .build();
-        CreateProjectVBuilder viewState = view.getState();
+        CreateProject.Builder viewState = view.getState();
         viewState.setProjectId(nonDefaultId);
         action.execute();
-        assertTrue(isDefault(viewState.internalBuild()));
+        assertTrue(isDefault(viewState.buildPartial()));
     }
 
     private static class CreateProjectAction
-            extends CommandAction<CreateProject, CreateProjectVBuilder> {
+            extends CommandAction<CreateProject, CreateProject.Builder> {
 
         private CreateProject commandMessageBeforeExecution;
 
-        private CreateProjectAction(CommandView<CreateProject, CreateProjectVBuilder> source) {
+        private CreateProjectAction(CommandView<CreateProject, CreateProject.Builder> source) {
             super(source);
         }
 
@@ -107,7 +105,7 @@ class CommandActionTest {
     }
 
     private static class CreateProjectView
-            extends CommandView<CreateProject, CreateProjectVBuilder> {
+            extends CommandView<CreateProject, CreateProject.Builder> {
 
         private boolean rendered;
 
@@ -121,7 +119,7 @@ class CommandActionTest {
         }
 
         @Override
-        protected String renderState(CreateProjectVBuilder state) {
+        protected String renderState(CreateProject.Builder state) {
             return String.valueOf(rendered);
         }
 

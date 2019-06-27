@@ -55,7 +55,7 @@ public final class Application {
     public void init(Screen screen) {
         if (this.screen != null) {
             throw new IllegalStateException("Application is already initialized, " +
-                                                    "this function should be called only once.");
+                                            "this function should be called only once.");
         } else {
             this.screen = checkNotNull(screen);
         }

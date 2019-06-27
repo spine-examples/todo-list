@@ -63,7 +63,7 @@ class DeleteTaskCommand extends TaskCommandTestBase {
         DeleteTask deleteTask = deleteTaskInstance(taskId());
 
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .setStatus(DELETED)
                 .build();

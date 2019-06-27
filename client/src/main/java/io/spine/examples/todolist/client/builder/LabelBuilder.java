@@ -21,9 +21,7 @@
 package io.spine.examples.todolist.client.builder;
 
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.CreateBasicLabelVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
 
@@ -53,7 +51,7 @@ public final class LabelBuilder {
      */
     public static final class CreateBasicLabelBuilder {
 
-        private final CreateBasicLabelVBuilder builder = CreateBasicLabel.vBuilder();
+        private final CreateBasicLabel.Builder builder = CreateBasicLabel.newBuilder();
 
         /**
          * Sets the title to the {@link CreateBasicLabel.Builder}.
@@ -75,14 +73,14 @@ public final class LabelBuilder {
         public CreateBasicLabel build() {
             LabelId id = generateId();
             builder.setLabelId(id);
-            return builder.build();
+            return builder.vBuild();
         }
 
         private static LabelId generateId() {
-            LabelId id = LabelIdVBuilder
+            LabelId id = LabelId
                     .newBuilder()
                     .setValue(newUuid())
-                    .build();
+                    .vBuild();
             return id;
         }
     }

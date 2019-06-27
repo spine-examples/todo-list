@@ -26,7 +26,7 @@ import io.spine.cli.Application;
 import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
-import io.spine.validate.ValidatingBuilder;
+import io.spine.protobuf.ValidatingBuilder;
 import io.spine.validate.ValidationException;
 
 import java.util.Collection;
@@ -44,7 +44,7 @@ import static io.spine.cli.ConstraintViolationFormatter.format;
  *         the validating builder type for the command message
  */
 public class EditCommandAction<M extends Message,
-                               B extends ValidatingBuilder<M, ? extends Message.Builder>>
+                               B extends ValidatingBuilder<M>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
     private final Collection<EditOperation<M, B>> editOperations;
@@ -98,9 +98,11 @@ public class EditCommandAction<M extends Message,
      *         the validating builder type for the command message
      * @return the new producer
      */
-    public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
-    EditCommandActionProducer<M, B> editCommandActionProducer(
-            String name, Shortcut shortcut,Collection<EditOperation<M, B>> edits) {
+    public static <M extends Message, B extends ValidatingBuilder<M>>
+    EditCommandActionProducer<M, B>
+    editCommandActionProducer(String name,
+                              Shortcut shortcut,
+                              Collection<EditOperation<M, B>> edits) {
         return new EditCommandActionProducer<>(name, shortcut, edits);
     }
 
@@ -114,7 +116,7 @@ public class EditCommandAction<M extends Message,
      */
     public static class EditCommandActionProducer<
             M extends Message,
-            B extends ValidatingBuilder<M, ? extends Message.Builder>>
+            B extends ValidatingBuilder<M>>
             extends AbstractActionProducer<CommandView<M, B>,
                                            CommandView<M, B>,
                                            EditCommandAction<M, B>> {

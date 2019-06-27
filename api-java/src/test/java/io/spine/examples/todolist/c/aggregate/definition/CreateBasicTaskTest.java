@@ -50,7 +50,7 @@ class CreateBasicTaskTest extends TaskCommandTestBase {
     void createTask() {
         CreateBasicTask createBasicTask = createTaskInstance(taskId());
         TaskView expected = TaskView
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId())
                 .build();
         isEqualToExpectedAfterReceiving(expected, createBasicTask);

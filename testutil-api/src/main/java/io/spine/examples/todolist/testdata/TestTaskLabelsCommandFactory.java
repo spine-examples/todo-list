@@ -25,13 +25,13 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
+
 /**
  * A factory of the task label commands for the test needs.
  */
 public final class TestTaskLabelsCommandFactory {
-
-    private static final TaskId TASK_ID = TestTaskCommandFactory.TASK_ID;
-    private static final LabelId LABEL_ID = TestTaskCommandFactory.LABEL_ID;
 
     private TestTaskLabelsCommandFactory() {
     }
@@ -43,10 +43,10 @@ public final class TestTaskLabelsCommandFactory {
      */
     public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, LabelId labelId) {
         AssignLabelToTask result = AssignLabelToTask
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -77,10 +77,10 @@ public final class TestTaskLabelsCommandFactory {
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, LabelId labelId) {
         RemoveLabelFromTask result = RemoveLabelFromTask
-                .vBuilder()
+                .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
-                .build();
+                .vBuild();
         return result;
     }
 }

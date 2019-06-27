@@ -44,13 +44,11 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
-import io.spine.core.UserIdVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.q.projection.LabelView;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.time.ZoneOffsets;
@@ -124,9 +122,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
     @Override
     public TaskLabels labelsOf(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
-        TaskLabels result = labels.orElse(TaskLabelsVBuilder.newBuilder()
+        TaskLabels result = labels.orElse(TaskLabels.newBuilder()
                                                             .setTaskId(taskId)
-                                                            .build());
+                                                            .vBuild());
         return result;
     }
 
@@ -230,17 +228,17 @@ final class TodoClientImpl implements SubscribingTodoClient {
     /** Queries the read-side with the specified query. */
     private List<Any> query(Query query) {
         return queryService.read(query)
-                           .getMessagesList()
+                           .getMessageList()
                            .stream()
                            .map(EntityStateWithVersion::getState)
                            .collect(toList());
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {
-        UserId userId = UserIdVBuilder
+        UserId userId = UserId
                 .newBuilder()
                 .setValue(newUuid())
-                .build();
+                .vBuild();
         ActorRequestFactory result = ActorRequestFactory
                 .newBuilder()
                 .setActor(userId)
@@ -274,7 +272,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         @Override
         public void onNext(SubscriptionUpdate value) {
             value.getEntityUpdates()
-                 .getUpdatesList()
+                 .getUpdateList()
                  .stream()
                  .map(EntityStateUpdate::getState)
                  .map(any -> (M) unpack(any))
