@@ -16,7 +16,7 @@ jobs:
     - stage: Unit and Integration Tests
       language: java
       jdk:
-        - oraclejdk8
+        - openjdk8
       before_install:
         # Upgrade the `npm` version shipped with Travis to the latest.
         - npm install -g npm@latest
@@ -40,7 +40,7 @@ jobs:
     - stage: Deployment
       language: java
       jdk:
-        - oraclejdk8
+        - openjdk8
       cache:
         directories:
           # We cache the SDK so we don't have to download it again on subsequent builds.
