@@ -25,6 +25,7 @@ import io.spine.cli.NoOpView;
 import io.spine.cli.Screen;
 import io.spine.cli.TestScreen;
 import io.spine.cli.view.View;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,10 +37,17 @@ class TransitionActionTest {
     private static final String ACTION_NAME = "static transition action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
+    @BeforeAll
+    static void setUp() {
+        Application application = Application.getInstance();
+        if (application.screen() == null) {
+            application.init(new TestScreen());
+        }
+    }
+
     @Test
     @DisplayName("render of a destination view")
     void renderDestinationView() {
-        Application.getInstance().init(new TestScreen());
         View source = new NoOpView();
         DisplayCounterView destination = new DisplayCounterView();
         Action<View, DisplayCounterView> action =
