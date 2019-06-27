@@ -33,7 +33,6 @@ import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.query.QueryBridge;
 
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
-import static io.spine.examples.todolist.server.Storage.createStorage;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -66,9 +65,8 @@ final class Application {
 
     private static Application create() {
         BoundedContext boundedContext =
-                BoundedContexts.create(spec -> createStorage(spec.isMultitenant()));
-
-        log.log("Initializing C/Q services.");
+                BoundedContexts.create(Storage::createStorage, Tracing::createTracing);
+        log.log("Initializing Command/Query services.");
         CommandService commandService =
                 CommandService.newBuilder()
                               .add(boundedContext)

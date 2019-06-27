@@ -27,9 +27,12 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.BoundedContextBuilder;
 import io.spine.server.ContextSpec;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
+import io.spine.server.trace.TracerFactory;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.Function;
 
@@ -59,14 +62,30 @@ public final class BoundedContexts {
     }
 
     /**
-     * Creates a new instance of the {@link BoundedContext}
-     * using the specified {@link StorageFactory}.
+     * Creates a new instance of the {@link BoundedContext} using the specified
+     * {@link StorageFactory}.
      *
      * @param storageFactory
      *         the storage factory to use
      * @return the bounded context created with the storage factory
      */
     public static BoundedContext create(Function<ContextSpec, StorageFactory> storageFactory) {
+        return create(storageFactory, null);
+    }
+
+    /**
+     * Creates a new instance of the {@link BoundedContext} using the specified
+     * {@link StorageFactory} and {@link TracerFactory}.
+     *
+     * @param storageFactory
+     *         the storage factory to use
+     * @param tracerFactory
+     *         the tracer factory to use
+     * @return the bounded context created with the specified parameters
+     */
+    public static BoundedContext
+    create(Function<ContextSpec, StorageFactory> storageFactory,
+           @Nullable Function<ContextSpec, TracerFactory> tracerFactory) {
         checkNotNull(storageFactory);
 
         LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
@@ -77,10 +96,13 @@ public final class BoundedContexts {
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        BoundedContext boundedContext = BoundedContext
+        BoundedContextBuilder builder = BoundedContext
                 .singleTenant(NAME)
-                .setStorage(storageFactory)
-                .build();
+                .setStorage(storageFactory);
+        if (tracerFactory != null) {
+            builder.setTracerFactorySupplier(tracerFactory);
+        }
+        BoundedContext boundedContext = builder.build();
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
