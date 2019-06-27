@@ -10,6 +10,7 @@ import com.google.auth.Credentials;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.server.ContextSpec;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.datastore.DatastoreStorageFactory;
 
@@ -39,13 +40,13 @@ final class Storage {
      *         {@code true} if the request context is multitenant, {@code false} otherwise
      * @return new storage factory
      */
-    static StorageFactory createStorage(boolean multitenant) {
+    static StorageFactory createStorage(ContextSpec spec) {
         Credentials credentials = serviceAccountCredentials();
         Datastore datastore = datastoreOptions(credentials).getService();
         return DatastoreStorageFactory
                 .newBuilder()
                 .setDatastore(datastore)
-                .setMultitenant(multitenant)
+                .setContextSpec(spec)
                 .build();
     }
 

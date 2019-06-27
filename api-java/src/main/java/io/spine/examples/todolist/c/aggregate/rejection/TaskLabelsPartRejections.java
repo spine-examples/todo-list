@@ -114,7 +114,7 @@ public final class TaskLabelsPartRejections {
                 .setId(cmd.getId())
                 .addAllExistingLabels(cmd.getExistingLabelsList())
                 .addAllNewLabels(cmd.getNewLabelsList())
-                .build();
+                .vBuild();
         CannotAddLabels rejection = CannotAddLabels
                 .newBuilder()
                 .setRejectionDetails(addLabelsRejected)

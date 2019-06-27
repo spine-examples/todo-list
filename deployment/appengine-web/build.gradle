@@ -48,6 +48,7 @@ dependencies {
     implementation "io.spine:spine-web:$spineWebVersion"
     implementation "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
     implementation "io.spine.gcloud:spine-datastore:$spineVersion"
+    implementation "io.spine.gcloud:spine-stackdriver-trace:$spineVersion"
 
     implementation "com.google.api-client:google-api-client:$googleApiClient"
     implementation("com.google.api-client:google-api-client-appengine:$googleApiClient") {
