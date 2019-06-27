@@ -76,6 +76,7 @@ subprojects {
         }
     }
     
+    apply from: deps.scripts.testOutput
     apply from: deps.scripts.javacArgs
     apply from: deps.scripts.pmd
 }
