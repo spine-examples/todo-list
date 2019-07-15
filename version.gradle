@@ -46,6 +46,6 @@ project.ext {
     hikariCpVersion = '2.4.3'
 
     // Versions of 3rd-party test-scope dependencies.
-    jUnitPlatformVersion = '1.0.0'
-    jUnitVersion = '5.0.0'
+    jUnitPlatformVersion = '1.5.0'
+    jUnitVersion = '5.5.0'
 }
