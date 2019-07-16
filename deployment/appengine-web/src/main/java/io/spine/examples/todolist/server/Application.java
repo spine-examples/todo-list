@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.flogger.FluentLogger;
 import io.spine.examples.todolist.TodoListContext;
 import io.spine.net.Url;
 import io.spine.server.BoundedContext;
@@ -41,8 +42,7 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
-    private static final StartUpLogger log = StartUpLogger.instance();
-
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final CommandService commandService;
     private final FirebaseQueryBridge queryBridge;
     private final FirebaseSubscriptionBridge subscriptionBridge;
@@ -65,12 +65,14 @@ final class Application {
     }
 
     private static Application create() {
-        ServerEnvironment.instance()
-                         .configureTracing(Tracing.createTracing());
+        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
+        serverEnvironment.configureTracing(Tracing.createTracing());
+        serverEnvironment.configureStorage(Storage.createStorage());
 
         BoundedContext boundedContext =
                 TodoListContext.create();
-        log.log("Initializing Command/Query services.");
+        FluentLogger.Api info = logger.atInfo();
+        info.log("Initializing Command/Query services.");
         CommandService commandService =
                 CommandService.newBuilder()
                               .add(boundedContext)
@@ -79,9 +81,9 @@ final class Application {
                 QueryService.newBuilder()
                             .add(boundedContext)
                             .build();
-        log.log("Initializing Firebase Realtime Database client.");
+        info.log("Initializing Firebase Realtime Database client.");
         Application application = new Application(commandService, queryService, firebaseClient());
-        log.log("Application initialized");
+        info.log("Application initialized.");
         return application;
     }
 
@@ -104,20 +106,22 @@ final class Application {
         return client;
     }
 
-    private static FirebaseQueryBridge newQueryBridge(QueryService queryService,
-                                                      FirebaseClient firebaseClient) {
-        return FirebaseQueryBridge.newBuilder()
-                                  .setQueryService(queryService)
-                                  .setFirebaseClient(firebaseClient)
-                                  .build();
+    private static
+    FirebaseQueryBridge newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
+        return FirebaseQueryBridge
+                .newBuilder()
+                .setQueryService(queryService)
+                .setFirebaseClient(firebaseClient)
+                .build();
     }
 
-    private static FirebaseSubscriptionBridge newSubscriptionBridge(QueryService queryService,
-                                                                    FirebaseClient firebaseClient) {
-        return FirebaseSubscriptionBridge.newBuilder()
-                                         .setQueryService(queryService)
-                                         .setFirebaseClient(firebaseClient)
-                                         .build();
+    private static FirebaseSubscriptionBridge
+    newSubscriptionBridge(QueryService queryService, FirebaseClient firebaseClient) {
+        return FirebaseSubscriptionBridge
+                .newBuilder()
+                .setQueryService(queryService)
+                .setFirebaseClient(firebaseClient)
+                .build();
     }
 
     private static DatabaseUrl databaseUrl() {

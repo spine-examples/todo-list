@@ -22,13 +22,14 @@ package io.spine.examples.todolist.server;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.auth.oauth2.GoogleCredentials;
+import io.spine.server.DeploymentType;
+import io.spine.server.ServerEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.google.api.client.util.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
-import static io.spine.server.ServerEnvironment.deploymentType;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -90,6 +91,11 @@ final class GoogleAuth {
             );
             return credential;
         }
+    }
+
+    private static DeploymentType deploymentType() {
+        return ServerEnvironment.instance()
+                                .deploymentType();
     }
 
     private static InputStream readResource(String name) {

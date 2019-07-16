@@ -87,11 +87,11 @@ class TaskCreationWizardTest {
                     .setTaskId(taskId())
                     .setStage(TASK_DEFINITION)
                     .build();
-            boundedContext().assertThat(emittedCommand(CreateDraft.class, once()));
-            boundedContext().assertEntity(TaskCreationWizard.class, processId())
-                            .hasStateThat()
-                            .comparingExpectedFieldsOnly()
-                            .isEqualTo(expectedWizardState);
+            context().assertThat(emittedCommand(CreateDraft.class, once()));
+            context().assertEntity(TaskCreationWizard.class, processId())
+                     .hasStateThat()
+                     .comparingExpectedFieldsOnly()
+                     .isEqualTo(expectedWizardState);
         }
     }
 
@@ -136,8 +136,8 @@ class TaskCreationWizardTest {
                     .setDueDateChange(dueDateChange)
                     .build();
 
-            boundedContext().receivesCommand(cmd)
-                            .assertThat(emittedCommands(UpdateTaskDescription.class,
+            context().receivesCommand(cmd)
+                     .assertThat(emittedCommands(UpdateTaskDescription.class,
                                                         UpdateTaskPriority.class,
                                                         UpdateTaskDueDate.class));
         }
@@ -155,8 +155,8 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .setPriorityChange(priorityChange)
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertRejectedWith(Rejections.CannotUpdateTaskDetails.class);
+            context().receivesCommand(cmd)
+                     .assertRejectedWith(Rejections.CannotUpdateTaskDetails.class);
         }
 
         @Test
@@ -188,9 +188,9 @@ class TaskCreationWizardTest {
                     .setPriorityChange(priorityChange)
                     .build();
 
-            boundedContext().receivesCommand(cmd1)
-                            .receivesCommand(cmd2)
-                            .assertThat(emittedCommands(UpdateTaskDescription.class,
+            context().receivesCommand(cmd1)
+                     .receivesCommand(cmd2)
+                     .assertThat(emittedCommands(UpdateTaskDescription.class,
                                                         UpdateTaskPriority.class));
         }
 
@@ -232,10 +232,10 @@ class TaskCreationWizardTest {
                     .setDescriptionChange(newDescriptionChange)
                     .build();
 
-            boundedContext().receivesCommand(cmd1)
-                            .receivesCommand(cmd2)
-                            .receivesCommand(newUpdate)
-                            .assertThat(emittedCommand(UpdateTaskDescription.class, twice()));
+            context().receivesCommand(cmd1)
+                     .receivesCommand(cmd2)
+                     .receivesCommand(newUpdate)
+                     .assertThat(emittedCommand(UpdateTaskDescription.class, twice()));
         }
     }
 
@@ -266,10 +266,10 @@ class TaskCreationWizardTest {
                     .addAllExistingLabels(existingLabelIds)
                     .addNewLabels(newLabel)
                     .build();
-            boundedContext().receivesCommand(cmd);
-            boundedContext().assertThat(emittedCommand(AssignLabelToTask.class, thrice()))
-                            .assertThat(emittedCommand(CreateBasicLabel.class, once()))
-                            .assertThat(emittedCommand(UpdateLabelDetails.class, once()));
+            context().receivesCommand(cmd);
+            context().assertThat(emittedCommand(AssignLabelToTask.class, thrice()))
+                     .assertThat(emittedCommand(CreateBasicLabel.class, once()))
+                     .assertThat(emittedCommand(UpdateLabelDetails.class, once()));
         }
 
         @Test
@@ -279,8 +279,8 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertRejectedWith(Rejections.CannotAddLabels.class);
+            context().receivesCommand(cmd)
+                     .assertRejectedWith(Rejections.CannotAddLabels.class);
         }
     }
 
@@ -303,8 +303,8 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertEmitted(LabelAssignmentSkipped.class);
+            context().receivesCommand(cmd)
+                     .assertEmitted(LabelAssignmentSkipped.class);
         }
     }
 
@@ -328,11 +328,11 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertThat(emittedCommand(FinalizeDraft.class, once()))
-                            .assertEntity(TaskCreationWizard.class, processId())
-                            .archivedFlag()
-                            .isTrue();
+            context().receivesCommand(cmd)
+                     .assertThat(emittedCommand(FinalizeDraft.class, once()))
+                     .assertEntity(TaskCreationWizard.class, processId())
+                     .archivedFlag()
+                     .isTrue();
         }
     }
 
@@ -355,10 +355,10 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertEntity(TaskCreationWizard.class, processId())
-                            .archivedFlag()
-                            .isTrue();
+            context().receivesCommand(cmd)
+                     .assertEntity(TaskCreationWizard.class, processId())
+                     .archivedFlag()
+                     .isTrue();
         }
     }
 
@@ -380,20 +380,20 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .build();
-            boundedContext().receivesCommand(cmd)
-                            .assertRejectedWith(Rejections.CannotMoveToStage.class);
+            context().receivesCommand(cmd)
+                     .assertRejectedWith(Rejections.CannotMoveToStage.class);
         }
     }
 
     private abstract static class CommandTest {
 
-        private BlackBoxBoundedContext boundedContext;
+        private BlackBoxBoundedContext context;
         private TaskId taskId;
         private TaskCreationId processId;
 
         @BeforeEach
         void setUp() {
-            boundedContext = BlackBoxBoundedContext
+            context = BlackBoxBoundedContext
                     .singleTenant()
                     .with(new TaskCreationWizardRepository(), new TaskRepository(),
                           new LabelAggregateRepository(), new TaskLabelsRepository());
@@ -407,7 +407,7 @@ class TaskCreationWizardTest {
                     .setId(processId)
                     .setTaskId(taskId)
                     .build();
-            boundedContext.receivesCommand(cmd);
+            context.receivesCommand(cmd);
         }
 
         void addDescription() {
@@ -424,7 +424,7 @@ class TaskCreationWizardTest {
                     .setId(processId)
                     .setDescriptionChange(descriptionChange)
                     .build();
-            boundedContext.receivesCommand(cmd);
+            context.receivesCommand(cmd);
         }
 
         void skipLabels() {
@@ -432,7 +432,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId)
                     .build();
-            boundedContext.receivesCommand(cmd);
+            context.receivesCommand(cmd);
         }
 
         TaskCreationId newId() {
@@ -453,8 +453,8 @@ class TaskCreationWizardTest {
                                   .build();
         }
 
-        public BlackBoxBoundedContext boundedContext() {
-            return boundedContext;
+        public BlackBoxBoundedContext<?> context() {
+            return context;
         }
 
         public TaskCreationId processId() {
