@@ -67,12 +67,12 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         DeleteTask deleteTask = deleteTaskInstance(taskId());
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(createLabel)
-                        .receivesCommand(assignLabelToTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(restoreTask)
-                        .assertEmitted(LabelledTaskRestored.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(createLabel)
+                 .receivesCommand(assignLabelToTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(restoreTask)
+                 .assertEmitted(LabelledTaskRestored.class);
     }
 
     @Test
@@ -108,10 +108,10 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTaskInstance(taskId());
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
-                        .receivesCommand(restoreTask)
-                        .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask)
+                 .receivesCommand(restoreTask)
+                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
     }
 
     @Test
@@ -120,10 +120,10 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         CreateDraft createDraft = createDraftInstance(taskId());
         FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
-        boundedContext().receivesCommand(createDraft)
-                        .receivesCommand(finalizeDraft)
-                        .receivesCommand(restoreTask)
-                        .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+        context().receivesCommand(createDraft)
+                 .receivesCommand(finalizeDraft)
+                 .receivesCommand(restoreTask)
+                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
     }
 
     @Test
@@ -131,8 +131,8 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
     void cannotRestoreDraft() {
         CreateDraft createDraft = createDraftInstance(taskId());
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
-        boundedContext().receivesCommand(createDraft)
-                        .receivesCommand(restoreTask)
-                        .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+        context().receivesCommand(createDraft)
+                 .receivesCommand(restoreTask)
+                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
     }
 }

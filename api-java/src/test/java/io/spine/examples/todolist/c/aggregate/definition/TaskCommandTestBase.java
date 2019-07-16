@@ -43,7 +43,7 @@ import static java.util.Arrays.asList;
  */
 class TaskCommandTestBase {
 
-    private BlackBoxBoundedContext boundedContext;
+    private BlackBoxBoundedContext<?> context;
     private final List<Repository<?, ?>> repositories;
     private TaskId taskId;
 
@@ -54,14 +54,15 @@ class TaskCommandTestBase {
     @SuppressWarnings("ZeroLengthArrayAllocation")
     @BeforeEach
     void setUp() {
-        boundedContext = BlackBoxBoundedContext.singleTenant()
-                                               .with(repositories.toArray(new Repository[0]));
+        context = BlackBoxBoundedContext
+                .singleTenant()
+                .with(repositories.toArray(new Repository[0]));
         taskId = randomTaskId();
     }
 
     /** Obtains an instance of bounded context that is used during the test. */
-    BlackBoxBoundedContext boundedContext() {
-        return boundedContext;
+    BlackBoxBoundedContext<?> context() {
+        return context;
     }
 
     /**
@@ -83,13 +84,12 @@ class TaskCommandTestBase {
      */
     void isEqualToExpectedAfterReceiving(TaskView expected, CommandMessage... commandMessages) {
         for (CommandMessage command : commandMessages) {
-            boundedContext().receivesCommand(command);
+            context().receivesCommand(command);
         }
-        boundedContext
-                .assertEntity(TaskViewProjection.class, taskId)
-                .hasStateThat()
-                .comparingExpectedFieldsOnly()
-                .isEqualTo(expected);
+        context.assertEntity(TaskViewProjection.class, taskId)
+               .hasStateThat()
+               .comparingExpectedFieldsOnly()
+               .isEqualTo(expected);
     }
 
     private static TaskId randomTaskId() {

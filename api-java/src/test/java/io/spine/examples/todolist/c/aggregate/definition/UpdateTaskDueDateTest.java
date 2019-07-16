@@ -50,9 +50,9 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance(taskId());
         UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(updateTaskDueDate)
-                        .assertEmitted(TaskDueDateUpdated.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(updateTaskDueDate)
+                 .assertEmitted(TaskDueDateUpdated.class);
     }
 
     @Test
@@ -78,10 +78,10 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTaskInstance(taskId());
         UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
-                        .receivesCommand(updateTaskDueDate)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask)
+                 .receivesCommand(updateTaskDueDate)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
     }
 
     @Test
@@ -92,10 +92,10 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTaskInstance(taskId());
         UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
-                        .receivesCommand(updateTaskDueDate)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask)
+                 .receivesCommand(updateTaskDueDate)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
     }
 
     @Test
@@ -108,7 +108,7 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(taskId(), expectedDueDate, newDueDate);
 
-        boundedContext()
+        context()
                 .receivesCommand(createTask)
                 .receivesCommand(updateTaskDueDate)
                 .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);

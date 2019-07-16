@@ -49,9 +49,9 @@ class CompleteTaskTest extends TaskCommandTestBase {
     @DisplayName("produce TaskCompleted event")
     void produceEvent() {
         CreateBasicTask createTask = createTaskInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask(createTask.getId()))
-                        .assertEmitted(TaskCompleted.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask(createTask.getId()))
+                 .assertEmitted(TaskCompleted.class);
     }
 
     @Test
@@ -76,10 +76,10 @@ class CompleteTaskTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTask(taskId());
         DeleteTask deleteTask = deleteTaskInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(completeTask)
-                        .assertRejectedWith(Rejections.CannotCompleteTask.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(completeTask)
+                 .assertRejectedWith(Rejections.CannotCompleteTask.class);
     }
 
     @Test
@@ -89,9 +89,9 @@ class CompleteTaskTest extends TaskCommandTestBase {
         CreateDraft createDraft = createDraftInstance(taskId());
         CompleteTask completeTask = completeTask(createDraft.getId());
 
-        boundedContext().receivesCommand(createDraft)
-                        .receivesCommand(completeTask)
-                        .assertRejectedWith(Rejections.CannotCompleteTask.class);
+        context().receivesCommand(createDraft)
+                 .receivesCommand(completeTask)
+                 .assertRejectedWith(Rejections.CannotCompleteTask.class);
     }
 
     private static CompleteTask completeTask(TaskId taskId) {

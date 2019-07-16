@@ -51,9 +51,9 @@ class DeleteTaskCommand extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance(taskId());
         DeleteTask deleteTask = deleteTaskInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .assertEmitted(TaskDeleted.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .assertEmitted(TaskDeleted.class);
     }
 
     @Test
@@ -75,7 +75,7 @@ class DeleteTaskCommand extends TaskCommandTestBase {
     void deleteDraft() {
         CreateDraft createDraft = createDraftInstance(taskId());
         DeleteTask deleteTask = deleteTaskInstance(taskId());
-        EntitySubject projectionSubject = boundedContext()
+        EntitySubject projectionSubject = context()
                 .receivesCommand(createDraft)
                 .receivesCommand(deleteTask)
                 .assertEntity(TaskViewProjection.class, taskId());
@@ -91,9 +91,9 @@ class DeleteTaskCommand extends TaskCommandTestBase {
     void cannotDeleteAlreadyDeletedTask() {
         CreateBasicTask createTask = createTaskInstance(taskId());
         DeleteTask deleteTask = deleteTaskInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(deleteTask)
-                        .assertRejectedWith(Rejections.CannotDeleteTask.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(deleteTask)
+                 .assertRejectedWith(Rejections.CannotDeleteTask.class);
     }
 }

@@ -30,9 +30,7 @@ import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskCreation;
-import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -42,7 +40,6 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SkipLabels;
-import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
@@ -50,11 +47,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.LabelAssignmentSkipped;
 import io.spine.examples.todolist.c.rejection.Rejections;
-import io.spine.examples.todolist.repository.LabelAggregateRepository;
-import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
-import io.spine.examples.todolist.repository.TaskLabelsRepository;
-import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -62,7 +54,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
 import static io.spine.testing.client.blackbox.Count.once;
 import static io.spine.testing.client.blackbox.Count.thrice;
@@ -138,8 +129,8 @@ class TaskCreationWizardTest {
 
             context().receivesCommand(cmd)
                      .assertThat(emittedCommands(UpdateTaskDescription.class,
-                                                        UpdateTaskPriority.class,
-                                                        UpdateTaskDueDate.class));
+                                                 UpdateTaskPriority.class,
+                                                 UpdateTaskDueDate.class));
         }
 
         @Test
@@ -191,7 +182,7 @@ class TaskCreationWizardTest {
             context().receivesCommand(cmd1)
                      .receivesCommand(cmd2)
                      .assertThat(emittedCommands(UpdateTaskDescription.class,
-                                                        UpdateTaskPriority.class));
+                                                 UpdateTaskPriority.class));
         }
 
         @Test
@@ -382,87 +373,6 @@ class TaskCreationWizardTest {
                     .build();
             context().receivesCommand(cmd)
                      .assertRejectedWith(Rejections.CannotMoveToStage.class);
-        }
-    }
-
-    private abstract static class CommandTest {
-
-        private BlackBoxBoundedContext context;
-        private TaskId taskId;
-        private TaskCreationId processId;
-
-        @BeforeEach
-        void setUp() {
-            context = BlackBoxBoundedContext
-                    .singleTenant()
-                    .with(new TaskCreationWizardRepository(), new TaskRepository(),
-                          new LabelAggregateRepository(), new TaskLabelsRepository());
-            taskId = newTaskId();
-            processId = newId();
-        }
-
-        void startWizard() {
-            StartTaskCreation cmd = StartTaskCreation
-                    .newBuilder()
-                    .setId(processId)
-                    .setTaskId(taskId)
-                    .build();
-            context.receivesCommand(cmd);
-        }
-
-        void addDescription() {
-            TaskDescription description = TaskDescription
-                    .newBuilder()
-                    .setValue("task for test")
-                    .build();
-            DescriptionChange descriptionChange = DescriptionChange
-                    .newBuilder()
-                    .setNewValue(description)
-                    .build();
-            UpdateTaskDetails cmd = UpdateTaskDetails
-                    .newBuilder()
-                    .setId(processId)
-                    .setDescriptionChange(descriptionChange)
-                    .build();
-            context.receivesCommand(cmd);
-        }
-
-        void skipLabels() {
-            SkipLabels cmd = SkipLabels
-                    .newBuilder()
-                    .setId(processId)
-                    .build();
-            context.receivesCommand(cmd);
-        }
-
-        TaskCreationId newId() {
-            return TaskCreationId.newBuilder()
-                                         .setValue(newUuid())
-                                         .build();
-        }
-
-        TaskId newTaskId() {
-            return TaskId.newBuilder()
-                                 .setValue(newUuid())
-                                 .build();
-        }
-
-        LabelId newLabelId() {
-            return LabelId.newBuilder()
-                                  .setValue(newUuid())
-                                  .build();
-        }
-
-        public BlackBoxBoundedContext<?> context() {
-            return context;
-        }
-
-        public TaskCreationId processId() {
-            return processId;
-        }
-
-        public TaskId taskId() {
-            return taskId;
         }
     }
 }
