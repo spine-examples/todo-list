@@ -24,10 +24,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
@@ -93,11 +92,7 @@ public class LocalMySqlServer {
 
     @VisibleForTesting
     static BoundedContext createBoundedContext(String[] args) {
-        return BoundedContexts.create(spec -> JdbcStorageFactory
-                .newBuilder()
-                .setDataSource(createDataSource(args))
-                .setMultitenant(spec.isMultitenant())
-                .build());
+        return TodoListContext.create();
     }
 
     private static DataSource createDataSource(String[] args) {

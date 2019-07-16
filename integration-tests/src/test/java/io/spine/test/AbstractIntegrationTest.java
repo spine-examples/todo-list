@@ -28,7 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.server.ContextSpec;
@@ -191,9 +191,9 @@ public abstract class AbstractIntegrationTest {
         String storageType = System.getProperty(STORAGE_TYPE_PROPERTY_KEY);
         BoundedContext boundedContext = null;
         if (!nonNull(storageType) || storageType.equals(STORAGE_TYPE_IN_MEMORY)) {
-            boundedContext = BoundedContexts.create();
+            boundedContext = TodoListContext.create();
         } else if (storageType.equals(STORAGE_TYPE_JDBC)) {
-            boundedContext = BoundedContexts.create(createStorageFactory());
+            boundedContext = TodoListContext.create();
         } else {
             fail("Property storage.type contains not supported storage type, read README.md to " +
                          "find supported storage types.");

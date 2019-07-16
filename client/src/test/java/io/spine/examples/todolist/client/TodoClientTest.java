@@ -28,7 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
@@ -55,7 +55,7 @@ abstract class TodoClientTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = TodoListContext.create();
         server = newServer(PORT, boundedContext);
         startServer();
         client = SubscribingTodoClient.instance(HOST, PORT);

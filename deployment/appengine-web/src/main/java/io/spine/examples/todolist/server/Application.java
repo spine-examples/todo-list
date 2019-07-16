@@ -20,11 +20,12 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.net.Url;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.ServerEnvironment;
 import io.spine.web.firebase.DatabaseUrl;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
@@ -64,8 +65,11 @@ final class Application {
     }
 
     private static Application create() {
+        ServerEnvironment.instance()
+                         .configureTracing(Tracing.createTracing());
+
         BoundedContext boundedContext =
-                BoundedContexts.create(Storage::createStorage, Tracing::createTracing);
+                TodoListContext.create();
         log.log("Initializing Command/Query services.");
         CommandService commandService =
                 CommandService.newBuilder()

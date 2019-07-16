@@ -20,13 +20,14 @@
 
 package io.spine.examples.todolist.context;
 
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 
 @DisplayName("BoundedContexts utility should")
-class BoundedContextsTest extends UtilityClassTest<BoundedContexts> {
+class TodoListContextTest extends UtilityClassTest<TodoListContext> {
 
-    BoundedContextsTest() {
-        super(BoundedContexts.class);
+    TodoListContextTest() {
+        super(TodoListContext.class);
     }
 }

@@ -38,7 +38,7 @@ import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
@@ -330,7 +330,7 @@ class TaskLabelsPartTest {
         }
 
         private TaskAggregateRoot newRoot(TaskId id) {
-            BoundedContext boundedContext = BoundedContexts.create();
+            BoundedContext boundedContext = TodoListContext.create();
             commandBus = boundedContext.commandBus();
             responseObserver = StreamObservers.memoizingObserver();
             labelId = LABEL_ID;

@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
@@ -45,7 +45,7 @@ abstract class ViewTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = TodoListContext.create();
         server = newServer(PORT, boundedContext);
         startServer();
 
