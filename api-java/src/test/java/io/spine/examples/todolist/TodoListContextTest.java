@@ -18,16 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.context;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.TodoListContext;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-@DisplayName("BoundedContexts utility should")
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("TodoListContext config class should")
 class TodoListContextTest extends UtilityClassTest<TodoListContext> {
 
     TodoListContextTest() {
         super(TodoListContext.class);
+    }
+
+    @Test
+    @DisplayName("declare name constant")
+    void name() {
+        assertThat(TodoListContext.NAME)
+                .isNotEmpty();
     }
 }
