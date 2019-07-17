@@ -42,7 +42,7 @@ class ClientAppTest {
     @Test
     @DisplayName("initialize the Application screen")
     void initApplicationScreen() {
-        Application application = Application.getInstance();
+        Application application = Application.instance();
         application.setScreen(nullRef());
 
         Screen expectedScreen = new TerminalScreen();

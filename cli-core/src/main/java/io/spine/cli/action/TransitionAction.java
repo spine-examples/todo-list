@@ -43,7 +43,7 @@ public final class TransitionAction<S extends View, D extends View> extends Abst
      */
     @Override
     public void execute() {
-        Application.getInstance()
+        Application.instance()
                    .screen()
                    .renderView(getDestination());
     }

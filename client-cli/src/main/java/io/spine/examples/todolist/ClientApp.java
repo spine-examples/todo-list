@@ -21,13 +21,12 @@
 package io.spine.examples.todolist;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.flogger.FluentLogger;
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import io.spine.cli.view.View;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.MainMenu;
-import io.spine.logging.Logging;
-import org.slf4j.Logger;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.AppConfig.getClient;
@@ -45,7 +44,8 @@ import static io.spine.examples.todolist.client.TodoClient.HOST;
  */
 public final class ClientApp {
 
-    private static final int ARGUMENTS_AMOUNT = 2;
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static final int ARGUMENT_NUMBER = 2;
     private static final String DEFAULT_HOST = HOST;
     private static final int DEFAULT_PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
@@ -66,13 +66,13 @@ public final class ClientApp {
     }
 
     private static TodoClient createClient(String[] arguments) {
-        Logger log = Logging.get(ClientApp.class);
         String hostname;
         int port;
-        if (arguments.length != ARGUMENTS_AMOUNT) {
-            log.info("Expected arguments amount is {}. " +
-                             "Default arguments will be used, hostname: {} and port: {}.",
-                     ARGUMENTS_AMOUNT, DEFAULT_HOST, DEFAULT_PORT);
+        if (arguments.length != ARGUMENT_NUMBER) {
+            logger.atInfo()
+                  .log("Expected number of arguments is: %d. " +
+                       "Default arguments will be used, hostname: %s and port: %d.",
+                       ARGUMENT_NUMBER, DEFAULT_HOST, DEFAULT_PORT);
             hostname = DEFAULT_HOST;
             port = DEFAULT_PORT;
         } else {
@@ -85,7 +85,7 @@ public final class ClientApp {
 
     @VisibleForTesting
     static void initCli(Screen screen) {
-        Application.getInstance()
+        Application.instance()
                    .init(screen);
     }
 }

@@ -21,13 +21,12 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.server.LocalCloudSqlServer.createBoundedContext;
-import static io.spine.examples.todolist.server.LocalCloudSqlServer.getActualArguments;
-import static io.spine.examples.todolist.server.LocalCloudSqlServer.getDefaultArguments;
+import static io.spine.examples.todolist.server.LocalCloudSqlServer.createContext;
+import static io.spine.examples.todolist.server.LocalCloudSqlServer.defaultArguments;
+import static io.spine.examples.todolist.server.LocalCloudSqlServer.actualArgumentsFrom;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
@@ -47,26 +46,25 @@ class LocalCloudSqlServerTest {
     @DisplayName("return default arguments on invalid custom arguments")
     void returnDefaultArguments() {
         String[] customArguments = {"firstArg", "secondArg"};
-        assertNotEquals(customArguments.length, getDefaultArguments().length);
+        assertNotEquals(customArguments.length, defaultArguments().length);
 
-        String[] actualArguments = getActualArguments(customArguments);
-        assertArrayEquals(getDefaultArguments(), actualArguments);
+        String[] actualArguments = actualArgumentsFrom(customArguments);
+        assertArrayEquals(defaultArguments(), actualArguments);
     }
 
     @Test
     @DisplayName("return specified arguments if match length requirements")
     void returnSpecifiedArguments() {
-        int requiredLength = getDefaultArguments().length;
+        int requiredLength = defaultArguments().length;
         String[] customArguments = new String[requiredLength];
-        String[] actualArguments = getActualArguments(customArguments);
+        String[] actualArguments = actualArgumentsFrom(customArguments);
         assertEquals(customArguments, actualArguments);
     }
 
     @Test
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
-        BoundedContext boundedContext = createBoundedContext(getDefaultArguments());
-        StorageFactory storageFactory = boundedContext.storageFactory();
-        assertFalse(storageFactory.isMultitenant());
+        BoundedContext context = createContext();
+        assertFalse(context.isMultitenant());
     }
 }
