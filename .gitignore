@@ -35,6 +35,7 @@
 
 # Do not ignore the following IDEA settings
 !.idea/misc.xml
+!.idea/codeStyleSettings.xml
 
 # Gradle interim configs
 .gradle/**
