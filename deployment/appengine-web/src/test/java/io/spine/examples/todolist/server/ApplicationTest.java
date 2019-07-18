@@ -21,8 +21,6 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.server.CommandService;
-import io.spine.server.QueryService;
-import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.query.QueryBridge;
 import org.junit.jupiter.api.DisplayName;
