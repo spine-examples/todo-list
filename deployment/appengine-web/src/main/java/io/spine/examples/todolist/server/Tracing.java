@@ -30,16 +30,12 @@ import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import io.spine.server.trace.TracerFactory;
 import io.spine.server.trace.stackdriver.StackdriverTracerFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Factory of {@link io.spine.server.trace.TracerFactory} instances.
  */
 final class Tracing {
 
-    /**
-     * Prevents the utility class instantiation.
-     */
+    /** Prevents the utility class instantiation. */
     private Tracing() {
     }
 

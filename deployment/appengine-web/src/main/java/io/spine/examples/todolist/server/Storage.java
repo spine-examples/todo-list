@@ -10,7 +10,6 @@ import com.google.auth.Credentials;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.server.ContextSpec;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.datastore.DatastoreStorageFactory;
