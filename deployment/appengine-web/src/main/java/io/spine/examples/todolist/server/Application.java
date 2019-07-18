@@ -69,18 +69,17 @@ final class Application {
         serverEnvironment.configureTracing(Tracing.createTracing());
         serverEnvironment.configureStorage(Storage.createStorage());
 
-        BoundedContext boundedContext =
-                TodoListContext.create();
+        BoundedContext context = TodoListContext.create();
         FluentLogger.Api info = logger.atInfo();
         info.log("Initializing Command/Query services.");
-        CommandService commandService =
-                CommandService.newBuilder()
-                              .add(boundedContext)
-                              .build();
-        QueryService queryService =
-                QueryService.newBuilder()
-                            .add(boundedContext)
-                            .build();
+        CommandService commandService = CommandService
+                .newBuilder()
+                .add(context)
+                .build();
+        QueryService queryService = QueryService
+                .newBuilder()
+                .add(context)
+                .build();
         info.log("Initializing Firebase Realtime Database client.");
         Application application = new Application(commandService, queryService, firebaseClient());
         info.log("Application initialized.");

@@ -48,11 +48,11 @@ class TaskViewTest extends ViewTest {
     private final ViewOfTask taskView = new ViewOfTask(TaskId.getDefaultInstance());
 
     @Test
-    @DisplayName("throw the exception if nonexistent task ID is specified")
+    @DisplayName("throw the exception if non-existing task ID is specified")
     void notAllowNonexistentTaskId() {
         TaskId id = TaskId
                 .newBuilder()
-                .setValue("invalid ID")
+                .setUuid("invalid ID")
                 .build();
         assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }

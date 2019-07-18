@@ -77,7 +77,7 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .setTaskId(taskId())
                     .setStage(TASK_DEFINITION)
-                    .build();
+                    .vBuild();
             context().assertThat(emittedCommand(CreateDraft.class, once()));
             context().assertEntity(TaskCreationWizard.class, processId())
                      .hasStateThat()
@@ -104,28 +104,28 @@ class TaskCreationWizardTest {
             TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
-                    .build();
+                    .vBuild();
             DescriptionChange descriptionChange = DescriptionChange
                     .newBuilder()
                     .setNewValue(description)
-                    .build();
+                    .vBuild();
             TaskPriority priority = TaskPriority.HIGH;
             PriorityChange priorityChange = PriorityChange
                     .newBuilder()
                     .setNewValue(priority)
-                    .build();
+                    .vBuild();
             Timestamp dueDate = Time.currentTime();
             TimestampChange dueDateChange = TimestampChange
                     .newBuilder()
                     .setNewValue(dueDate)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails cmd = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
                     .setPriorityChange(priorityChange)
                     .setDueDateChange(dueDateChange)
-                    .build();
+                    .vBuild();
 
             context().receivesCommand(cmd)
                      .assertThat(emittedCommands(UpdateTaskDescription.class,
@@ -140,12 +140,12 @@ class TaskCreationWizardTest {
             PriorityChange priorityChange = PriorityChange
                     .newBuilder()
                     .setNewValue(priority)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails cmd = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setPriorityChange(priorityChange)
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertRejectedWith(Rejections.CannotUpdateTaskDetails.class);
         }
@@ -157,27 +157,27 @@ class TaskCreationWizardTest {
             TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
-                    .build();
+                    .vBuild();
             DescriptionChange descriptionChange = DescriptionChange
                     .newBuilder()
                     .setNewValue(description)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails cmd1 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
-                    .build();
+                    .vBuild();
 
             TaskPriority priority = TaskPriority.HIGH;
             PriorityChange priorityChange = PriorityChange
                     .newBuilder()
                     .setNewValue(priority)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails cmd2 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setPriorityChange(priorityChange)
-                    .build();
+                    .vBuild();
 
             context().receivesCommand(cmd1)
                      .receivesCommand(cmd2)
@@ -192,36 +192,36 @@ class TaskCreationWizardTest {
             TaskDescription description = TaskDescription
                     .newBuilder()
                     .setValue(descriptionValue)
-                    .build();
+                    .vBuild();
             DescriptionChange descriptionChange = DescriptionChange
                     .newBuilder()
                     .setNewValue(description)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails cmd1 = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(descriptionChange)
-                    .build();
+                    .vBuild();
 
             SkipLabels cmd2 = SkipLabels
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
 
             String newDescriptionValue = "Description 2";
             TaskDescription newDescription = TaskDescription
                     .newBuilder()
                     .setValue(newDescriptionValue)
-                    .build();
+                    .vBuild();
             DescriptionChange newDescriptionChange = DescriptionChange
                     .newBuilder()
                     .setNewValue(newDescription)
-                    .build();
+                    .vBuild();
             UpdateTaskDetails newUpdate = UpdateTaskDetails
                     .newBuilder()
                     .setId(processId())
                     .setDescriptionChange(newDescriptionChange)
-                    .build();
+                    .vBuild();
 
             context().receivesCommand(cmd1)
                      .receivesCommand(cmd2)
@@ -245,18 +245,19 @@ class TaskCreationWizardTest {
         @Test
         @DisplayName("create and assign requested labels")
         void testAddLabels() {
-            List<LabelId> existingLabelIds = ImmutableList.of(newLabelId(), newLabelId());
+            List<LabelId> existingLabelIds = ImmutableList.of(LabelId.generate(),
+                                                              LabelId.generate());
             LabelDetails newLabel = LabelDetails
                     .newBuilder()
                     .setTitle("testAddLabels")
                     .setColor(LabelColor.GREEN)
-                    .build();
+                    .vBuild();
             AddLabels cmd = AddLabels
                     .newBuilder()
                     .setId(processId())
                     .addAllExistingLabels(existingLabelIds)
                     .addNewLabels(newLabel)
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd);
             context().assertThat(emittedCommand(AssignLabelToTask.class, thrice()))
                      .assertThat(emittedCommand(CreateBasicLabel.class, once()))
@@ -269,7 +270,7 @@ class TaskCreationWizardTest {
             AddLabels cmd = AddLabels
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertRejectedWith(Rejections.CannotAddLabels.class);
         }
@@ -293,7 +294,7 @@ class TaskCreationWizardTest {
             SkipLabels cmd = SkipLabels
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertEmitted(LabelAssignmentSkipped.class);
         }
@@ -318,7 +319,7 @@ class TaskCreationWizardTest {
             CompleteTaskCreation cmd = CompleteTaskCreation
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertThat(emittedCommand(FinalizeDraft.class, once()))
                      .assertEntity(TaskCreationWizard.class, processId())
@@ -345,7 +346,7 @@ class TaskCreationWizardTest {
             CancelTaskCreation cmd = CancelTaskCreation
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertEntity(TaskCreationWizard.class, processId())
                      .archivedFlag()
@@ -370,7 +371,7 @@ class TaskCreationWizardTest {
             CompleteTaskCreation cmd = CompleteTaskCreation
                     .newBuilder()
                     .setId(processId())
-                    .build();
+                    .vBuild();
             context().receivesCommand(cmd)
                      .assertRejectedWith(Rejections.CannotMoveToStage.class);
         }

@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
+import com.google.common.flogger.FluentLogger;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -55,7 +56,6 @@ final class FirebaseClients {
      * @return the initialized instance of {@link Firestore}
      */
     public static Firestore initializeFirestore() {
-        Logger log = Logging.get(FirebaseClients.class);
         InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
@@ -65,7 +65,6 @@ final class FirebaseClients {
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
-            log.error("Error while reading Firebase config file.", e);
             throw new IllegalStateException(e);
         }
         FirebaseOptions options = new FirebaseOptions.Builder()

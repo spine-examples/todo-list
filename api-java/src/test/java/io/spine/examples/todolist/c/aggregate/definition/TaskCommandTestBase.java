@@ -30,7 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
 import static java.util.Arrays.asList;
 
 /**
@@ -57,7 +56,7 @@ class TaskCommandTestBase {
         context = BlackBoxBoundedContext
                 .singleTenant()
                 .with(repositories.toArray(new Repository[0]));
-        taskId = randomTaskId();
+        taskId = TaskId.generate();
     }
 
     /** Obtains an instance of bounded context that is used during the test. */
@@ -90,13 +89,5 @@ class TaskCommandTestBase {
                .hasStateThat()
                .comparingExpectedFieldsOnly()
                .isEqualTo(expected);
-    }
-
-    private static TaskId randomTaskId() {
-        TaskId result = TaskId
-                .newBuilder()
-                .setValue(newUuid())
-                .build();
-        return result;
     }
 }

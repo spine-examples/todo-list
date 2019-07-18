@@ -35,11 +35,8 @@ import static io.spine.base.Identifier.newUuid;
 public final class TestLabelCommandFactory {
 
     public static final String LABEL_TITLE = "label title";
-    public static final String UPDATED_LABEL_TITLE = "updated label title";
-    public static final LabelId LABEL_ID = LabelId
-            .newBuilder()
-            .setValue(newUuid())
-            .vBuild();
+    private static final String UPDATED_LABEL_TITLE = "updated label title";
+    private static final LabelId LABEL_ID = LabelId.generate();
 
     private TestLabelCommandFactory() {
     }

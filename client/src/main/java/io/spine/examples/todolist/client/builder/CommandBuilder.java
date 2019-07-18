@@ -45,6 +45,6 @@ public final class CommandBuilder {
      * @return the {@code LabelBuilder} instance
      */
     public static LabelBuilder label() {
-        return LabelBuilder.getInstance();
+        return LabelBuilder.newInstance();
     }
 }

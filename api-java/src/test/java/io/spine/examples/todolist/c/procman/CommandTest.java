@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.c.procman;
 
 import io.spine.examples.todolist.DescriptionChange;
-import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
@@ -34,8 +33,6 @@ import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
-
-import static io.spine.base.Identifier.newUuid;
 
 /**
  * Abstract base for tests testing command execution.
@@ -52,8 +49,8 @@ abstract class CommandTest {
                 .singleTenant()
                 .with(new TaskCreationWizardRepository(), new TaskRepository(),
                       new LabelAggregateRepository(), new TaskLabelsRepository());
-        taskId = newTaskId();
-        processId = newId();
+        taskId = TaskId.generate();
+        processId = TaskCreationId.generate();
     }
 
     void startWizard() {
@@ -69,16 +66,16 @@ abstract class CommandTest {
         TaskDescription description = TaskDescription
                 .newBuilder()
                 .setValue("task for test")
-                .build();
+                .vBuild();
         DescriptionChange descriptionChange = DescriptionChange
                 .newBuilder()
                 .setNewValue(description)
-                .build();
+                .vBuild();
         UpdateTaskDetails cmd = UpdateTaskDetails
                 .newBuilder()
                 .setId(processId)
                 .setDescriptionChange(descriptionChange)
-                .build();
+                .vBuild();
         context.receivesCommand(cmd);
     }
 
@@ -88,24 +85,6 @@ abstract class CommandTest {
                 .setId(processId)
                 .build();
         context.receivesCommand(cmd);
-    }
-
-    TaskCreationId newId() {
-        return TaskCreationId.newBuilder()
-                                     .setValue(newUuid())
-                                     .build();
-    }
-
-    TaskId newTaskId() {
-        return TaskId.newBuilder()
-                             .setValue(newUuid())
-                             .build();
-    }
-
-    LabelId newLabelId() {
-        return LabelId.newBuilder()
-                              .setValue(newUuid())
-                              .build();
     }
 
     BlackBoxBoundedContext<?> context() {

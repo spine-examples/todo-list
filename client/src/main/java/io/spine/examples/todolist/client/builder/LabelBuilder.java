@@ -23,8 +23,6 @@ package io.spine.examples.todolist.client.builder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 
-import static io.spine.base.Identifier.newUuid;
-
 /**
  * Provides label command builders.
  */
@@ -33,7 +31,7 @@ public final class LabelBuilder {
     private LabelBuilder() {
     }
 
-    static LabelBuilder getInstance() {
+    static LabelBuilder newInstance() {
         return new LabelBuilder();
     }
 
@@ -67,21 +65,10 @@ public final class LabelBuilder {
 
         /**
          * Builds {@link CreateBasicLabel} command.
-         *
-         * @return the {@link CreateBasicLabel} command
          */
         public CreateBasicLabel build() {
-            LabelId id = generateId();
-            builder.setLabelId(id);
+            builder.setLabelId(LabelId.generate());
             return builder.vBuild();
-        }
-
-        private static LabelId generateId() {
-            LabelId id = LabelId
-                    .newBuilder()
-                    .setValue(newUuid())
-                    .vBuild();
-            return id;
         }
     }
 }

@@ -46,7 +46,6 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.TaskStatus.OPEN;
@@ -61,7 +60,7 @@ class ClientTest extends TodoClientTest {
     @Override
     void setUp() throws InterruptedException {
         super.setUp();
-        client = getClient();
+        client = client();
     }
 
     @Test
@@ -74,7 +73,8 @@ class ClientTest extends TodoClientTest {
         List<?> entities = Stream.of(taskViews, labels, tasks)
                                  .flatMap(List::stream)
                                  .collect(toList());
-        assertThat(entities).isEmpty();
+        assertThat(entities)
+                .isEmpty();
     }
 
     @Test
@@ -82,19 +82,21 @@ class ClientTest extends TodoClientTest {
     void defaultLabelWhenNoLabel() {
         TaskLabel expectedLabel = TaskLabel
                 .newBuilder()
-                .setId(randomLabelId())
+                .setId(LabelId.generate())
                 .setTitle("Chores")
                 .build();
 
-        TaskLabel result = client.labelOr(randomLabelId(), expectedLabel);
-        assertThat(result).isEqualTo(expectedLabel);
+        TaskLabel result = client.labelOr(LabelId.generate(), expectedLabel);
+        assertThat(result)
+                .isEqualTo(expectedLabel);
     }
 
     @Test
     @DisplayName("return an empty optional when querying for a non-existing label")
     void emptyOptionalWhenNoLabel() {
-        Optional<LabelView> view = client.labelView(randomLabelId());
-        assertThat(view).isEmpty();
+        Optional<LabelView> view = client.labelView(LabelId.generate());
+        assertThat(view)
+                .isEmpty();
     }
 
     @Test
@@ -107,7 +109,8 @@ class ClientTest extends TodoClientTest {
         TaskLabels labels = client.labelsOf(taskId);
         List<LabelId> idsList = labels.getLabelIdsList()
                                       .getIdsList();
-        assertThat(idsList).isEmpty();
+        assertThat(idsList)
+                .isEmpty();
     }
 
     @Test
@@ -127,7 +130,8 @@ class ClientTest extends TodoClientTest {
         List<LabelId> labelIds = client.labelsOf(taskId)
                                        .getLabelIdsList()
                                        .getIdsList();
-        assertThat(labelIds).containsExactly(labelId);
+        assertThat(labelIds)
+                .containsExactly(labelId);
     }
 
     @DisplayName("obtain a proper label view when querying by ID")
@@ -144,7 +148,8 @@ class ClientTest extends TodoClientTest {
                 .setColor(LabelAggregate.DEFAULT_LABEL_COLOR)
                 .build();
 
-        assertThat(client.labelView(labelId)).hasValue(expected);
+        assertThat(client.labelView(labelId))
+                .hasValue(expected);
     }
 
     @DisplayName("post a command and update the `TaskView` entity state ")
@@ -165,11 +170,11 @@ class ClientTest extends TodoClientTest {
 
         TaskId taskId = createDraft.getId();
 
-        FinalizeDraft finalizeDraft = finalizeDraft(randomTaskId());
+        FinalizeDraft finalizeDraft = finalizeDraft(TaskId.generate());
         client.postCommand(finalizeDraft);
 
-        assertThat(client.taskViews()).containsExactly(freshDraft(taskId));
-
+        assertThat(client.taskViews())
+                .containsExactly(freshDraft(taskId));
     }
 
     @DisplayName("change the state of the `TaskView` after a command has been posted")
@@ -188,7 +193,8 @@ class ClientTest extends TodoClientTest {
                 .setStatus(FINALIZED)
                 .build();
 
-        assertThat(client.taskViews()).containsExactly(expected);
+        assertThat(client.taskViews())
+                .containsExactly(expected);
     }
 
     @DisplayName("subscribe to task views")
@@ -213,20 +219,6 @@ class ClientTest extends TodoClientTest {
         client.unSubscribe(subscription);
     }
 
-    private static LabelId randomLabelId() {
-        LabelId result = LabelId.newBuilder()
-                                .setValue(newUuid())
-                                .build();
-        return result;
-    }
-
-    private static TaskId randomTaskId() {
-        TaskId result = TaskId.newBuilder()
-                              .setValue(newUuid())
-                              .build();
-        return result;
-    }
-
     /**
      * Obtains a {@code TaskView} that has the state that is expected after {@link CreateDraft}
      * command.
@@ -238,5 +230,4 @@ class ClientTest extends TodoClientTest {
                 .setStatus(DRAFT)
                 .build();
     }
-
 }

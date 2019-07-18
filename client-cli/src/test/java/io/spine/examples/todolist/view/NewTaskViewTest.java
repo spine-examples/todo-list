@@ -78,7 +78,7 @@ class NewTaskViewTest extends ViewTest {
            .renderView(view);
         TaskId idAfterRender = view.getState()
                                    .getId();
-        assertNotEquals(initialId.getValue(), idAfterRender.getValue());
+        assertNotEquals(initialId, idAfterRender);
     }
 
     @Nested

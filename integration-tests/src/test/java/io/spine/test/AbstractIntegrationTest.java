@@ -66,7 +66,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Base class for integration and performance tests. Encapsulates server, clients setup logic.
  *
- * <p>Contains {@link #getClients() method getClients} to access clients.
+ * <p>Contains {@link #clients() method getClients} to access clients.
  *
  * <p>Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
  * operation in multithreaded environment.
@@ -165,8 +165,8 @@ public abstract class AbstractIntegrationTest {
     @AfterEach
     protected void tearDown() {
         server.shutdown();
-        getClient().shutdown();
-        getClients().forEach(TodoClient::shutdown);
+        client().shutdown();
+        clients().forEach(TodoClient::shutdown);
     }
 
     private void startServer() throws InterruptedException {
@@ -200,11 +200,11 @@ public abstract class AbstractIntegrationTest {
         return context;
     }
 
-    protected TodoClient getClient() {
+    protected TodoClient client() {
         return client;
     }
 
-    protected ImmutableList<TodoClient> getClients() {
+    protected ImmutableList<TodoClient> clients() {
         return ImmutableList.copyOf(clients);
     }
 

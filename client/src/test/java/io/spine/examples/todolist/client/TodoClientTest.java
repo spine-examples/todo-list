@@ -64,7 +64,7 @@ abstract class TodoClientTest {
     @AfterEach
     public void tearDown() {
         server.shutdown();
-        getClient().shutdown();
+        client().shutdown();
     }
 
     private void startServer() throws InterruptedException {
@@ -118,7 +118,7 @@ abstract class TodoClientTest {
                              .build();
     }
 
-    public SubscribingTodoClient getClient() {
+    public SubscribingTodoClient client() {
         return client;
     }
 }

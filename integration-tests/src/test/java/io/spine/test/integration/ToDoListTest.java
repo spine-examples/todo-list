@@ -68,7 +68,7 @@ class ToDoListTest extends AbstractIntegrationTest {
     @Override
     protected void setUp() throws InterruptedException {
         super.setUp();
-        client = getClient();
+        client = client();
     }
 
     @Test

@@ -22,7 +22,6 @@ package io.spine.examples.todolist.q.projection.given;
 
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
-import io.spine.base.Identifier;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.PriorityChange;
@@ -57,16 +56,6 @@ public final class TaskViewProjectionTestEnv {
 
     public TaskViewProjectionTestEnv(TaskId taskId) {
         this.taskId = taskId;
-    }
-
-    /** Obtains a task ID with a value of a new random UUID. */
-    public static TaskId randomTaskId() {
-        String value = Identifier.newUuid();
-        TaskId result = TaskId
-                .newBuilder()
-                .setValue(value)
-                .build();
-        return result;
     }
 
     /** Obtains a {@code Timestamp} that corresponds to a day after tomorrow. */

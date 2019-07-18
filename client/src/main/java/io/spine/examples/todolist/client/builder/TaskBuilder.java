@@ -25,8 +25,6 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 
-import static io.spine.base.Identifier.newUuid;
-
 /**
  * Provides task command builders.
  */
@@ -82,8 +80,7 @@ public final class TaskBuilder {
          * @return the {@code CreateBasicTask} command
          */
         public CreateBasicTask build() {
-            TaskId id = generateId();
-            builder.setId(id);
+            builder.setId(TaskId.generate());
             return builder.vBuild();
         }
     }
@@ -101,17 +98,9 @@ public final class TaskBuilder {
          * @return the {@code CreateDraft} command
          */
         public CreateDraft build() {
-            TaskId id = generateId();
+            TaskId id = TaskId.generate();
             builder.setId(id);
             return builder.vBuild();
         }
-    }
-
-    private static TaskId generateId() {
-        TaskId id = TaskId
-                .newBuilder()
-                .setValue(newUuid())
-                .vBuild();
-        return id;
     }
 }

@@ -31,7 +31,6 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.util.Collections.singletonList;
@@ -68,7 +67,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
      */
     @Override
     public void render(Screen screen) {
-        getState().setId(generatedId());
+        getState().setId(TaskId.generate());
         super.render(screen);
     }
 
@@ -80,13 +79,6 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
                                    ? EMPTY_VALUE
                                    : rawDescription;
         return DESCRIPTION_LABEL + ' ' + resultDescription;
-    }
-
-    private static TaskId generatedId() {
-        return TaskId
-                .newBuilder()
-                .setValue(newUuid())
-                .vBuild();
     }
 
     /**

@@ -57,12 +57,12 @@ public final class TaskLabelsPartRejections {
         RejectedTaskCommandDetails commandDetails = RejectedTaskCommandDetails
                 .newBuilder()
                 .setTaskId(cmd.getId())
-                .build();
+                .vBuild();
         AssignLabelToTaskRejected assignLabelToTaskRejected = AssignLabelToTaskRejected
                 .newBuilder()
                 .setCommandDetails(commandDetails)
                 .setLabelId(cmd.getLabelId())
-                .build();
+                .vBuild();
         CannotAssignLabelToTask rejection = CannotAssignLabelToTask
                 .newBuilder()
                 .setRejectionDetails(assignLabelToTaskRejected)
@@ -85,12 +85,12 @@ public final class TaskLabelsPartRejections {
         RejectedTaskCommandDetails commandDetails = RejectedTaskCommandDetails
                 .newBuilder()
                 .setTaskId(cmd.getId())
-                .build();
+                .vBuild();
         RemoveLabelFromTaskRejected removeLabelRejected = RemoveLabelFromTaskRejected
                 .newBuilder()
                 .setLabelId(cmd.getLabelId())
                 .setCommandDetails(commandDetails)
-                .build();
+                .vBuild();
         CannotRemoveLabelFromTask rejection = CannotRemoveLabelFromTask
                 .newBuilder()
                 .setRejectionDetails(removeLabelRejected)
