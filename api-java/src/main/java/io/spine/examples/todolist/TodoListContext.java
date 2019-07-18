@@ -28,9 +28,6 @@ import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
-import io.spine.server.storage.StorageFactory;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
