@@ -22,12 +22,9 @@ package io.spine.examples.todolist.server;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
-import com.google.common.flogger.FluentLogger;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import io.spine.logging.Logging;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,9 +39,7 @@ final class FirebaseClients {
     private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
-    /**
-     * The {@code private} constructor prevents the utility class instantiation.
-     */
+    /** Prevents instantiation of this utility class. */
     private FirebaseClients() {}
 
     /**
