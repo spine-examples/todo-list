@@ -88,7 +88,7 @@ public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicT
     static class DescriptionEditOperation
             implements EditOperation<CreateBasicTask, CreateBasicTask.Builder> {
 
-        private static final String PROMPT = "Please enter the task description";
+        private static final String PROMPT = "Please enter the task description.";
 
         /**
          * Prompts a user for a task description and updates state of the specified builder.
