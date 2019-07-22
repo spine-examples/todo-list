@@ -43,7 +43,7 @@ buildscript { final scriptHandler ->
 }
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '0.15.5' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '0.15.6' apply false
 }
 
 allprojects {
