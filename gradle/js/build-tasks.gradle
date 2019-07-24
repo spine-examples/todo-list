@@ -1,0 +1,167 @@
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * This script declares common Gradle tasks required for JavaScript modules.
+ *
+ * <p>Most of the tasks launch a separate process which runs an NPM CLI command, so it's necessary
+ * that the NPM command line tool is installed.
+ *
+ * <p>This script doesn't configure Protobuf plugin and Spine's Protobuf JS plugin.
+ */
+
+ext {
+    JAVA_SCRIPT_TASK_GROUP = 'JavaScript'
+
+    workDirectory = "$projectDir"
+    nodeModulesDir = "$projectDir/node_modules"
+    packageJsonFile = "$projectDir/package.json"
+
+    npm = { final String... command ->
+        ext.executeNpm(workDirectory as File, command)
+    }
+}
+
+apply from: "$rootDir/gradle/js/npm-cli.gradle"
+apply from: "$rootDir/gradle/js/update-package-version.gradle"
+
+/**
+ * Compiles Protobuf sources into JavaScript.
+ *
+ * <p>This is a lifecycle task. It performs no action but triggers all the tasks which perform
+ * the compilation.
+ */
+task compileProtoToJs {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = "Compiles Protobuf sources to JavaScript."
+}
+
+/**
+ * Installs the module dependencies using the `npm install` command.
+ *
+ * The `npm install` command is executed with the vulnerability check disabled since
+ * it cannot fail the task execution despite on vulnerabilities found.
+ *
+ * To check installed Node packages for vulnerabilities execute `auditNodePackages` task.
+ */
+task installNodePackages {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Installs the module`s Node dependencies.'
+
+    inputs.file packageJsonFile
+    outputs.dir nodeModulesDir
+
+    doLast {
+        // To turn off npm audit when installing all packages. Use `auditNodePackages` task
+        // to check installed Node packages for vulnerabilities.
+        npm 'set', 'audit', 'false'
+        npm 'install'
+    }
+}
+
+/**
+ * Audits the module dependencies using the `npm audit` command.
+ *
+ * Sets the minimum level of vulnerability for `npm audit` to exit with a non-zero exit code
+ * to "high".
+ */
+task auditNodePackages {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Audits the module`s Node dependencies.'
+
+    inputs.dir nodeModulesDir
+
+    doLast {
+        npm 'set', 'audit-level', 'high'
+        npm 'audit'
+    }
+}
+
+// TODO:2019-05-22:yegor.udovchenko: Enable audit of NPM packages when
+// `npm audit` command stops failing due to NPM server overload.
+// See: https://github.com/SpineEventEngine/config/issues/64
+auditNodePackages.enabled = false
+
+/**
+ * Installs the module dependencies and checks them for vulnerabilities.
+ */
+task installDependencies {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Installs the JavaScript dependencies.'
+
+    dependsOn installNodePackages
+    dependsOn auditNodePackages
+
+    auditNodePackages.mustRunAfter installNodePackages
+}
+
+/**
+ * Cleans output of `buildJs` and dependant tasks.
+ */
+task cleanJs {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Cleans the output of JavaScript build.'
+
+    clean.dependsOn cleanJs
+
+    doLast {
+        delete buildJs.outputs
+        delete compileProtoToJs.outputs
+        delete installNodePackages.outputs
+    }
+}
+
+/**
+ * Assembles the JS sources.
+ *
+ * This task is an analog of `build` for JS.
+ *
+ * To include a task into the JS build, depend `buildJs` onto that task.
+ */
+task buildJs {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = "Assembles the JavaScript source files."
+
+    dependsOn updatePackageVersion
+    dependsOn installDependencies
+    dependsOn compileProtoToJs
+    assemble.dependsOn buildJs
+}
+
+/**
+ * Tests the JS sources.
+ *
+ * If `check` task is scheduled to run, this task is automatically added to
+ * the task graph and will be executed after `test` task completion.
+ */
+task testJs {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = "Tests the JavaScript source files."
+
+    dependsOn installDependencies
+    dependsOn compileProtoToJs
+    check.dependsOn testJs
+
+    testJs.mustRunAfter test
+}
+
+idea.module {
+    excludeDirs += file(nodeModulesDir)
+}

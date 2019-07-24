@@ -21,7 +21,10 @@
 dependencies {
     // Depend on JUnit in the production part of the code, as this module exposes testing utilities
     // that are based on JUnit.
-    implementation deps.test.junit5Api
-
-    implementation project(path: ':cli-core')
+    implementation (
+        "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
+        "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
+        "org.apiguardian:apiguardian-api:1.0.0",
+        project(path: ':cli-core')
+    )
 }

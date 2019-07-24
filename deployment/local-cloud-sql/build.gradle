@@ -19,10 +19,12 @@
  */
 
 dependencies {
-    implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
-    implementation "com.zaxxer:HikariCP:$hikariCpVersion"
-    implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
-    implementation project(path: ':server')
+    implementation (
+            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
+            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
+            "com.google.cloud.sql:mysql-socket-factory:$deps.versions.cloudSqlSocketFactory",
+            project(path: ':server')
+    )
 }
 
 // A task to run the server. See `LocalCloudSqlServer` for the details.

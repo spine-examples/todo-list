@@ -18,33 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript { final scriptHandler ->
-    apply from: "$rootDir/config/gradle/dependencies.gradle"
-    apply from: 'version.gradle'
-
-    defaultRepositories(scriptHandler)
-    dependencies {
-        classpath deps.build.guava
-        classpath(deps.build.gradlePlugins.protobuf) {
-            // exclude an old Guava version
-            exclude group: 'com.google.guava'
-        }
-        classpath deps.build.gradlePlugins.protobuf
-        classpath deps.build.gradlePlugins.errorProne
-        classpath("org.gretty:gretty:$grettyVersion") {
-            exclude group: 'commons-logging'
-        }
-        classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
-        classpath "io.spine.tools:spine-model-verifier:$spineVersion"
-        classpath "io.spine.tools:spine-proto-js-plugin:$spineBaseVersion"
-    }
-
-    forceConfiguration(scriptHandler)
-}
-
 plugins {
     id 'io.spine.tools.gradle.bootstrap' version '0.15.6' apply false
+    id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
+
+final def scripts = [
+    version : "$rootDir/version.gradle",
+    jacoco : "$rootDir/config/gradle/jacoco.gradle",
+    staticAnalysis: "$rootDir/gradle/static-analysis.gradle"
+]
 
 allprojects {
     apply plugin: 'io.spine.tools.gradle.bootstrap'
@@ -52,20 +35,37 @@ allprojects {
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
+    apply from: "$scripts.version"
 
     spine.enableJava()
+
+    ext {
+        final def gradlePlugins = [
+            errorProne   : "net.ltgt.gradle:gradle-errorprone-plugin:$deps.versions.errorPronePlugin",
+            protobuf     : "com.google.protobuf:protobuf-gradle-plugin:$deps.versions.protobufPlugin",
+            appengine    : "com.google.cloud.tools:appengine-gradle-plugin:$deps.versions.appenginePlugin",
+            licenseReport: "com.github.jk1:gradle-license-report:$deps.versions.licensePlugin"
+        ]
+
+        run = [
+                "scripts"       : scripts,
+                "gradlePlugins" : gradlePlugins
+        ]
+    }
 }
 
 subprojects {
+    apply from: "$rootDir/version.gradle"
     dependencies {
-        errorprone deps.build.errorProneCore
-        errorproneJavac deps.build.errorProneJavac
-
-        implementation deps.build.guava
-        implementation deps.build.checkerAnnotations
-
-        testImplementation group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
-        testRuntimeOnly deps.test.junit5Runner
+        errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
+        errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
+        implementation (
+                "com.google.guava:guava:$deps.versions.guava",
+                "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
+        )
+        runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
+        testImplementation "io.spine:spine-testutil-server:$deps.versions.spineCore"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit5"
     }
 
     test {
@@ -73,10 +73,9 @@ subprojects {
             includeEngines 'junit-jupiter'
         }
     }
-    
-    apply from: deps.scripts.testOutput
-    apply from: deps.scripts.javacArgs
-    apply from: deps.scripts.pmd
+
+    apply plugin: 'net.ltgt.errorprone'
+    apply from: run.scripts.staticAnalysis
 }
 
 ext {
@@ -104,4 +103,4 @@ if (isTravis) {
     }
 }
 
-apply from: deps.scripts.jacoco
+apply from: run.scripts.jacoco

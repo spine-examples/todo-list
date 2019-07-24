@@ -23,37 +23,35 @@ buildscript {
         maven { url = repos.gradlePlugins }
     }
     dependencies {
-        classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
-        classpath deps.build.gradlePlugins.appengine
-        classpath deps.build.guava
+        classpath "gradle.plugin.org.gretty:gretty:$deps.versions.gretty"
+        classpath run.gradlePlugins.appengine
+        classpath "com.google.guava:guava:$deps.versions.guava"
     }
 }
 
 apply plugin: 'war'
 apply plugin: 'com.google.cloud.tools.appengine'
 
-apply from: "$projectDir/scripts/appengine.gradle"
-apply from: "$projectDir/scripts/datastore-emulator.gradle"
+apply from: "$projectDir/gradle/appengine.gradle"
+apply from: "$projectDir/gradle/datastore-emulator.gradle"
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-    jcenter()
-}
+apply from: "$rootDir/version.gradle"
 
 dependencies {
-    implementation project(':server')
-
-    implementation 'com.google.appengine:appengine-api-1.0-sdk:1.9.67'
-    implementation "io.spine:spine-web:$spineWebVersion"
-    implementation "io.spine.gcloud:spine-firebase-web:$spineWebVersion"
-    implementation "io.spine.gcloud:spine-datastore:$spineVersion"
-    implementation "io.spine.gcloud:spine-stackdriver-trace:$spineVersion"
-
-    implementation "com.google.api-client:google-api-client:$googleApiClient"
-    implementation("com.google.api-client:google-api-client-appengine:$googleApiClient") {
+    implementation("com.google.api-client:google-api-client-appengine:$deps.versions.googleApiClient") {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
+    implementation (
+        "com.google.appengine:appengine-api-1.0-sdk:$deps.versions.appengineSdk",
+        "com.google.api-client:google-api-client:$deps.versions.googleApiClient",
+
+        "io.spine:spine-web:$deps.versions.spineWeb",
+        "io.spine.gcloud:spine-firebase-web:$deps.versions.spineWeb",
+        "io.spine.gcloud:spine-datastore:$deps.versions.spineGcloud",
+        "io.spine.gcloud:spine-stackdriver-trace:$deps.versions.spineGcloud",
+
+        project(':server')
+    )
 }
 
 appengine {
@@ -69,10 +67,10 @@ idea.module {
     excludeDirs += file("$projectDir/src/main/webapp/static")
 
     iml {
-        beforeMerged { module ->
+        beforeMerged { final module ->
             module.dependencies.clear()
         }
-        whenMerged { module ->
+        whenMerged { final module ->
             module.dependencies*.exported = true
         }
     }
@@ -85,7 +83,7 @@ tasks["appengineStop"].dependsOn stopDatastore
 configurations.all {
     resolutionStrategy.eachDependency {
         if (it.requested.group == 'javax.servlet') {
-            it.useVersion(servletApiVersion)
+            it.useVersion("$deps.versions.appEngineServletApi")
         }
     }
 }
