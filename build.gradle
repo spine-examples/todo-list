@@ -24,9 +24,9 @@ plugins {
 }
 
 final def scripts = [
-    version : "$rootDir/version.gradle",
-    jacoco : "$rootDir/config/gradle/jacoco.gradle",
-    staticAnalysis: "$rootDir/gradle/static-analysis.gradle"
+    version         : "$rootDir/version.gradle",
+    jacoco          : "$rootDir/gradle/jacoco.gradle",
+    staticAnalysis  : "$rootDir/gradle/static-analysis.gradle"
 ]
 
 allprojects {
