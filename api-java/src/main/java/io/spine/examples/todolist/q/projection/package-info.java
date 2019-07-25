@@ -21,7 +21,10 @@
 /**
  * This package provides implementation for projection classes.
  */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.q.projection;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;

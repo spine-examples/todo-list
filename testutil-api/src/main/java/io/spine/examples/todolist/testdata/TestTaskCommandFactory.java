@@ -39,7 +39,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.base.Time.currentTime;
 
 /**
@@ -49,14 +48,8 @@ import static io.spine.base.Time.currentTime;
 // It's necessary to provide all task-related commands.
 public class TestTaskCommandFactory {
 
-    public static final TaskId TASK_ID = TaskId
-            .newBuilder()
-            .setValue(newUuid())
-            .vBuild();
-    public static final LabelId LABEL_ID = LabelId
-            .newBuilder()
-            .setValue(newUuid())
-            .vBuild();
+    public static final TaskId TASK_ID = TaskId.generate();
+    public static final LabelId LABEL_ID = LabelId.generate();
     public static final String DESCRIPTION = "Task description.";
     private static final Timestamp DUE_DATE = currentTime();
 

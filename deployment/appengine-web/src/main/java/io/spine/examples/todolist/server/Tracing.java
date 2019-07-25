@@ -27,32 +27,24 @@ import io.grpc.CallOptions;
 import io.grpc.ManagedChannel;
 import io.grpc.auth.MoreCallCredentials;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
-import io.spine.server.ContextSpec;
 import io.spine.server.trace.TracerFactory;
 import io.spine.server.trace.stackdriver.StackdriverTracerFactory;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Factory of {@link io.spine.server.trace.TracerFactory} instances.
  */
 final class Tracing {
 
-    /**
-     * Prevents the utility class instantiation.
-     */
+    /** Prevents the utility class instantiation. */
     private Tracing() {
     }
 
     /**
      * Creates a {@link TracerFactory} for the given context.
      *
-     * @param context
-     *         bounded context info
      * @return new tracer factory
      */
-    static TracerFactory createTracing(ContextSpec context) {
-        checkNotNull(context);
+    static TracerFactory createTracing() {
         GrpcCallContext callContext = callContext();
         String projectId = Configuration.instance()
                                         .projectId();
@@ -60,7 +52,6 @@ final class Tracing {
                 .newBuilder()
                 .setGcpProjectId(projectId)
                 .setCallContext(callContext)
-                .setContext(context.name())
                 .build();
         return result;
     }

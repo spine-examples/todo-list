@@ -21,13 +21,15 @@
 dependencies {
     implementation project(path: ':client')
 
-    testImplementation "mysql:mysql-connector-java:$mysqlDriverVersion"
-    testImplementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
-    testImplementation "com.zaxxer:HikariCP:$hikariCpVersion"
-    testImplementation "org.junit.platform:junit-platform-console-standalone:$jUnitPlatformVersion"
+    testImplementation(
+        "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
+        "io.spine:spine-rdbms:$deps.versions.spineJdbc",
+        "com.zaxxer:HikariCP:$deps.versions.hikariCp",
+        "org.junit.platform:junit-platform-console-standalone:$deps.versions.junitPlatform",
 
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
+        project(path: ':testutil-api'),
+        project(path: ':server')
+    )
 }
 
 task integrationTest(type: JavaExec) {

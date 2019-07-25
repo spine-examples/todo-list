@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.function.Predicate;
 
-import static io.spine.examples.todolist.q.projection.given.TaskViewProjectionTestEnv.randomTaskId;
 import static io.spine.examples.todolist.q.projection.given.TaskViewProjectionTestEnv.theDayAfterTomorrow;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static org.junit.Assert.assertTrue;
@@ -50,7 +49,7 @@ class TaskViewProjectionTest {
 
     @BeforeEach
     void setUp() {
-        taskId = randomTaskId();
+        taskId = TaskId.generate();
         repository = new TaskViewRepository();
         boundedContext = BlackBoxBoundedContext.singleTenant()
                                                .with(repository);

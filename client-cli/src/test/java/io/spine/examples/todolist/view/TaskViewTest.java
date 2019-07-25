@@ -22,9 +22,11 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
@@ -33,27 +35,33 @@ import static io.spine.examples.todolist.view.ViewOfTask.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.ViewOfTask.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.ViewOfTask.PRIORITY_VALUE;
 import static java.lang.System.lineSeparator;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("TaskView should")
 class TaskViewTest extends ViewTest {
 
-    private final TaskView task = TaskView
-            .newBuilder()
-            .setDescription(newDescription("my task description"))
-            .setPriority(NORMAL)
-            .setDueDate(currentTime())
-            .build();
-    private final ViewOfTask taskView = new ViewOfTask(TaskId.getDefaultInstance());
+    private TaskView task;
+    private ViewOfTask taskView;
+
+    @BeforeEach
+    void createTaskAndView() {
+        task = TaskView
+                .newBuilder()
+                .setId(TaskId.generate())
+                .setDescription(newDescription("my task description"))
+                .setPriority(NORMAL)
+                .setDueDate(currentTime())
+                .vBuild();
+        taskView = new ViewOfTask(TaskId.getDefaultInstance());
+    }
 
     @Test
-    @DisplayName("throw the exception if nonexistent task ID is specified")
+    @DisplayName("throw the exception if non-existing task ID is specified")
     void notAllowNonexistentTaskId() {
         TaskId id = TaskId
                 .newBuilder()
-                .setValue("invalid ID")
-                .build();
+                .setUuid("invalid ID")
+                .vBuild();
         assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }
 
@@ -64,6 +72,8 @@ class TaskViewTest extends ViewTest {
                 DESCRIPTION_VALUE + task.getDescription() + lineSeparator() +
                         PRIORITY_VALUE + task.getPriority() + lineSeparator() +
                         DUE_DATE_VALUE + format(task.getDueDate());
-        assertEquals(expectedResult, taskView.renderState(task));
+
+        assertThat(taskView.renderState(task))
+             .isEqualTo(expectedResult);
     }
 }

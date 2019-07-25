@@ -64,10 +64,10 @@ class FinalizeDraftTest extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance();
         DeleteTask deleteTask = deleteTaskInstance(taskId());
         FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(finalizeDraft)
-                        .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(finalizeDraft)
+                 .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
     }
 
     @Test
@@ -76,8 +76,8 @@ class FinalizeDraftTest extends TaskCommandTestBase {
     void cannotFinalizeNotDraftTask() {
         CreateBasicTask createTask = createTaskInstance();
         FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(finalizeDraft)
-                        .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(finalizeDraft)
+                 .assertRejectedWith(Rejections.CannotFinalizeDraft.class);
     }
 }

@@ -39,7 +39,7 @@ class TransitionActionTest {
 
     @BeforeAll
     static void setUp() {
-        Application application = Application.getInstance();
+        Application application = Application.instance();
         if (application.screen() == null) {
             application.init(new TestScreen());
         }

@@ -128,7 +128,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bu
                 .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
                 .addIds(event.getLabelId())
-                .build();
+                .vBuild();
         builder().setId(event.getTaskId())
                  .setLabelIdsList(newLabelsList);
     }

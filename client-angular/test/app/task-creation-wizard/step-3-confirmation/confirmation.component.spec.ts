@@ -79,7 +79,7 @@ describe('ConfirmationComponent', () => {
     mockClient.fetchById.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(ConfirmationComponent);
     component = fixture.componentInstance;
-    component.wizard.init(taskCreationProcess().getId().getValue());
+    component.wizard.init(taskCreationProcess().getId().getUuid());
     tick();
     component.stepper = mockStepper();
     component.initFromWizard();

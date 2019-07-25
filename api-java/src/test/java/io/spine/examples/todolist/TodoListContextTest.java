@@ -18,41 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist;
 
-import io.spine.logging.Logging;
-import org.slf4j.Logger;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static java.lang.String.format;
+import static com.google.common.truth.Truth.assertThat;
 
-/**
- * A logger facade to be used when logging the application start up process.
- */
-final class StartUpLogger {
+@DisplayName("TodoListContext config class should")
+class TodoListContextTest extends UtilityClassTest<TodoListContext> {
 
-    private static final Logger logger = Logging.get(Application.class);
-    private static final StartUpLogger instance = new StartUpLogger();
-
-    /**
-     * Prevents direct instantiation.
-     */
-    private StartUpLogger() {
+    TodoListContextTest() {
+        super(TodoListContext.class);
     }
 
-    static StartUpLogger instance() {
-        return instance;
-    }
-
-    /**
-     * Logs the given message on the {@code INFO} level.
-     *
-     * @param template
-     *         the logged message template
-     * @param arguments
-     *         the message template arguments
-     */
-    void log(String template, Object... arguments) {
-        String messageTemplate = format("Start up: %s", template);
-        logger.debug(messageTemplate, arguments);
+    @Test
+    @DisplayName("declare name constant")
+    void name() {
+        assertThat(TodoListContext.NAME)
+                .isNotEmpty();
     }
 }

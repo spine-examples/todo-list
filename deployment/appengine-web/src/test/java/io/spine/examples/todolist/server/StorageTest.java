@@ -22,20 +22,21 @@ package io.spine.examples.todolist.server;
 
 import com.google.cloud.datastore.DatastoreOptions;
 import io.spine.examples.todolist.server.given.StorageTestEnv.EmptyCredentials;
+import io.spine.server.ServerEnvironment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.server.DeploymentType.APPENGINE_CLOUD;
 import static io.spine.server.DeploymentType.APPENGINE_EMULATOR;
 import static io.spine.server.DeploymentType.STANDALONE;
-import static io.spine.server.ServerEnvironment.configureDeployment;
-import static io.spine.server.ServerEnvironment.resetDeploymentType;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Storage should")
 class StorageTest {
+
+    protected static final ServerEnvironment serverEnvironment = ServerEnvironment.instance();
 
     @Nested
     @DisplayName("provide DatastoreOptions for")
@@ -43,33 +44,40 @@ class StorageTest {
 
         @AfterEach
         void tearDown() {
-            resetDeploymentType();
+            serverEnvironment.reset();
         }
 
         @Test
         @DisplayName("on App Engine cloud infrastructure")
         void onGaeCloud() {
-            configureDeployment(() -> APPENGINE_CLOUD);
+            serverEnvironment.configureDeployment(() -> APPENGINE_CLOUD);
             DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
-            assertEquals("https://datastore.googleapis.com", options.getHost());
+            assertThat(options.getHost())
+                    .isEqualTo("https://datastore.googleapis.com");
         }
 
         @Test
         @DisplayName("on App Engine emulator")
         void onGaeEmulator() {
-            configureDeployment(() -> APPENGINE_EMULATOR);
+            serverEnvironment.configureDeployment(() -> APPENGINE_EMULATOR);
             DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
-            assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
-            assertEquals(Configuration.instance().projectId(), options.getProjectId());
+
+            assertThat(options.getHost())
+                    .isEqualTo(Storage.LOCAL_DATASTORE_HOST);
+            assertThat(options.getProjectId())
+                    .isEqualTo(Configuration.instance().projectId());
         }
 
         @Test
         @DisplayName("in standalone mode")
         void inStandaloneMode() {
-            configureDeployment(() -> STANDALONE);
+            serverEnvironment.configureDeployment(() -> STANDALONE);
             DatastoreOptions options = Storage.datastoreOptions(new EmptyCredentials());
-            assertEquals(Storage.LOCAL_DATASTORE_HOST, options.getHost());
-            assertEquals(Configuration.instance().projectId(), options.getProjectId());
+
+            assertThat(options.getHost())
+                    .isEqualTo(Storage.LOCAL_DATASTORE_HOST);
+            assertThat(options.getProjectId())
+                    .isEqualTo(Configuration.instance().projectId());
         }
     }
 }

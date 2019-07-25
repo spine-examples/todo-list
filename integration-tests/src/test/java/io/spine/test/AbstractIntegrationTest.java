@@ -23,15 +23,15 @@ package io.spine.test;
 import com.google.common.collect.ImmutableList;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
-import io.spine.server.ContextSpec;
+import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +49,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
@@ -67,7 +66,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Base class for integration and performance tests. Encapsulates server, clients setup logic.
  *
- * <p>Contains {@link #getClients() method getClients} to access clients.
+ * <p>Contains {@link #clients() method getClients} to access clients.
  *
  * <p>Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
  * operation in multithreaded environment.
@@ -120,11 +119,10 @@ public abstract class AbstractIntegrationTest {
         return properties;
     }
 
-    private static Function<ContextSpec, StorageFactory> createStorageFactory() {
-        return spec -> JdbcStorageFactory
+    private static StorageFactory createStorageFactory() {
+        return JdbcStorageFactory
                 .newBuilder()
                 .setDataSource(createDataSource())
-                .setMultitenant(spec.isMultitenant())
                 .build();
     }
 
@@ -155,8 +153,8 @@ public abstract class AbstractIntegrationTest {
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
-        BoundedContext boundedContextInMemory = createBoundedContext();
-        server = newServer(PORT, boundedContextInMemory);
+        BoundedContext context = createContext();
+        server = newServer(PORT, context);
         startServer();
         client = TodoClient.instance(HOST, PORT);
         for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {
@@ -167,8 +165,8 @@ public abstract class AbstractIntegrationTest {
     @AfterEach
     protected void tearDown() {
         server.shutdown();
-        getClient().shutdown();
-        getClients().forEach(TodoClient::shutdown);
+        client().shutdown();
+        clients().forEach(TodoClient::shutdown);
     }
 
     private void startServer() throws InterruptedException {
@@ -187,25 +185,26 @@ public abstract class AbstractIntegrationTest {
     }
 
     @SuppressWarnings("AccessOfSystemProperties") // OK for this test.
-    private static BoundedContext createBoundedContext() {
+    private static BoundedContext createContext() {
         String storageType = System.getProperty(STORAGE_TYPE_PROPERTY_KEY);
-        BoundedContext boundedContext = null;
-        if (!nonNull(storageType) || storageType.equals(STORAGE_TYPE_IN_MEMORY)) {
-            boundedContext = BoundedContexts.create();
-        } else if (storageType.equals(STORAGE_TYPE_JDBC)) {
-            boundedContext = BoundedContexts.create(createStorageFactory());
-        } else {
-            fail("Property storage.type contains not supported storage type, read README.md to " +
-                         "find supported storage types.");
+        if (nonNull(storageType) && !storageType.equals(STORAGE_TYPE_IN_MEMORY)) {
+            if (storageType.equals(STORAGE_TYPE_JDBC)) {
+                ServerEnvironment.instance()
+                                 .configureStorage(createStorageFactory());
+            } else {
+                fail("Property storage.type contains not supported storage type, read README.md to " +
+                             "find supported storage types.");
+            }
         }
-        return boundedContext;
+        BoundedContext context  = TodoListContext.create();
+        return context;
     }
 
-    protected TodoClient getClient() {
+    protected TodoClient client() {
         return client;
     }
 
-    protected ImmutableList<TodoClient> getClients() {
+    protected ImmutableList<TodoClient> clients() {
         return ImmutableList.copyOf(clients);
     }
 
@@ -227,7 +226,6 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected interface ToDoCommand {
-
         void execute(int iterationIndex);
     }
 
@@ -235,9 +233,8 @@ public abstract class AbstractIntegrationTest {
         try {
             task.get();
         } catch (Throwable e) {
-            throw newIllegalStateException(e, "Test task did not complete normally, reason: %s",
+            throw newIllegalStateException(e, "Test task did not complete normally, reason: %s.",
                                            e.getLocalizedMessage());
         }
     }
-
 }

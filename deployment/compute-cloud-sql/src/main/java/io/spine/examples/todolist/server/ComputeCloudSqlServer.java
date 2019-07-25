@@ -21,14 +21,15 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.flogger.FluentLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
-import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.logging.Logging;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.server.BoundedContext;
+import io.spine.server.ServerEnvironment;
+import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
-import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -52,8 +53,10 @@ import static java.lang.String.format;
                                                         for servers in different modules. */)
 public class ComputeCloudSqlServer {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
     private static final String DB_PROPERTIES_FILE = "cloud-sql.properties";
-    private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
+    private static final Properties properties = loadProperties(DB_PROPERTIES_FILE);
 
     private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
             "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
@@ -63,22 +66,27 @@ public class ComputeCloudSqlServer {
     }
 
     public static void main(String[] args) throws IOException {
-        BoundedContext boundedContext = createBoundedContext();
-        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        ServerEnvironment.instance()
+                         .configureStorage(createStorageFactory());
+
+        BoundedContext context = createContext();
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
         server.start();
     }
 
     @VisibleForTesting
-    static BoundedContext createBoundedContext() {
-        return BoundedContexts.create(spec -> JdbcStorageFactory
-                .newBuilder()
-                .setDataSource(createDataSource())
-                .setMultitenant(spec.isMultitenant())
-                .build());
+    static BoundedContext createContext() {
+        return TodoListContext.create();
+    }
+
+    private static StorageFactory createStorageFactory() {
+        return JdbcStorageFactory.newBuilder()
+                                 .setDataSource(createDataSource())
+                                 .build();
     }
 
     private static DataSource createDataSource() {
-        Logger log = Logging.get(ComputeCloudSqlServer.class);
+        FluentLogger.Api info = logger.atInfo();
         HikariConfig config = new HikariConfig();
 
         String instanceConnectionName = properties.getProperty("db.instance");
@@ -86,16 +94,16 @@ public class ComputeCloudSqlServer {
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
 
-        log.info("Start `DataSource` creation. The following parameters will be used:");
-        String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
+        info.log("Start `DataSource` creation. The following parameters will be used:");
+        String dbUrl = format(DB_URL_FORMAT, dbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
-        log.info("JDBC URL: {}", dbUrl);
+        info.log("JDBC URL: %s", dbUrl);
 
         config.setUsername(username);
-        log.info("Username: {}", username);
+        info.log("Username: %s", username);
 
         config.setPassword(password);
-        log.info("Password: {}", password);
+        info.log("Password: %s", password);
 
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;
@@ -111,15 +119,15 @@ public class ComputeCloudSqlServer {
      *
      * @return the prefix for a connection {@code URL}
      */
-    private static String getDbUrlPrefix() {
-        Environment environment = Environment.getInstance();
+    private static String dbUrlPrefix() {
+        Environment environment = Environment.instance();
         String prefix = environment.isTests()
                         ? "jdbc:h2:mem:"
                         : properties.getProperty("db.prefix");
         return prefix;
     }
 
-    private static Properties getProperties(String propertiesFile) {
+    private static Properties loadProperties(String propertiesFile) {
         Properties properties = new Properties();
         InputStream stream = ComputeCloudSqlServer.class.getClassLoader()
                                                         .getResourceAsStream(propertiesFile);

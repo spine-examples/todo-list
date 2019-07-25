@@ -54,9 +54,9 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
                                                .getValue();
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), previousDescription, NEW_DESCRIPTION);
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(updateDescription)
-                        .assertEmitted(TaskDescriptionUpdated.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(updateDescription)
+                 .assertEmitted(TaskDescriptionUpdated.class);
     }
 
     @Test
@@ -88,10 +88,10 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), previousDescription, NEW_DESCRIPTION);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(updateDescription)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(updateDescription)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
     }
 
     @Test
@@ -106,10 +106,10 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), previousDescription, NEW_DESCRIPTION);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
-                        .receivesCommand(updateDescription)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask)
+                 .receivesCommand(updateDescription)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
     }
 
     @Test
@@ -122,8 +122,8 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         UpdateTaskDescription updateDescription =
                 updateTaskDescriptionInstance(taskId(), incorrectDescription, NEW_DESCRIPTION);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(updateDescription)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(updateDescription)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
     }
 }

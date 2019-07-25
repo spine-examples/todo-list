@@ -21,14 +21,15 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.flogger.FluentLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
-import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.logging.Logging;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.server.BoundedContext;
+import io.spine.server.ServerEnvironment;
+import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
-import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -48,7 +49,7 @@ import static java.lang.String.format;
  * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
- * {@linkplain #getDefaultArguments() default arguments} will be used.
+ * {@linkplain #defaultArguments() default arguments} will be used.
  * The arguments are stored in the properties file {@code jdbc-storage.properties}.
  *
  * <p>As the server uses {@code MySQL}, the database with the specified name should be created
@@ -61,8 +62,9 @@ import static java.lang.String.format;
                                                         for servers in different modules. */)
 public class LocalMySqlServer {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
-    private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
+    private static final Properties properties = loadProperties(DB_PROPERTIES_FILE);
 
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
 
@@ -71,19 +73,21 @@ public class LocalMySqlServer {
     }
 
     public static void main(String[] args) throws IOException {
-        String[] actualArguments = getActualArguments(args);
-        BoundedContext boundedContext = createBoundedContext(actualArguments);
-        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        String[] actualArguments = actualArgumentsFrom(args);
+        ServerEnvironment.instance()
+                         .configureStorage(createStorageFactory(actualArguments));
+        BoundedContext context = createContext();
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
         server.start();
     }
 
     @VisibleForTesting
-    static String[] getActualArguments(String[] commandLineArguments) {
-        Logger log = Logging.get(LocalMySqlServer.class);
-        String[] defaultArguments = getDefaultArguments();
+    static String[] actualArgumentsFrom(String[] commandLineArguments) {
+        String[] defaultArguments = defaultArguments();
         if (commandLineArguments.length != defaultArguments.length) {
-            log.info("The specified arguments don't match the length requirement. " +
-                             "Required arguments size: {}. Default arguments will be used: {}.",
+            logger.atInfo().log(
+                    "The specified arguments do not match the length requirement. " +
+                             "Required arguments size: %d. Default arguments will be used: %s.",
                      defaultArguments.length, defaultArguments);
             return defaultArguments;
         } else {
@@ -92,32 +96,35 @@ public class LocalMySqlServer {
     }
 
     @VisibleForTesting
-    static BoundedContext createBoundedContext(String[] args) {
-        return BoundedContexts.create(spec -> JdbcStorageFactory
+    static BoundedContext createContext() {
+        return TodoListContext.create();
+    }
+
+    private static StorageFactory createStorageFactory(String[] args) {
+        return JdbcStorageFactory
                 .newBuilder()
                 .setDataSource(createDataSource(args))
-                .setMultitenant(spec.isMultitenant())
-                .build());
+                .build();
     }
 
     private static DataSource createDataSource(String[] args) {
-        Logger log = Logging.get(LocalMySqlServer.class);
+        FluentLogger.Api info = logger.atInfo();
         HikariConfig config = new HikariConfig();
 
         String dbName = args[0];
         String username = args[1];
         String password = args[2];
 
-        log.info("Start `DataSource` creation. The following parameters will be used:");
-        String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
+        info.log("Start `DataSource` creation. The following parameters will be used:");
+        String dbUrl = format(DB_URL_FORMAT, dbUrlPrefix(), dbName);
         config.setJdbcUrl(dbUrl);
-        log.info("JDBC URL: {}", dbUrl);
+        info.log("JDBC URL: %s", dbUrl);
 
         config.setUsername(username);
-        log.info("Username: {}", username);
+        info.log("Username: %s", username);
 
         config.setPassword(password);
-        log.info("Password: {}", password);
+        info.log("Password: %s", password);
 
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;
@@ -133,8 +140,8 @@ public class LocalMySqlServer {
      *
      * @return the prefix for a connection {@code URL}
      */
-    private static String getDbUrlPrefix() {
-        Environment environment = Environment.getInstance();
+    private static String dbUrlPrefix() {
+        Environment environment = Environment.instance();
         String prefix = environment.isTests()
                         ? "jdbc:h2:mem:"
                         : properties.getProperty("db.prefix");
@@ -142,14 +149,14 @@ public class LocalMySqlServer {
     }
 
     @VisibleForTesting
-    static String[] getDefaultArguments() {
+    static String[] defaultArguments() {
         String dbName = properties.getProperty("db.name");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
         return new String[]{dbName, username, password};
     }
 
-    private static Properties getProperties(String propertiesFile) {
+    private static Properties loadProperties(String propertiesFile) {
         Properties properties = new Properties();
         InputStream stream = LocalMySqlServer.class.getClassLoader()
                                                    .getResourceAsStream(propertiesFile);

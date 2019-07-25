@@ -20,7 +20,7 @@
 
 spine.enableJava().client()
 
-apply from: "$rootDir/scripts/publish.gradle"
+apply from: "$rootDir/gradle/publish.gradle"
 
 dependencies {
     compile project(path: ':model')

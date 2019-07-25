@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.common.collect.ImmutableSet;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.server.BoundedContext;
 import io.spine.server.firebase.FirebaseSubscriptionMirror;
@@ -56,7 +56,7 @@ public class LocalFirebaseServer {
     private LocalFirebaseServer() {}
 
     public static void main(String[] args) throws IOException {
-        BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = TodoListContext.create();
         startSubscriptionMirror(boundedContext);
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();

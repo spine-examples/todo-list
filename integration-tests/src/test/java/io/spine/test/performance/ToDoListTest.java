@@ -41,7 +41,7 @@ class ToDoListTest extends AbstractIntegrationTest {
     @Disabled
     @DisplayName("Create tasks concurrently and retrieve projection")
     void firstFlow() {
-        ImmutableList<TodoClient> clients = getClients();
+        ImmutableList<TodoClient> clients = clients();
         int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             CreateBasicTask basicTask = createBasicTask();
@@ -49,7 +49,7 @@ class ToDoListTest extends AbstractIntegrationTest {
                    .postCommand(basicTask);
         }, numberOfRequests);
 
-        List<TaskView> taskItems = getClient().taskViews();
+        List<TaskView> taskItems = client().taskViews();
 
         assertEquals(numberOfRequests, taskItems.size());
     }
@@ -57,7 +57,7 @@ class ToDoListTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Create tasks concurrently and retrieve aggregate state")
     void secondFlow() {
-        ImmutableList<TodoClient> clients = getClients();
+        ImmutableList<TodoClient> clients = clients();
         int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             CreateBasicTask basicTask = createBasicTask();
@@ -65,7 +65,7 @@ class ToDoListTest extends AbstractIntegrationTest {
                    .postCommand(basicTask);
         }, numberOfRequests);
 
-        List<Task> tasks = getClient().tasks();
+        List<Task> tasks = client().tasks();
 
         assertEquals(numberOfRequests, tasks.size());
     }

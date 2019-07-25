@@ -18,13 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-ext {
-    firebaseMirrorVersion = spineVersion
-}
-
 dependencies {
-    implementation project(path: ':server')
-    implementation "io.spine:spine-firebase-mirror:$firebaseMirrorVersion"
-    implementation deps.build.firebaseAdmin
-    implementation "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
+    implementation (
+        "com.google.firebase:firebase-admin:$deps.versions.firebaseAdmin",
+        "io.netty:netty-tcnative-boringssl-static:$deps.versions.nettyBoringssl",
+        "io.spine:spine-firebase-mirror:$deps.versions.spineFirebaseMirror",
+        project(path: ':server')
+    )
 }

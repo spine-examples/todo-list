@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/build-profile.gradle"
-apply from: "$rootDir/scripts/js.gradle"
+apply from: "$rootDir/gradle/build-profile.gradle"
+apply from: "$rootDir/gradle/js.gradle"
 
 buildJs {
     outputs.dir "$projectDir/dist"
@@ -37,6 +37,7 @@ testJs {
     dependsOn buildJs
 }
 
+@SuppressWarnings("GrMethodMayBeStatic")
 def buildParameter() {
     if (ext.isDev()) {
         return 'build-dev'

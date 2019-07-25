@@ -24,7 +24,7 @@ import io.spine.cli.Application;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.cli.Application.getInstance;
+import static io.spine.cli.Application.instance;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -42,9 +42,9 @@ class ApplicationTest {
     void allowInitOnlyOnce() {
         try {
             // Exception may be thrown during first call also (if was initialized in other tests).
-            getInstance().init(new TerminalScreen());
+            instance().init(new TerminalScreen());
 
-            getInstance().init(new TerminalScreen());
+            instance().init(new TerminalScreen());
             fail("Exception should be thrown.");
         } catch (IllegalStateException ignored) {
         }

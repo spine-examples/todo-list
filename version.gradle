@@ -21,31 +21,69 @@
 
 final def SPINE_VERSION = '1.0.0-SNAPSHOT'
 
-project.ext {
-    // To-do List app version.
+final def versions = [
+        checkerFramework : "2.9.0",
+        errorProne       : "2.3.3",
+        errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+        errorPronePlugin : "0.8.1",
+        pmd              : "6.16.0",
+        checkstyle       : "8.19",
+        protobufPlugin   : "0.8.8",
+        findBugs         : "3.0.2",
+        guava            : "28.0-jre",
+        protobuf         : "3.9.0",
+        grpc             : "1.22.0",
+        flogger          : "0.4",
+        junit5           : "5.5.1",
+        junitPlatform    : "1.5.1",
+        truth            : "0.44",
+        httpClient       : "1.29.0",
+        licensePlugin    : '1.6',
+        netty            : '1.22.0',
+        gretty           : '2.3.1',
+
+        shadowJar        : '4.0.4',
+        mysqlDriver      : '6.0.6',
+        nettyBoringssl   : '2.0.6.Final',
+        hikariCp         : '2.4.3',
+
+        servletApi       : '4.0.0',
+        firebaseAdmin    : "6.8.0",
+        appengineApi     : "1.9.73",
+        appengineSdk     : "1.9.67",
+        appenginePlugin  : "1.3.5",
+        //TODO:2019-07-25:alexander.yevsyukov:  return to 3.1.0 after fixing dependencies
+        // See: https://github.com/spine-examples/todo-list/issues/107
+        appEngineServletApi : '4.0.0',
+        cloudSqlSocketFactory : '1.0.4',
+
+        // Versions of Google APIs Client libraries.
+        googleApiClient  : '1.27.0',
+
+        // Spine components versions.
+        spineBase        : SPINE_VERSION,
+        spineCore        : SPINE_VERSION,
+        spineWeb         : SPINE_VERSION,
+        spineFirebaseMirror : SPINE_VERSION,
+        spineJdbc        : SPINE_VERSION,
+        spineGcloud      : SPINE_VERSION
+]
+
+//noinspection GroovyAssignabilityCheck
+final def grpc = [
+        grpcCore               : "io.grpc:grpc-core:$versions.grpc",
+        grpcStub               : "io.grpc:grpc-stub:$versions.grpc",
+        grpcOkHttp             : "io.grpc:grpc-okhttp:$versions.grpc",
+        grpcProtobuf           : "io.grpc:grpc-protobuf:$versions.grpc",
+        grpcNetty              : "io.grpc:grpc-netty:$versions.grpc",
+        grpcContext            : "io.grpc:grpc-context:$versions.grpc"
+]
+
+ext {
+    deps = [
+        "versions" : versions,
+        "grpc"     : grpc
+    ]
+    // The version of this application.
     appVersion = SPINE_VERSION
-
-    // Versions of Spine libraries.
-    spineVersion = SPINE_VERSION
-
-    spineJdbcStorageVersion = SPINE_VERSION
-    spineBaseVersion = SPINE_VERSION
-    spineWebVersion = SPINE_VERSION
-
-    // Versions of Google APIs Client libraries.
-    googleApiClient = '1.27.0'
-
-    // Versions of 3rd-party runtime dependencies.
-    servletApiVersion = '4.0.0'
-    cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '4.0.4'
-    mysqlDriverVersion = '6.0.6'
-    gsonVersion = '2.7'
-    nettyBoringsslVersion = '2.0.6.Final'
-    grettyVersion = '2.3.1'
-    hikariCpVersion = '2.4.3'
-
-    // Versions of 3rd-party test-scope dependencies.
-    jUnitPlatformVersion = '1.0.0'
-    jUnitVersion = '5.0.0'
 }

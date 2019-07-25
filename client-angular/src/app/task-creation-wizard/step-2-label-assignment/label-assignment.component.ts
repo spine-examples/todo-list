@@ -88,7 +88,7 @@ export class LabelAssignmentComponent extends WizardStep {
   initFromWizard(): void {
     this.loadAvailableLabels
       .then(labels => {
-        const findMatch = id => labels.find(label => label.getId().getValue() === id.getValue());
+        const findMatch = id => labels.find(label => label.getId().getUuid() === id.getUuid());
         this.selected = this.wizard.taskLabels.map(findMatch);
       })
       .catch(err => {

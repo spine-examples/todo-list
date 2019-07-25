@@ -48,15 +48,15 @@ class CreateDraftTest extends TaskCommandTestBase {
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
         CreateDraft createDraftCmd = createDraftInstance();
-        boundedContext().receivesCommand(createDraftCmd)
-                        .assertEmitted(TaskDraftCreated.class);
+        context().receivesCommand(createDraftCmd)
+                 .assertEmitted(TaskDraftCreated.class);
     }
 
     @Test
     @DisplayName("create the draft")
     void createDraft() {
         CreateDraft createDraft = createDraftInstance(taskId());
-        boundedContext().receivesCommand(createDraft);
+        context().receivesCommand(createDraft);
 
         TaskView expected = TaskView
                 .newBuilder()
@@ -75,9 +75,9 @@ class CreateDraftTest extends TaskCommandTestBase {
         DeleteTask deleteTask = deleteTaskInstance(taskId);
         CreateDraft createDraft = createDraftInstance(taskId);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(createDraft)
-                        .assertRejectedWith(Rejections.CannotCreateDraft.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(createDraft)
+                 .assertRejectedWith(Rejections.CannotCreateDraft.class);
     }
 }

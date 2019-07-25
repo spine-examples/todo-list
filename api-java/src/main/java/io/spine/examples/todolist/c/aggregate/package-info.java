@@ -21,7 +21,10 @@
 /**
  * This package provides implementation for aggregate classes.
  */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.c.aggregate;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;

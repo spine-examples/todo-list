@@ -22,7 +22,12 @@
  * This package contains implementation for classes which provides
  * methods to process aggregates and projection.
  */
+@BoundedContext(TodoListContext.NAME)
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist;
+
+import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.server.annotation.BoundedContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;

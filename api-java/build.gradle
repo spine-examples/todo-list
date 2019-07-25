@@ -18,7 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply plugin: 'io.spine.tools.spine-model-verifier'
+plugins {
+    id 'io.spine.tools.gradle.bootstrap'
+    id 'net.ltgt.errorprone'
+}
+
 spine.enableJava().server()
 
 compileJava {
@@ -27,10 +31,10 @@ compileJava {
 
 dependencies {
     compile project(path: ':model')
-    compile "io.spine:spine-server:$spineVersion"
+    compile "io.spine:spine-server:$deps.versions.spineCore"
 
-    annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"
+    annotationProcessor "io.spine.tools:spine-model-assembler:$deps.versions.spineCore"
 
     testImplementation project(path: ':testutil-api')
-    testImplementation "io.spine:spine-testutil-server:$spineVersion"
+    testImplementation "io.spine:spine-testutil-server:$deps.versions.spineCore"
 }

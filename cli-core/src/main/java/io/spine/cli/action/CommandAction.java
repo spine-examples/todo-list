@@ -56,7 +56,7 @@ public abstract class CommandAction<M extends Message, B extends ValidatingBuild
         post(commandMessage);
 
         sourceState.clear();
-        Application.getInstance()
+        Application.instance()
                    .screen()
                    .renderView(getDestination());
     }

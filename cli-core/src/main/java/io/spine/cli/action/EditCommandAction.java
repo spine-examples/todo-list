@@ -64,7 +64,7 @@ public class EditCommandAction<M extends Message,
      */
     @Override
     public void execute() {
-        Screen screen = Application.getInstance()
+        Screen screen = Application.instance()
                                    .screen();
         for (EditOperation<M, B> edit : editOperations) {
             start(edit, screen);

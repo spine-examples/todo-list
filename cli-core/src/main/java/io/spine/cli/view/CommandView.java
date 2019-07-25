@@ -103,7 +103,7 @@ public abstract class CommandView<M extends Message, B extends ValidatingBuilder
 
     private void handleValidationException(ValidationException ex) {
         recentViolations.addAll(ex.getConstraintViolations());
-        Application.getInstance()
+        Application.instance()
                    .screen()
                    .renderView(this);
     }

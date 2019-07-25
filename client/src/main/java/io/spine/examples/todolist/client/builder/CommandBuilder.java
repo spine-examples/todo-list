@@ -36,7 +36,7 @@ public final class CommandBuilder {
      * @return the {@code TaskBuilder} instance
      */
     public static TaskBuilder task() {
-        return TaskBuilder.getInstance();
+        return TaskBuilder.newInstance();
     }
 
     /**
@@ -45,6 +45,6 @@ public final class CommandBuilder {
      * @return the {@code LabelBuilder} instance
      */
     public static LabelBuilder label() {
-        return LabelBuilder.getInstance();
+        return LabelBuilder.newInstance();
     }
 }

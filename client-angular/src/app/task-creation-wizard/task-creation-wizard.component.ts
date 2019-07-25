@@ -199,7 +199,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    * creation ID part.
    */
   private ensureRouteHasId(): void {
-    const idString = this.wizard.id.getValue();
+    const idString = this.wizard.id.getUuid();
     const urlWithId = `/wizard/${idString}`;
     const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
     if (!alreadyWithId) {

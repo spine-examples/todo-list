@@ -31,6 +31,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class Application {
 
+    private static final Application INSTANCE = new Application();
+
     private Screen screen;
 
     /** Prevents instantiation of this class from outside. */
@@ -54,8 +56,7 @@ public final class Application {
      */
     public void init(Screen screen) {
         if (this.screen != null) {
-            throw new IllegalStateException("Application is already initialized, " +
-                                            "this function should be called only once.");
+            throw new IllegalStateException("Application is already initialized.");
         } else {
             this.screen = checkNotNull(screen);
         }
@@ -71,14 +72,7 @@ public final class Application {
      *
      * @return the singleton instance
      */
-    public static Application getInstance() {
-        return Singleton.INSTANCE.value;
-    }
-
-    @SuppressWarnings("ImmutableEnumChecker") // OK for this singleton.
-    private enum Singleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Application value = new Application();
+    public static Application instance() {
+        return INSTANCE;
     }
 }

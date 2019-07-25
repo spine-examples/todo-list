@@ -21,11 +21,10 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.server.ComputeCloudSqlServer.createBoundedContext;
+import static io.spine.examples.todolist.server.ComputeCloudSqlServer.createContext;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertFalse;
 
@@ -41,8 +40,7 @@ class ComputeCloudSqlServerTest {
     @Test
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
-        BoundedContext boundedContext = createBoundedContext();
-        StorageFactory storageFactory = boundedContext.storageFactory();
-        assertFalse(storageFactory.isMultitenant());
+        BoundedContext context = createContext();
+        assertFalse(context.isMultitenant());
     }
 }

@@ -18,12 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/js.gradle"
+apply from: "$rootDir/gradle/js.gradle"
 
 ext {
     bundleFile = "$projectDir/bundle.js"
 }
-
 
 /**
  * Compiles the JS into the `bundle.js` artifact.

@@ -55,10 +55,10 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         CompleteTask completeTask = completeTaskInstance(taskId());
         ReopenTask reopenTask = reopenTaskInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(completeTask)
-                        .receivesCommand(reopenTask)
-                        .assertEmitted(TaskReopened.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(completeTask)
+                 .receivesCommand(reopenTask)
+                 .assertEmitted(TaskReopened.class);
     }
 
     @Test
@@ -83,9 +83,9 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         TaskId taskId = createTask.getId();
         ReopenTask reopenTask = reopenTaskInstance(taskId);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(reopenTask)
-                        .assertRejectedWith(Rejections.CannotReopenTask.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(reopenTask)
+                 .assertRejectedWith(Rejections.CannotReopenTask.class);
     }
 
     @Test
@@ -96,10 +96,10 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         DeleteTask deleteTask = deleteTaskInstance(taskId);
         ReopenTask reopenTask = reopenTaskInstance(taskId);
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(reopenTask)
-                        .assertRejectedWith(Rejections.CannotReopenTask.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(reopenTask)
+                 .assertRejectedWith(Rejections.CannotReopenTask.class);
     }
 
     @Test
@@ -108,7 +108,7 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         CreateDraft createDraft = createDraftInstance();
         TaskId taskId = createDraft.getId();
         ReopenTask reopenTask = reopenTaskInstance(taskId);
-        boundedContext()
+        context()
                 .receivesCommand(createDraft)
                 .receivesCommand(reopenTask)
                 .assertRejectedWith(Rejections.CannotReopenTask.class);

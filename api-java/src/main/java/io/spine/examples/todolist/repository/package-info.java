@@ -21,7 +21,10 @@
 /**
  * This package provides classes for working with aggregate and projection repositories.
  */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.repository;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;

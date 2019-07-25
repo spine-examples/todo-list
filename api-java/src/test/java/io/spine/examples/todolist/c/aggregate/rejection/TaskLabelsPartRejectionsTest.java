@@ -33,7 +33,6 @@ import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
@@ -50,12 +49,12 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask rejection")
     void throwCannotRemoveLabelFromTaskRejection() {
-        TaskId taskId = taskId();
+        TaskId taskId = TaskId.generate();
         RemoveLabelFromTask cmd = RemoveLabelFromTask
                 .newBuilder()
                 .setId(taskId)
-                .setLabelId(labelId())
-                .build();
+                .setLabelId(LabelId.generate())
+                .vBuild();
         CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
@@ -69,12 +68,12 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotAssignLabelToTask rejection")
     void throwCannotAssignLabelToTaskRejection() {
-        TaskId taskId = taskId();
+        TaskId taskId = TaskId.generate();
         AssignLabelToTask cmd = AssignLabelToTask
                 .newBuilder()
-                .setLabelId(labelId())
+                .setLabelId(LabelId.generate())
                 .setId(taskId)
-                .build();
+                .vBuild();
         CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
@@ -88,14 +87,11 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotAddLabels rejection")
     void throwCannotAddLabelsToTaskRejection() {
-        TaskCreationId taskCreationId = TaskCreationId
-                .newBuilder()
-                .setValue(newUuid())
-                .build();
+        TaskCreationId taskCreationId = TaskCreationId.generate();
         AddLabels cmd = AddLabels
                 .newBuilder()
                 .setId(taskCreationId)
-                .build();
+                .vBuild();
         CannotAddLabels rejection =
                 assertThrows(CannotAddLabels.class,
                              () -> throwCannotAddLabelsToTask(cmd));
@@ -103,21 +99,5 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
                                            .getRejectionDetails()
                                            .getId();
         assertEquals(taskCreationId, actualId);
-    }
-
-    private static TaskId taskId() {
-        TaskId result = TaskId
-                .newBuilder()
-                .setValue(newUuid())
-                .build();
-        return result;
-    }
-
-    private static LabelId labelId() {
-        LabelId result = LabelId
-                .newBuilder()
-                .setValue(newUuid())
-                .build();
-        return result;
     }
 }

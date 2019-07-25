@@ -60,19 +60,17 @@ import static io.spine.test.integration.given.TaskCreationWizardTestEnv.cancel;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.complete;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.createDraft;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.createNewLabel;
-import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
-import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.setDetails;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.skipLabels;
 
 @DisplayName("TaskCreationWizard should")
 class TaskCreationWizardTest {
 
-    private BlackBoxBoundedContext boundedContext;
+    private BlackBoxBoundedContext<?> context;
 
     @BeforeEach
     void before() {
-        boundedContext = BlackBoxBoundedContext
+        context = BlackBoxBoundedContext
                 .singleTenant()
                 .with(new TaskCreationWizardRepository(), new TaskRepository(),
                       new LabelAggregateRepository(), new TaskLabelsRepository(),
@@ -82,8 +80,8 @@ class TaskCreationWizardTest {
     @Test
     @DisplayName("supervise task creation")
     void firstCase() {
-        TaskCreationId pid = newPid();
-        TaskId taskId = newTaskId();
+        TaskCreationId pid = TaskCreationId.generate();
+        TaskId taskId = TaskId.generate();
         StartTaskCreation createDraft = createDraft(pid, taskId);
         String description = "firstCase";
         UpdateTaskDetails updateDetails = setDetails(pid, description);
@@ -98,22 +96,22 @@ class TaskCreationWizardTest {
                 .setTaskStatus(FINALIZED)
                 .build();
 
-        boundedContext.receivesCommand(createDraft)
-                      .receivesCommand(updateDetails)
-                      .receivesCommand(skipLabels)
-                      .receivesCommand(completeCreation)
-                      .assertEntity(TaskPart.class, taskId)
-                      .hasStateThat()
-                      .comparingExpectedFieldsOnly()
-                      .isEqualTo(expected);
+        context.receivesCommand(createDraft)
+               .receivesCommand(updateDetails)
+               .receivesCommand(skipLabels)
+               .receivesCommand(completeCreation)
+               .assertEntity(TaskPart.class, taskId)
+               .hasStateThat()
+               .comparingExpectedFieldsOnly()
+               .isEqualTo(expected);
 
     }
 
     @Test
     @DisplayName("create and assign new labels")
     void secondCase() {
-        TaskCreationId pid = newPid();
-        TaskId taskId = newTaskId();
+        TaskCreationId pid = TaskCreationId.generate();
+        TaskId taskId = TaskId.generate();
         StartTaskCreation createDraft = createDraft(pid, taskId);
         UpdateTaskDetails setDetails = setDetails(pid, "secondCase");
         LabelDetails redLabel = LabelDetails
@@ -144,20 +142,20 @@ class TaskCreationWizardTest {
                 .setTaskId(taskId)
                 .build();
 
-        boundedContext.receivesCommand(createDraft)
-                      .receivesCommand(setDetails)
-                      .receivesCommand(addLabels)
-                      .assertEntity(TaskLabelsPart.class, taskId)
-                      .hasStateThat()
-                      .comparingExpectedFieldsOnly()
-                      .isEqualTo(expected);
+        context.receivesCommand(createDraft)
+               .receivesCommand(setDetails)
+               .receivesCommand(addLabels)
+               .assertEntity(TaskLabelsPart.class, taskId)
+               .hasStateThat()
+               .comparingExpectedFieldsOnly()
+               .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("set all the optional fields")
     void thirdCase() {
-        TaskCreationId pid = newPid();
-        TaskId taskId = newTaskId();
+        TaskCreationId pid = TaskCreationId.generate();
+        TaskId taskId = TaskId.generate();
         StartTaskCreation createDraft = createDraft(pid, taskId);
 
         String description = "thirdCase";
@@ -177,21 +175,21 @@ class TaskCreationWizardTest {
                 .setDueDate(dueDate)
                 .build();
 
-        boundedContext.receivesCommand(createDraft)
-                      .receivesCommand(updateDetails)
-                      .receivesCommand(addLabels)
-                      .receivesCommand(completeTaskCreation)
-                      .assertEntity(TaskPart.class, taskId)
-                      .hasStateThat()
-                      .comparingExpectedFieldsOnly()
-                      .isEqualTo(expected);
+        context.receivesCommand(createDraft)
+               .receivesCommand(updateDetails)
+               .receivesCommand(addLabels)
+               .receivesCommand(completeTaskCreation)
+               .assertEntity(TaskPart.class, taskId)
+               .hasStateThat()
+               .comparingExpectedFieldsOnly()
+               .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("cancel the process")
     void forthCase() {
-        TaskCreationId pid = newPid();
-        TaskId taskId = newTaskId();
+        TaskCreationId pid = TaskCreationId.generate();
+        TaskId taskId = TaskId.generate();
         StartTaskCreation createDraft = createDraft(pid, taskId);
         String description = "fourthCase";
         UpdateTaskDetails setDetails = setDetails(pid, description);
@@ -205,12 +203,12 @@ class TaskCreationWizardTest {
                 .setTaskStatus(DRAFT)
                 .build();
 
-        boundedContext.receivesCommand(createDraft)
-                      .receivesCommand(setDetails)
-                      .receivesCommand(cancel)
-                      .assertEntity(TaskPart.class, taskId)
-                      .hasStateThat()
-                      .comparingExpectedFieldsOnly()
-                      .isEqualTo(expected);
+        context.receivesCommand(createDraft)
+               .receivesCommand(setDetails)
+               .receivesCommand(cancel)
+               .assertEntity(TaskPart.class, taskId)
+               .hasStateThat()
+               .comparingExpectedFieldsOnly()
+               .isEqualTo(expected);
     }
 }

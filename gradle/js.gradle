@@ -38,7 +38,7 @@ spine {
 project.compileJava.enabled = false
 project.compileTestJava.enabled = false
 
-apply from: deps.scripts.jsBuildTasks
+apply from: "$rootDir/gradle/js/build-tasks.gradle"
 
 // Do not update the package version as we are not going to publish it.
 buildJs.dependsOn.remove(updatePackageVersion)
@@ -59,7 +59,7 @@ dependencies {
 protobuf {
     generatedFilesBaseDir = compiledProto
     protoc {
-        artifact = deps.build.protoc
+        artifact = "com.google.protobuf:protoc:$deps.versions.protobuf"
     }
     generateProtoTasks {
         all().each { final task ->
@@ -85,10 +85,10 @@ idea.module {
     testSourceDirs += file("$projectDir/test")
 
     iml {
-        beforeMerged { module ->
+        beforeMerged { final module ->
             module.dependencies.clear()
         }
-        whenMerged { module ->
+        whenMerged { final module ->
             module.dependencies*.exported = true
         }
     }

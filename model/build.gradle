@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/publish.gradle"
+apply from: "$rootDir/gradle/publish.gradle"
 
 dependencies {
-    implementation "io.spine:spine-core:$spineVersion"
+    implementation "io.spine:spine-core:$deps.versions.spineCore"
 }

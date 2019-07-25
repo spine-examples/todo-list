@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides implementation for the application context.
- */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.context;
+package io.spine.examples.todolist.c.aggregate.rejection;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;

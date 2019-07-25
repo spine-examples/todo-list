@@ -38,7 +38,7 @@ public final class Bot {
      */
     public Bot() {
         this.screen = new TestScreen();
-        Application.getInstance()
+        Application.instance()
                    .setScreen(screen);
     }
 

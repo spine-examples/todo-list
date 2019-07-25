@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.flogger.FluentLogger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,14 +35,17 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/_ah/warmup")
 public class WarmupServlet extends HttpServlet {
 
-    private static final StartUpLogger logger = StartUpLogger.instance();
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private static final long serialVersionUID = 0L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        logger.log("Warm up started.");
+        FluentLogger.Api info = logger.atInfo();
+        info.log("Warm up started.");
         Application application = Application.application();
-        logger.log("Warm up finished. {} created", application.getClass().getSimpleName());
+        info.log("Warm up finished. `%s` has been created.",
+                 application.getClass()
+                            .getName());
     }
 }

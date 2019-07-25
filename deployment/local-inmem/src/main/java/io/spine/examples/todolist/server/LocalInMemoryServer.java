@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.context.BoundedContexts.create;
+import static io.spine.examples.todolist.TodoListContext.create;
 import static io.spine.examples.todolist.server.Server.newServer;
 
 /**

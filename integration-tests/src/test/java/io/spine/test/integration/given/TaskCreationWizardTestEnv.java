@@ -37,7 +37,6 @@ import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 
 /**
@@ -129,30 +128,10 @@ public class TaskCreationWizardTestEnv {
     }
 
     public static CreateBasicLabel createNewLabel(String title) {
-        LabelId id = LabelId
+        return CreateBasicLabel
                 .newBuilder()
-                .setValue(newUuid())
-                .build();
-        CreateBasicLabel cmd = CreateBasicLabel
-                .newBuilder()
-                .setLabelId(id)
+                .setLabelId(LabelId.generate())
                 .setLabelTitle(title)
-                .build();
-        return cmd;
-    }
-
-    // Value generating static methods
-    // -------------------------------
-
-    public static TaskCreationId newPid() {
-        return TaskCreationId.newBuilder()
-                             .setValue(newUuid())
-                             .build();
-    }
-
-    public static TaskId newTaskId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
+                .vBuild();
     }
 }

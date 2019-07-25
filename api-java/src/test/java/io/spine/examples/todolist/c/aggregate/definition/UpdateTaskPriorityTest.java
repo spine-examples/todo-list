@@ -50,9 +50,9 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
     void produceEvent() {
         CreateBasicTask createTask = createTaskInstance(taskId());
         UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(updateTaskPriority)
-                        .assertEmitted(TaskPriorityUpdated.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(updateTaskPriority)
+                 .assertEmitted(TaskPriorityUpdated.class);
     }
 
     @Test
@@ -78,10 +78,10 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
 
         UpdateTaskPriority updatePriority = updateTaskPriorityInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(updatePriority)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(updatePriority)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
     }
 
     @Test
@@ -93,10 +93,10 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
 
         UpdateTaskPriority updatePriority = updateTaskPriorityInstance(taskId());
 
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(deleteTask)
-                        .receivesCommand(updatePriority)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(deleteTask)
+                 .receivesCommand(updatePriority)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
     }
 
     @Test
@@ -105,8 +105,8 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance();
         TaskId taskId = createTask.getId();
         UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, HIGH, LOW);
-        boundedContext().receivesCommand(createTask)
-                        .receivesCommand(updateTaskPriority)
-                        .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+        context().receivesCommand(createTask)
+                 .receivesCommand(updateTaskPriority)
+                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
     }
 }

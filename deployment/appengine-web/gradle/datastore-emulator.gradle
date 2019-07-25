@@ -47,11 +47,9 @@ void startDatastore(final projectName, final localPort) {
     "${scriptFolder}${File.separatorChar}${scriptName}${parameters}".execute()
 }
 
-apply from: "$rootDir/config/gradle/dependencies.gradle"
-
 buildscript {
     repositories {
-        maven { url = repos.gradlePlugins }
+        gradlePluginPortal()
     }
 
     dependencies {

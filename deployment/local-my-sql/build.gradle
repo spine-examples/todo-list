@@ -19,11 +19,12 @@
  */
 
 dependencies {
-    implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
-    implementation "com.zaxxer:HikariCP:$hikariCpVersion"
-    implementation "mysql:mysql-connector-java:$mysqlDriverVersion"
-
-    implementation project(path: ':server')
+    implementation (
+        "com.zaxxer:HikariCP:$deps.versions.hikariCp",
+        "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
+        "io.spine:spine-rdbms:$deps.versions.spineJdbc",
+        project(path: ':server')
+    )
 }
 
 // A task to run the server. See `LocalMySqlServer` for the details.

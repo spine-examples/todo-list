@@ -42,7 +42,6 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.validate.Validate.isNotDefault;
 import static java.util.stream.Collectors.toList;
@@ -201,10 +200,7 @@ final class WizardCommands {
      * @return the command messages creating and assigning a label
      */
     private Stream<? extends CommandMessage> createAndAssignLabel(LabelDetails label) {
-        LabelId labelId = LabelId
-                .newBuilder()
-                .setValue(newUuid())
-                .vBuild();
+        LabelId labelId = LabelId.generate();
         CreateBasicLabel createBasicLabel = createLabel(labelId, label);
         UpdateLabelDetails updateLabelDetails = setColorToLabel(labelId, label);
         AssignLabelToTask assignLabelToTask = assignLabel(labelId);

@@ -94,7 +94,7 @@ describe('LabelAssignmentComponent', () => {
     mockClient.fetchById.and.callFake(initMockProcessWithLabels(selectedLabels));
     fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
-    component.wizard.init(taskCreationProcess().getId().getValue());
+    component.wizard.init(taskCreationProcess().getId().getUuid());
     tick();
     component.stepper = mockStepper();
 

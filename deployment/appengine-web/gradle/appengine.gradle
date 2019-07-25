@@ -33,7 +33,7 @@ import java.util.regex.Pattern
  * profile value.
  */
 
-apply from: "$rootDir/scripts/build-profile.gradle"
+apply from: "$rootDir/gradle/build-profile.gradle"
 
 /**
  * Copies the AppEngine deployment descriptor into the location recognized by the AppEngine Gradle

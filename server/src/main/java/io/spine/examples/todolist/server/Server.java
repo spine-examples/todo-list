@@ -126,7 +126,7 @@ public final class Server implements Logging {
      */
     public void start() throws IOException {
         startServer();
-        _info("Server started, listening to commands on the port {}.", port);
+        _info().log("Server started, listening to commands on the port %s.", port);
         awaitTermination();
     }
 

@@ -25,8 +25,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import io.spine.logging.Logging;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +39,7 @@ final class FirebaseClients {
     private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
-    /**
-     * The {@code private} constructor prevents the utility class instantiation.
-     */
+    /** Prevents instantiation of this utility class. */
     private FirebaseClients() {}
 
     /**
@@ -55,7 +51,6 @@ final class FirebaseClients {
      * @return the initialized instance of {@link Firestore}
      */
     public static Firestore initializeFirestore() {
-        Logger log = Logging.get(FirebaseClients.class);
         InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
@@ -65,7 +60,6 @@ final class FirebaseClients {
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
-            log.error("Error while reading Firebase config file.", e);
             throw new IllegalStateException(e);
         }
         FirebaseOptions options = new FirebaseOptions.Builder()

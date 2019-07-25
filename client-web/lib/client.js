@@ -132,7 +132,7 @@ export class Client {
     static _newId() {
         let id = new TaskId();
         let value = uuid.v4();
-        id.setValue(value);
+        id.setUuid(value);
         return id;
     }
 }

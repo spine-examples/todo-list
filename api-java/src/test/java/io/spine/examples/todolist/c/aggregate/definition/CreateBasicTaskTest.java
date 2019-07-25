@@ -41,8 +41,8 @@ class CreateBasicTaskTest extends TaskCommandTestBase {
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
         CreateBasicTask createTask = createTaskInstance(taskId());
-        boundedContext().receivesCommand(createTask)
-                        .assertEmitted(TaskCreated.class);
+        context().receivesCommand(createTask)
+                 .assertEmitted(TaskCreated.class);
     }
 
     @Test

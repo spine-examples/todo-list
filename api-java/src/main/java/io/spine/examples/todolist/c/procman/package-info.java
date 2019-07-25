@@ -22,7 +22,10 @@
  * The classes related to {@link io.spine.examples.todolist.c.procman.TaskCreationWizard} process
  * manager.
  */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.c.procman;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;
