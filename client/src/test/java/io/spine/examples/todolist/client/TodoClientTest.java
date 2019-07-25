@@ -99,9 +99,10 @@ abstract class TodoClientTest {
     }
 
     static CreateDraft createDraft() {
-        return CommandBuilder.task()
-                             .createDraft()
-                             .build();
+        return CommandBuilder
+                .task()
+                .createDraft()
+                .build();
     }
 
     static FinalizeDraft finalizeDraft(TaskId taskId) {
@@ -113,10 +114,11 @@ abstract class TodoClientTest {
     }
 
     static CreateBasicTask createBasicTask() {
-        return CommandBuilder.task()
-                             .createTask()
-                             .setDescription(newDescription(DESCRIPTION))
-                             .build();
+        return CommandBuilder
+                .task()
+                .createTask()
+                .setDescription(newDescription(DESCRIPTION))
+                .build();
     }
 
     public SubscribingTodoClient client() {
