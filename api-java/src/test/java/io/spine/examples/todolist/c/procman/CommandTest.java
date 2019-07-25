@@ -58,7 +58,7 @@ abstract class CommandTest {
                 .newBuilder()
                 .setId(processId)
                 .setTaskId(taskId)
-                .build();
+                .vBuild();
         context.receivesCommand(cmd);
     }
 
@@ -83,7 +83,7 @@ abstract class CommandTest {
         SkipLabels cmd = SkipLabels
                 .newBuilder()
                 .setId(processId)
-                .build();
+                .vBuild();
         context.receivesCommand(cmd);
     }
 

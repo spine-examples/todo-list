@@ -54,7 +54,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
                 .newBuilder()
                 .setId(taskId)
                 .setLabelId(LabelId.generate())
-                .build();
+                .vBuild();
         CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
@@ -73,7 +73,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
                 .newBuilder()
                 .setLabelId(LabelId.generate())
                 .setId(taskId)
-                .build();
+                .vBuild();
         CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
@@ -91,7 +91,7 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
         AddLabels cmd = AddLabels
                 .newBuilder()
                 .setId(taskCreationId)
-                .build();
+                .vBuild();
         CannotAddLabels rejection =
                 assertThrows(CannotAddLabels.class,
                              () -> throwCannotAddLabelsToTask(cmd));

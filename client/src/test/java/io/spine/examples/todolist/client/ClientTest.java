@@ -84,7 +84,7 @@ class ClientTest extends TodoClientTest {
                 .newBuilder()
                 .setId(LabelId.generate())
                 .setTitle("Chores")
-                .build();
+                .vBuild();
 
         TaskLabel result = client.labelOr(LabelId.generate(), expectedLabel);
         assertThat(result)
@@ -146,7 +146,7 @@ class ClientTest extends TodoClientTest {
                 .setId(labelId)
                 .setTitle(createLabel.getLabelTitle())
                 .setColor(LabelAggregate.DEFAULT_LABEL_COLOR)
-                .build();
+                .vBuild();
 
         assertThat(client.labelView(labelId))
                 .hasValue(expected);
@@ -191,7 +191,7 @@ class ClientTest extends TodoClientTest {
         TaskView expected = freshDraft(taskId)
                 .toBuilder()
                 .setStatus(FINALIZED)
-                .build();
+                .vBuild();
 
         assertThat(client.taskViews())
                 .containsExactly(expected);
@@ -212,9 +212,12 @@ class ClientTest extends TodoClientTest {
         assertThat(responses).hasSize(1);
 
         TaskView taskView = responses.get(0);
-        assertThat(taskView.getId()).isEqualTo(createTask.getId());
-        assertThat(taskView.getStatus()).isEqualTo(OPEN);
-        assertThat(taskView.getDescription()).isEqualTo(createTask.getDescription());
+        assertThat(taskView.getId())
+                .isEqualTo(createTask.getId());
+        assertThat(taskView.getStatus())
+                .isEqualTo(OPEN);
+        assertThat(taskView.getDescription())
+                .isEqualTo(createTask.getDescription());
 
         client.unSubscribe(subscription);
     }
@@ -228,6 +231,6 @@ class ClientTest extends TodoClientTest {
                 .newBuilder()
                 .setId(taskId)
                 .setStatus(DRAFT)
-                .build();
+                .vBuild();
     }
 }

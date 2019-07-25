@@ -33,7 +33,7 @@ public final class TaskBuilder {
     private TaskBuilder() {
     }
 
-    static TaskBuilder getInstance() {
+    static TaskBuilder newInstance() {
         return new TaskBuilder();
     }
 

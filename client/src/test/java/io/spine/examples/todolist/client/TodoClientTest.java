@@ -22,13 +22,13 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
@@ -94,7 +94,7 @@ abstract class TodoClientTest {
                 .newBuilder()
                 .setId(taskId)
                 .setLabelId(labelId)
-                .build();
+                .vBuild();
         return result;
     }
 
@@ -105,9 +105,10 @@ abstract class TodoClientTest {
     }
 
     static FinalizeDraft finalizeDraft(TaskId taskId) {
-        FinalizeDraft result = FinalizeDraft.newBuilder()
-                                            .setId(taskId)
-                                            .build();
+        FinalizeDraft result = FinalizeDraft
+                .newBuilder()
+                .setId(taskId)
+                .vBuild();
         return result;
     }
 

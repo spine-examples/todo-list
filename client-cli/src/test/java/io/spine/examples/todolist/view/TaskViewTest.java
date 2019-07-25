@@ -44,7 +44,7 @@ class TaskViewTest extends ViewTest {
             .setDescription(newDescription("my task description"))
             .setPriority(NORMAL)
             .setDueDate(currentTime())
-            .build();
+            .vBuild();
     private final ViewOfTask taskView = new ViewOfTask(TaskId.getDefaultInstance());
 
     @Test
@@ -53,7 +53,7 @@ class TaskViewTest extends ViewTest {
         TaskId id = TaskId
                 .newBuilder()
                 .setUuid("invalid ID")
-                .build();
+                .vBuild();
         assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }
 
