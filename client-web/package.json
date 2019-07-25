@@ -9,6 +9,7 @@
   "author": "Spine Event Engine",
   "license": "Apache-2.0",
   "dependencies": {
+    "firebase": "^6.3.1",
     "rxjs": "6.3.3",
     "spine-web": "0.18.0"
   },
