@@ -38,17 +38,12 @@ final def versions = [
         junitPlatform    : "1.5.1",
         truth            : "0.44",
         httpClient       : "1.29.0",
-        roaster          : '2.20.8.Final',
         licensePlugin    : '1.6',
-        autoService      : '1.0-rc5',
-        autoCommon       : '0.10',
-        jackson          : '2.9.9.1',
         netty            : '1.22.0',
         gretty           : '2.3.1',
 
         shadowJar        : '4.0.4',
         mysqlDriver      : '6.0.6',
-        gson             : '2.7',
         nettyBoringssl   : '2.0.6.Final',
         hikariCp         : '2.4.3',
 
