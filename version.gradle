@@ -52,7 +52,9 @@ final def versions = [
         appengineApi     : "1.9.73",
         appengineSdk     : "1.9.67",
         appenginePlugin  : "1.3.5",
-        appEngineServletApi : '4.0.0', // TODO: return to 3.1.0 after fixing dependencies
+        //TODO:2019-07-25:alexander.yevsyukov:  return to 3.1.0 after fixing dependencies
+        // See: https://github.com/spine-examples/todo-list/issues/107
+        appEngineServletApi : '4.0.0',
         cloudSqlSocketFactory : '1.0.4',
 
         // Versions of Google APIs Client libraries.
