@@ -84,7 +84,7 @@ describe('TaskCreationWizardComponent', () => {
   // It's only important for it to be defined.
   const activatedRoute = {
     snapshot: {
-      paramMap: convertToParamMap({taskCreationId: taskCreationProcess().getId().getValue()})
+      paramMap: convertToParamMap({taskCreationId: taskCreationProcess().getId().getUuid()})
     }
   };
 
@@ -178,7 +178,7 @@ describe('TaskCreationWizardComponent', () => {
     initChildElements(theComponent);
     theComponent.ngAfterViewInit();
     tick();
-    const wizardId = wizard.id.getValue();
+    const wizardId = wizard.id.getUuid();
     expect(wizardId).toBeTruthy();
     expect(location.go).toHaveBeenCalledWith(`/wizard/${wizardId}`);
   }));

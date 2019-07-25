@@ -118,9 +118,9 @@ describe('TaskService', () => {
   it('should fetch an expected list of tasks', () => {
     service.tasks$.toPromise().then(fetchedTasks => {
       expect(fetchedTasks.length).toBe(2);
-      expect(fetchedTasks[0].getId().getValue()).toBe(CHORE_1_ID);
+      expect(fetchedTasks[0].getId().getUuid()).toBe(CHORE_1_ID);
       expect(fetchedTasks[0].getDescription().getValue()).toBe(CHORE_1_DESC);
-      expect(fetchedTasks[1].getId().getValue()).toBe(CHORE_2_ID);
+      expect(fetchedTasks[1].getId().getUuid()).toBe(CHORE_2_ID);
       expect(fetchedTasks[1].getDescription().getValue()).toBe(CHORE_2_DESC);
     });
   });

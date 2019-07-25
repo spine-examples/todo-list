@@ -41,7 +41,7 @@ export function chores(): TaskView[] {
 
 export function taskWithId(desiredId: string): TaskView {
   const taskId = new TaskId();
-  taskId.setValue(desiredId);
+  taskId.setUuid(desiredId);
   const description = new TaskDescription();
   description.setValue('Wash my car');
   return taskItem(taskId, description);
@@ -50,7 +50,7 @@ export function taskWithId(desiredId: string): TaskView {
 export function taskItem(id: TaskId, description: TaskDescription): TaskView {
   const result = new TaskView();
   const taskId = new TaskId();
-  taskId.setValue(id);
+  taskId.setUuid(id);
   result.setId(taskId);
   const taskDescription = new TaskDescription();
   taskDescription.setValue(description);

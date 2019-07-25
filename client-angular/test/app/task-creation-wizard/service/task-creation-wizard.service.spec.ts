@@ -87,7 +87,7 @@ describe('TaskCreationWizard', () => {
   function initializeWizard(stage?: TaskCreation.Stage): void {
     mockClient.fetchById.and.callFake(initMockProcess(stage));
     // noinspection JSIgnoredPromiseFromCall The promise is resolved via `fakeAsync()`.
-    wizard.init(taskCreationProcess(stage).getId().getValue());
+    wizard.init(taskCreationProcess(stage).getId().getUuid());
   }
 
   beforeEach(() => {

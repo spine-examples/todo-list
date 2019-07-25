@@ -43,7 +43,7 @@ export class UuidGenerator {
   static newId<T extends Message>(type: new() => T): T {
     const result = this.emptyMessageOfType(type);
     const value = uuid();
-    result.setValue(value);
+    result.setUuid(value);
     return result;
   }
 
@@ -54,7 +54,7 @@ export class UuidGenerator {
    */
   static newIdWithValue<T extends Message>(value: string, type: new() => T): T {
     const result = this.emptyMessageOfType(type);
-    result.setValue(value);
+    result.setUuid(value);
     return result;
   }
 
@@ -63,7 +63,7 @@ export class UuidGenerator {
       throw new Error(UuidGenerator.ERROR_MESSAGE);
     }
     const result: T = new type();
-    if (!result.setValue) {
+    if (!result.setUuid) {
       throw new Error(UuidGenerator.ERROR_MESSAGE);
     }
     return result;

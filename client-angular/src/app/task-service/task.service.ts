@@ -288,8 +288,8 @@ export class TaskService implements OnDestroy {
       next: (view: TaskView): void => {
         if (view) {
           const alreadyBroadcast = this.tasks
-            .map(value => value.getId().getValue())
-            .includes(view.getId().getValue());
+            .map(value => value.getId().getUuid())
+            .includes(view.getId().getUuid());
           if (!alreadyBroadcast) {
             const presentItems: TaskView[] = this.tasks.slice();
             presentItems.push(view);

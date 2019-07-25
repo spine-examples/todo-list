@@ -41,7 +41,7 @@ describe('UuidGenerator', () => {
     const id = 'the-ID';
     const created = UuidGenerator.newIdWithValue<TaskId>(id, TaskId);
     expect(created).toBeTruthy();
-    expect(created.getValue()).toEqual(id);
+    expect(created.getUuid()).toEqual(id);
   });
 
   it('should throw an error when a specified type is undefined', () => {

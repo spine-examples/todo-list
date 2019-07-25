@@ -41,7 +41,7 @@ export function label2(): LabelView {
 function label(id: string, title: string, color: LabelColor): LabelView {
   const result = new LabelView();
   const labelId = new LabelId();
-  labelId.setValue(id);
+  labelId.setUuid(id);
   result.setId(labelId);
   result.setTitle(title);
   result.setColor(color);
