@@ -1,21 +1,33 @@
-# ToDo List example application
+# Todo List example application
 
-This repository contains an example project of a ToDo List service with multiple client applications.
+This repository contains an example project of a Todo List server application with 
+multiple client applications.
 
-Client applications are:
- * Web client based
- * Command-line application, written in Java.
- * Mobile app for Android platform.
- 
-The example also shows multiple deployment options and storage options.
- 
-## Guide
+## Server
 
-This repository defines a guide of how to create a Spine-base system (based on the example 
-of TodoList application).
+The server application consists of a single TodoList Bounded Context, describing a few scenarios
+of working with tasks.
 
-To explore the guide, checkout the given tags:
- - [`step-1`](https://github.com/SpineEventEngine/todo-list/tree/step-1)
- - [`step-2`](https://github.com/SpineEventEngine/todo-list/tree/step-2)
- - [`step-3`](https://github.com/SpineEventEngine/todo-list/tree/step-3)
- - [`step-4`](https://github.com/SpineEventEngine/todo-list/tree/step-4)
+### Deployment
+
+Several options of server deployment are showcased.
+
+- Server running at Google App Engine with data stored in Cloud Datastore ([details](https://github.com/spine-examples/todo-list/tree/master/deployment/appengine-web)).
+- Server running at Google Compute Engine using Cloud SQL as a storage([details](https://github.com/spine-examples/todo-list/tree/master/deployment/compute-cloud-sql)).
+- Standalone server with Cloud SQL as a storage ([details](https://github.com/spine-examples/todo-list/tree/master/deployment/local-cloud-sql)).
+- Standalone server using a standalone MySQL database for storage ([see](https://github.com/spine-examples/todo-list/tree/master/deployment/local-my-sql)).
+
+Also, two options aimed for development or local tests:
+
+- Standalone server with in-memory data storage with the subscription support through Cloud Firestore. 
+It's handy to test remote clients such as 3rd-party systems or mobile devices. See [this Gradle module](https://github.com/spine-examples/todo-list/tree/master/deployment/local-firebase).
+- Standalone server with in-memory data storage and gRPC interface only ([details](https://github.com/spine-examples/todo-list/tree/master/deployment/local-inmem)).  
+
+
+## Clients
+
+There are three client applications available as examples.
+
+- [Angular-based web application](https://github.com/spine-examples/todo-list/tree/master/client-angular).
+- [Vanilla JS web application](https://github.com/spine-examples/todo-list/tree/master/client-web).
+- [Console application](https://github.com/spine-examples/todo-list/tree/master/client-cli). 

@@ -1,7 +1,7 @@
-## To-Do List Web Server
+## Todo List Web Server
 
-This module is an App Engine Standard Environment application serving the To-Do List
-application. It depends on all the other modules in To-Do List application implementing the
+This module is an App Engine Standard Environment application serving the Todo List
+application. It depends on all the other modules in Todo List application implementing the
 [Spine Web](https://github.com/SpineEventEngine/web) server API.
 
 The deployment uses the servlet-based Spine `web` API and its Firebase implementation.
@@ -27,7 +27,7 @@ do the following:
     ./gradlew appengineRun
     ```
  
-After the command is executed, the To-Do List server is available on `localhost:8080`.
+After the command is executed, the Todo List server is available on `localhost:8080`.
 To debug the local server, create a new Remote configuration and run it in the debug mode.
 The configuration should connect to `localhost:5005`.
 
