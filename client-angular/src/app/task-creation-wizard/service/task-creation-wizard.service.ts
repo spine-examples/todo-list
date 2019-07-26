@@ -27,7 +27,7 @@ import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {DescriptionChange, PriorityChange} from 'proto/todolist/changes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
-import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {
   AddLabels,

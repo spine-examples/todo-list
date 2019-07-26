@@ -32,7 +32,7 @@ option java_generate_equals_and_hash = true;
 
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
-import "todolist/model.proto";
+import "todolist/tasks.proto";
 
 // The rejection to update a task description.
 //
