@@ -107,7 +107,7 @@ message UpdateTaskPriority {
     PriorityChange priority_change = 2 [(required) = true];
 }
 
-// Assing a label to a task.
+// Assign a label to a task.
 //
 // Applicable to both drafts and finalized tasks.
 // Cannot be applied to the deleted tasks.
@@ -130,7 +130,7 @@ message AssignLabelToTask {
 // Cannot be applied to the deleted tasks.
 // Cannot be applied to the completed tasks.
 //
-// The command shouldn't affect the task in case there is no such label assigned.
+// The command should not affect the task in case there is no such label assigned.
 //
 message RemoveLabelFromTask {
 
