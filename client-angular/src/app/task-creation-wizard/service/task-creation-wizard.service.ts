@@ -36,7 +36,7 @@ import {
   SkipLabels,
   StartTaskCreation,
   UpdateTaskDetails
-} from 'proto/todolist/c/commands_pb';
+} from 'proto/todolist/commands_pb';
 
 /**
  * A service which executes commands specific to the Task Creation Wizard process.

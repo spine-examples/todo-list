@@ -22,7 +22,7 @@ import {Component} from '@angular/core';
 import {async, TestBed} from '@angular/core/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
-import {TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/projections_pb';
 
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {LayoutService} from 'app/layout/layout.service';

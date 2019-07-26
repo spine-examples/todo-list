@@ -32,7 +32,6 @@ option java_generate_equals_and_hash = true;
 
 
 // Variety of choices used for `TaskLabel` coloring.
-//
 enum LabelColor {
 
     // Used as an undefined value marker.
@@ -48,7 +47,6 @@ enum LabelColor {
 }
 
 // Task priority values.
-//
 enum TaskPriority {
 
     // Used as an undefined value marker.
@@ -62,7 +60,6 @@ enum TaskPriority {
 }
 
 // Variety of possible statuses for `Task`
-//
 enum TaskStatus {
 
     // Used as an undefined value marker

@@ -25,7 +25,7 @@ import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {chore, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
-import {TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/projections_pb';
 import {mockNotificationService} from 'test/given/layout-service';
 import {NotificationService} from 'app/layout/notification.service';
 

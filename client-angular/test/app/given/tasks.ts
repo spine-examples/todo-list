@@ -21,7 +21,7 @@
 import {tomorrow} from 'test/given/dates';
 import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/projections_pb';
 import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 
 export const CHORE_1_ID = 'task-1';

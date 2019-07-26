@@ -34,7 +34,7 @@ import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/projections_pb';
 import {LayoutModule} from 'app/layout/layout.module';
 import {NotificationService} from 'app/layout/notification.service';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
