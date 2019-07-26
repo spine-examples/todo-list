@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.event.TaskCreated;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;

@@ -25,12 +25,12 @@ import io.spine.examples.todolist.AssignLabelToTaskRejected;
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.RemoveLabelFromTaskRejected;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
-import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.rejection.CannotAddLabels;
-import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
-import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.command.AddLabels;
+import io.spine.examples.todolist.command.AssignLabelToTask;
+import io.spine.examples.todolist.command.RemoveLabelFromTask;
+import io.spine.examples.todolist.rejection.CannotAddLabels;
+import io.spine.examples.todolist.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.rejection.CannotRemoveLabelFromTask;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

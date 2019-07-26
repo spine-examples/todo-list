@@ -22,8 +22,8 @@ package io.spine.examples.todolist.testdata;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.command.AssignLabelToTask;
+import io.spine.examples.todolist.command.RemoveLabelFromTask;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;

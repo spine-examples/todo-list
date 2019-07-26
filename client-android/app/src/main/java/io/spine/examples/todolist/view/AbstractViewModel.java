@@ -24,7 +24,7 @@ import android.arch.lifecycle.ViewModel;
 import android.os.Handler;
 import android.os.Looper;
 import io.grpc.StatusRuntimeException;
-import io.spine.examples.todolist.c.commands.TodoCommand;
+import io.spine.examples.todolist.command.TodoCommand;
 import io.spine.examples.todolist.client.Clients;
 import io.spine.examples.todolist.client.TodoClient;
 

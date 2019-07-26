@@ -28,11 +28,11 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
-import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.command.AddLabels;
+import io.spine.examples.todolist.command.CompleteTaskCreation;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.command.SetTaskDetails;
+import io.spine.examples.todolist.command.StartTaskCreation;
 import io.spine.examples.todolist.view.AbstractViewModel;
 import io.spine.examples.todolist.client.Callback;
 

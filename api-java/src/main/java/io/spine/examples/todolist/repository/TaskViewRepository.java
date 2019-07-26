@@ -22,7 +22,7 @@ package io.spine.examples.todolist.repository;
 
 import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.events.TaskAware;
+import io.spine.examples.todolist.event.TaskAware;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
 import io.spine.server.projection.ProjectionRepository;

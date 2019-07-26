@@ -29,13 +29,13 @@ import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.c.commands.CancelTaskCreation;
-import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
-import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.SkipLabels;
-import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
+import io.spine.examples.todolist.command.AddLabels;
+import io.spine.examples.todolist.command.CancelTaskCreation;
+import io.spine.examples.todolist.command.CompleteTaskCreation;
+import io.spine.examples.todolist.command.CreateBasicLabel;
+import io.spine.examples.todolist.command.SkipLabels;
+import io.spine.examples.todolist.command.StartTaskCreation;
+import io.spine.examples.todolist.command.UpdateTaskDetails;
 
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 

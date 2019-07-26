@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.events.TaskDeleted;
-import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateDraft;
+import io.spine.examples.todolist.command.DeleteTask;
+import io.spine.examples.todolist.event.TaskDeleted;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.examples.todolist.q.projection.TaskViewProjection;
+import io.spine.examples.todolist.rejection.Rejections;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.testing.server.entity.EntitySubject;

@@ -28,16 +28,16 @@ import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.command.CompleteTask;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateDraft;
+import io.spine.examples.todolist.command.DeleteTask;
+import io.spine.examples.todolist.command.FinalizeDraft;
+import io.spine.examples.todolist.command.ReopenTask;
+import io.spine.examples.todolist.command.RestoreDeletedTask;
+import io.spine.examples.todolist.command.UpdateTaskDescription;
+import io.spine.examples.todolist.command.UpdateTaskDueDate;
+import io.spine.examples.todolist.command.UpdateTaskPriority;
 
 import static io.spine.base.Time.currentTime;
 

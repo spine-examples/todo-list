@@ -24,8 +24,8 @@ import io.spine.core.Subscribe;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.c.events.LabelCreated;
-import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.event.LabelCreated;
+import io.spine.examples.todolist.event.LabelDetailsUpdated;
 import io.spine.server.projection.Projection;
 
 /**
