@@ -49,7 +49,7 @@ dependencies {
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.
     // This descriptor is required to configure gRPC services for a Google Cloud Endpoint.
-    protobuf("io.spine:spine-client:$spineVersion") {
+    protobuf("io.spine:spine-client:$deps.versions.spineCore") {
         exclude group: 'com.google.protobuf'
         exclude group: 'io.spine', module: 'spine-core'
     }
