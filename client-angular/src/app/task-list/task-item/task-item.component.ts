@@ -20,7 +20,7 @@
 
 import {Component, Input} from '@angular/core';
 
-import {TaskStatus, TaskView} from 'proto/todolist/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/views_pb';
 import {TaskService} from 'app/task-service/task.service';
 
 @Component({

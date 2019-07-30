@@ -24,7 +24,7 @@ import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
 import {CreateBasicLabel} from 'proto/todolist/commands_pb';
-import {LabelView} from 'proto/todolist/projections_pb';
+import {LabelView} from 'proto/todolist/views_pb';
 
 /**
  * A service which operates with task labels.

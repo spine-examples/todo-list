@@ -28,7 +28,7 @@ import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/commands_pb';
-import {TaskView} from 'proto/todolist/projections_pb';
+import {TaskView} from 'proto/todolist/views_pb';
 import {TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/layout/notification.service';
 
