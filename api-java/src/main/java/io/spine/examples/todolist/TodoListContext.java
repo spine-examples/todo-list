@@ -20,12 +20,12 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.repository.LabelAggregateRepository;
-import io.spine.examples.todolist.repository.LabelViewRepository;
-import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
-import io.spine.examples.todolist.repository.TaskLabelsRepository;
-import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.examples.todolist.repository.TaskViewRepository;
+import io.spine.examples.todolist.server.label.LabelAggregateRepository;
+import io.spine.examples.todolist.server.label.LabelViewRepository;
+import io.spine.examples.todolist.server.task.TaskCreationWizardRepository;
+import io.spine.examples.todolist.server.task.TaskLabelsRepository;
+import io.spine.examples.todolist.server.task.TaskRepository;
+import io.spine.examples.todolist.server.task.TaskViewRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
 

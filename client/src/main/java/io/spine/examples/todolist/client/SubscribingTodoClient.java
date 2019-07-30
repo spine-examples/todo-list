@@ -22,7 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.view.TaskView;
 
 /**
  * A TodoList gRPC client able to make calls to the {@code SubscriptionService}.

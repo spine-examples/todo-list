@@ -26,8 +26,8 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.q.projection.LabelView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.view.LabelView;
+import io.spine.examples.todolist.view.TaskView;
 
 import javax.annotation.Nullable;
 import java.util.List;

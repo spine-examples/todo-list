@@ -35,7 +35,7 @@ import io.spine.examples.todolist.command.ReopenTask;
 import io.spine.examples.todolist.command.RestoreDeletedTask;
 import io.spine.examples.todolist.command.UpdateTaskDueDate;
 import io.spine.examples.todolist.command.UpdateTaskPriority;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.view.TaskView;
 import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

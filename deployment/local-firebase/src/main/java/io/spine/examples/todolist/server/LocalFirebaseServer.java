@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import com.google.cloud.firestore.Firestore;
 import com.google.common.collect.ImmutableSet;
 import io.spine.examples.todolist.TodoListContext;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.view.TaskView;
 import io.spine.server.BoundedContext;
 import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.type.TypeUrl;
