@@ -20,6 +20,6 @@
 
 dependencies {
     compile project(path: ':model')
-    implementation project(path: ':api-java')
+    implementation project(path: ':server')
     implementation "io.spine:spine-testutil-core:$deps.versions.spineCore"
 }

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.server;
 
 import io.spine.examples.todolist.server.label.LabelAggregateRepository;
 import io.spine.examples.todolist.server.label.LabelViewRepository;

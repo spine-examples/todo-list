@@ -18,23 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id 'io.spine.tools.gradle.bootstrap'
-    id 'net.ltgt.errorprone'
-}
+/**
+ * This package provides test environment for
+ * {@link io.spine.examples.todolist.server.task.TaskViewProjection} tests.
+ */
+@ParametersAreNonnullByDefault
+@CheckReturnValue
+package io.spine.examples.todolist.server.task.given;
 
-spine.enableJava().server()
+import com.google.errorprone.annotations.CheckReturnValue;
 
-compileJava {
-    options.compilerArgs += ["-processor", "io.spine.model.assemble.AssignLookup", "-AspineDirRoot=${rootDir}"]
-}
-
-dependencies {
-    compile project(path: ':model')
-    compile "io.spine:spine-server:$deps.versions.spineCore"
-
-    annotationProcessor "io.spine.tools:spine-model-assembler:$deps.versions.spineCore"
-
-    testImplementation project(path: ':testutil-api')
-    testImplementation "io.spine:spine-testutil-server:$deps.versions.spineCore"
-}
+import javax.annotation.ParametersAreNonnullByDefault;

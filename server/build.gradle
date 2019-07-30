@@ -18,7 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+plugins {
+    id 'io.spine.tools.gradle.bootstrap'
+    id 'net.ltgt.errorprone'
+}
+
+spine.enableJava().server()
+
+compileJava {
+    options.compilerArgs += ["-processor", "io.spine.model.assemble.AssignLookup", "-AspineDirRoot=${rootDir}"]
+}
+
 dependencies {
     compile project(path: ':model')
-    compile project(path: ':api-java')
+    compile "io.spine:spine-server:$deps.versions.spineCore"
+
+    annotationProcessor "io.spine.tools:spine-model-assembler:$deps.versions.spineCore"
+
+    testImplementation project(path: ':testutil-api')
+    testImplementation "io.spine:spine-testutil-server:$deps.versions.spineCore"
 }

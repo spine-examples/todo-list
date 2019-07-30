@@ -18,14 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides test environment for
- * {@link io.spine.examples.todolist.server.task.TaskViewProjection} tests.
- */
-@ParametersAreNonnullByDefault
-@CheckReturnValue
-package io.spine.examples.todolist.server.view.given;
+package io.spine.examples.todolist.server;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("TodoListContext config class should")
+class TodoListContextTest extends UtilityClassTest<TodoListContext> {
+
+    TodoListContextTest() {
+        super(TodoListContext.class);
+    }
+
+    @Test
+    @DisplayName("declare name constant")
+    void name() {
+        assertThat(TodoListContext.NAME)
+                .isNotEmpty();
+    }
+}

@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.cli.view;
 
-import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.cli.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.server.Server;
+import io.spine.examples.todolist.server.TodoListContext;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
