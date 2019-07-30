@@ -78,6 +78,7 @@ message TaskLabels {
     //
     // Task can have any number of labels assigned, i.e. [0; +inf).
     // Optional. Empty by default.
+    //
     LabelIdsList label_ids_list = 2;
 }
 
@@ -102,6 +103,7 @@ message TaskLabel {
     // Label color.
     //
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
+    //
     LabelColor color = 3;
 }
 

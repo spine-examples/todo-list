@@ -19,7 +19,7 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/projections_pb';
 
 /**
  * Given a `TaskView`, obtains a string representation of its due date in a human-readable format.

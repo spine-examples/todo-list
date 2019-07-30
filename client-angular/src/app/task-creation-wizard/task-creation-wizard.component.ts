@@ -30,7 +30,7 @@ import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmatio
 import {LayoutService} from 'app/layout/layout.service';
 import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
-import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskCreation} from 'proto/todolist/tasks_pb';
 
 /**
  * The main component of the Task Creation Wizard.

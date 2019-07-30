@@ -24,7 +24,7 @@ import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateBasicTask;
 import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

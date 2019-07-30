@@ -22,8 +22,8 @@ package io.spine.test.performance;
 
 import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.command.CreateBasicTask;
 import io.spine.examples.todolist.q.projection.TaskView;
 import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.Disabled;

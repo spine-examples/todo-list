@@ -19,7 +19,7 @@
  */
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
-import {LabelView} from 'proto/todolist/q/projections_pb';
+import {LabelView} from 'proto/todolist/projections_pb';
 import {LabelColor} from 'proto/todolist/attributes_pb';
 
 const LABEL_1_ID = 'label-1';

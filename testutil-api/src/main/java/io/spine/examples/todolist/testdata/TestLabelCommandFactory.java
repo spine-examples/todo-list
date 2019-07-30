@@ -24,8 +24,8 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.command.CreateBasicLabel;
+import io.spine.examples.todolist.command.UpdateLabelDetails;
 
 /**
  * A factory of the label commands for the test needs.

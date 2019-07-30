@@ -22,7 +22,7 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
-import {TaskPriority, TaskStatus, TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskPriority, TaskStatus, TaskView} from 'proto/todolist/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**

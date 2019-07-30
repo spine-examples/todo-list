@@ -31,7 +31,7 @@ import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {taskWithId} from 'test/given/tasks';
-import {TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskView} from 'proto/todolist/projections_pb';
 import {LayoutService} from 'app/layout/layout.service';
 import {NotificationService} from 'app/layout/notification.service';
 import {LayoutModule} from 'app/layout/layout.module';

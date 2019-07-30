@@ -22,8 +22,8 @@ package io.spine.examples.todolist.client.builder;
 
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateDraft;
 
 /**
  * Provides task command builders.

@@ -29,14 +29,14 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.c.events.TaskCompleted;
-import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.examples.todolist.c.events.TaskDeleted;
-import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
-import io.spine.examples.todolist.c.events.TaskDraftCreated;
-import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
-import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
-import io.spine.examples.todolist.c.events.TaskReopened;
+import io.spine.examples.todolist.event.TaskCompleted;
+import io.spine.examples.todolist.event.TaskCreated;
+import io.spine.examples.todolist.event.TaskDeleted;
+import io.spine.examples.todolist.event.TaskDescriptionUpdated;
+import io.spine.examples.todolist.event.TaskDraftCreated;
+import io.spine.examples.todolist.event.TaskDueDateUpdated;
+import io.spine.examples.todolist.event.TaskPriorityUpdated;
+import io.spine.examples.todolist.event.TaskReopened;
 
 import java.time.Instant;
 

@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.events.TaskDraftCreated;
-import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateDraft;
+import io.spine.examples.todolist.command.DeleteTask;
+import io.spine.examples.todolist.event.TaskDraftCreated;
 import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.rejection.Rejections;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import org.junit.jupiter.api.DisplayName;

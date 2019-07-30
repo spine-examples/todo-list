@@ -24,7 +24,7 @@ import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskStatus;
-import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.event.TaskCreated;
 import io.spine.examples.todolist.q.projection.given.TaskViewProjectionTestEnv;
 import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.entity.AbstractEntity;

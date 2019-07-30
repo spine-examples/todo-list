@@ -51,6 +51,7 @@ message TaskDescription {
     // A description value.
     //
     // Must contain at least 3 alphanumeric symbols.
+    //
     string value = 1 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
 }
 

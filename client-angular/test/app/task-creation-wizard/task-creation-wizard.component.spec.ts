@@ -28,13 +28,7 @@ import {ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap} from '@angula
 
 import {Client} from 'spine-web';
 
-import {
-  MatChipsModule,
-  MatIconModule,
-  MatListModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule
-} from '@angular/material';
+import {MatChipsModule, MatIconModule, MatListModule, MatProgressBarModule, MatProgressSpinnerModule} from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -59,7 +53,7 @@ import {chores} from 'test/given/tasks';
 import {LabelService} from 'app/labels/label.service';
 import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
 
-import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {mockLayoutService, mockNotificationService} from 'test/given/layout-service';
 import {LayoutService} from 'app/layout/layout.service';

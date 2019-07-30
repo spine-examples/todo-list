@@ -29,7 +29,7 @@ import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.CommandView;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.command.CreateBasicTask;
 
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;

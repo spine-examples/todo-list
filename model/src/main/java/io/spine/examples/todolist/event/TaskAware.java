@@ -18,27 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package io.spine.examples.todolist.event;
 
-buildscript {
-    ext.kotlin_version = '1.2.10'
-    apply from: "../version.gradle"
-    
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.google.gms:google-services:3.1.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
+import com.google.errorprone.annotations.Immutable;
+import io.spine.base.EventMessage;
+import io.spine.examples.todolist.TaskId;
 
-allprojects {
-    defaultRepositories(project)
-}
+/**
+ * An event that is related to a single task and is aware of to which one exactly.
+ */
+@Immutable
+public interface TaskAware extends EventMessage {
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    /** Obtains an ID of the task that this event is related to. */
+    TaskId getTaskId();
 }

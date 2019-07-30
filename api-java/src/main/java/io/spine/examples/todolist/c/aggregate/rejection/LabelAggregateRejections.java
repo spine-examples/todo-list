@@ -24,8 +24,8 @@ import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelDetailsUpdateRejected;
 import io.spine.examples.todolist.RejectedLabelCommandDetails;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.command.UpdateLabelDetails;
+import io.spine.examples.todolist.rejection.CannotUpdateLabelDetails;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
