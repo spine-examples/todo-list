@@ -30,7 +30,7 @@ let spineWebTypes = require('spine-web/proto/index');
 let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../generated/main/js/todolist/values_pb").TaskDescription;
 let CreateBasicTask = require("../generated/main/js/todolist/commands_pb").CreateBasicTask;
-let MyListView = require("../generated/main/js/todolist/projections_pb").MyListView;
+let MyListView = require("../generated/main/js/todolist/views_pb").MyListView;
 
 let firebase = require("./firebase_client.js");
 

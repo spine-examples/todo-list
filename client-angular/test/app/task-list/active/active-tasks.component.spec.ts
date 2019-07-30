@@ -34,7 +34,7 @@ import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {chore} from 'test/given/tasks';
 
-import {TaskView} from 'proto/todolist/projections_pb';
+import {TaskView} from 'proto/todolist/views_pb';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';

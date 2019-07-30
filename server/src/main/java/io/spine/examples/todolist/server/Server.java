@@ -36,7 +36,7 @@ public final class Server implements Logging {
 
     private final int port;
     private final GrpcContainer grpcContainer;
-    private final BoundedContext boundedContext;
+    private final BoundedContext context;
 
     /**
      * Creates a server with the {@link CommandService Command}, {@link QueryService Query} and
@@ -57,12 +57,12 @@ public final class Server implements Logging {
      *
      * @param port
      *         the port to bind the server to
-     * @param boundedContext
+     * @param context
      *         the {@link BoundedContext} to serve
      */
-    private Server(int port, BoundedContext boundedContext) {
+    private Server(int port, BoundedContext context) {
         this.port = port;
-        this.boundedContext = boundedContext;
+        this.context = context;
 
         CommandService commandService = initCommandService();
         QueryService queryService = initQueryService();
@@ -73,7 +73,7 @@ public final class Server implements Logging {
     private SubscriptionService initSubscriptionService() {
         SubscriptionService result = SubscriptionService
                 .newBuilder()
-                .add(boundedContext)
+                .add(context)
                 .build();
         return result;
     }
@@ -81,7 +81,7 @@ public final class Server implements Logging {
     private QueryService initQueryService() {
         QueryService result = QueryService
                 .newBuilder()
-                .add(boundedContext)
+                .add(context)
                 .build();
         return result;
     }
@@ -89,7 +89,7 @@ public final class Server implements Logging {
     private CommandService initCommandService() {
         CommandService result = CommandService
                 .newBuilder()
-                .add(boundedContext)
+                .add(context)
                 .build();
         return result;
     }

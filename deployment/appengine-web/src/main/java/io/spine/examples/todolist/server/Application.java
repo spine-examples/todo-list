@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.flogger.FluentLogger;
-import io.spine.examples.todolist.TodoListContext;
 import io.spine.net.Url;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;

@@ -19,7 +19,7 @@
  */
 
 import {Component, Input} from '@angular/core';
-import {TaskView} from 'proto/todolist/projections_pb';
+import {TaskView} from 'proto/todolist/views_pb';
 
 /**
  * Component responsible for displaying a single task.

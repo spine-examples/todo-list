@@ -23,7 +23,7 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
-import {TaskStatus, TaskView} from 'proto/todolist/projections_pb';
+import {TaskStatus, TaskView} from 'proto/todolist/views_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**

@@ -21,7 +21,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TaskService} from 'app/task-service/task.service';
-import {TaskView} from 'proto/todolist/projections_pb';
+import {TaskView} from 'proto/todolist/views_pb';
 import {first} from 'rxjs/operators';
 
 @Component({

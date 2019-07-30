@@ -23,7 +23,7 @@ import {chore} from 'test/given/tasks';
 import {TaskCreationId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {LabelIdsList} from 'proto/todolist/values_pb';
-import {LabelView, TaskView} from 'proto/todolist/projections_pb';
+import {LabelView, TaskView} from 'proto/todolist/views_pb';
 
 export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
   const creationProcess = taskCreationProcess(stage);

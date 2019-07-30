@@ -22,7 +22,6 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TodoListContext;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.command.AssignLabelToTask;
 import io.spine.examples.todolist.command.CreateBasicLabel;
@@ -30,6 +29,7 @@ import io.spine.examples.todolist.command.CreateBasicTask;
 import io.spine.examples.todolist.command.CreateDraft;
 import io.spine.examples.todolist.command.FinalizeDraft;
 import io.spine.examples.todolist.server.Server;
+import io.spine.examples.todolist.server.TodoListContext;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
