@@ -18,41 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.protobuf.Timestamp;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.view.ActionListView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import static com.google.protobuf.util.Timestamps.toMillis;
+import static io.spine.cli.action.TransitionAction.transitionProducer;
+import static io.spine.examples.todolist.cli.view.TaskListView.newOpenTaskListProducer;
 
 /**
- * Formats a date into a user-friendly representation.
+ * Menu of actions that are related to
+ * {@link io.spine.examples.todolist.server.view.MyListView MyListView}.
  */
-final class DateFormatter {
+public final class MyTasksMenu extends ActionListView {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
-
-    @VisibleForTesting
-    static final String DEFAULT_TIMESTAMP_VALUE = "default";
-
-    /** Prevents instantiation of this utility class. */
-    private DateFormatter() {
+    private MyTasksMenu() {
+        super("My tasks menu");
     }
 
-    static String format(Timestamp timestamp) {
-        long millis = toMillis(timestamp);
-        return millis == 0
-               ? DEFAULT_TIMESTAMP_VALUE
-               : getDateFormat().format(new Date(millis));
-    }
-
-    @VisibleForTesting
-    static SimpleDateFormat getDateFormat() {
-        SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-        return result;
+    /**
+     * Creates a new {@code MyTasksMenu} instance.
+     *
+     * @return the new instance
+     */
+    public static MyTasksMenu create() {
+        MyTasksMenu view = new MyTasksMenu();
+        view.addAction(transitionProducer("Create task", new Shortcut("c"), NewTaskView.create()));
+        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
+        return view;
     }
 }

@@ -18,21 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.cli.view.NewTaskView.DescriptionEditOperation;
 import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.server.view.NewTaskView.DescriptionEditOperation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
-import static io.spine.examples.todolist.server.view.NewTaskView.DESCRIPTION_LABEL;
-import static io.spine.examples.todolist.server.view.NewTaskView.EMPTY_VALUE;
+import static io.spine.examples.todolist.cli.view.NewTaskView.DESCRIPTION_LABEL;
+import static io.spine.examples.todolist.cli.view.NewTaskView.EMPTY_VALUE;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

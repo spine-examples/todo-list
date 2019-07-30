@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
 import io.spine.examples.todolist.client.TodoClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +26,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.AppConfig.init;
-import static io.spine.examples.todolist.AppConfig.setClient;
+import static io.spine.examples.todolist.cli.AppConfig.init;
+import static io.spine.examples.todolist.cli.AppConfig.setClient;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.testing.Tests.nullRef;

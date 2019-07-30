@@ -18,31 +18,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli;
 
-import io.spine.cli.action.Shortcut;
-import io.spine.cli.view.ActionListView;
+import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.client.TodoClient;
 
-import static io.spine.cli.action.TransitionAction.transitionProducer;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Root view of the application.
+ * Configuration of the client application.
  */
-public final class MainMenu extends ActionListView {
+public final class AppConfig {
 
-    private MainMenu() {
-        super("Main menu");
+    private static TodoClient todoClient = null;
+
+    /** Prevents instantiation of this class. */
+    private AppConfig() {
+    }
+
+    public static void init(TodoClient client) {
+        if (todoClient != null) {
+            throw new IllegalStateException("AppConfig is already initialized.");
+        } else {
+            todoClient = checkNotNull(client);
+        }
+    }
+
+    @VisibleForTesting
+    public static void setClient(TodoClient client) {
+        todoClient = client;
     }
 
     /**
-     * Creates a new {@code MainMenu} instance.
+     * Obtains {@link TodoClient} for communication with the {@code Server}.
      *
-     * @return the new instance
+     * @return the todoClient interface
      */
-    public static MainMenu create() {
-        MainMenu mainMenu = new MainMenu();
-        mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
-                                              MyTasksMenu.create()));
-        return mainMenu;
+    public static TodoClient getClient() {
+        checkState(todoClient != null);
+        return todoClient;
     }
 }

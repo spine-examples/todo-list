@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.NoOpView;
@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.examples.todolist.server.view.TaskListView.newOpenTaskViewProducer;
-import static io.spine.examples.todolist.server.view.TaskListView.taskActionProducersFor;
+import static io.spine.examples.todolist.cli.view.TaskListView.newOpenTaskViewProducer;
+import static io.spine.examples.todolist.cli.view.TaskListView.taskActionProducersFor;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;

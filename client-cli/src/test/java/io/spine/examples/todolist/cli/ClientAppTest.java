@@ -18,14 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.ClientApp.initCli;
+import static io.spine.examples.todolist.cli.ClientApp.initCli;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.testing.Tests.nullRef;
 import static org.junit.jupiter.api.Assertions.assertEquals;

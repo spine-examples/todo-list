@@ -18,36 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
-
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-
-import java.io.IOException;
-
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
-
 /**
- * Utilities for creating {@linkplain Terminal terminals}.
+ * This package contains command line Todo-List client application.
  */
-final class Terminals {
 
-    /** Prevents instantiation of this utility class. */
-    private Terminals() {
-    }
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.cli;
 
-    /**
-     * Creates a new terminal.
-     *
-     * @return new terminal
-     */
-    static Terminal newTerminal() {
-        try {
-            return TerminalBuilder.builder()
-                                  .dumb(true)
-                                  .build();
-        } catch (IOException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-    }
-}
+import com.google.errorprone.annotations.CheckReturnValue;
+
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -18,33 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli.view;
 
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.terminal.Terminal;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.view.ActionListView;
+
+import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
- * Utilities for creating {@linkplain LineReader line readers}.
+ * Root view of the application.
  */
-final class Readers {
+public final class MainMenu extends ActionListView {
 
-    /** Prevents instantiation of this utility class. */
-    private Readers() {
+    private MainMenu() {
+        super("Main menu");
     }
 
     /**
-     * Creates a {@link LineReader} with the specified {@link Terminal}.
+     * Creates a new {@code MainMenu} instance.
      *
-     * @param terminal
-     *         the terminal to use in the line reader
-     * @return new line reader
+     * @return the new instance
      */
-    static LineReader newLineReader(Terminal terminal) {
-        LineReader reader = LineReaderBuilder
-                .builder()
-                .terminal(terminal)
-                .build();
-        return reader;
+    public static MainMenu create() {
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
+                                              MyTasksMenu.create()));
+        return mainMenu;
     }
 }

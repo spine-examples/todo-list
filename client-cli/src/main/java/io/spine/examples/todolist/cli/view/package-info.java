@@ -18,33 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
-
-import io.spine.cli.action.Shortcut;
-import io.spine.cli.view.ActionListView;
-
-import static io.spine.cli.action.TransitionAction.transitionProducer;
-import static io.spine.examples.todolist.server.view.TaskListView.newOpenTaskListProducer;
-
 /**
- * Menu of actions that are related to
- * {@link io.spine.examples.todolist.server.view.MyListView MyListView}.
+ * This package contains views of the application CLI.
  */
-public final class MyTasksMenu extends ActionListView {
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.cli.view;
 
-    private MyTasksMenu() {
-        super("My tasks menu");
-    }
-
-    /**
-     * Creates a new {@code MyTasksMenu} instance.
-     *
-     * @return the new instance
-     */
-    public static MyTasksMenu create() {
-        MyTasksMenu view = new MyTasksMenu();
-        view.addAction(transitionProducer("Create task", new Shortcut("c"), NewTaskView.create()));
-        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
-        return view;
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

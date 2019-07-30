@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.view.TaskView;
@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.base.Time.currentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
-import static io.spine.examples.todolist.server.view.DateFormatter.format;
-import static io.spine.examples.todolist.server.view.ViewOfTask.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.server.view.ViewOfTask.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.server.view.ViewOfTask.PRIORITY_VALUE;
+import static io.spine.examples.todolist.cli.view.DateFormatter.format;
+import static io.spine.examples.todolist.cli.view.ViewOfTask.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.cli.view.ViewOfTask.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.cli.view.ViewOfTask.PRIORITY_VALUE;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertThrows;

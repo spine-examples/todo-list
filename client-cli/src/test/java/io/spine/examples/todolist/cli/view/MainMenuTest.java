@@ -18,10 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains views of the application CLI.
- */
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@DisplayName("MainMenu should")
+class MainMenuTest extends ViewTest {
+
+    @Test
+    @DisplayName("not be empty")
+    void notBeEmpty() {
+        MainMenu mainMenu = MainMenu.create();
+        assertFalse(mainMenu.getActions()
+                            .isEmpty());
+    }
+}

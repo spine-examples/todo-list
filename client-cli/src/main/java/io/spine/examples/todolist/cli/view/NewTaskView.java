@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.EditOperation;
@@ -32,7 +32,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.command.CreateBasicTask;
 
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
-import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.cli.AppConfig.getClient;
 import static java.util.Collections.singletonList;
 
 /**

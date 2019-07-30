@@ -18,45 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.client.TodoClient;
+import com.google.protobuf.Timestamp;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import static com.google.protobuf.util.Timestamps.toMillis;
 
 /**
- * Configuration of the client application.
+ * Formats a date into a user-friendly representation.
  */
-public final class AppConfig {
+final class DateFormatter {
 
-    private static TodoClient todoClient = null;
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    /** Prevents instantiation of this class. */
-    private AppConfig() {
+    @VisibleForTesting
+    static final String DEFAULT_TIMESTAMP_VALUE = "default";
+
+    /** Prevents instantiation of this utility class. */
+    private DateFormatter() {
     }
 
-    public static void init(TodoClient client) {
-        if (todoClient != null) {
-            throw new IllegalStateException("AppConfig is already initialized.");
-        } else {
-            todoClient = checkNotNull(client);
-        }
+    static String format(Timestamp timestamp) {
+        long millis = toMillis(timestamp);
+        return millis == 0
+               ? DEFAULT_TIMESTAMP_VALUE
+               : getDateFormat().format(new Date(millis));
     }
 
     @VisibleForTesting
-    public static void setClient(TodoClient client) {
-        todoClient = client;
-    }
-
-    /**
-     * Obtains {@link TodoClient} for communication with the {@code Server}.
-     *
-     * @return the todoClient interface
-     */
-    public static TodoClient getClient() {
-        checkState(todoClient != null);
-        return todoClient;
+    static SimpleDateFormat getDateFormat() {
+        SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        return result;
     }
 }

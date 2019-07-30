@@ -18,30 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
-import io.spine.cli.Screen;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.IOException;
 
-@DisplayName("TerminalScreen should")
-class TerminalScreenTest {
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
-    private static final String EMPTY_STRING = "";
+/**
+ * Utilities for creating {@linkplain Terminal terminals}.
+ */
+final class Terminals {
 
-    private final Screen screen = new TerminalScreen();
-
-    @Test
-    @DisplayName("not allow empty prompt")
-    void notAllowEmptyPrompt() {
-        assertThrows(IllegalArgumentException.class, () -> screen.promptUser(EMPTY_STRING));
+    /** Prevents instantiation of this utility class. */
+    private Terminals() {
     }
 
-    @Test
-    @DisplayName("not allow empty string for printing")
-    void notAllowEmptyMessage() {
-        assertThrows(IllegalArgumentException.class, () -> screen.println(EMPTY_STRING));
+    /**
+     * Creates a new terminal.
+     *
+     * @return new terminal
+     */
+    static Terminal newTerminal() {
+        try {
+            return TerminalBuilder.builder()
+                                  .dumb(true)
+                                  .build();
+        } catch (IOException e) {
+            throw illegalStateWithCauseOf(e);
+        }
     }
 }

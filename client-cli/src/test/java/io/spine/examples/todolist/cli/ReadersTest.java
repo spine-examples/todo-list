@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
 import io.spine.testing.UtilityClassTest;
 import org.jline.reader.LineReader;
@@ -26,8 +26,8 @@ import org.jline.terminal.Terminal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Readers.newLineReader;
-import static io.spine.examples.todolist.Terminals.newTerminal;
+import static io.spine.examples.todolist.cli.Readers.newLineReader;
+import static io.spine.examples.todolist.cli.Terminals.newTerminal;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DisplayName("Readers should")

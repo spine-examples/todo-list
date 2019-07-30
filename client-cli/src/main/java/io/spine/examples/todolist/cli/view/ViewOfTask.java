@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
@@ -28,8 +28,8 @@ import io.spine.examples.todolist.view.TaskView;
 import java.util.List;
 import java.util.Optional;
 
-import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.server.view.DateFormatter.format;
+import static io.spine.examples.todolist.cli.AppConfig.getClient;
+import static io.spine.examples.todolist.cli.view.DateFormatter.format;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 

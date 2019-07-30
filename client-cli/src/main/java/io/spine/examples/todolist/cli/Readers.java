@@ -18,42 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
-import io.spine.cli.AbstractScreen;
-import io.spine.cli.Screen;
 import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.newTerminal;
-
 /**
- * A {@link Screen} of a command-line application.
+ * Utilities for creating {@linkplain LineReader line readers}.
  */
-public final class TerminalScreen extends AbstractScreen {
+final class Readers {
 
-    private final LineReader reader = newLineReader();
-
-    @Override
-    public String promptUser(String prompt) {
-        checkArgument(!isNullOrEmpty(prompt));
-        println(prompt);
-        String answer = reader.readLine();
-        return answer;
+    /** Prevents instantiation of this utility class. */
+    private Readers() {
     }
 
-    @Override
-    public void println(String message) {
-        checkArgument(!isNullOrEmpty(message));
-        reader.getTerminal()
-              .writer()
-              .println(message);
-    }
-
-    private static LineReader newLineReader() {
-        Terminal terminal = newTerminal();
-        return Readers.newLineReader(terminal);
+    /**
+     * Creates a {@link LineReader} with the specified {@link Terminal}.
+     *
+     * @param terminal
+     *         the terminal to use in the line reader
+     * @return new line reader
+     */
+    static LineReader newLineReader(Terminal terminal) {
+        LineReader reader = LineReaderBuilder
+                .builder()
+                .terminal(terminal)
+                .build();
+        return reader;
     }
 }

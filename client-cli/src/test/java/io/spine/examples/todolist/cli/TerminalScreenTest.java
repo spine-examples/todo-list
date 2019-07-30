@@ -18,29 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
-import io.spine.testing.UtilityClassTest;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.impl.DumbTerminal;
+import io.spine.cli.Screen;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Terminals.newTerminal;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("Terminals should")
-class TerminalsTest extends UtilityClassTest<Terminals> {
+@DisplayName("TerminalScreen should")
+class TerminalScreenTest {
 
-    TerminalsTest() {
-        super(Terminals.class);
+    private static final String EMPTY_STRING = "";
+
+    private final Screen screen = new TerminalScreen();
+
+    @Test
+    @DisplayName("not allow empty prompt")
+    void notAllowEmptyPrompt() {
+        assertThrows(IllegalArgumentException.class, () -> screen.promptUser(EMPTY_STRING));
     }
 
     @Test
-    @DisplayName("create a new dumb terminal")
-    void createNewDumbTerminal() {
-        Terminal terminal = newTerminal();
-        assertThat(terminal, instanceOf(DumbTerminal.class));
+    @DisplayName("not allow empty string for printing")
+    void notAllowEmptyMessage() {
+        assertThrows(IllegalArgumentException.class, () -> screen.println(EMPTY_STRING));
     }
 }

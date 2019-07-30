@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.Screen;
@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static io.spine.cli.action.TransitionAction.transitionProducer;
-import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.cli.AppConfig.getClient;
 import static java.lang.String.valueOf;
 
 /**

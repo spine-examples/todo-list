@@ -18,21 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli;
 
+import io.spine.testing.UtilityClassTest;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.impl.DumbTerminal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static io.spine.examples.todolist.cli.Terminals.newTerminal;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 
-@DisplayName("MainMenu should")
-class MainMenuTest extends ViewTest {
+@DisplayName("Terminals should")
+class TerminalsTest extends UtilityClassTest<Terminals> {
+
+    TerminalsTest() {
+        super(Terminals.class);
+    }
 
     @Test
-    @DisplayName("not be empty")
-    void notBeEmpty() {
-        MainMenu mainMenu = MainMenu.create();
-        assertFalse(mainMenu.getActions()
-                            .isEmpty());
+    @DisplayName("create a new dumb terminal")
+    void createNewDumbTerminal() {
+        Terminal terminal = newTerminal();
+        assertThat(terminal, instanceOf(DumbTerminal.class));
     }
 }

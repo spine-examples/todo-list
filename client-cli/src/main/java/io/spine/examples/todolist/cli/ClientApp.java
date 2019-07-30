@@ -18,18 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.cli;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.flogger.FluentLogger;
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import io.spine.cli.view.View;
+import io.spine.examples.todolist.cli.view.MainMenu;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.server.view.MainMenu;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.cli.AppConfig.getClient;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
 
 /**

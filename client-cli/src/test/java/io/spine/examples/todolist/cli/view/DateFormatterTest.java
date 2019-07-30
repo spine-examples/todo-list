@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.view;
+package io.spine.examples.todolist.cli.view;
 
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.DisplayName;
@@ -28,9 +28,9 @@ import java.util.Date;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.base.Time.currentTime;
-import static io.spine.examples.todolist.server.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
-import static io.spine.examples.todolist.server.view.DateFormatter.format;
-import static io.spine.examples.todolist.server.view.DateFormatter.getDateFormat;
+import static io.spine.examples.todolist.cli.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
+import static io.spine.examples.todolist.cli.view.DateFormatter.format;
+import static io.spine.examples.todolist.cli.view.DateFormatter.getDateFormat;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
