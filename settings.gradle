@@ -27,7 +27,6 @@ include 'client-angular'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
-include 'integration-tests'
 
 def deployment(final String name) {
     final String path = ":$name"
