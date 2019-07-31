@@ -20,16 +20,16 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.command.AddLabels;
-import io.spine.examples.todolist.command.AssignLabelToTask;
-import io.spine.examples.todolist.command.RemoveLabelFromTask;
-import io.spine.examples.todolist.rejection.CannotAddLabels;
-import io.spine.examples.todolist.rejection.CannotAssignLabelToTask;
-import io.spine.examples.todolist.rejection.CannotRemoveLabelFromTask;
 import io.spine.examples.todolist.server.label.TaskLabelsPartRejections;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.TaskCreationId;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.AddLabels;
+import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
+import io.spine.examples.todolist.tasks.command.RemoveLabelFromTask;
+import io.spine.examples.todolist.tasks.rejection.CannotAddLabels;
+import io.spine.examples.todolist.tasks.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.tasks.rejection.CannotRemoveLabelFromTask;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

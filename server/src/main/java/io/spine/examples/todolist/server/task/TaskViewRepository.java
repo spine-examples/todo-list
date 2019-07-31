@@ -21,9 +21,9 @@
 package io.spine.examples.todolist.server.task;
 
 import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.event.TaskAware;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.event.TaskAware;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.route.EventRouting;
 

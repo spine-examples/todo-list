@@ -20,19 +20,19 @@
 
 package io.spine.examples.todolist.cli.view;
 
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.base.Time.currentTime;
-import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.cli.view.DateFormatter.format;
 import static io.spine.examples.todolist.cli.view.ViewOfTask.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.cli.view.ViewOfTask.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.cli.view.ViewOfTask.PRIORITY_VALUE;
+import static io.spine.examples.todolist.tasks.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertThrows;

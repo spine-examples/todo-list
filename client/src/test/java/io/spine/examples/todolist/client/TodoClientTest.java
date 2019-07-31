@@ -20,16 +20,16 @@
 
 package io.spine.examples.todolist.client;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.command.AssignLabelToTask;
-import io.spine.examples.todolist.command.CreateBasicLabel;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.CreateDraft;
-import io.spine.examples.todolist.command.FinalizeDraft;
 import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.TodoListContext;
+import io.spine.examples.todolist.server.TasksContextFactory;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
+import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.CreateDraft;
+import io.spine.examples.todolist.tasks.command.FinalizeDraft;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +55,7 @@ abstract class TodoClientTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        BoundedContext boundedContext = TodoListContext.create();
+        BoundedContext boundedContext = TasksContextFactory.create();
         server = newServer(PORT, boundedContext);
         startServer();
         client = SubscribingTodoClient.instance(HOST, PORT);

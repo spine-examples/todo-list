@@ -20,17 +20,17 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdsList;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.command.AssignLabelToTask;
-import io.spine.examples.todolist.command.RemoveLabelFromTask;
-import io.spine.examples.todolist.event.LabelAssignedToTask;
-import io.spine.examples.todolist.event.LabelRemovedFromTask;
-import io.spine.examples.todolist.rejection.CannotAssignLabelToTask;
-import io.spine.examples.todolist.rejection.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.LabelIdsList;
+import io.spine.examples.todolist.tasks.Task;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.TaskLabels;
+import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
+import io.spine.examples.todolist.tasks.command.RemoveLabelFromTask;
+import io.spine.examples.todolist.tasks.event.LabelAssignedToTask;
+import io.spine.examples.todolist.tasks.event.LabelRemovedFromTask;
+import io.spine.examples.todolist.tasks.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.tasks.rejection.CannotRemoveLabelFromTask;
 import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;

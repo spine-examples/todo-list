@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.server.task;
 
 import io.spine.base.CommandMessage;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.server.entity.Repository;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;

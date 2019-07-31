@@ -22,22 +22,22 @@ package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
 import io.spine.change.TimestampChange;
-import io.spine.examples.todolist.DescriptionChange;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.command.CompleteTask;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.CreateDraft;
-import io.spine.examples.todolist.command.DeleteTask;
-import io.spine.examples.todolist.command.FinalizeDraft;
-import io.spine.examples.todolist.command.ReopenTask;
-import io.spine.examples.todolist.command.RestoreDeletedTask;
-import io.spine.examples.todolist.command.UpdateTaskDescription;
-import io.spine.examples.todolist.command.UpdateTaskDueDate;
-import io.spine.examples.todolist.command.UpdateTaskPriority;
+import io.spine.examples.todolist.tasks.DescriptionChange;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.PriorityChange;
+import io.spine.examples.todolist.tasks.TaskDescription;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.TaskPriority;
+import io.spine.examples.todolist.tasks.command.CompleteTask;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.CreateDraft;
+import io.spine.examples.todolist.tasks.command.DeleteTask;
+import io.spine.examples.todolist.tasks.command.FinalizeDraft;
+import io.spine.examples.todolist.tasks.command.ReopenTask;
+import io.spine.examples.todolist.tasks.command.RestoreDeletedTask;
+import io.spine.examples.todolist.tasks.command.UpdateTaskDescription;
+import io.spine.examples.todolist.tasks.command.UpdateTaskDueDate;
+import io.spine.examples.todolist.tasks.command.UpdateTaskPriority;
 
 import static io.spine.base.Time.currentTime;
 

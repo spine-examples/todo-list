@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.server.label;
 
 import io.spine.core.Subscribe;
-import io.spine.examples.todolist.LabelColor;
-import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.event.LabelCreated;
-import io.spine.examples.todolist.event.LabelDetailsUpdated;
-import io.spine.examples.todolist.view.LabelView;
+import io.spine.examples.todolist.tasks.LabelColor;
+import io.spine.examples.todolist.tasks.LabelDetails;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.event.LabelCreated;
+import io.spine.examples.todolist.tasks.event.LabelDetailsUpdated;
+import io.spine.examples.todolist.tasks.view.LabelView;
 import io.spine.server.projection.Projection;
 
 /**

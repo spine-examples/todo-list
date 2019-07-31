@@ -22,10 +22,10 @@ package io.spine.examples.todolist.cli.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.cli.view.NewTaskView.DescriptionEditOperation;
-import io.spine.examples.todolist.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.TaskDescription;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

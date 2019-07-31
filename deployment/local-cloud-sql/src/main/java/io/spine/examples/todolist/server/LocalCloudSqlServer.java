@@ -113,7 +113,7 @@ public class LocalCloudSqlServer {
 
     @VisibleForTesting
     static BoundedContext createContext() {
-        return TodoListContext.create();
+        return TasksContextFactory.create();
     }
 
     private static DataSource createDataSource(String[] args) {

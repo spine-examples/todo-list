@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.server.task;
 
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.TaskStatus;
-import io.spine.examples.todolist.event.TaskCreated;
 import io.spine.examples.todolist.server.task.given.TaskViewProjectionTestEnv;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.TaskPriority;
+import io.spine.examples.todolist.tasks.TaskStatus;
+import io.spine.examples.todolist.tasks.event.TaskCreated;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.server.entity.AbstractEntity;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;

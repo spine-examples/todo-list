@@ -26,23 +26,17 @@ import io.spine.examples.todolist.server.task.TaskCreationWizardRepository;
 import io.spine.examples.todolist.server.task.TaskLabelsRepository;
 import io.spine.examples.todolist.server.task.TaskRepository;
 import io.spine.examples.todolist.server.task.TaskViewRepository;
+import io.spine.examples.todolist.tasks.TasksContext;
 import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
  */
-public final class TodoListContext {
-
-    /**
-     * The name of the context.
-     *
-     * <p>See {@code package-info.java} for using the value in the annotation for the package.
-     */
-    static final String NAME = "TodoList";
+public final class TasksContextFactory {
 
     /** Prevents instantiation of this utility class. */
-    private TodoListContext() {
+    private TasksContextFactory() {
     }
 
     /**
@@ -53,7 +47,7 @@ public final class TodoListContext {
      */
     public static BoundedContext create() {
         BoundedContextBuilder builder = BoundedContext
-                .singleTenant(NAME)
+                .singleTenant(TasksContext.NAME)
                 .add(new TaskRepository())
                 .add(new TaskLabelsRepository())
                 .add(new LabelAggregateRepository())

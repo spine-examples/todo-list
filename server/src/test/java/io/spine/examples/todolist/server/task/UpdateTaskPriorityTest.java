@@ -20,18 +20,18 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.DeleteTask;
-import io.spine.examples.todolist.command.UpdateTaskPriority;
-import io.spine.examples.todolist.event.TaskPriorityUpdated;
-import io.spine.examples.todolist.rejection.Rejections;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.DeleteTask;
+import io.spine.examples.todolist.tasks.command.UpdateTaskPriority;
+import io.spine.examples.todolist.tasks.event.TaskPriorityUpdated;
+import io.spine.examples.todolist.tasks.rejection.Rejections;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.TaskPriority.HIGH;
-import static io.spine.examples.todolist.TaskPriority.LOW;
+import static io.spine.examples.todolist.tasks.TaskPriority.HIGH;
+import static io.spine.examples.todolist.tasks.TaskPriority.LOW;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;

@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.examples.todolist.server.TodoListContext.create;
+import static io.spine.examples.todolist.server.TasksContextFactory.create;
 
 /**
  * A local {@link Server} using

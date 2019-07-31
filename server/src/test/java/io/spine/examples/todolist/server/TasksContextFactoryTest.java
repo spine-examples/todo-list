@@ -18,18 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.event;
+package io.spine.examples.todolist.server;
 
-import com.google.errorprone.annotations.Immutable;
-import io.spine.base.EventMessage;
-import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.tasks.TasksContext;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-/**
- * An event that is related to a single task and is aware of to which one exactly.
- */
-@Immutable
-public interface TaskAware extends EventMessage {
+import static com.google.common.truth.Truth.assertThat;
 
-    /** Obtains an ID of the task that this event is related to. */
-    TaskId getTaskId();
+@DisplayName("TodoListContext config class should")
+class TasksContextFactoryTest extends UtilityClassTest<TasksContextFactory> {
+
+    TasksContextFactoryTest() {
+        super(TasksContextFactory.class);
+    }
+
+    @Test
+    @DisplayName("declare name constant")
+    void name() {
+        assertThat(TasksContext.NAME)
+                .isNotEmpty();
+    }
 }

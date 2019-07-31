@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.server.label;
 
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.LabelDetailsUpdateRejected;
-import io.spine.examples.todolist.RejectedLabelCommandDetails;
-import io.spine.examples.todolist.command.UpdateLabelDetails;
-import io.spine.examples.todolist.rejection.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.tasks.LabelDetailsUpdateRejected;
+import io.spine.examples.todolist.tasks.RejectedLabelCommandDetails;
+import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
+import io.spine.examples.todolist.tasks.rejection.CannotUpdateLabelDetails;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

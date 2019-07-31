@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.TaskCreation;
-import io.spine.examples.todolist.TaskCreationId;
+import io.spine.examples.todolist.tasks.TaskCreation;
+import io.spine.examples.todolist.tasks.TaskCreationId;
 import io.spine.server.procman.ProcessManagerRepository;
 
 /**

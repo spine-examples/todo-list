@@ -20,15 +20,15 @@
 
 package io.spine.examples.todolist.server.label;
 
-import io.spine.examples.todolist.LabelColor;
-import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.command.CreateBasicLabel;
-import io.spine.examples.todolist.command.UpdateLabelDetails;
-import io.spine.examples.todolist.event.LabelCreated;
-import io.spine.examples.todolist.event.LabelDetailsUpdated;
-import io.spine.examples.todolist.rejection.Rejections;
+import io.spine.examples.todolist.tasks.LabelColor;
+import io.spine.examples.todolist.tasks.LabelDetails;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.TaskLabel;
+import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
+import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
+import io.spine.examples.todolist.tasks.event.LabelCreated;
+import io.spine.examples.todolist.tasks.event.LabelDetailsUpdated;
+import io.spine.examples.todolist.tasks.rejection.Rejections;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

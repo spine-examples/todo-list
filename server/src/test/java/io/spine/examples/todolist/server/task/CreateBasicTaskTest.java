@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.event.TaskCreated;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.event.TaskCreated;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

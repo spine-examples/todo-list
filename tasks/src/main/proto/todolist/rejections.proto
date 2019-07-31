@@ -25,7 +25,7 @@ package spine.examples.todolist;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "io.spine.examples.todolist.rejection";
+option java_package = "io.spine.examples.todolist.tasks.rejection";
 option java_multiple_files = false;
 option java_generate_equals_and_hash = true;
 

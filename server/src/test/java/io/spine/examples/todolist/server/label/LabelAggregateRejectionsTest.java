@@ -22,8 +22,8 @@ package io.spine.examples.todolist.server.label;
 
 import com.google.common.testing.NullPointerTester;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.command.UpdateLabelDetails;
-import io.spine.examples.todolist.rejection.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
+import io.spine.examples.todolist.tasks.rejection.CannotUpdateLabelDetails;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

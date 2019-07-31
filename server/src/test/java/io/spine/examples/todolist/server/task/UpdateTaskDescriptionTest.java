@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.command.CompleteTask;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.DeleteTask;
-import io.spine.examples.todolist.command.UpdateTaskDescription;
-import io.spine.examples.todolist.event.TaskDescriptionUpdated;
-import io.spine.examples.todolist.rejection.Rejections;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.command.CompleteTask;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.DeleteTask;
+import io.spine.examples.todolist.tasks.command.UpdateTaskDescription;
+import io.spine.examples.todolist.tasks.event.TaskDescriptionUpdated;
+import io.spine.examples.todolist.tasks.rejection.Rejections;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.TaskStatus;
+import io.spine.examples.todolist.tasks.TaskStatus;
 
 /**
  * Validates task commands and state transitions.

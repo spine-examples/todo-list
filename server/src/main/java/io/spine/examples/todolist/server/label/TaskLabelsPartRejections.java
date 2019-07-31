@@ -20,17 +20,17 @@
 
 package io.spine.examples.todolist.server.label;
 
-import io.spine.examples.todolist.AddLabelsRejected;
-import io.spine.examples.todolist.AssignLabelToTaskRejected;
-import io.spine.examples.todolist.RejectedTaskCommandDetails;
-import io.spine.examples.todolist.RemoveLabelFromTaskRejected;
-import io.spine.examples.todolist.command.AddLabels;
-import io.spine.examples.todolist.command.AssignLabelToTask;
-import io.spine.examples.todolist.command.RemoveLabelFromTask;
-import io.spine.examples.todolist.rejection.CannotAddLabels;
-import io.spine.examples.todolist.rejection.CannotAssignLabelToTask;
-import io.spine.examples.todolist.rejection.CannotRemoveLabelFromTask;
 import io.spine.examples.todolist.server.task.TaskLabelsPart;
+import io.spine.examples.todolist.tasks.AddLabelsRejected;
+import io.spine.examples.todolist.tasks.AssignLabelToTaskRejected;
+import io.spine.examples.todolist.tasks.RejectedTaskCommandDetails;
+import io.spine.examples.todolist.tasks.RemoveLabelFromTaskRejected;
+import io.spine.examples.todolist.tasks.command.AddLabels;
+import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
+import io.spine.examples.todolist.tasks.command.RemoveLabelFromTask;
+import io.spine.examples.todolist.tasks.rejection.CannotAddLabels;
+import io.spine.examples.todolist.tasks.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.tasks.rejection.CannotRemoveLabelFromTask;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

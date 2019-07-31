@@ -20,14 +20,14 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.DescriptionChange;
-import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.command.SkipLabels;
-import io.spine.examples.todolist.command.StartTaskCreation;
-import io.spine.examples.todolist.command.UpdateTaskDetails;
 import io.spine.examples.todolist.server.label.LabelAggregateRepository;
+import io.spine.examples.todolist.tasks.DescriptionChange;
+import io.spine.examples.todolist.tasks.TaskCreationId;
+import io.spine.examples.todolist.tasks.TaskDescription;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.SkipLabels;
+import io.spine.examples.todolist.tasks.command.StartTaskCreation;
+import io.spine.examples.todolist.tasks.command.UpdateTaskDetails;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -44,8 +44,10 @@ abstract class CommandTest {
     void setUp() {
         context = BlackBoxBoundedContext
                 .singleTenant()
-                .with(new TaskCreationWizardRepository(), new TaskRepository(),
-                      new LabelAggregateRepository(), new TaskLabelsRepository());
+                .with(new TaskCreationWizardRepository(),
+                      new TaskRepository(),
+                      new LabelAggregateRepository(),
+                      new TaskLabelsRepository());
         taskId = TaskId.generate();
         processId = TaskCreationId.generate();
     }

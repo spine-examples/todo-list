@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.TaskStatus;
+import io.spine.examples.todolist.tasks.TaskStatus;
 
 /**
  * This class defines possible transitions of {@link TaskStatus}.

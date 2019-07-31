@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.server.task;
 
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.command.CompleteTask;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.UpdateTaskDueDate;
-import io.spine.examples.todolist.event.TaskDueDateUpdated;
-import io.spine.examples.todolist.rejection.Rejections;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.command.CompleteTask;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.UpdateTaskDueDate;
+import io.spine.examples.todolist.tasks.event.TaskDueDateUpdated;
+import io.spine.examples.todolist.tasks.rejection.Rejections;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

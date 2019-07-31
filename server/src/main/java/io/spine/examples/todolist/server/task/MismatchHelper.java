@@ -22,8 +22,8 @@ package io.spine.examples.todolist.server.task;
 
 import io.spine.change.ValueMismatch;
 import io.spine.core.Version;
-import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.TaskPriorityValue;
+import io.spine.examples.todolist.tasks.TaskPriority;
+import io.spine.examples.todolist.tasks.TaskPriorityValue;
 import io.spine.protobuf.AnyPacker;
 
 /**

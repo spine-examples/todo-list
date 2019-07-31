@@ -44,13 +44,13 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.view.LabelView;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.Task;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.TaskLabel;
+import io.spine.examples.todolist.tasks.TaskLabels;
+import io.spine.examples.todolist.tasks.view.LabelView;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.time.ZoneOffsets;
 
 import javax.annotation.Nullable;

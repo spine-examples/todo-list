@@ -24,9 +24,9 @@ package spine.examples.todolist;
 
 import "spine/options.proto";
 
-option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "io.spine.examples.todolist";
-option java_outer_classname = "ModelProto";
+option (type_url_prefix) = "type.todolist.spine.io";
+option java_package = "io.spine.examples.todolist.tasks";
+option java_outer_classname = "TasksProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 

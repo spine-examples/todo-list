@@ -68,7 +68,7 @@ final class Application {
         serverEnvironment.configureTracing(Tracing.createTracing());
         serverEnvironment.configureStorage(Storage.createStorage());
 
-        BoundedContext context = TodoListContext.create();
+        BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();
         info.log("Initializing Command/Query services.");
         CommandService commandService = CommandService

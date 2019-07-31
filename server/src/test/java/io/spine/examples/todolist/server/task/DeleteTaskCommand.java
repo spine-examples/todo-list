@@ -20,17 +20,17 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.CreateDraft;
-import io.spine.examples.todolist.command.DeleteTask;
-import io.spine.examples.todolist.event.TaskDeleted;
-import io.spine.examples.todolist.rejection.Rejections;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.CreateDraft;
+import io.spine.examples.todolist.tasks.command.DeleteTask;
+import io.spine.examples.todolist.tasks.event.TaskDeleted;
+import io.spine.examples.todolist.tasks.rejection.Rejections;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.testing.server.entity.EntitySubject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.TaskStatus.DELETED;
+import static io.spine.examples.todolist.tasks.TaskStatus.DELETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;

@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server.task;
 
-import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.server.aggregate.AggregatePartRepository;
 
 /**

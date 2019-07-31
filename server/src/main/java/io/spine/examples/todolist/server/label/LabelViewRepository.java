@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.server.label;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.view.LabelView;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.view.LabelView;
 import io.spine.server.projection.ProjectionRepository;
 
 /**

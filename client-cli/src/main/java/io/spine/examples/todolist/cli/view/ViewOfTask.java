@@ -21,9 +21,9 @@
 package io.spine.examples.todolist.cli.view;
 
 import io.spine.cli.view.EntityView;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.view.TaskItem;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.view.TaskItem;
+import io.spine.examples.todolist.tasks.view.TaskView;
 
 import java.util.List;
 import java.util.Optional;
