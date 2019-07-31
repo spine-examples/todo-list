@@ -18,13 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server.tasks.task;
+
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.event.TaskAware;
+import io.spine.examples.todolist.tasks.view.TaskView;
+import io.spine.server.projection.ProjectionRepository;
+import io.spine.server.route.EventRouting;
+
+import static java.util.Collections.singleton;
+
 /**
- * Sample To-Do List application server based on gRPC.
+ * Repository for the {@link TaskViewProjection}.
  */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+public class TaskViewRepository
+        extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+    @OverridingMethodsMustInvokeSuper
+    @Override
+    protected void setupEventRouting(EventRouting<TaskId> routing) {
+        super.setupEventRouting(routing);
+        routing.route(TaskAware.class, (message, context) -> singleton(message.getTaskId()));
+    }
+}

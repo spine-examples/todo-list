@@ -18,13 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server.tasks.task;
+
+import io.spine.examples.todolist.tasks.TaskCreation;
+import io.spine.examples.todolist.tasks.TaskCreationId;
+import io.spine.server.procman.ProcessManagerRepository;
+
 /**
- * Sample To-Do List application server based on gRPC.
+ * The process manager repository for the {@link TaskCreationWizard}.
  */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
-
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+public class TaskCreationWizardRepository
+        extends ProcessManagerRepository<TaskCreationId, TaskCreationWizard, TaskCreation> {
+}

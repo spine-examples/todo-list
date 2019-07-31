@@ -19,11 +19,11 @@
  */
 
 /**
- * Sample To-Do List application server based on gRPC.
+ * This package provides classes related to server-side management of labels.
  */
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.tasks.label;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 

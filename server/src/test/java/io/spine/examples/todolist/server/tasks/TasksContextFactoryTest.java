@@ -18,13 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Sample To-Do List application server based on gRPC.
- */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.tasks;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.examples.todolist.tasks.TasksContext;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("TodoListContext config class should")
+class TasksContextFactoryTest extends UtilityClassTest<TasksContextFactory> {
+
+    TasksContextFactoryTest() {
+        super(TasksContextFactory.class);
+    }
+
+    @Test
+    @DisplayName("declare name constant")
+    void name() {
+        assertThat(TasksContext.NAME)
+                .isNotEmpty();
+    }
+}

@@ -19,11 +19,12 @@
  */
 
 /**
- * Sample To-Do List application server based on gRPC.
+ * This package provides test environment for
+ * {@link io.spine.examples.todolist.server.tasks.task.TaskViewProjection} tests.
  */
-@CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+@CheckReturnValue
+package io.spine.examples.todolist.server.tasks.task.given;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 

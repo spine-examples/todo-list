@@ -18,13 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server.tasks.label;
+
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.view.LabelView;
+import io.spine.server.projection.ProjectionRepository;
+
 /**
- * Sample To-Do List application server based on gRPC.
+ * Repository for the {@link LabelViewProjection}.
  */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
-
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+public class LabelViewRepository
+        extends ProjectionRepository<LabelId, LabelViewProjection, LabelView> {
+}

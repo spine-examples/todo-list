@@ -22,7 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.TasksContextFactory;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.command.AssignLabelToTask;

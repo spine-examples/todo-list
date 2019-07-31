@@ -19,12 +19,15 @@
  */
 
 /**
- * Sample To-Do List application server based on gRPC.
+ * This package contains server-side part of the Tasks context.
  */
+@BoundedContext(TasksContext.NAME)
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.tasks;
 
 import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.core.BoundedContext;
+import io.spine.examples.todolist.tasks.TasksContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;

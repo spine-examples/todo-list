@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.server.label.LabelAggregate;
+import io.spine.examples.todolist.server.tasks.label.LabelAggregate;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.Task;
 import io.spine.examples.todolist.tasks.TaskId;

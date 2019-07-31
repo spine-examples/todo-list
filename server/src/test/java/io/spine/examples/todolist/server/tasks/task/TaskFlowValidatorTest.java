@@ -18,13 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Sample To-Do List application server based on gRPC.
- */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.tasks.task;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+@DisplayName("TaskFlowValidator should")
+class TaskFlowValidatorTest extends UtilityClassTest<TaskFlowValidator> {
+
+    TaskFlowValidatorTest() {
+        super(TaskFlowValidator.class);
+    }
+}

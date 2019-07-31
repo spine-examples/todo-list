@@ -18,13 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server.tasks.task;
+
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregateRoot;
+
 /**
- * Sample To-Do List application server based on gRPC.
+ * Aggregate root for the tasks.
+ *
+ * @see AggregateRoot
  */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
+public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+    /**
+     * Creates a new instance.
+     *
+     * @param context
+     *         the bounded context to which the aggregate belongs
+     * @param id
+     *         the ID of the aggregate
+     */
+    public TaskAggregateRoot(BoundedContext context, TaskId id) {
+        super(context, id);
+    }
+}

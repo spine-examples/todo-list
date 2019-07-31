@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server.tasks.task;
+
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.server.aggregate.AggregatePartRepository;
+
 /**
- * Sample To-Do List application server based on gRPC.
+ * Repository managing {@link TaskLabelsPart} instances.
  */
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.server;
-
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+public class TaskLabelsRepository
+        extends AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
+}
