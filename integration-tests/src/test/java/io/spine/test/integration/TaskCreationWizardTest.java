@@ -72,8 +72,10 @@ class TaskCreationWizardTest {
     void before() {
         context = BlackBoxBoundedContext
                 .singleTenant()
-                .with(new TaskCreationWizardRepository(), new TaskRepository(),
-                      new LabelAggregateRepository(), new TaskLabelsRepository(),
+                .with(new TaskCreationWizardRepository(),
+                      new TaskRepository(),
+                      new LabelAggregateRepository(),
+                      new TaskLabelsRepository(),
                       new TaskViewRepository());
     }
 
