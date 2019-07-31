@@ -31,6 +31,7 @@ import io.spine.examples.todolist.command.FinalizeDraft;
 import io.spine.examples.todolist.command.RestoreDeletedTask;
 import io.spine.examples.todolist.event.LabelledTaskRestored;
 import io.spine.examples.todolist.rejection.Rejections;
+import io.spine.examples.todolist.server.label.LabelAggregateRepository;
 import io.spine.examples.todolist.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,10 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.a
 class RestoreDeletedTaskTest extends TaskCommandTestBase {
 
     RestoreDeletedTaskTest() {
-        super(new TaskRepository(), new TaskViewRepository(), new TaskLabelsRepository());
+        super(new TaskRepository(),
+              new TaskViewRepository(),
+              new TaskLabelsRepository(),
+              new LabelAggregateRepository());
     }
 
     @Test

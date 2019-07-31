@@ -113,8 +113,7 @@ message TaskLabel {
 //
 message TaskCreation {
     option (entity).kind = PROCESS_MANAGER;
-    //TODO:2019-05-13:serhii.lekariev: Once the version is newer than `1.0.0-pre7`, bring the visibility back to `NONE`. See this fix https://github.com/SpineEventEngine/core-java/pull/1062
-    option (entity).visibility = QUERY;
+    option (entity).visibility = NONE;
 
     // The ID of the process.
     TaskCreationId id = 1 [(required) = true];

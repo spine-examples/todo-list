@@ -61,7 +61,7 @@ final def versions = [
         googleApiClient  : '1.27.0',
 
         // Spine components versions.
-        spineBase        : SPINE_VERSION,
+        spineBase        : '1.0.0',
         spineCore        : SPINE_VERSION,
         spineWeb         : SPINE_VERSION,
         spineFirebaseMirror : SPINE_VERSION,

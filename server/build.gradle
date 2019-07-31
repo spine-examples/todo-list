@@ -30,7 +30,7 @@ compileJava {
 }
 
 dependencies {
-    compile project(path: ':model')
+    compile project(path: ':tasks')
     compile "io.spine:spine-server:$deps.versions.spineCore"
 
     annotationProcessor "io.spine.tools:spine-model-assembler:$deps.versions.spineCore"

@@ -102,10 +102,7 @@ import static io.spine.examples.todolist.server.task.TaskPartRejections.UpdateRe
                                                  annotated as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
         "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/})
-public class TaskPart extends AggregatePart<TaskId,
-                                            Task,
-                                            Task.Builder,
-        TaskAggregateRoot> {
+public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
         super(root);

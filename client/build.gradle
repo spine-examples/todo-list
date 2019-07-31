@@ -23,7 +23,7 @@ spine.enableJava().client()
 apply from: "$rootDir/gradle/publish.gradle"
 
 dependencies {
-    compile project(path: ':model')
+    compile project(path: ':tasks')
 
     implementation deps.grpc.grpcProtobuf
 
