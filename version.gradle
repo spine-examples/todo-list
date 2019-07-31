@@ -62,7 +62,7 @@ final def versions = [
 
         // Spine components versions.
         spineBase        : '1.0.0',
-        spineCore        : SPINE_VERSION,
+        spineCore        : '1.0.0',
         spineWeb         : SPINE_VERSION,
         spineFirebaseMirror : SPINE_VERSION,
         spineJdbc        : SPINE_VERSION,
