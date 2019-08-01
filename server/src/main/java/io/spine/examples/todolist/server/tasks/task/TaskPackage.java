@@ -25,7 +25,7 @@ import io.spine.server.BoundedContextBuilder;
 /**
  * Configures Tasks context to serve task-related entities.
  */
-public class TaskPackage {
+public final class TaskPackage {
 
     /** Prevents instantiation of this utility class. */
     private TaskPackage() {

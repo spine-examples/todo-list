@@ -25,7 +25,7 @@ import io.spine.server.BoundedContextBuilder;
 /**
  * Configures Tasks context to work with label entities.
  */
-public class LabelPackage {
+public final class LabelPackage {
 
     /** Prevents instantiation of this utility class. */
     private LabelPackage() {
