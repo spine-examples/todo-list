@@ -27,7 +27,7 @@ import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.route.EventRouting;
 
-import static java.util.Collections.singleton;
+import static io.spine.server.route.EventRoute.withId;
 
 /**
  * Repository for the {@link TaskViewProjection}.
@@ -39,6 +39,6 @@ public class TaskViewRepository
     @Override
     protected void setupEventRouting(EventRouting<TaskId> routing) {
         super.setupEventRouting(routing);
-        routing.route(TaskAware.class, (message, context) -> singleton(message.getTaskId()));
+        routing.route(TaskAware.class, (message, context) -> withId(message.getTaskId()));
     }
 }

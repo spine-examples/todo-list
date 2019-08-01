@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server.tasks.label;
 
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.LabelColor;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelId;
@@ -41,12 +42,11 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.update
 @DisplayName("LabelAggregate should")
 class LabelAggregateTest {
 
-    private BlackBoxBoundedContext boundedContext;
+    private BlackBoxBoundedContext context;
 
     @BeforeEach
     void setUp() {
-        boundedContext = BlackBoxBoundedContext.singleTenant()
-                                               .with(new LabelAggregateRepository());
+        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
     }
 
     @Nested
@@ -57,8 +57,8 @@ class LabelAggregateTest {
         @DisplayName("produce LabelCreated event")
         void produceEvent() {
             CreateBasicLabel createLabel = createLabelInstance();
-            boundedContext.receivesCommand(createLabel)
-                          .assertEmitted(LabelCreated.class);
+            context.receivesCommand(createLabel)
+                   .assertEmitted(LabelCreated.class);
         }
 
         @Test
@@ -73,11 +73,11 @@ class LabelAggregateTest {
                     .setTitle(createLabel.getLabelTitle())
                     .build();
 
-            boundedContext.receivesCommand(createLabel)
-                          .assertEntity(LabelAggregate.class, labelId)
-                          .hasStateThat()
-                          .comparingExpectedFieldsOnly()
-                          .isEqualTo(expected);
+            context.receivesCommand(createLabel)
+                   .assertEntity(LabelAggregate.class, labelId)
+                   .hasStateThat()
+                   .comparingExpectedFieldsOnly()
+                   .isEqualTo(expected);
         }
     }
 
@@ -91,9 +91,9 @@ class LabelAggregateTest {
             CreateBasicLabel createLabel = createLabelInstance();
             LabelId labelId = createLabel.getLabelId();
             UpdateLabelDetails updateDetails = updateLabelDetailsInstance(labelId);
-            boundedContext.receivesCommand(createLabel)
-                          .receivesCommand(updateDetails)
-                          .assertEmitted(LabelDetailsUpdated.class);
+            context.receivesCommand(createLabel)
+                   .receivesCommand(updateDetails)
+                   .assertEmitted(LabelDetailsUpdated.class);
         }
 
         @Test
@@ -115,12 +115,12 @@ class LabelAggregateTest {
                     .setColor(newDetails.getColor())
                     .build();
 
-            boundedContext.receivesCommand(createLabel)
-                          .receivesCommand(firstUpdate)
-                          .receivesCommand(secondUpdate)
-                          .assertEntity(LabelAggregate.class, labelId)
-                          .hasStateThat()
-                          .isEqualTo(expected);
+            context.receivesCommand(createLabel)
+                   .receivesCommand(firstUpdate)
+                   .receivesCommand(secondUpdate)
+                   .assertEntity(LabelAggregate.class, labelId)
+                   .hasStateThat()
+                   .isEqualTo(expected);
         }
 
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
@@ -141,9 +141,9 @@ class LabelAggregateTest {
 
             UpdateLabelDetails updateDetails =
                     updateLabelDetailsInstance(labelId, previousDetails, newDetails);
-            boundedContext.receivesCommand(createLabel)
-                          .receivesCommand(updateDetails)
-                          .assertRejectedWith(Rejections.CannotUpdateLabelDetails.class);
+            context.receivesCommand(createLabel)
+                   .receivesCommand(updateDetails)
+                   .assertRejectedWith(Rejections.CannotUpdateLabelDetails.class);
         }
 
         private LabelDetails newDetails() {

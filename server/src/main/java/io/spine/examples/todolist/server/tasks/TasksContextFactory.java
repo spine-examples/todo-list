@@ -20,11 +20,11 @@
 
 package io.spine.examples.todolist.server.tasks;
 
-import io.spine.examples.todolist.server.tasks.label.LabelAggregateRepository;
-import io.spine.examples.todolist.server.tasks.label.LabelViewRepository;
-import io.spine.examples.todolist.server.tasks.task.TaskCreationWizardRepository;
-import io.spine.examples.todolist.server.tasks.task.TaskLabelsRepository;
-import io.spine.examples.todolist.server.tasks.task.TaskRepository;
+import io.spine.examples.todolist.server.tasks.label.LabelAggregate;
+import io.spine.examples.todolist.server.tasks.label.LabelViewProjection;
+import io.spine.examples.todolist.server.tasks.task.TaskCreationWizard;
+import io.spine.examples.todolist.server.tasks.task.TaskLabelsPart;
+import io.spine.examples.todolist.server.tasks.task.TaskPart;
 import io.spine.examples.todolist.server.tasks.task.TaskViewRepository;
 import io.spine.examples.todolist.tasks.TasksContext;
 import io.spine.server.BoundedContext;
@@ -58,11 +58,11 @@ public final class TasksContextFactory {
     public static BoundedContextBuilder builder() {
         return BoundedContext
                     .singleTenant(TasksContext.NAME)
-                    .add(new TaskRepository())
-                    .add(new TaskLabelsRepository())
-                    .add(new LabelAggregateRepository())
+                    .add(TaskPart.class)
+                    .add(TaskLabelsPart.class)
+                    .add(LabelAggregate.class)
                     .add(new TaskViewRepository())
-                    .add(new LabelViewRepository())
-                    .add(new TaskCreationWizardRepository());
+                    .add(LabelViewProjection.class)
+                    .add(TaskCreationWizard.class);
     }
 }
