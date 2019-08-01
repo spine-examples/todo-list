@@ -1,0 +1,248 @@
+//
+// Copyright 2018, TeamDev. All rights reserved.
+//
+// Redistribution and use in source and/or binary forms, with or without
+// modification, must retain the above copyright notice and the following
+// disclaimer.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+
+syntax = "proto3";
+
+package spine.examples.todolist;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.todolist.spine.io";
+option java_package = "io.spine.examples.todolist.tasks";
+option java_outer_classname = "ValuesProto";
+option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
+
+import "google/protobuf/timestamp.proto";
+
+import "spine/change/change.proto";
+import "spine/change/value_mismatch.proto";
+
+import "todolist/identifiers.proto";
+import "todolist/attributes.proto";
+
+// A wrapper for a task priority.
+message TaskPriorityValue {
+
+    // The task priority value.
+    TaskPriority priority_value = 1;
+}
+
+// A description of a task.
+message TaskDescription {
+
+    // A description value.
+    //
+    // Must contain at least 3 alphanumeric symbols.
+    //
+    string value = 1 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
+}
+
+// **** Data transfer objects ****
+
+// DTO for the task details.
+//
+// Wrapped by several events to transfer the task data.
+//
+message TaskDetails {
+
+    // A description of the task.
+    TaskDescription description = 1;
+
+    // A priority of the task.
+    TaskPriority priority = 2;
+
+    // Status of the task.
+    TaskStatus status = 3 [(required) = true, (validate) = true];
+
+    google.protobuf.Timestamp due_date = 4;
+}
+
+// DTO for the label details.
+//
+// Wrapped by several events to transfer the label data.
+//
+message LabelDetails {
+
+    // Label title.
+    string title = 1 [(required) = true];
+
+    // Label color.
+    LabelColor color = 2;
+}
+
+// DTO for the description mismatch.
+message DescriptionUpdateRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // A mismatching description value.
+    change.ValueMismatch description_mismatch = 2;
+}
+
+// DTO for the priority mismatch.
+message PriorityUpdateRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // A mismatching priority value.
+    change.ValueMismatch priority_mismatch = 2;
+}
+
+// DTO for the due date mismatch.
+message TaskDueDateUpdateRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // A mismatching due date value.
+    change.ValueMismatch due_date_mismatch = 2;
+}
+
+// DTO for rejected update task details command details.
+message TaskDetailsUpdateRejected {
+
+    // The task creation process ID.
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
+
+    // The requested new task description.
+    TaskDescription new_description = 2;
+
+    // The requested new task priority.
+    TaskPriority new_priority = 3;
+
+    // The requested new task due date.
+    google.protobuf.Timestamp new_due_date = 4;
+}
+
+// DTO for the label details mismatch.
+message LabelDetailsUpdateRejected {
+
+    // An unsuccessful label command details.
+    RejectedLabelCommandDetails command_details = 1;
+
+    // A mismatching label details value.
+    change.ValueMismatch label_details_mismatch = 2;
+}
+
+// DTO for the rejected create basic task command details.
+message CreateBasicTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected add labels command details.
+message AddLabelsRejected {
+
+    // The ID of the rejected task creation.
+    TaskCreationId id = 1 [(required) = true, (validate) = true];
+
+    // The IDs of the existing labels that were assigned to the task.
+    repeated LabelId existing_labels = 2;
+
+    // The details of the new labels that were assigned to the task.
+    repeated LabelDetails new_labels = 3;
+}
+
+// DTO for the rejected assign label to task command details.
+message AssignLabelToTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // An identifier of the label.
+    LabelId label_id = 2;
+}
+
+// DTO for the rejected remove label from task command details.
+message RemoveLabelFromTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // An identifier of the label.
+    LabelId label_id = 2;
+}
+
+// DTO for the rejected reopen task command details.
+message ReopenTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected delete task command details.
+message DeleteTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected restore deleted task command details.
+message RestoreDeletedTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected complete task command details.
+message CompleteTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected create task draft command details.
+message CreateDraftRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected finalize draft command details.
+message FinalizeDraftRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the unsuccessful task command details.
+message RejectedTaskCommandDetails {
+
+    // A task identifier.
+    TaskId task_id = 1;
+}
+
+// DTO for the unsuccessful label command details.
+message RejectedLabelCommandDetails {
+
+    // A task label identifier.
+    LabelId label_id = 1;
+}
+
+// DTO for the list of the label IDs.
+message LabelIdsList {
+
+    // Label IDs.
+    repeated LabelId ids = 1;
+}

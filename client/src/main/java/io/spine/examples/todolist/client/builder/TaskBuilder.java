@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.client.builder;
 
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.CreateDraft;
+import io.spine.examples.todolist.tasks.TaskDescription;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.CreateDraft;
 
 /**
  * Provides task command builders.

@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.testdata;
 
-import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.tasks.TaskDescription;
 
 /**
  * Utilities for creating Protobuf messages with a single field.

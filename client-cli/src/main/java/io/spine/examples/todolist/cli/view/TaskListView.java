@@ -27,7 +27,7 @@ import io.spine.cli.action.TransitionAction;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.cli.view.ActionListView;
 import io.spine.cli.view.View;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.view.TaskView;
 
 import java.util.ArrayList;
 import java.util.Collection;

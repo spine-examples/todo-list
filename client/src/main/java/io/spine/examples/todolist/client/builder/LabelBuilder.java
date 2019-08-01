@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.client.builder;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.command.CreateBasicLabel;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
 
 /**
  * Provides label command builders.

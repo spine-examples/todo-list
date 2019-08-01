@@ -21,7 +21,10 @@
 /**
  * Sample To-Do List application server based on gRPC.
  */
+@CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.server;
+
+import com.google.errorprone.annotations.CheckReturnValue;
 
 import javax.annotation.ParametersAreNonnullByDefault;

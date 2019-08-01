@@ -25,7 +25,7 @@ import io.spine.cli.NoOpView;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

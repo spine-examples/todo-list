@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'model'
+include 'tasks'
 include 'client'
 include 'server'
 include 'client-cli'
@@ -27,7 +27,6 @@ include 'client-angular'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
-include 'integration-tests'
 
 def deployment(final String name) {
     final String path = ":$name"

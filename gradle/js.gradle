@@ -52,8 +52,8 @@ configurations {
 }
 
 dependencies {
-    protobuf project(':model')
-    compile project(':model')
+    protobuf project(':tasks')
+    compile project(':tasks')
 }
 
 protobuf {

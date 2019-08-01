@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.flogger.FluentLogger;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.net.Url;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -68,7 +69,7 @@ final class Application {
         serverEnvironment.configureTracing(Tracing.createTracing());
         serverEnvironment.configureStorage(Storage.createStorage());
 
-        BoundedContext context = TodoListContext.create();
+        BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();
         info.log("Initializing Command/Query services.");
         CommandService commandService = CommandService

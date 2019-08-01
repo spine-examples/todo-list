@@ -21,19 +21,19 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.command.AssignLabelToTask;
-import io.spine.examples.todolist.command.CreateBasicLabel;
-import io.spine.examples.todolist.command.CreateBasicTask;
-import io.spine.examples.todolist.command.CreateDraft;
-import io.spine.examples.todolist.command.FinalizeDraft;
-import io.spine.examples.todolist.server.label.LabelAggregate;
-import io.spine.examples.todolist.view.LabelView;
-import io.spine.examples.todolist.view.TaskView;
+import io.spine.examples.todolist.server.tasks.label.LabelAggregate;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.Task;
+import io.spine.examples.todolist.tasks.TaskId;
+import io.spine.examples.todolist.tasks.TaskLabel;
+import io.spine.examples.todolist.tasks.TaskLabels;
+import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
+import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
+import io.spine.examples.todolist.tasks.command.CreateBasicTask;
+import io.spine.examples.todolist.tasks.command.CreateDraft;
+import io.spine.examples.todolist.tasks.command.FinalizeDraft;
+import io.spine.examples.todolist.tasks.view.LabelView;
+import io.spine.examples.todolist.tasks.view.TaskView;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +46,9 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
-import static io.spine.examples.todolist.TaskStatus.DRAFT;
-import static io.spine.examples.todolist.TaskStatus.FINALIZED;
-import static io.spine.examples.todolist.TaskStatus.OPEN;
+import static io.spine.examples.todolist.tasks.TaskStatus.DRAFT;
+import static io.spine.examples.todolist.tasks.TaskStatus.FINALIZED;
+import static io.spine.examples.todolist.tasks.TaskStatus.OPEN;
 import static java.util.stream.Collectors.toList;
 
 @DisplayName("Todo client should")

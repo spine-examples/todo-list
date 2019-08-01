@@ -20,12 +20,12 @@
 
 package io.spine.examples.todolist.testdata;
 
-import io.spine.examples.todolist.LabelColor;
-import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsChange;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.command.CreateBasicLabel;
-import io.spine.examples.todolist.command.UpdateLabelDetails;
+import io.spine.examples.todolist.tasks.LabelColor;
+import io.spine.examples.todolist.tasks.LabelDetails;
+import io.spine.examples.todolist.tasks.LabelDetailsChange;
+import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
+import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
 
 /**
  * A factory of the label commands for the test needs.
