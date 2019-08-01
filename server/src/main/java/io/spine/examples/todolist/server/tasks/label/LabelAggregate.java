@@ -25,7 +25,9 @@ import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.tasks.LabelColor;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelDetailsChange;
+import io.spine.examples.todolist.tasks.LabelDetailsUpdateRejected;
 import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.RejectedLabelCommandDetails;
 import io.spine.examples.todolist.tasks.TaskLabel;
 import io.spine.examples.todolist.tasks.command.CreateBasicLabel;
 import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
@@ -35,8 +37,6 @@ import io.spine.examples.todolist.tasks.rejection.CannotUpdateLabelDetails;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
-
-import static io.spine.examples.todolist.server.tasks.label.LabelAggregateRejections.throwCannotUpdateLabelDetails;
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
@@ -83,7 +83,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
             LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             ValueMismatch mismatch =
                     unexpectedValue(expectedLabelDetails, actualLabelDetails, newLabelDetails);
-            throwCannotUpdateLabelDetails(cmd, mismatch);
+            throwCannotUpdate(cmd, mismatch);
         }
 
         LabelId labelId = cmd.getId();
@@ -110,5 +110,34 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         builder().setId(id())
                  .setTitle(labelDetails.getTitle())
                  .setColor(labelDetails.getColor());
+    }
+
+    /**
+     * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
+     * the passed parameters.
+     *
+     * @param cmd
+     *         the rejected command
+     * @param mismatch
+     *         the {@link ValueMismatch}
+     * @throws CannotUpdateLabelDetails
+     *         the rejection to throw
+     */
+    private static void throwCannotUpdate(UpdateLabelDetails cmd, ValueMismatch mismatch)
+            throws CannotUpdateLabelDetails {
+        RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetails
+                .newBuilder()
+                .setLabelId(cmd.getId())
+                .buildPartial();
+        LabelDetailsUpdateRejected detailsUpdateRejected = LabelDetailsUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setLabelDetailsMismatch(mismatch)
+                .buildPartial();
+        CannotUpdateLabelDetails rejection = CannotUpdateLabelDetails
+                .newBuilder()
+                .setRejectionDetails(detailsUpdateRejected)
+                .build();
+        throw rejection;
     }
 }
