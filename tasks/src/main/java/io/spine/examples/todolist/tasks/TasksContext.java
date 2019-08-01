@@ -23,7 +23,7 @@ package io.spine.examples.todolist.tasks;
 /**
  * Provides constants for the Tasks context.
  */
-public class TasksContext {
+public final class TasksContext {
 
     /** The name of the Tasks context. */
     public static final String NAME = "Tasks";
