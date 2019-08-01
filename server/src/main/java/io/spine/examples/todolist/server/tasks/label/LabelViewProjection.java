@@ -33,11 +33,7 @@ import static io.spine.examples.todolist.tasks.LabelColor.DEFAULT;
 /**
  * A projection which mirrors the state of a single label.
  */
-public class LabelViewProjection extends Projection<LabelId, LabelView, LabelView.Builder> {
-
-    public LabelViewProjection(LabelId id) {
-        super(id);
-    }
+final class LabelViewProjection extends Projection<LabelId, LabelView, LabelView.Builder> {
 
     @Subscribe
     void on(LabelCreated e) {

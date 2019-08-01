@@ -47,15 +47,17 @@ import io.spine.server.projection.Projection;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.examples.todolist.tasks.TaskStatus.COMPLETED;
+import static io.spine.examples.todolist.tasks.TaskStatus.DELETED;
+import static io.spine.examples.todolist.tasks.TaskStatus.DRAFT;
+import static io.spine.examples.todolist.tasks.TaskStatus.FINALIZED;
+import static io.spine.examples.todolist.tasks.TaskStatus.OPEN;
+
 /**
  * A projection which mirrors the state of a single task.
  */
-@SuppressWarnings({"Duplicates", "OverlyCoupledClass"}) // OK for this projection.
-public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Builder> {
-
-    public TaskViewProjection(TaskId id) {
-        super(id);
-    }
+@SuppressWarnings("OverlyCoupledClass")
+final class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Builder> {
 
     @Subscribe
     void taskCreated(TaskCreated e) {
@@ -63,37 +65,37 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bu
         builder().setId(e.getTaskId())
                  .setDescription(taskDetails.getDescription())
                  .setDueDate(taskDetails.getDueDate())
-                 .setStatus(TaskStatus.OPEN);
+                 .setStatus(OPEN);
     }
 
     @Subscribe
     void on(TaskCompleted e) {
-        builder().setStatus(TaskStatus.COMPLETED);
+        builder().setStatus(COMPLETED);
     }
 
     @Subscribe
     void on(TaskDraftFinalized e) {
-        builder().setStatus(TaskStatus.FINALIZED);
+        builder().setStatus(FINALIZED);
     }
 
     @Subscribe
     void on(TaskReopened e) {
-        builder().setStatus(TaskStatus.OPEN);
+        builder().setStatus(OPEN);
     }
 
     @Subscribe
     void on(TaskDeleted e) {
         TaskStatus currentStatus = builder().getStatus();
-        if (currentStatus == TaskStatus.DRAFT) {
+        if (currentStatus == DRAFT) {
             eraseTask();
         } else {
-            builder().setStatus(TaskStatus.DELETED);
+            builder().setStatus(DELETED);
         }
     }
 
     @Subscribe
     void on(DeletedTaskRestored e) {
-        builder().setStatus(TaskStatus.OPEN);
+        builder().setStatus(OPEN);
     }
 
     @Subscribe
@@ -120,7 +122,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bu
     @Subscribe
     void on(TaskDraftCreated e) {
         builder().setId(e.getTaskId())
-                 .setStatus(TaskStatus.DRAFT);
+                 .setStatus(DRAFT);
     }
 
     @Subscribe

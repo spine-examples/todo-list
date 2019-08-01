@@ -23,7 +23,6 @@ package io.spine.examples.todolist.server.tasks.task.given;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import io.spine.change.TimestampChange;
-import io.spine.examples.todolist.server.tasks.task.TaskViewProjection;
 import io.spine.examples.todolist.tasks.DescriptionChange;
 import io.spine.examples.todolist.tasks.PriorityChange;
 import io.spine.examples.todolist.tasks.TaskDescription;
@@ -44,7 +43,7 @@ import java.time.Instant;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
- * Environment for testing the {@link TaskViewProjection}.
+ * Environment for testing the {@code TaskViewProjection}.
  *
  * <p>This environment works with 1 task at a time, the ID of which is supplied via its constructor.
  *

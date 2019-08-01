@@ -265,9 +265,10 @@ final class WizardCommands {
      * @return new instance of a command message
      */
     private AssignLabelToTask assignLabel(LabelId labelId) {
-        return AssignLabelToTask.newBuilder()
-                                        .setId(taskId)
-                                        .setLabelId(labelId)
-                                        .vBuild();
+        return AssignLabelToTask
+                .newBuilder()
+                .setId(taskId)
+                .setLabelId(labelId)
+                .vBuild();
     }
 }

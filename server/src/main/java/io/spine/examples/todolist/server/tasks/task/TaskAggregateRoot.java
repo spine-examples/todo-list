@@ -29,7 +29,7 @@ import io.spine.server.aggregate.AggregateRoot;
  *
  * @see AggregateRoot
  */
-public class TaskAggregateRoot extends AggregateRoot<TaskId> {
+final class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
     /**
      * Creates a new instance.
