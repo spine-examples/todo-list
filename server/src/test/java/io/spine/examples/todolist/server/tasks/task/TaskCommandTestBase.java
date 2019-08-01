@@ -21,15 +21,11 @@
 package io.spine.examples.todolist.server.tasks.task;
 
 import io.spine.base.CommandMessage;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.view.TaskView;
-import io.spine.server.entity.Repository;
 import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  * An abstract base for all commands that are related to tasks.
@@ -42,19 +38,11 @@ import static java.util.Arrays.asList;
 class TaskCommandTestBase {
 
     private BlackBoxBoundedContext<?> context;
-    private final List<Repository<?, ?>> repositories;
     private TaskId taskId;
 
-    TaskCommandTestBase(Repository<?, ?>... repositories) {
-        this.repositories = asList(repositories);
-    }
-
-    @SuppressWarnings("ZeroLengthArrayAllocation")
     @BeforeEach
     void setUp() {
-        context = BlackBoxBoundedContext
-                .singleTenant()
-                .with(repositories.toArray(new Repository[0]));
+        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
     }
 

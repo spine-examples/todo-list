@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server.tasks.task;
 
-import io.spine.examples.todolist.server.tasks.label.LabelAggregateRepository;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.command.AssignLabelToTask;
 import io.spine.examples.todolist.tasks.command.CompleteTask;
@@ -48,13 +47,6 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.a
 
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 class RestoreDeletedTaskTest extends TaskCommandTestBase {
-
-    RestoreDeletedTaskTest() {
-        super(new TaskRepository(),
-              new TaskViewRepository(),
-              new TaskLabelsRepository(),
-              new LabelAggregateRepository());
-    }
 
     @Test
     @DisplayName("produce LabelledTaskRestored event")

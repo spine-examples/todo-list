@@ -25,12 +25,22 @@ import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.tasks.CompleteTaskRejected;
+import io.spine.examples.todolist.tasks.CreateDraftRejected;
+import io.spine.examples.todolist.tasks.DeleteTaskRejected;
 import io.spine.examples.todolist.tasks.DescriptionChange;
+import io.spine.examples.todolist.tasks.DescriptionUpdateRejected;
+import io.spine.examples.todolist.tasks.FinalizeDraftRejected;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.PriorityChange;
+import io.spine.examples.todolist.tasks.PriorityUpdateRejected;
+import io.spine.examples.todolist.tasks.RejectedTaskCommandDetails;
+import io.spine.examples.todolist.tasks.ReopenTaskRejected;
+import io.spine.examples.todolist.tasks.RestoreDeletedTaskRejected;
 import io.spine.examples.todolist.tasks.Task;
 import io.spine.examples.todolist.tasks.TaskDescription;
 import io.spine.examples.todolist.tasks.TaskDetails;
+import io.spine.examples.todolist.tasks.TaskDueDateUpdateRejected;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.TaskLabels;
 import io.spine.examples.todolist.tasks.TaskPriority;
@@ -81,27 +91,18 @@ import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isV
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.ChangeStatusRejections.throwCannotCompleteTask;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.ChangeStatusRejections.throwCannotDeleteTask;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.ChangeStatusRejections.throwCannotFinalizeDraft;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.ChangeStatusRejections.throwCannotReopenTask;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.UpdateRejections.throwCannotUpdateDescription;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
-import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.tasks.TaskStatus.COMPLETED;
+import static io.spine.examples.todolist.tasks.TaskStatus.DRAFT;
+import static io.spine.examples.todolist.tasks.TaskStatus.FINALIZED;
+import static io.spine.examples.todolist.tasks.TaskStatus.OPEN;
 
 /**
  * The aggregate managing the state of a {@link Task}.
  */
-@SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
-                                                 process all commands and events related to it
-                                                 according to the domain model.
-                                                 The {@code AggregatePart} does it with methods
-                                                 annotated as {@code Assign} and {@code Apply}.
-                                                 In that case class has too many methods.*/
-        "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/})
+@SuppressWarnings({
+        "ClassWithTooManyMethods" /* one method per signal type */,
+        "OverlyCoupledClass" /* depends on handled signal types */
+})
 public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
@@ -113,7 +114,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         TaskId taskId = cmd.getId();
         TaskDetails taskDetails = TaskDetails
                 .newBuilder()
-                .setStatus(TaskStatus.OPEN)
+                .setStatus(OPEN)
                 .setDescription(cmd.getDescription())
                 .buildPartial();
         TaskCreated result = TaskCreated
@@ -128,7 +129,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
     TaskDescriptionUpdated handle(UpdateTaskDescription cmd) throws CannotUpdateTaskDescription {
         boolean isValid = ensureNeitherCompletedNorDeleted(state().getTaskStatus());
         if (!isValid) {
-            throwCannotUpdateTaskDescription(cmd);
+            throw rejection(cmd);
         }
         DescriptionChange descriptionChange = cmd.getDescriptionChange();
         TaskDescription actualDescription = state().getDescription();
@@ -140,7 +141,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
                                                      actualDescription.getValue(),
                                                      descriptionChange.getNewValue()
                                                                       .getValue());
-            throwCannotUpdateDescription(cmd, mismatch);
+            throw rejection(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated result = TaskDescriptionUpdated
@@ -156,21 +157,19 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         Task state = state();
         TaskStatus taskStatus = state.getTaskStatus();
         boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
-
         if (!isValid) {
-            throwCannotUpdateTaskDueDate(cmd);
+            throw rejection(cmd);
         }
 
         TimestampChange change = cmd.getDueDateChange();
         Timestamp actualDueDate = state.getDueDate();
         Timestamp expectedDueDate = change.getPreviousValue();
 
-        boolean isEquals = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
-
-        if (!isEquals) {
+        boolean sameDate = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
+        if (!sameDate) {
             Timestamp newDueDate = change.getNewValue();
             ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate, newDueDate);
-            throwCannotUpdateTaskDueDate(cmd, mismatch);
+            throw rejection(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated result = TaskDueDateUpdated
@@ -186,21 +185,19 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         Task state = state();
         TaskStatus taskStatus = state.getTaskStatus();
         boolean isValid = isValidUpdateTaskPriorityCommand(taskStatus);
-
         if (!isValid) {
-            throwCannotUpdateTaskPriority(cmd);
+            throw rejection(cmd);
         }
         PriorityChange priorityChange = cmd.getPriorityChange();
         TaskPriority actualPriority = state.getPriority();
         TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        boolean isEquals = actualPriority == expectedPriority;
-
-        if (!isEquals) {
+        boolean samePriority = actualPriority == expectedPriority;
+        if (!samePriority) {
             TaskPriority newPriority = priorityChange.getNewValue();
             ValueMismatch mismatch =
                     valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
-            throwCannotUpdateTaskPriority(cmd, mismatch);
+            throw rejection(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated result = TaskPriorityUpdated
@@ -216,9 +213,8 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         Task state = state();
         TaskStatus currentStatus = state.getTaskStatus();
         boolean isValid = ensureCompleted(currentStatus);
-
         if (!isValid) {
-            throwCannotReopenTask(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -237,7 +233,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotDeleteTask(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -252,11 +248,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
     TaskCompleted handle(CompleteTask cmd) throws CannotCompleteTask {
         Task state = state();
         TaskStatus currentStatus = state.getTaskStatus();
-        TaskStatus newStatus = TaskStatus.COMPLETED;
-        boolean isValid = isValidTransition(currentStatus, newStatus);
-
+        boolean isValid = isValidTransition(currentStatus, COMPLETED);
         if (!isValid) {
-            throwCannotCompleteTask(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -270,9 +264,8 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
     @Assign
     TaskDraftCreated handle(CreateDraft cmd) throws CannotCreateDraft {
         boolean isValid = isValidCreateDraftCommand(state().getTaskStatus());
-
         if (!isValid) {
-            throwCannotCreateDraft(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -287,11 +280,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
     @Assign
     TaskDraftFinalized handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
         TaskStatus currentStatus = state().getTaskStatus();
-        TaskStatus newStatus = TaskStatus.FINALIZED;
-        boolean isValid = isValidTransition(currentStatus, newStatus);
-
+        boolean isValid = isValidTransition(currentStatus, FINALIZED);
         if (!isValid) {
-            throwCannotFinalizeDraft(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -308,7 +299,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
         TaskStatus currentStatus = state().getTaskStatus();
         boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
-            throwCannotRestoreDeletedTask(cmd);
+            throw rejection(cmd);
         }
 
         TaskId taskId = cmd.getId();
@@ -338,72 +329,252 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
      *****************/
 
     @Apply
-    private void taskCreated(TaskCreated event) {
-        TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getTaskId())
+    private void event(TaskCreated e) {
+        TaskDetails taskDetails = e.getDetails();
+        builder().setId(e.getTaskId())
                  .setCreated(currentTime())
                  .setDescription(taskDetails.getDescription())
                  .setPriority(taskDetails.getPriority())
-                 .setTaskStatus(TaskStatus.FINALIZED);
+                 .setTaskStatus(FINALIZED);
     }
 
     @Apply
-    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        TaskDescription newDescription = event.getDescriptionChange()
-                                              .getNewValue();
+    private void event(TaskDescriptionUpdated e) {
+        TaskDescription newDescription = e.getDescriptionChange()
+                                          .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Apply
-    private void taskDueDateUpdated(TaskDueDateUpdated event) {
-        Timestamp newDueDate = event.getDueDateChange()
-                                    .getNewValue();
+    private void event(TaskDueDateUpdated e) {
+        Timestamp newDueDate = e.getDueDateChange()
+                                .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Apply
-    private void taskPriorityUpdated(TaskPriorityUpdated event) {
-        TaskPriority newPriority = event.getPriorityChange()
-                                        .getNewValue();
+    private void event(TaskPriorityUpdated e) {
+        TaskPriority newPriority = e.getPriorityChange()
+                                    .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Apply
-    private void taskReopened(@SuppressWarnings("unused") TaskReopened event) {
-        builder().setTaskStatus(TaskStatus.OPEN);
+    private void event(@SuppressWarnings("unused") TaskReopened e) {
+        builder().setTaskStatus(OPEN);
     }
 
     @Apply
-    private void taskDeleted(@SuppressWarnings("unused") TaskDeleted event) {
+    private void event(@SuppressWarnings("unused") TaskDeleted e) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    private void deletedTaskRestored(@SuppressWarnings("unused") DeletedTaskRestored event) {
-        builder().setTaskStatus(TaskStatus.OPEN);
+    private void event(@SuppressWarnings("unused") DeletedTaskRestored e) {
+        builder().setTaskStatus(OPEN);
     }
 
     @Apply
-    private void labelledTaskRestored(@SuppressWarnings("unused") LabelledTaskRestored event) {
-        builder().setTaskStatus(TaskStatus.OPEN);
+    private void event(@SuppressWarnings("unused") LabelledTaskRestored e) {
+        builder().setTaskStatus(OPEN);
     }
 
     @Apply
-    private void taskCompleted(@SuppressWarnings("unused") TaskCompleted event) {
-        builder().setTaskStatus(TaskStatus.COMPLETED);
+    private void event(@SuppressWarnings("unused") TaskCompleted e) {
+        builder().setTaskStatus(COMPLETED);
     }
 
     @Apply
-    private void taskDraftFinalized(@SuppressWarnings("unused") TaskDraftFinalized event) {
-        builder().setTaskStatus(TaskStatus.FINALIZED);
+    private void event(@SuppressWarnings("unused") TaskDraftFinalized e) {
+        builder().setTaskStatus(FINALIZED);
     }
 
     @Apply
-    private void draftCreated(TaskDraftCreated event) {
-        builder().setId(event.getTaskId())
-                 .setCreated(event.getDraftCreationTime())
-                 .setDescription(event.getDetails()
-                                      .getDescription())
-                 .setTaskStatus(TaskStatus.DRAFT);
+    private void event(TaskDraftCreated e) {
+        builder().setId(e.getTaskId())
+                 .setCreated(e.getDraftCreationTime())
+                 .setDescription(e.getDetails()
+                                  .getDescription())
+                 .setTaskStatus(DRAFT);
+    }
+
+    /*
+     * Rejections
+     **************/
+
+    private static CannotUpdateTaskDescription rejection(UpdateTaskDescription cmd)
+            throws CannotUpdateTaskDescription {
+        RejectedTaskCommandDetails commandDetails =
+                detailsOf(cmd.getId());
+        DescriptionUpdateRejected descriptionUpdateRejected = DescriptionUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotUpdateTaskDescription rejection = CannotUpdateTaskDescription
+                .newBuilder()
+                .setRejectionDetails(descriptionUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotCreateDraft rejection(CreateDraft cmd) throws CannotCreateDraft {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        CreateDraftRejected createDraftRejected = CreateDraftRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotCreateDraft rejection = CannotCreateDraft
+                .newBuilder()
+                .setRejectionDetails(createDraftRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotReopenTask rejection(ReopenTask cmd) throws CannotReopenTask {
+        RejectedTaskCommandDetails commandDetails =
+                detailsOf(cmd.getId());
+        ReopenTaskRejected reopenTaskRejected = ReopenTaskRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotReopenTask rejection = CannotReopenTask
+                .newBuilder()
+                .setRejectionDetails(reopenTaskRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotRestoreDeletedTask rejection(RestoreDeletedTask cmd)
+            throws CannotRestoreDeletedTask {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        RestoreDeletedTaskRejected restoreTaskRejected = RestoreDeletedTaskRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotRestoreDeletedTask rejection = CannotRestoreDeletedTask
+                .newBuilder()
+                .setRejectionDetails(restoreTaskRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotDeleteTask rejection(DeleteTask cmd) throws CannotDeleteTask {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        DeleteTaskRejected deleteTaskRejected = DeleteTaskRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotDeleteTask rejection = CannotDeleteTask
+                .newBuilder()
+                .setRejectionDetails(deleteTaskRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotFinalizeDraft rejection(FinalizeDraft cmd) throws CannotFinalizeDraft {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        FinalizeDraftRejected finalizeDraftRejected = FinalizeDraftRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotFinalizeDraft rejection = CannotFinalizeDraft
+                .newBuilder()
+                .setRejectionDetails(finalizeDraftRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotCompleteTask rejection(CompleteTask cmd) throws CannotCompleteTask {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        CompleteTaskRejected completeTaskRejected = CompleteTaskRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotCompleteTask rejection = CannotCompleteTask
+                .newBuilder()
+                .setRejectionDetails(completeTaskRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotUpdateTaskDueDate
+    rejection(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        TaskDueDateUpdateRejected dueDateUpdateRejected = TaskDueDateUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotUpdateTaskDueDate rejection = CannotUpdateTaskDueDate
+                .newBuilder()
+                .setRejectionDetails(dueDateUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotUpdateTaskDueDate
+    rejection(UpdateTaskDueDate cmd, ValueMismatch mismatch) throws CannotUpdateTaskDueDate {
+        RejectedTaskCommandDetails commandDetails =
+                detailsOf(cmd.getId());
+        TaskDueDateUpdateRejected dueDateUpdateRejected = TaskDueDateUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setDueDateMismatch(mismatch)
+                .vBuild();
+        CannotUpdateTaskDueDate rejection = CannotUpdateTaskDueDate
+                .newBuilder()
+                .setRejectionDetails(dueDateUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotUpdateTaskDescription
+    rejection(UpdateTaskDescription cmd, ValueMismatch mismatch)
+            throws CannotUpdateTaskDescription {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        DescriptionUpdateRejected descriptionUpdateRejected = DescriptionUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setDescriptionMismatch(mismatch)
+                .vBuild();
+        CannotUpdateTaskDescription rejection = CannotUpdateTaskDescription
+                .newBuilder()
+                .setRejectionDetails(descriptionUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotUpdateTaskPriority rejection(UpdateTaskPriority cmd)
+            throws CannotUpdateTaskPriority {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        PriorityUpdateRejected priorityUpdateRejected = PriorityUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .vBuild();
+        CannotUpdateTaskPriority rejection = CannotUpdateTaskPriority
+                .newBuilder()
+                .setRejectionDetails(priorityUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotUpdateTaskPriority
+    rejection(UpdateTaskPriority cmd, ValueMismatch mismatch) throws CannotUpdateTaskPriority {
+        RejectedTaskCommandDetails commandDetails = detailsOf(cmd.getId());
+        PriorityUpdateRejected priorityUpdateRejected = PriorityUpdateRejected
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setPriorityMismatch(mismatch)
+                .vBuild();
+        CannotUpdateTaskPriority rejection = CannotUpdateTaskPriority
+                .newBuilder()
+                .setRejectionDetails(priorityUpdateRejected)
+                .build();
+        throw rejection;
+    }
+
+    private static RejectedTaskCommandDetails detailsOf(TaskId taskId) {
+        return RejectedTaskCommandDetails.newBuilder()
+                                         .setTaskId(taskId)
+                                         .vBuild();
     }
 }

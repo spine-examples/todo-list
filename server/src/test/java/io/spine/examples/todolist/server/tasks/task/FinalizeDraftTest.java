@@ -38,10 +38,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finaliz
 @DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
 class FinalizeDraftTest extends TaskCommandTestBase {
 
-    FinalizeDraftTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("finalize the draft")
     void finalizeTask() {

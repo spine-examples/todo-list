@@ -39,10 +39,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateT
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
 class UpdateTaskPriorityTest extends TaskCommandTestBase {
 
-    UpdateTaskPriorityTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskPriorityUpdated event")
     void produceEvent() {

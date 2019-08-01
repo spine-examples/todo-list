@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server.tasks.task;
 
-import io.spine.examples.todolist.server.tasks.label.LabelAggregateRepository;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.DescriptionChange;
 import io.spine.examples.todolist.tasks.TaskCreationId;
 import io.spine.examples.todolist.tasks.TaskDescription;
@@ -42,12 +42,7 @@ abstract class CommandTest {
 
     @BeforeEach
     void setUp() {
-        context = BlackBoxBoundedContext
-                .singleTenant()
-                .with(new TaskCreationWizardRepository(),
-                      new TaskRepository(),
-                      new LabelAggregateRepository(),
-                      new TaskLabelsRepository());
+        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
         processId = TaskCreationId.generate();
     }
