@@ -76,13 +76,12 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
         LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
-        boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
-
-        if (!isEquals) {
+        boolean sameValue = actualLabelDetails.equals(expectedLabelDetails);
+        if (!sameValue) {
             LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             ValueMismatch mismatch =
                     unexpectedValue(expectedLabelDetails, actualLabelDetails, newLabelDetails);
-            throwCannotUpdate(cmd, mismatch);
+            throw rejection(cmd, mismatch);
         }
 
         LabelId labelId = cmd.getId();
@@ -111,19 +110,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
                  .setColor(labelDetails.getColor());
     }
 
-    /**
-     * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
-     * the passed parameters.
-     *
-     * @param cmd
-     *         the rejected command
-     * @param mismatch
-     *         the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails
-     *         the rejection to throw
-     */
-    private static void throwCannotUpdate(UpdateLabelDetails cmd, ValueMismatch mismatch)
-            throws CannotUpdateLabelDetails {
+    private static CannotUpdateLabelDetails
+    rejection(UpdateLabelDetails cmd, ValueMismatch mismatch) throws CannotUpdateLabelDetails {
         RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetails
                 .newBuilder()
                 .setLabelId(cmd.getId())
