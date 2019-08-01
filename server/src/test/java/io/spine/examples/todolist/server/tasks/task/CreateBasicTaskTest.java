@@ -31,10 +31,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 class CreateBasicTaskTest extends TaskCommandTestBase {
 
-    CreateBasicTaskTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskCreated event")
     void produceEvent() {

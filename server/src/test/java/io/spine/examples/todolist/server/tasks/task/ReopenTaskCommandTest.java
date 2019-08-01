@@ -42,10 +42,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenT
 @DisplayName("ReopenTask command should be interpreted by TaskPart and")
 class ReopenTaskCommandTest extends TaskCommandTestBase {
 
-    ReopenTaskCommandTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskReopened event")
     void produceEvent() {

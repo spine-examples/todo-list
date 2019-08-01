@@ -38,10 +38,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
 class CreateDraftTest extends TaskCommandTestBase {
 
-    CreateDraftTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {

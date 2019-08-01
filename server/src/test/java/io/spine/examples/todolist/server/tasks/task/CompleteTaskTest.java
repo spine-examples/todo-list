@@ -39,10 +39,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
 class CompleteTaskTest extends TaskCommandTestBase {
 
-    CompleteTaskTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskCompleted event")
     void produceEvent() {

@@ -46,14 +46,23 @@ public final class TasksContextFactory {
      * @return the {@link BoundedContext} instance
      */
     public static BoundedContext create() {
-        BoundedContextBuilder builder = BoundedContext
-                .singleTenant(TasksContext.NAME)
-                .add(new TaskRepository())
-                .add(new TaskLabelsRepository())
-                .add(new LabelAggregateRepository())
-                .add(new TaskViewRepository())
-                .add(new LabelViewRepository())
-                .add(new TaskCreationWizardRepository());
+        BoundedContextBuilder builder = builder();
         return builder.build();
+    }
+
+    /**
+     * Creates and configures the builder for the Tasks context.
+     *
+     * <p>The returned builder has all the repositories of the context.
+     */
+    public static BoundedContextBuilder builder() {
+        return BoundedContext
+                    .singleTenant(TasksContext.NAME)
+                    .add(new TaskRepository())
+                    .add(new TaskLabelsRepository())
+                    .add(new LabelAggregateRepository())
+                    .add(new TaskViewRepository())
+                    .add(new LabelViewRepository())
+                    .add(new TaskCreationWizardRepository());
     }
 }

@@ -38,10 +38,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
 class DeleteTaskCommand extends TaskCommandTestBase {
 
-    DeleteTaskCommand() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskDeleted event")
     void produceEvent() {

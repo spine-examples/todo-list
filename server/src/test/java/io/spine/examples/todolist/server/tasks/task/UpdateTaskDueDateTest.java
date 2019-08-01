@@ -38,10 +38,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateT
 @DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
 class UpdateTaskDueDateTest extends TaskCommandTestBase {
 
-    UpdateTaskDueDateTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskDueDateUpdated event")
     void produceEvent() {

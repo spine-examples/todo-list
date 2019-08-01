@@ -40,10 +40,6 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
 
     private static final String NEW_DESCRIPTION = "Wash my dog.";
 
-    UpdateTaskDescriptionTest() {
-        super(new TaskRepository(), new TaskViewRepository());
-    }
-
     @Test
     @DisplayName("produce TaskDescriptionUpdated event")
     void produceEvent() {
