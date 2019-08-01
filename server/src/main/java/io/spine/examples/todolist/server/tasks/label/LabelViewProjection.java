@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.server.tasks.label;
 
 import io.spine.core.Subscribe;
-import io.spine.examples.todolist.tasks.LabelColor;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.event.LabelCreated;
@@ -29,10 +28,11 @@ import io.spine.examples.todolist.tasks.event.LabelDetailsUpdated;
 import io.spine.examples.todolist.tasks.view.LabelView;
 import io.spine.server.projection.Projection;
 
+import static io.spine.examples.todolist.tasks.LabelColor.DEFAULT;
+
 /**
  * A projection which mirrors the state of a single label.
  */
-@SuppressWarnings("unused") // Methods used reflectively by Spine.
 public class LabelViewProjection extends Projection<LabelId, LabelView, LabelView.Builder> {
 
     public LabelViewProjection(LabelId id) {
@@ -40,16 +40,16 @@ public class LabelViewProjection extends Projection<LabelId, LabelView, LabelVie
     }
 
     @Subscribe
-    void labelCreated(LabelCreated event) {
-        builder().setTitle(event.getDetails().getTitle())
-                 .setColor(LabelColor.GRAY);
+    void on(LabelCreated e) {
+        builder().setTitle(e.getDetails().getTitle())
+                 .setColor(DEFAULT);
     }
 
     @Subscribe
-    void labelDetailsUpdated(LabelDetailsUpdated event) {
-        LabelDetails labelDetails = event.getLabelDetailsChange()
-                                         .getNewDetails();
-        builder().setTitle(labelDetails.getTitle())
-                 .setColor(labelDetails.getColor());
+    void on(LabelDetailsUpdated e) {
+        LabelDetails label = e.getLabelDetailsChange()
+                              .getNewDetails();
+        builder().setTitle(label.getTitle())
+                 .setColor(label.getColor());
     }
 }

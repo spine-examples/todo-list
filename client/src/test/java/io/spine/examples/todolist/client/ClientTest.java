@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.server.tasks.label.LabelAggregate;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.Task;
 import io.spine.examples.todolist.tasks.TaskId;
@@ -46,6 +45,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
+import static io.spine.examples.todolist.tasks.LabelColor.DEFAULT;
 import static io.spine.examples.todolist.tasks.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.tasks.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.tasks.TaskStatus.OPEN;
@@ -145,7 +145,7 @@ class ClientTest extends TodoClientTest {
                 .newBuilder()
                 .setId(labelId)
                 .setTitle(createLabel.getLabelTitle())
-                .setColor(LabelAggregate.DEFAULT_LABEL_COLOR)
+                .setColor(DEFAULT)
                 .vBuild();
 
         assertThat(client.labelView(labelId))

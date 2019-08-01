@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.server.tasks.label;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.tasks.LabelColor;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelDetailsChange;
 import io.spine.examples.todolist.tasks.LabelDetailsUpdateRejected;
@@ -38,13 +36,12 @@ import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
+import static io.spine.examples.todolist.tasks.LabelColor.DEFAULT;
+
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
  */
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
-
-    @VisibleForTesting
-    public static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
     protected LabelAggregate(LabelId id) {
         super(id);
@@ -98,7 +95,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         builder().setId(event.getId())
                  .setTitle(event.getDetails()
                                 .getTitle())
-                 .setColor(DEFAULT_LABEL_COLOR);
+                 .setColor(DEFAULT);
     }
 
     @Apply
