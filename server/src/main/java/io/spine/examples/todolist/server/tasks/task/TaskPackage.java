@@ -18,43 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.tasks;
+package io.spine.examples.todolist.server.tasks.task;
 
-import io.spine.examples.todolist.server.tasks.label.LabelPackage;
-import io.spine.examples.todolist.server.tasks.task.TaskPackage;
-import io.spine.examples.todolist.tasks.TasksContext;
-import io.spine.server.BoundedContext;
 import io.spine.server.BoundedContextBuilder;
 
 /**
- * Utilities for creation the {@link BoundedContext} instances.
+ * Configures Tasks context to serve task-realated entities.
  */
-public final class TasksContextFactory {
+public class TaskPackage {
 
     /** Prevents instantiation of this utility class. */
-    private TasksContextFactory() {
+    private TaskPackage() {
     }
 
     /**
-     * Creates the {@link BoundedContext} instance
-     * using {@code InMemoryStorageFactory} for a single tenant.
-     *
-     * @return the {@link BoundedContext} instance
+     * Configures Tasks context to work with label entities.
      */
-    public static BoundedContext create() {
-        BoundedContextBuilder builder = builder();
-        return builder.build();
-    }
-
-    /**
-     * Creates and configures the builder for the Tasks context.
-     *
-     * <p>The returned builder has all the repositories of the context.
-     */
-    public static BoundedContextBuilder builder() {
-        BoundedContextBuilder builder = BoundedContext.singleTenant(TasksContext.NAME);
-        LabelPackage.configure(builder);
-        TaskPackage.configure(builder);
-        return builder;
+    public static void configure(BoundedContextBuilder context) {
+        context.add(TaskPart.class)
+               .add(TaskLabelsPart.class)
+               .add(new TaskViewRepository())
+               .add(TaskCreationWizard.class);
     }
 }

@@ -32,7 +32,7 @@ import static io.spine.server.route.EventRoute.withId;
 /**
  * Repository for the {@link TaskViewProjection}.
  */
-public class TaskViewRepository
+final class TaskViewRepository
         extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
 
     @OverridingMethodsMustInvokeSuper

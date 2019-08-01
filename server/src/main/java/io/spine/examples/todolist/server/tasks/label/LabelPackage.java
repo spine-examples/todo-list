@@ -18,28 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.tasks.task;
+package io.spine.examples.todolist.server.tasks.label;
 
-import io.spine.examples.todolist.tasks.TaskId;
-import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregateRoot;
+import io.spine.server.BoundedContextBuilder;
 
 /**
- * Aggregate root for the tasks.
- *
- * @see AggregateRoot
+ * Configures Tasks context to work with label entities.
  */
-final class TaskAggregateRoot extends AggregateRoot<TaskId> {
+public class LabelPackage {
 
-    /**
-     * Creates a new instance.
-     *
-     * @param context
-     *         the bounded context to which the aggregate belongs
-     * @param id
-     *         the ID of the aggregate
-     */
-    public TaskAggregateRoot(BoundedContext context, TaskId id) {
-        super(context, id);
+    /** Prevents instantiation of this utility class. */
+    private LabelPackage() {
+    }
+
+    public static void configure(BoundedContextBuilder context) {
+        context.add(LabelAggregate.class)
+               .add(LabelViewProjection.class);
     }
 }

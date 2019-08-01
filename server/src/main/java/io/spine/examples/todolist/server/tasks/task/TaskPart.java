@@ -103,9 +103,9 @@ import static io.spine.examples.todolist.tasks.TaskStatus.OPEN;
         "ClassWithTooManyMethods" /* one method per signal type */,
         "OverlyCoupledClass" /* depends on handled signal types */
 })
-public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggregateRoot> {
+final class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggregateRoot> {
 
-    public TaskPart(TaskAggregateRoot root) {
+    TaskPart(TaskAggregateRoot root) {
         super(root);
     }
 

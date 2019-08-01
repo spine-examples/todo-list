@@ -41,11 +41,7 @@ import static io.spine.examples.todolist.tasks.LabelColor.DEFAULT;
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
  */
-public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
-
-    protected LabelAggregate(LabelId id) {
-        super(id);
-    }
+final class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
 
     @Assign
     LabelCreated handle(CreateBasicLabel cmd) {
@@ -81,10 +77,10 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
             throw rejection(cmd, mismatch);
         }
 
-        LabelId labelId = cmd.getId();
+        LabelId label = cmd.getId();
         LabelDetailsUpdated result = LabelDetailsUpdated
                 .newBuilder()
-                .setLabelId(labelId)
+                .setLabelId(label)
                 .setLabelDetailsChange(labelDetailsChange)
                 .vBuild();
         return result;

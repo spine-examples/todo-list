@@ -22,6 +22,9 @@ package io.spine.examples.todolist.server.tasks.task;
 
 import io.spine.examples.todolist.tasks.TaskStatus;
 
+import static io.spine.examples.todolist.tasks.TaskStatus.COMPLETED;
+import static io.spine.examples.todolist.tasks.TaskStatus.DELETED;
+
 /**
  * Validates task commands and state transitions.
  */
@@ -64,11 +67,11 @@ final class TaskFlowValidator {
     }
 
     static boolean ensureDeleted(TaskStatus currentStatus) {
-        return currentStatus == TaskStatus.DELETED;
+        return currentStatus == DELETED;
     }
 
     static boolean ensureCompleted(TaskStatus currentStatus) {
-        return currentStatus == TaskStatus.COMPLETED;
+        return currentStatus == COMPLETED;
     }
 
     /**

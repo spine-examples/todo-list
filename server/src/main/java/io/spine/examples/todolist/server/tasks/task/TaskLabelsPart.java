@@ -45,7 +45,7 @@ import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isV
 /**
  * The aggregate managing the state of a {@link TaskLabels}.
  */
-public class TaskLabelsPart
+final class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
 
     TaskLabelsPart(TaskAggregateRoot root) {
