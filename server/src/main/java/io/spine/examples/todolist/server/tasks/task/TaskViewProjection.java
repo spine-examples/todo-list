@@ -58,31 +58,31 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bu
     }
 
     @Subscribe
-    void taskCreated(TaskCreated event) {
-        TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getTaskId())
+    void taskCreated(TaskCreated e) {
+        TaskDetails taskDetails = e.getDetails();
+        builder().setId(e.getTaskId())
                  .setDescription(taskDetails.getDescription())
                  .setDueDate(taskDetails.getDueDate())
                  .setStatus(TaskStatus.OPEN);
     }
 
     @Subscribe
-    void taskCompleted(TaskCompleted event) {
+    void on(TaskCompleted e) {
         builder().setStatus(TaskStatus.COMPLETED);
     }
 
     @Subscribe
-    void taskDraftFinalized(TaskDraftFinalized event) {
+    void on(TaskDraftFinalized e) {
         builder().setStatus(TaskStatus.FINALIZED);
     }
 
     @Subscribe
-    void taskReopened(TaskReopened event) {
+    void on(TaskReopened e) {
         builder().setStatus(TaskStatus.OPEN);
     }
 
     @Subscribe
-    void taskDeleted(TaskDeleted deleted) {
+    void on(TaskDeleted e) {
         TaskStatus currentStatus = builder().getStatus();
         if (currentStatus == TaskStatus.DRAFT) {
             eraseTask();
@@ -92,58 +92,58 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bu
     }
 
     @Subscribe
-    void taskRestored(DeletedTaskRestored restored) {
+    void on(DeletedTaskRestored e) {
         builder().setStatus(TaskStatus.OPEN);
     }
 
     @Subscribe
-    void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        TaskDescription newDescription = event.getDescriptionChange()
-                                              .getNewValue();
+    void on(TaskDescriptionUpdated e) {
+        TaskDescription newDescription = e.getDescriptionChange()
+                                          .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Subscribe
-    void taskDueDateUpdated(TaskDueDateUpdated event) {
-        Timestamp newDueDate = event.getDueDateChange()
-                                    .getNewValue();
+    void on(TaskDueDateUpdated e) {
+        Timestamp newDueDate = e.getDueDateChange()
+                                .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Subscribe
-    void taskPriorityUpdated(TaskPriorityUpdated event) {
-        TaskPriority newPriority = event.getPriorityChange()
-                                        .getNewValue();
+    void on(TaskPriorityUpdated e) {
+        TaskPriority newPriority = e.getPriorityChange()
+                                    .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Subscribe
-    void draftCreated(TaskDraftCreated event) {
-        builder().setId(event.getTaskId())
+    void on(TaskDraftCreated e) {
+        builder().setId(e.getTaskId())
                  .setStatus(TaskStatus.DRAFT);
     }
 
     @Subscribe
-    void labelAssignedToTask(LabelAssignedToTask event) {
+    void on(LabelAssignedToTask e) {
         LabelIdsList newLabelsList = LabelIdsList
                 .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
-                .addIds(event.getLabelId())
+                .addIds(e.getLabelId())
                 .vBuild();
-        builder().setId(event.getTaskId())
+        builder().setId(e.getTaskId())
                  .setLabelIdsList(newLabelsList);
     }
 
     @Subscribe
-    void labelRemovedFromTask(LabelRemovedFromTask event) {
+    void on(LabelRemovedFromTask e) {
         List<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
                                                       .getIdsList());
-        list.remove(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList
+        list.remove(e.getLabelId());
+        LabelIdsList labels = LabelIdsList
                 .newBuilder()
                 .addAllIds(list)
                 .build();
-        builder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(labels);
     }
 
     /**

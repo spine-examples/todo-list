@@ -93,21 +93,21 @@ public class TaskLabelsPart
     }
 
     @Apply
-    private void labelAssignedToTask(LabelAssignedToTask event) {
+    private void event(LabelAssignedToTask e) {
         LabelIdsList newLabelsList = LabelIdsList
                 .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())
-                .addIds(event.getLabelId())
+                .addIds(e.getLabelId())
                 .vBuild();
-        builder().setTaskId(event.getTaskId());
+        builder().setTaskId(e.getTaskId());
         builder().setLabelIdsList(newLabelsList);
     }
 
     @Apply
-    private void labelRemovedFromTask(LabelRemovedFromTask event) {
+    private void event(LabelRemovedFromTask e) {
         int indexToRemove = builder().getLabelIdsList()
                                      .getIdsList()
-                                     .indexOf(event.getLabelId());
+                                     .indexOf(e.getLabelId());
         LabelIdsList newLabelsList = LabelIdsList
                 .newBuilder()
                 .mergeFrom(builder().getLabelIdsList())

@@ -95,13 +95,10 @@ import static io.spine.examples.todolist.server.tasks.task.TaskPartRejections.Up
 /**
  * The aggregate managing the state of a {@link Task}.
  */
-@SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
-                                                 process all commands and events related to it
-                                                 according to the domain model.
-                                                 The {@code AggregatePart} does it with methods
-                                                 annotated as {@code Assign} and {@code Apply}.
-                                                 In that case class has too many methods.*/
-        "OverlyCoupledClass" /* Each method needs dependencies to perform execution.*/})
+@SuppressWarnings({
+        "ClassWithTooManyMethods" /* one method per signal type */,
+        "OverlyCoupledClass" /* depends on handled signal types */
+})
 public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggregateRoot> {
 
     public TaskPart(TaskAggregateRoot root) {
@@ -338,9 +335,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
      *****************/
 
     @Apply
-    private void taskCreated(TaskCreated event) {
-        TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getTaskId())
+    private void event(TaskCreated e) {
+        TaskDetails taskDetails = e.getDetails();
+        builder().setId(e.getTaskId())
                  .setCreated(currentTime())
                  .setDescription(taskDetails.getDescription())
                  .setPriority(taskDetails.getPriority())
@@ -348,62 +345,62 @@ public class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggr
     }
 
     @Apply
-    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        TaskDescription newDescription = event.getDescriptionChange()
-                                              .getNewValue();
+    private void event(TaskDescriptionUpdated e) {
+        TaskDescription newDescription = e.getDescriptionChange()
+                                          .getNewValue();
         builder().setDescription(newDescription);
     }
 
     @Apply
-    private void taskDueDateUpdated(TaskDueDateUpdated event) {
-        Timestamp newDueDate = event.getDueDateChange()
-                                    .getNewValue();
+    private void event(TaskDueDateUpdated e) {
+        Timestamp newDueDate = e.getDueDateChange()
+                                .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Apply
-    private void taskPriorityUpdated(TaskPriorityUpdated event) {
-        TaskPriority newPriority = event.getPriorityChange()
-                                        .getNewValue();
+    private void event(TaskPriorityUpdated e) {
+        TaskPriority newPriority = e.getPriorityChange()
+                                    .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Apply
-    private void taskReopened(@SuppressWarnings("unused") TaskReopened event) {
+    private void event(@SuppressWarnings("unused") TaskReopened e) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskDeleted(@SuppressWarnings("unused") TaskDeleted event) {
+    private void event(@SuppressWarnings("unused") TaskDeleted e) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    private void deletedTaskRestored(@SuppressWarnings("unused") DeletedTaskRestored event) {
+    private void event(@SuppressWarnings("unused") DeletedTaskRestored e) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void labelledTaskRestored(@SuppressWarnings("unused") LabelledTaskRestored event) {
+    private void event(@SuppressWarnings("unused") LabelledTaskRestored e) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskCompleted(@SuppressWarnings("unused") TaskCompleted event) {
+    private void event(@SuppressWarnings("unused") TaskCompleted e) {
         builder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    private void taskDraftFinalized(@SuppressWarnings("unused") TaskDraftFinalized event) {
+    private void event(@SuppressWarnings("unused") TaskDraftFinalized e) {
         builder().setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    private void draftCreated(TaskDraftCreated event) {
-        builder().setId(event.getTaskId())
-                 .setCreated(event.getDraftCreationTime())
-                 .setDescription(event.getDetails()
-                                      .getDescription())
+    private void event(TaskDraftCreated e) {
+        builder().setId(e.getTaskId())
+                 .setCreated(e.getDraftCreationTime())
+                 .setDescription(e.getDetails()
+                                  .getDescription())
                  .setTaskStatus(TaskStatus.DRAFT);
     }
 }

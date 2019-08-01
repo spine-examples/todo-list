@@ -107,9 +107,8 @@ import static io.spine.validate.Validate.isDefault;
  */
 @SuppressWarnings({"unused" /* Command handler methods invoked via reflection. */,
         "OverlyCoupledClass" /* OK for process manager entity. */})
-public class TaskCreationWizard extends ProcessManager<TaskCreationId,
-                                                       TaskCreation,
-                                                       TaskCreation.Builder> {
+public class TaskCreationWizard
+        extends ProcessManager<TaskCreationId, TaskCreation, TaskCreation.Builder> {
 
     protected TaskCreationWizard(TaskCreationId id) {
         super(id);
