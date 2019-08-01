@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server.tasks.task;
 import io.spine.server.BoundedContextBuilder;
 
 /**
- * Configures Tasks context to serve task-realated entities.
+ * Configures Tasks context to serve task-related entities.
  */
 public class TaskPackage {
 
@@ -32,7 +32,7 @@ public class TaskPackage {
     }
 
     /**
-     * Configures Tasks context to work with label entities.
+     * Adds entity classes and repositories of this package to the passed context builder.
      */
     public static void configure(BoundedContextBuilder context) {
         context.add(TaskPart.class)

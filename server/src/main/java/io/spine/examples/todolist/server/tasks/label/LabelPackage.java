@@ -31,6 +31,9 @@ public class LabelPackage {
     private LabelPackage() {
     }
 
+    /**
+     * Adds entity classes of this package to the passed context builder.
+     */
     public static void configure(BoundedContextBuilder context) {
         context.add(LabelAggregate.class)
                .add(LabelViewProjection.class);
