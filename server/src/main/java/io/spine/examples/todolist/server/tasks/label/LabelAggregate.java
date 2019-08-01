@@ -41,7 +41,6 @@ import io.spine.server.command.Assign;
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
  */
-@SuppressWarnings("unused") // A lot of reflectively used handler methods.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
 
     @VisibleForTesting

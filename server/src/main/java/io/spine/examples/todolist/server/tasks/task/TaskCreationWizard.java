@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server.tasks.task;
 
 import io.spine.base.CommandMessage;
 import io.spine.core.CommandContext;
+import io.spine.examples.todolist.tasks.AddLabelsRejected;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.TaskCreation;
@@ -52,8 +53,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
-import static io.spine.examples.todolist.server.tasks.label.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.CONFIRMATION;
@@ -133,7 +134,7 @@ public class TaskCreationWizard
             throws CannotMoveToStage, CannotUpdateTaskDetails {
         boolean isTaskDefinition = builder().getStage() == TASK_DEFINITION;
         if (isTaskDefinition && isDefault(command.getDescriptionChange())) {
-            throwCannotUpdateTaskDetails(command);
+            throw rejection(command);
         }
         return transit(LABEL_ASSIGNMENT,
                        () -> commands().updateTaskDetails(command));
@@ -145,7 +146,7 @@ public class TaskCreationWizard
         List<LabelId> existingLabels = command.getExistingLabelsList();
         List<LabelDetails> newLabels = command.getNewLabelsList();
         if (existingLabels.isEmpty() && newLabels.isEmpty()) {
-            throwCannotAddLabelsToTask(command);
+            throw rejection(command);
         }
         WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
@@ -314,7 +315,7 @@ public class TaskCreationWizard
         return result;
     }
 
-    private static void throwCannotUpdateTaskDetails(UpdateTaskDetails command)
+    private static CannotUpdateTaskDetails rejection(UpdateTaskDetails command)
             throws CannotUpdateTaskDetails {
         TaskDetailsUpdateRejected details = TaskDetailsUpdateRejected
                 .newBuilder()
@@ -329,6 +330,21 @@ public class TaskCreationWizard
         CannotUpdateTaskDetails rejection = CannotUpdateTaskDetails
                 .newBuilder()
                 .setRejectionDetails(details)
+                .build();
+        throw rejection;
+    }
+
+    private static CannotAddLabels rejection(AddLabels cmd) throws CannotAddLabels {
+        checkNotNull(cmd);
+        AddLabelsRejected addLabelsRejected = AddLabelsRejected
+                .newBuilder()
+                .setId(cmd.getId())
+                .addAllExistingLabels(cmd.getExistingLabelsList())
+                .addAllNewLabels(cmd.getNewLabelsList())
+                .vBuild();
+        CannotAddLabels rejection = CannotAddLabels
+                .newBuilder()
+                .setRejectionDetails(addLabelsRejected)
                 .build();
         throw rejection;
     }
