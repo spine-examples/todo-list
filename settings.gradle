@@ -21,9 +21,9 @@
 include 'tasks'
 include 'server'
 include ':client:java'
-include ':client:client-cli'
-include ':client:client-web'
-include ':client:client-angular'
+include ':client:cli'
+include ':client:html-js'
+include ':client:angular'
 include 'testutil-api'
 
 def deployment(final String name) {

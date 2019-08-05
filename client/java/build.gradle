@@ -27,8 +27,10 @@ dependencies {
 
     implementation deps.grpc.grpcProtobuf
 
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
+    testImplementation(
+        project(path: ':testutil-api'),
+        project(path: ':server')
+    )
 }
 
 // Do not run `client` tests in parallel so instantiated server and client do not overlap with 
