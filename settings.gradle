@@ -19,12 +19,12 @@
  */
 
 include 'tasks'
-include 'client'
 include 'server'
-include 'client-cli'
-include 'client-web'
-include 'client-angular'
-include 'cli-core'
+include ':client:java'
+include ':client:cli-core'
+include ':client:client-cli'
+include ':client:client-web'
+include ':client:client-angular'
 include 'testutil-api'
 include 'testutil-cli'
 

@@ -68,5 +68,5 @@ google-services.json
 
 # Web-specific entires.
 client-web/proto
-client-web/node_modules
-client-web/bundle.js
+**/node_modules/**
+**/bundle.js

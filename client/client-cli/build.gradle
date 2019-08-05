@@ -18,13 +18,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ext {
+    jlineVersion = '3.12.1'
+}
+
+spine.enableJava().client()
+
 dependencies {
-    // Depend on JUnit in the production part of the code, as this module exposes testing utilities
-    // that are based on JUnit.
-    implementation (
-        "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
-        "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
-        "org.apiguardian:apiguardian-api:1.1.0",
-        project(path: ':client:cli-core')
-    )
+    implementation "org.jline:jline:$jlineVersion"
+
+    implementation project(path: ':client:java')
+    implementation project(path: ':client:cli-core')
+    testImplementation project(path: ':testutil-cli')
+    testImplementation project(path: ':testutil-api')
+    testImplementation project(path: ':server')
+}
+
+// A task to run the client. See `ClientApp` for the details.
+task runTodoClient(dependsOn: jar, type: JavaExec) {
+    if(project.hasProperty('conf')){
+        args(conf.split(','))
+    }
+
+    standardInput = System.in
+    main = 'io.spine.examples.todolist.ClientApp'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// Do not run `client-cli` tests in parallel so instantiated server and client do not overlap with 
+// their counterparts from the other thread.
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
 }
