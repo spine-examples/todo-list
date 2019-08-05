@@ -21,12 +21,10 @@
 include 'tasks'
 include 'server'
 include ':client:java'
-include ':client:cli-core'
 include ':client:client-cli'
 include ':client:client-web'
 include ':client:client-angular'
 include 'testutil-api'
-include 'testutil-cli'
 
 def deployment(final String name) {
     final String path = ":$name"

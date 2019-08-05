@@ -18,6 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//apply plugin: 'java-library'
+//apply plugin: 'java-test-fixtures'
+
+//plugins {
+//    id 'java-library'
+//    id 'java-test-fixtures'
+//}
+
 ext {
     jlineVersion = '3.12.1'
 }
@@ -25,13 +33,18 @@ ext {
 spine.enableJava().client()
 
 dependencies {
-    implementation "org.jline:jline:$jlineVersion"
+    implementation (
+        "org.jline:jline:$jlineVersion",
+        project(path: ':client:java')
+    )
+    testImplementation(
+        "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
+        "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
+        "org.apiguardian:apiguardian-api:1.1.0",
 
-    implementation project(path: ':client:java')
-    implementation project(path: ':client:cli-core')
-    testImplementation project(path: ':testutil-cli')
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
+        project(path: ':testutil-api'),
+        project(path: ':server')
+    )
 }
 
 // A task to run the client. See `ClientApp` for the details.

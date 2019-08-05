@@ -24,6 +24,7 @@ import io.spine.cli.Bot;
 import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -100,9 +101,9 @@ class EditCommandActionTest {
         bot.addAnswer(SHORTCUT.getValue());
 
         action.execute();
-        assertEquals(VALID_COMMENT, view.getState()
-                                        .build()
-                                        .getValue());
+        Assertions.assertEquals(VALID_COMMENT, view.getState()
+                                                   .build()
+                                                   .getValue());
     }
 
     @Test

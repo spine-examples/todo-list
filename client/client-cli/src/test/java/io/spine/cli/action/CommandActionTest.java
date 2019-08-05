@@ -25,13 +25,13 @@ import io.spine.cli.CreateProject;
 import io.spine.cli.ProjectId;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
 import static io.spine.validate.Validate.isDefault;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,8 +67,8 @@ class CommandActionTest {
         viewState.setProjectId(expectedId);
         action.execute();
 
-        assertEquals(expectedId, action.getCommandMessageBeforeExecution()
-                                       .getProjectId());
+        Assertions.assertEquals(expectedId, action.getCommandMessageBeforeExecution()
+                                                  .getProjectId());
         assertTrue(view.wasRendered());
     }
 
