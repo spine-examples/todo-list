@@ -18,23 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.view;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.action.Shortcut;
+
+import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
+import static io.spine.examples.todolist.cli.view.TaskListView.newOpenTaskListProducer;
+
+/**
+ * Menu of actions that are related to
+ * {@link io.spine.examples.todolist.server.view.MyListView MyListView}.
+ */
+public final class MyTasksMenu extends ActionListView {
+
+    private MyTasksMenu() {
+        super("My tasks menu");
+    }
+
+    /**
+     * Creates a new {@code MyTasksMenu} instance.
+     *
+     * @return the new instance
+     */
+    public static MyTasksMenu create() {
+        MyTasksMenu view = new MyTasksMenu();
+        view.addAction(transitionProducer("Create task", new Shortcut("c"), NewTaskView.create()));
+        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
+        return view;
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

@@ -18,23 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.action;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.view.View;
+
+/**
+ * Producer of an {@link Action}.
+ *
+ * <p>Allows to specify construction of the {@link Action} for an unknown source.
+ *
+ * @param <S>
+ *         the type of the source view
+ * @param <D>
+ *         the type of the destination view
+ * @param <T>
+ *         the type of the action to be created
+ */
+public interface ActionProducer<S extends View,
+        D extends View,
+        T extends Action<S, D>> {
+
+    /**
+     * Creates the {@link Action} with the specified source.
+     *
+     * @param source
+     *         the source {@link View}
+     * @return the action with the source
+     */
+    T create(S source);
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

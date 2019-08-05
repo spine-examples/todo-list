@@ -18,23 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.view;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.action.Shortcut;
+
+import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
+
+/**
+ * Root view of the application.
+ */
+public final class MainMenu extends ActionListView {
+
+    private MainMenu() {
+        super("Main menu");
+    }
+
+    /**
+     * Creates a new {@code MainMenu} instance.
+     *
+     * @return the new instance
+     */
+    public static MainMenu create() {
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
+                                              MyTasksMenu.create()));
+        return mainMenu;
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

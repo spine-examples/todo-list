@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2018, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,23 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+syntax = "proto3";
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+package io.spine.cli;
+
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.todolist.spine.io";
+option java_package = "io.spine.examples.todolist.cli.test";
+option java_outer_classname = "ConstraintViolationFormatterTestProto";
+option java_multiple_files = true;
+
+// A natural number.
+//
+// Zero is considered a natural number.
+//
+message NaturalNumber {
+
+    // Natural number value.
+    //
+    // Must be greater than or equal to zero.
+    int32 value = 1 [(min).value = "0"];
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

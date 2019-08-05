@@ -18,23 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+spine.enableJava().client()
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+apply from: "$rootDir/gradle/publish.gradle"
+
+dependencies {
+    compile project(path: ':tasks')
+
+    implementation deps.grpc.grpcProtobuf
+
+    testImplementation(
+        project(path: ':testutil-api'),
+        project(path: ':server')
+    )
 }
 
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'
+// Do not run `client` tests in parallel so instantiated server and client do not overlap with 
+// their counterparts from the other thread.
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
+}

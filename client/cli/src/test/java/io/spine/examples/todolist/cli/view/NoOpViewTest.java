@@ -18,23 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.view;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.TestScreen;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@DisplayName("NoOpView should")
+class NoOpViewTest {
+
+    private final NoOpView view = new NoOpView();
+
+    @Test
+    @DisplayName("initially be marked unrendered")
+    void initiallyBeMarkedUnrendered() {
+        assertFalse(view.wasRendered());
+    }
+
+    @Test
+    @DisplayName("be marked rendered after render")
+    void beMarkedRenderedAfterRender() {
+        new TestScreen().renderView(view);
+        assertTrue(view.wasRendered());
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

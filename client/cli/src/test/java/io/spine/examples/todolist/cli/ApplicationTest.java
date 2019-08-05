@@ -18,23 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.examples.todolist.cli.Application.instance;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@DisplayName("Application should")
+class ApplicationTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Application.class);
+    }
+
+    @Test
+    @DisplayName("allow initialization only once")
+    void allowInitOnlyOnce() {
+        try {
+            // Exception may be thrown during first call also (if was initialized in other tests).
+            instance().init(new TerminalScreen());
+
+            instance().init(new TerminalScreen());
+            fail("Exception should be thrown.");
+        } catch (IllegalStateException ignored) {
+        }
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

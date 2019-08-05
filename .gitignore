@@ -67,6 +67,6 @@ google-services.json
 **/spine-dev.json
 
 # Web-specific entires.
-client-web/proto
-client-web/node_modules
-client-web/bundle.js
+client/html-js/proto
+**/node_modules/**
+**/bundle.js

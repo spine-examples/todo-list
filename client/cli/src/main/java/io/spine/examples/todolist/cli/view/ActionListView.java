@@ -18,23 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.view;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.Screen;
+
+/**
+ * A {@code View} that represents list of {@linkplain io.spine.examples.todolist.cli.action.Action actions}.
+ *
+ * <p>Typical instance of the class is a menu, in which the end-user selects an {@code Action}
+ * to be executed from the actions list.
+ */
+public class ActionListView extends AbstractView {
+
+    public ActionListView(String title) {
+        super(title);
+    }
+
+    /**
+     * Does nothing. All the required behavior for this class is implemented in the
+     * {@linkplain AbstractView#render(Screen) super} class.
+     */
+    @Override
+    protected void renderBody(Screen screen) {
+        // Do nothing.
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

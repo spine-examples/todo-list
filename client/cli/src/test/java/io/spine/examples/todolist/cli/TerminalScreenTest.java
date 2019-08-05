@@ -18,23 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@DisplayName("TerminalScreen should")
+class TerminalScreenTest {
+
+    private static final String EMPTY_STRING = "";
+
+    private final Screen screen = new TerminalScreen();
+
+    @Test
+    @DisplayName("not allow empty prompt")
+    void notAllowEmptyPrompt() {
+        assertThrows(IllegalArgumentException.class, () -> screen.promptUser(EMPTY_STRING));
+    }
+
+    @Test
+    @DisplayName("not allow empty string for printing")
+    void notAllowEmptyMessage() {
+        assertThrows(IllegalArgumentException.class, () -> screen.println(EMPTY_STRING));
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

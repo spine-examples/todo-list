@@ -18,23 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.examples.todolist.cli.ClientApp.initCli;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.nullRef;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DisplayName("ClientApp should")
+class ClientAppTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ClientApp.class);
+    }
+
+    @Test
+    @DisplayName("initialize the Application screen")
+    void initApplicationScreen() {
+        Application application = Application.instance();
+        application.setScreen(nullRef());
+
+        Screen expectedScreen = new TerminalScreen();
+        initCli(expectedScreen);
+
+        assertEquals(expectedScreen, application.screen());
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

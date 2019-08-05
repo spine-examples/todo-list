@@ -18,23 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import com.google.protobuf.Message;
+import io.spine.protobuf.ValidatingBuilder;
+
+/**
+ * An operation, that edits {@link ValidatingBuilder} state.
+ *
+ * @param <M>
+ *         the type of the message
+ * @param <B>
+ *         the type of the validating builder for the message
+ */
+public interface EditOperation<M extends Message,
+                               B extends ValidatingBuilder<M>> {
+
+    /**
+     * Starts editing of the specified validating builder.
+     *
+     * <p>Result of this operation is state modification of the specified builder.
+     *
+     * @param screen
+     *         the {@link Screen} to use
+     * @param builder
+     *         the validating builder
+     */
+    void start(Screen screen, B builder);
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'

@@ -18,23 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'tasks'
-include 'server'
-include ':client:java'
-include ':client:cli'
-include ':client:html-js'
-include ':client:angular'
-include 'testutil-api'
+package io.spine.examples.todolist.cli.view;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.examples.todolist.cli.Screen;
+
+/**
+ * A view that does nothing.
+ *
+ * <p>Allows to determine the whether the view was rendered.
+ */
+public final class NoOpView implements View {
+
+    private boolean rendered;
+
+    /**
+     * Marks the view as {@link #rendered}.
+     */
+    @Override
+    public void render(Screen screen) {
+        rendered = true;
+    }
+
+    /**
+     * Determines whether the view was rendered at least once.
+     *
+     * @return {@code true} if the view was rendered, {@code false} otherwise
+     */
+    public boolean wasRendered() {
+        return rendered;
+    }
 }
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'appengine-web'
