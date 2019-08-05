@@ -15,7 +15,7 @@ How to run:
     
 2. Run the client (in separate terminal):
     ```bash
-    cd client-angular
+    cd client/angular
     npm run ng serve 
     # or just `ng serve` if you have Angular CLI installed.
     ```

@@ -1,5 +1,5 @@
 {
-  "name": "client-web",
+  "name": "html-js",
   "version": "1.0.0",
   "description": "The Web client of the TodoList application.",
   "main": "index.js",

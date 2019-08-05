@@ -29,7 +29,7 @@ ext {
  *
  * <p>This task executes the NPM `compile` script, which uses Webpack to assemble the artifact.
  *
- * <p>This task is a part of a standard Gradle build for the `:client-web` project.
+ * <p>This task is a part of a standard Gradle build for the `:client:html-js` project.
  */
 task bundleJs {
     group = JAVA_SCRIPT_TASK_GROUP

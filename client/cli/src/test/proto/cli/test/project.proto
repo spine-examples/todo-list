@@ -24,8 +24,8 @@ package io.spine.cli;
 
 import "spine/options.proto";
 
-option (type_url_prefix) = "type.spine.cli";
-option java_package = "io.spine.cli";
+option (type_url_prefix) = "type.todolist.spine.io";
+option java_package = "io.spine.examples.todolist.cli.test";
 option java_outer_classname = "ProjectProto";
 option java_multiple_files = true;
 

@@ -20,11 +20,10 @@
 
 package io.spine.examples.todolist.cli;
 
-import io.spine.cli.Application;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.cli.Application.instance;
+import static io.spine.examples.todolist.cli.Application.instance;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.fail;
 

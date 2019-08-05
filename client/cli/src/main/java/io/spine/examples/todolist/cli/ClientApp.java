@@ -22,10 +22,8 @@ package io.spine.examples.todolist.cli;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.flogger.FluentLogger;
-import io.spine.cli.Application;
-import io.spine.cli.Screen;
-import io.spine.cli.view.View;
 import io.spine.examples.todolist.cli.view.MainMenu;
+import io.spine.examples.todolist.cli.view.View;
 import io.spine.examples.todolist.client.TodoClient;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;

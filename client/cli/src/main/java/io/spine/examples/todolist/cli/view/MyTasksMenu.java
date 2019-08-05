@@ -20,10 +20,9 @@
 
 package io.spine.examples.todolist.cli.view;
 
-import io.spine.cli.action.Shortcut;
-import io.spine.cli.view.ActionListView;
+import io.spine.examples.todolist.cli.action.Shortcut;
 
-import static io.spine.cli.action.TransitionAction.transitionProducer;
+import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
 import static io.spine.examples.todolist.cli.view.TaskListView.newOpenTaskListProducer;
 
 /**

@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.cli.view;
 
-import io.spine.cli.Bot;
-import io.spine.cli.action.Shortcut;
+import io.spine.examples.todolist.cli.Bot;
+import io.spine.examples.todolist.cli.action.Shortcut;
 import io.spine.examples.todolist.cli.view.NewTaskView.DescriptionEditOperation;
 import io.spine.examples.todolist.tasks.TaskDescription;
 import io.spine.examples.todolist.tasks.TaskId;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.cli.NoOpAction.noOpActionProducer;
+import static io.spine.examples.todolist.cli.action.NoOpAction.noOpActionProducer;
 import static io.spine.examples.todolist.cli.view.NewTaskView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.cli.view.NewTaskView.EMPTY_VALUE;
 import static io.spine.examples.todolist.testdata.Given.newDescription;

@@ -21,20 +21,18 @@
 package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.cli.Screen;
-import io.spine.cli.action.Shortcut;
-import io.spine.cli.action.TransitionAction;
-import io.spine.cli.action.TransitionAction.TransitionActionProducer;
-import io.spine.cli.view.ActionListView;
-import io.spine.cli.view.View;
+import io.spine.examples.todolist.cli.Screen;
+import io.spine.examples.todolist.cli.action.Shortcut;
+import io.spine.examples.todolist.cli.action.TransitionAction;
+import io.spine.examples.todolist.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.tasks.view.TaskView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static io.spine.cli.action.TransitionAction.transitionProducer;
 import static io.spine.examples.todolist.cli.AppConfig.getClient;
+import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
 import static java.lang.String.valueOf;
 
 /**
