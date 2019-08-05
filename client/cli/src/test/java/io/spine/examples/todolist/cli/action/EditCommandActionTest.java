@@ -25,7 +25,6 @@ import io.spine.examples.todolist.cli.EditOperation;
 import io.spine.examples.todolist.cli.Screen;
 import io.spine.examples.todolist.cli.test.action.Comment;
 import io.spine.examples.todolist.cli.view.CommandView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,9 +101,9 @@ class EditCommandActionTest {
         bot.addAnswer(SHORTCUT.getValue());
 
         action.execute();
-        Assertions.assertEquals(VALID_COMMENT, view.getState()
-                                                   .build()
-                                                   .getValue());
+        assertEquals(VALID_COMMENT, view.getState()
+                                        .build()
+                                        .getValue());
     }
 
     @Test
