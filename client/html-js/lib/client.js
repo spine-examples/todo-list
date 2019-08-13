@@ -30,7 +30,7 @@ let spineWebTypes = require('spine-web/proto/index');
 let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../generated/main/js/todolist/values_pb").TaskDescription;
 let CreateBasicTask = require("../generated/main/js/todolist/commands_pb").CreateBasicTask;
-let MyListView = require("../generated/main/js/todolist/views_pb").MyListView;
+let TaskView = require("../generated/main/js/todolist/views_pb").TaskView;
 
 let firebase = require("./firebase_client.js");
 
@@ -70,29 +70,14 @@ export class Client {
     }
 
     /**
-     * Subscribes to all task list changes on the server and displays the on the UI.
+     * Subscribes to all task list changes on the server and displays them on the UI.
      *
      * @param table the view to display the tasks in
      */
     subscribeToTaskChanges(table) {
-        let typeUrl = new spineWeb.TypeUrl(
-            "type.spine.examples.todolist/spine.examples.todolist.MyListView"
-        );
-        let type = new spineWeb.Type(
-            MyListView,
-            typeUrl
-        );
-        // noinspection JSUnusedGlobalSymbols Used by the caller code.
-        let fillTable = {
-            next: (view) => {
-                Client._fillTable(table, view);
-            }
-        };
-        this._firebaseClient.subscribeToEntities({ofType: type})
+        this._firebaseClient.subscribe({entity: TaskView})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe(fillTable);
-                itemChanged.subscribe(fillTable);
-                itemRemoved.subscribe(fillTable);
+                itemAdded.subscribe(item => Client._addToTable(table, item));
             })
             .catch(errorCallback);
     }
@@ -103,13 +88,9 @@ export class Client {
         return new spineWeb.ActorProvider(userId);
     }
 
-    static _fillTable(table, myListView) {
-        let items = myListView.getMyList().getItemsList();
-        table.innerHTML = "";
-        for (let item of items) {
-            let description = item.getDescription().getValue();
-            table.innerHTML += `<div class="task_item">${description}</div>`;
-        }
+    static _addToTable(table, taskView) {
+        let description = taskView.getDescription().getValue();
+        table.innerHTML += `<div class="task_item">${description}</div>`;
     }
 
     static _createTaskCommand(description) {
