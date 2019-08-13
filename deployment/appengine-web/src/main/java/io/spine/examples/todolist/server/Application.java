@@ -21,13 +21,16 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.flogger.FluentLogger;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.FirebaseDatabase;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
-import io.spine.net.Url;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.server.ServerEnvironment;
-import io.spine.web.firebase.DatabaseUrl;
+import io.spine.server.SubscriptionService;
+import io.spine.server.transport.memory.InMemoryTransportFactory;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
@@ -35,7 +38,8 @@ import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 import io.spine.web.query.QueryBridge;
 
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
-import static io.spine.web.firebase.FirebaseClientFactory.restClient;
+import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredentials;
+import static io.spine.web.firebase.FirebaseClientFactory.remoteClient;
 
 /**
  * The TodoList application.
@@ -58,16 +62,18 @@ final class Application {
 
     private Application(CommandService commandService,
                         QueryService queryService,
+                        SubscriptionService subscriptionService,
                         FirebaseClient firebaseClient) {
         this.commandService = commandService;
         this.queryBridge = newQueryBridge(queryService, firebaseClient);
-        this.subscriptionBridge = newSubscriptionBridge(queryService, firebaseClient);
+        this.subscriptionBridge = newSubscriptionBridge(subscriptionService, firebaseClient);
     }
 
     private static Application create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         serverEnvironment.configureTracing(Tracing.createTracing());
         serverEnvironment.configureStorage(Storage.createStorage());
+        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();
@@ -80,8 +86,15 @@ final class Application {
                 .newBuilder()
                 .add(context)
                 .build();
+        SubscriptionService subscriptionService = SubscriptionService
+                .newBuilder()
+                .add(context)
+                .build();
         info.log("Initializing Firebase Realtime Database client.");
-        Application application = new Application(commandService, queryService, firebaseClient());
+        Application application = new Application(commandService,
+                                                  queryService,
+                                                  subscriptionService,
+                                                  firebaseClient());
         info.log("Application initialized.");
         return application;
     }
@@ -101,7 +114,15 @@ final class Application {
     private static FirebaseClient firebaseClient() {
         FirebaseCredentials credentials =
                 FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
-        FirebaseClient client = restClient(databaseUrl(), credentials);
+
+        FirebaseOptions options = FirebaseOptions
+                .builder()
+                .setDatabaseUrl(databaseUrl())
+                .setCredentials(serviceAccountCredentials())
+                .build();
+        FirebaseApp.initializeApp(options);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseClient client = remoteClient(database, credentials);
         return client;
     }
 
@@ -115,25 +136,17 @@ final class Application {
     }
 
     private static FirebaseSubscriptionBridge
-    newSubscriptionBridge(QueryService queryService, FirebaseClient firebaseClient) {
+    newSubscriptionBridge(SubscriptionService subscriptionService, FirebaseClient firebaseClient) {
         return FirebaseSubscriptionBridge
                 .newBuilder()
-                .setQueryService(queryService)
+                .setSubscriptionService(subscriptionService)
                 .setFirebaseClient(firebaseClient)
                 .build();
     }
 
-    private static DatabaseUrl databaseUrl() {
-        String firebaseDatabaseUrl = Configuration.instance()
-                                           .firebaseDatabaseUrl();
-        Url url = Url
-                .newBuilder()
-                .setSpec(firebaseDatabaseUrl)
-                .buildPartial();
-        DatabaseUrl databaseUrl = DatabaseUrl
-                .newBuilder()
-                .setUrl(url)
-                .vBuild();
+    private static String databaseUrl() {
+        String databaseUrl = Configuration.instance()
+                                          .firebaseDatabaseUrl();
         return databaseUrl;
     }
 }

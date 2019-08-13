@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskService} from 'app/task-service/task.service';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
@@ -227,15 +227,16 @@ export class TaskCreationWizard {
 
   private fetchProcessDetails(): Promise<TaskCreation> {
     return new Promise<TaskCreation>((resolve, reject) => {
-      const dataCallback = processDetails => {
-        if (!processDetails) {
+      const dataCallback = taskCreationProcesses => {
+        if (taskCreationProcesses.length < 1) {
           reject(`No task creation process found for ID: ${this._id}`);
         } else {
-          resolve(processDetails);
+          resolve(taskCreationProcesses[0]);
         }
       };
-      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
-      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
+      this.spineWebClient.fetch({entity: TaskCreation, byIds: [this._id]})
+        .then(taskCreationProcesses => dataCallback(taskCreationProcesses))
+        .catch(err => reject(err));
     });
   }
 

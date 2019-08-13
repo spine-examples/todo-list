@@ -27,7 +27,7 @@ import static io.spine.examples.todolist.cli.view.TaskListView.newOpenTaskListPr
 
 /**
  * Menu of actions that are related to
- * {@link io.spine.examples.todolist.server.view.MyListView MyListView}.
+ * {@link io.spine.examples.todolist.tasks.view.TaskView To-Do List tasks}.
  */
 public final class MyTasksMenu extends ActionListView {
 

@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
@@ -56,7 +56,7 @@ export class LabelService {
    * Fetches a list of labels available in the application.
    */
   fetchAllLabels(): Promise<LabelView[]> {
-    return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
+    return this.spineWebClient.fetch({entity: LabelView});
   }
 
   /**
@@ -66,15 +66,16 @@ export class LabelService {
    */
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) => {
-        const dataCallback = label => {
-          if (!label) {
+        const dataCallback = labels => {
+          if (labels.length < 1) {
             reject(`No label view found for ID: ${labelId}`);
           } else {
-            resolve(label);
+            resolve(labels[0]);
           }
         };
-        // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
-        this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, dataCallback, reject);
+        this.spineWebClient.fetch({entity: LabelView, byIds: [labelId]})
+          .then(labels => dataCallback(labels))
+          .catch(err => reject(err));
       }
     );
   }
