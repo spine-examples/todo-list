@@ -46,9 +46,11 @@ describe('TaskService', () => {
     });
   }
 
-  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
+  mockClient.subscribe.and.returnValue(observableSubscriptionDataOf(
     addedTasksSubject.asObservable(), unsubscribe
   ));
+  mockClient.fetch.and.returnValue(Promise.resolve([]));
+
   let service: TaskService;
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
@@ -127,7 +129,7 @@ describe('TaskService', () => {
 
   it('should fetch a single task view by ID', fakeAsync(() => {
     const theTask = chore();
-    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theTask));
+    mockClient.fetch.and.returnValue(Promise.resolve([theTask]));
     service.fetchById(theTask.getId())
       .then(taskView => expect(taskView).toEqual(theTask))
       .catch(err =>
@@ -135,21 +137,21 @@ describe('TaskService', () => {
       );
   }));
 
-  it('should propagate errors from Spine Web Client on `fetchById`', fakeAsync(() => {
-    const errorMessage = 'Task details lookup rejected';
-    mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
-
-    service.fetchById(chore().getId())
-      .then(() => fail('Task details lookup should have been rejected'))
-      .catch(err => expect(err).toEqual(errorMessage));
-  }));
-
   it('should produce an error when no matching task is found during lookup', fakeAsync(() => {
-    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
     const taskId = chore().getId();
+    mockClient.fetch.and.returnValue(Promise.resolve([]));
 
     service.fetchById(taskId)
       .then(() => fail('Task details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(`No task view found for ID: ${taskId}`));
+  }));
+
+  it('should propagate errors from Spine Web Client on `fetchById`', fakeAsync(() => {
+    const errorMessage = 'Task details lookup rejected';
+    mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
+
+    service.fetchById(chore().getId())
+      .then(() => fail('Task details lookup should have been rejected'))
+      .catch(err => expect(err).toEqual(errorMessage));
   }));
 });

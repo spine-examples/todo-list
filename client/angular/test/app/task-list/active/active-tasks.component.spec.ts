@@ -74,9 +74,10 @@ describe('ActiveTasksComponent', () => {
 
   const addedTasksSubject = new BehaviorSubject<TaskView>(chore());
 
-  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
+  mockClient.subscribe.and.returnValue(observableSubscriptionDataOf(
     addedTasksSubject.asObservable(), unsubscribe
   ));
+  mockClient.fetch.and.returnValue(Promise.resolve([]));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({

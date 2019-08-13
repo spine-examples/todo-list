@@ -44,7 +44,7 @@ describe('TaskItemComponent', () => {
   let hostFixture;
   let childComponent: TaskDetailsComponent;
 
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
     [], [], [], jasmine.createSpy()
   ));
 

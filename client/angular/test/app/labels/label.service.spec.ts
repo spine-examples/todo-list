@@ -42,10 +42,8 @@ describe('LabelService', () => {
   });
 
   it('should fetch all labels', fakeAsync(() => {
-    const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-    mockClient.fetchAll.and.returnValue(fetch);
     const theLabels = [label1(), label2()];
-    fetch.atOnce.and.returnValue(Promise.resolve(theLabels));
+    mockClient.fetch.and.returnValue(Promise.resolve(theLabels));
 
     service.fetchAllLabels()
       .then(labels => {
@@ -56,10 +54,8 @@ describe('LabelService', () => {
   }));
 
   it('should propagate errors from Spine Web Client on `fetchAllLabels`', fakeAsync(() => {
-    const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-    mockClient.fetchAll.and.returnValue(fetch);
     const errorMessage = 'Labels lookup rejected';
-    fetch.atOnce.and.returnValue(Promise.reject(errorMessage));
+    mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
 
     service.fetchAllLabels()
       .then(() => fail('Labels fetch should have been rejected'))
@@ -68,7 +64,7 @@ describe('LabelService', () => {
 
   it('should fetch a single label details by ID', fakeAsync(() => {
     const theLabel = label1();
-    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theLabel));
+    mockClient.fetch.and.returnValue(Promise.resolve([theLabel]));
 
     service.fetchLabelDetails(theLabel.getId())
       .then(label => expect(label).toEqual(theLabel))
@@ -79,7 +75,7 @@ describe('LabelService', () => {
 
   it('should propagate errors from Spine Web Client on `fetchLabelDetails`', fakeAsync(() => {
     const errorMessage = 'Label details lookup rejected';
-    mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
+    mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
 
     service.fetchLabelDetails(label1().getId())
       .then(() => fail('Label details lookup should have been rejected'))
@@ -87,7 +83,7 @@ describe('LabelService', () => {
   }));
 
   it('should produce an error when no matching label is found during lookup', fakeAsync(() => {
-    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
+    mockClient.fetch.and.returnValue(Promise.resolve([]));
     const labelId = label1().getId();
 
     service.fetchLabelDetails(labelId)

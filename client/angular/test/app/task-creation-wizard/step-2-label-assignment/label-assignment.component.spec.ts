@@ -45,13 +45,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
     [chores()], [], [], unsubscribe
   ));
-
-  const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-  mockClient.fetchAll.and.returnValue(fetch);
-  fetch.atOnce.and.returnValue(Promise.resolve());
 
   let component: LabelAssignmentComponent;
   let fixture: ComponentFixture<LabelAssignmentComponent>;
@@ -90,8 +86,7 @@ describe('LabelAssignmentComponent', () => {
     })
       .compileComponents();
 
-    fetch.atOnce.and.returnValue(Promise.resolve(availableLabels));
-    mockClient.fetchById.and.callFake(initMockProcessWithLabels(selectedLabels));
+    mockClient.fetch.and.callFake(initMockProcessWithLabels(selectedLabels, availableLabels));
     fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
     component.wizard.init(taskCreationProcess().getId().getUuid());
@@ -114,7 +109,7 @@ describe('LabelAssignmentComponent', () => {
 
   it('should redirect Errors during loading labels to error viewport', fakeAsync(() => {
     const errorMessage = 'Loading available labels failed';
-    fetch.atOnce.and.returnValue(Promise.reject(errorMessage));
+    mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
     const newFixture = TestBed.createComponent(LabelAssignmentComponent);
     const newComponent = newFixture.componentInstance;
 

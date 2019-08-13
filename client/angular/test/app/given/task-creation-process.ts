@@ -25,20 +25,22 @@ import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {LabelIdsList} from 'proto/todolist/values_pb';
 import {LabelView, TaskView} from 'proto/todolist/views_pb';
 
-export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
+export function initMockProcess(stage?: TaskCreation.Stage)
+  : ({entity: cls, byIds: ids}) => Promise<any> {
   const creationProcess = taskCreationProcess(stage);
   const task = chore();
-  return resolveWithProcess(creationProcess, task);
+  return resolveWithOneOf(creationProcess, task);
 }
 
-export function initMockProcessWithLabels(labels: LabelView[]) {
+export function initMockProcessWithLabels(selected: LabelView[], available: LabelView[])
+  : ({entity: cls, byIds: ids}) => Promise<any> {
   const creationProcess = taskCreationProcess(TaskCreation.Stage.LABEL_ASSIGNMENT);
   const task = chore();
 
   const labelIdsList = new LabelIdsList();
-  labelIdsList.setIdsList(labels.map(label => label.getId()));
+  labelIdsList.setIdsList(selected.map(label => label.getId()));
   task.setLabelIdsList(labelIdsList);
-  return resolveWithProcess(creationProcess, task);
+  return resolveWithOneOf(creationProcess, task, available);
 }
 
 export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
@@ -53,12 +55,15 @@ export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
   return taskCreation;
 }
 
-function resolveWithProcess(creationProcess, task) {
-  return (type, id, resolve) => {
-    if (type.class() === TaskCreation) {
-      resolve(creationProcess);
-    } else if (type.class() === TaskView) {
-      resolve(task);
+function resolveWithOneOf(creationProcess, task, labels?) {
+  return ({entity: cls}) => {
+    if (cls === TaskCreation) {
+      return Promise.resolve([creationProcess]);
+    } else if (cls === TaskView) {
+      return Promise.resolve([task]);
+    } else if (cls === LabelView) {
+      const labelsArr = labels ? labels : [];
+      return Promise.resolve(labelsArr);
     }
   };
 }

@@ -65,6 +65,6 @@ export function observableSubscriptionDataOf<T>(added: Observable<T>,
 export function mockSpineWebClient() {
   return jasmine.createSpyObj<Client>(
     'Client',
-    ['sendCommand', 'subscribeToEntities', 'fetchAll', 'fetchById']
+    ['sendCommand', 'subscribe', 'fetch']
   );
 }

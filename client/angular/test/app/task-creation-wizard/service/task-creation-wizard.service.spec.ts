@@ -63,7 +63,7 @@ describe('TaskCreationWizard', () => {
 
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
     [chores()], [], [], unsubscribe
   ));
 
@@ -85,7 +85,7 @@ describe('TaskCreationWizard', () => {
    * stage).
    */
   function initializeWizard(stage?: TaskCreation.Stage): void {
-    mockClient.fetchById.and.callFake(initMockProcess(stage));
+    mockClient.fetch.and.callFake(initMockProcess(stage));
     // noinspection JSIgnoredPromiseFromCall The promise is resolved via `fakeAsync()`.
     wizard.init(taskCreationProcess(stage).getId().getUuid());
   }
@@ -139,7 +139,7 @@ describe('TaskCreationWizard', () => {
   }));
 
   it('should produce an error if nothing is found by the specified ID', fakeAsync(() => {
-    mockClient.fetchById.and.callFake((type, id, resolve) => resolve(null));
+    mockClient.fetch.and.returnValue(Promise.resolve([]));
     const theId = 'some-ID';
     wizard.init(theId)
       .then(() => {
