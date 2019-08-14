@@ -59,7 +59,7 @@ export class TaskListComponent implements OnInit {
   }
 
   private reloadTasks(): void {
-    this.taskService.reloadTasks();
+    this.taskService.fetchAllTasks();
   }
 
   private subscribeToTaskChanges(): void {

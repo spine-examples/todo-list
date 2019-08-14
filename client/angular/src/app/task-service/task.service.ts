@@ -105,10 +105,11 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Refreshes the currently stored task list.
+   * Loads all currently existing tasks and reflects them to the corresponding array in this
+   * instance of the task service.
    */
-  reloadTasks(): void {
-    this.fetchAllTasks();
+  fetchAllTasks(): void {
+    this.fetchAll().then(tasks => this._tasks$.next(tasks));
   }
 
   /**
@@ -284,14 +285,6 @@ export class TaskService implements OnDestroy {
         .then(tasks => dataCallback(tasks))
         .catch(err => reject(err));
     });
-  }
-
-  /**
-   * Reflects all currently existing tasks to the corresponding array in this instance of the task
-   * service.
-   */
-  private fetchAllTasks(): void {
-    this.fetchAll().then(tasks => this._tasks$.next(tasks));
   }
 
   /**
