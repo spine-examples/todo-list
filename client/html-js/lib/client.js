@@ -51,7 +51,7 @@ const ACTOR = "TodoList-actor";
 export class Client {
 
     constructor() {
-        this._firebaseClient = spineWeb.init({
+        this._spineWebClient = spineWeb.init({
             protoIndexFiles: [knownTypes, spineWebTypes],
             endpointUrl: HOST,
             firebaseDatabase: firebase.application.database(),
@@ -66,7 +66,30 @@ export class Client {
      */
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
-        this._firebaseClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
+        this._spineWebClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
+    }
+
+    /**
+     * Renders the task list to the given view.
+     *
+     * All changes to the list are received via subscriptions mechanism and are rendered
+     * immediately.
+     *
+     * @param table the view to display the tasks in
+     */
+    renderTasksTo(table) {
+        this.loadTasks(table);
+        this.subscribeToTaskChanges(table);
+    }
+
+    /**
+     * Loads all existing tasks and shows them at the given view.
+     *
+     * @param table the view to display the tasks in
+     */
+    loadTasks(table) {
+        this._spineWebClient.fetch({entity: TaskView})
+            .then(tasks => tasks.forEach(task => Client._addToTable(table, task)))
     }
 
     /**
@@ -75,9 +98,9 @@ export class Client {
      * @param table the view to display the tasks in
      */
     subscribeToTaskChanges(table) {
-        this._firebaseClient.subscribe({entity: TaskView})
+        this._spineWebClient.subscribe({entity: TaskView})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe(item => Client._addToTable(table, item));
+                itemAdded.subscribe(task => Client._addToTable(table, task));
             })
             .catch(errorCallback);
     }

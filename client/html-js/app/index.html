@@ -25,9 +25,9 @@
 <script>
     let client = new Client();
 
-    function subscribeToTaskChanges() {
+    function displayTasks() {
         let list = document.getElementById("task_list");
-        client.subscribeToTaskChanges(list);
+        client.renderTasksTo(list);
     }
 
     function submitNewTask() {
@@ -52,7 +52,7 @@
     }
 
     window.onload = () => {
-        subscribeToTaskChanges();
+        displayTasks();
     };
 </script>
 
