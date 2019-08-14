@@ -72,7 +72,7 @@ export class Client {
     /**
      * Renders the task list to the given view.
      *
-     * All new task items are received via subscriptions mechanism and are rendered immediately.
+     * The task list is dynamically updated based on the changes that arrive from the server.
      *
      * @param table the view to display the tasks in
      */
