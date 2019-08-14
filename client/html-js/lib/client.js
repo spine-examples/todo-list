@@ -112,8 +112,10 @@ export class Client {
     }
 
     static _addToTable(table, taskView) {
-        let description = taskView.getDescription().getValue();
-        table.innerHTML += `<div class="task_item">${description}</div>`;
+        if (taskView) {
+            let description = taskView.getDescription().getValue();
+            table.innerHTML += `<div class="task_item">${description}</div>`;
+        }
     }
 
     static _createTaskCommand(description) {
