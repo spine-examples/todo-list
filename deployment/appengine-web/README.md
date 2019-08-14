@@ -43,7 +43,7 @@ already running on the respective port, the Datastore emulator is reset.
 
 ## Application deployment
 The deployment uses the Firebase Realtime Database. It is required that the Firebase
-credentials are available under the `appengine-web/src/main/resources/spine-dev.json`.
+credentials are available under the `appengine-web/src/main/resources/service-account.json`.
 
 To deploy the application:
 
@@ -79,11 +79,11 @@ deployed by Travis:
 To generate a key for an existing service account execute the following `gcloud` command under
 project root directory:
 ```bash
-./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/spine-dev.json --iam-account firebase-adminsdk-c5bfw@spine-dev.iam.gserviceaccount.com
+./gcloud iam service-accounts keys create deployment/appengine-web/src/main/resources/service-account.json --iam-account firebase-adminsdk-l4lav@spine-todo-list-example.iam.gserviceaccount.com
 ```
 
 The same service account is used during the automatic deployment on Travis build. The service
-account key is decrypted and stored under `deployment/appengine-web/src/main/resources/spine-dev.json`
+account key is decrypted and stored under `deployment/appengine-web/src/main/resources/service-account.json`
 path.
 
 #### Encrypt credentials for Travis
