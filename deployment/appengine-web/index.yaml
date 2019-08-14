@@ -52,6 +52,11 @@ indexes:
         direction: desc
       - name: snapshot
 
+  - kind: spine.server.delivery.InboxMessage
+    properties:
+      - name: inbox_shard
+      - name: when_received
+
   # Todo-list context entities
 
   - kind: spine.examples.todolist.Task
