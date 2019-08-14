@@ -113,8 +113,8 @@ message TaskLabel {
 //
 message TaskCreation {
     option (entity).kind = PROCESS_MANAGER;
-    // TODO:2019-08-13:dmytro.kuzmin: Create some task creation process view instead of querying
-    // todo the process manager directly.
+    // TODO:2019-08-13:dmytro.kuzmin: Create a task creation process view instead of querying the
+    // todo process manager directly.
     option (entity).visibility = QUERY;
 
     // The ID of the process.
