@@ -99,9 +99,16 @@ export class TaskService implements OnDestroy {
   private assureTasksInitialized(): void {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskView[]>([]);
-      this.restoreTasks();
+      this.fetchAllTasks();
       this.subscribeToTaskUpdates().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
+  }
+
+  /**
+   * Refreshes the currently stored task list.
+   */
+  reloadTasks(): void {
+    this.fetchAllTasks();
   }
 
   /**
@@ -283,7 +290,7 @@ export class TaskService implements OnDestroy {
    * Reflects all currently existing tasks to the corresponding array in this instance of the task
    * service.
    */
-  private restoreTasks(): void {
+  private fetchAllTasks(): void {
     this.fetchAll().then(tasks => this._tasks$.next(tasks));
   }
 

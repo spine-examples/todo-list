@@ -46,14 +46,23 @@ export class TaskListComponent implements OnInit {
         .pipe(first())
         .subscribe((data: any): void => {
           this.filter = data.filter;
-          this.performSubscription();
+          this.initTaskList();
         });
     } else {
-      this.performSubscription();
+      this.initTaskList();
     }
   }
 
-  private performSubscription(): void {
+  private initTaskList(): void {
+    this.refreshTaskList();
+    this.subscribeToTaskChanges();
+  }
+
+  private refreshTaskList(): void {
+    this.taskService.reloadTasks();
+  }
+
+  private subscribeToTaskChanges(): void {
     this.taskService.tasks$.subscribe((tasks: TaskView[]) => {
       this.tasks = tasks.filter(this.filter);
       this.hasElements = this.tasks.length !== 0;
