@@ -54,11 +54,11 @@ export class TaskListComponent implements OnInit {
   }
 
   private initTaskList(): void {
-    this.refreshTaskList();
+    this.reloadTasks();
     this.subscribeToTaskChanges();
   }
 
-  private refreshTaskList(): void {
+  private reloadTasks(): void {
     this.taskService.reloadTasks();
   }
 
