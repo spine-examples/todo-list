@@ -302,16 +302,16 @@ export class TaskService implements OnDestroy {
    */
   private subscribeToTaskUpdates(): Promise<() => void> {
     const taskAdded = view => {
-        if (view) {
-          const alreadyBroadcast = this.tasks
-            .map(value => value.getId().getUuid())
-            .includes(view.getId().getUuid());
-          if (!alreadyBroadcast) {
-            const presentItems: TaskView[] = this.tasks.slice();
-            presentItems.push(view);
-            this._tasks$.next(presentItems);
-          }
+      if (view) {
+        const alreadyBroadcast = this.tasks
+          .map(value => value.getId().getUuid())
+          .includes(view.getId().getUuid());
+        if (!alreadyBroadcast) {
+          const presentItems: TaskView[] = this.tasks.slice();
+          presentItems.push(view);
+          this._tasks$.next(presentItems);
         }
+      }
     };
 
     return new Promise((resolve, reject) =>
