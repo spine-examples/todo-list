@@ -37,7 +37,7 @@ import static io.spine.examples.todolist.server.Application.application;
  */
 @WebServlet(name = TodoCommandServlet.NAME, value = "/command")
 @SuppressWarnings({"serial",
-        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
+        "DuplicateStringLiteralInspection" /* Standard Spine endpoint for commands. */})
 public final class TodoCommandServlet extends CommandServlet {
 
     static final String NAME = "Command Service";

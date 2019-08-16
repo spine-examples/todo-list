@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.server.Application.application;
  * The {@code /command} endpoint of the TodoList system.
  */
 @WebServlet("/command")
-@SuppressWarnings("DuplicateStringLiteralInspection") // Similar endpoint to `appengine-web`.
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for commands.
 public final class TodoCommandServlet extends CommandServlet {
 
     private static final long serialVersionUID = 0L;

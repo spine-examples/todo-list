@@ -37,7 +37,7 @@ import static io.spine.examples.todolist.server.Application.application;
  */
 @WebServlet(name = TodoQueryServlet.NAME, value = "/query")
 @SuppressWarnings({"serial",
-        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
+        "DuplicateStringLiteralInspection" /* Standard Spine endpoint for queries. */})
 public final class TodoQueryServlet extends QueryServlet {
 
     static final String NAME = "Query Service";

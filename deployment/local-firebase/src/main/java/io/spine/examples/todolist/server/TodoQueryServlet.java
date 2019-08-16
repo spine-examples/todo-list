@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.server.Application.application;
  * The {@code /query} endpoint of the TodoList system.
  */
 @WebServlet("/query")
-@SuppressWarnings("DuplicateStringLiteralInspection") // Similar endpoint to `appengine-web`.
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for queries.
 public final class TodoQueryServlet extends QueryServlet {
 
     private static final long serialVersionUID = 0L;

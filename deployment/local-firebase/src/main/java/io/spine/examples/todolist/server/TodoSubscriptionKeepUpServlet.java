@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.server.Application.application;
  * The {@code /subscription/keep-up} endpoint of the TodoList system.
  */
 @WebServlet("/subscription/keep-up")
-@SuppressWarnings("DuplicateStringLiteralInspection") // Similar endpoint to `appengine-web`.
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for subscriptions.
 public class TodoSubscriptionKeepUpServlet extends SubscriptionKeepUpServlet {
 
     private static final long serialVersionUID = 0L;

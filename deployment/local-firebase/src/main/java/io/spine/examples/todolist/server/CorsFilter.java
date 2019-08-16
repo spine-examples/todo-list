@@ -39,7 +39,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 /**
  * A {@link javax.servlet.Filter} which appends the CORS headers to the HTTP responses.
  */
-@SuppressWarnings("DuplicateStringLiteralInspection") // Similar filter name to `appengine-web`.
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard name for CORS filter.
 @WebFilter(filterName = "CORS filter", urlPatterns = "*")
 public final class CorsFilter implements Filter {
 

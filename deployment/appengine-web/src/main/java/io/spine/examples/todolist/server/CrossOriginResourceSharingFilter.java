@@ -40,8 +40,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  * the {@code Content-Type} header.
  */
 @WebFilter(filterName = CrossOriginResourceSharingFilter.NAME, urlPatterns = "*")
-@SuppressWarnings("DuplicateStringLiteralInspection")
-// Similar filter to the one in `local-firebase`.
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard name for CORS filter.
 public final class CrossOriginResourceSharingFilter extends HttpFilter {
 
     private static final long serialVersionUID = 0L;

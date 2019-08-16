@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.server.Application.application;
  */
 @WebServlet(name = TodoSubscriptionKeepUpServlet.NAME, value = "/subscription/keep-up")
 @SuppressWarnings({"serial",
-        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
+        "DuplicateStringLiteralInspection" /* Standard Spine endpoint for subscriptions. */})
 public class TodoSubscriptionKeepUpServlet extends SubscriptionKeepUpServlet {
 
     static final String NAME = "Subscription Keep Up Service";
