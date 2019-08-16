@@ -64,7 +64,6 @@ final def versions = [
         spineBase        : SPINE_VERSION,
         spineCore        : SPINE_VERSION,
         spineWeb         : SPINE_VERSION,
-        spineFirebaseMirror : "1.0.0-SNAPSHOT",
         spineJdbc        : SPINE_VERSION,
         spineGcloud      : SPINE_VERSION
 ]

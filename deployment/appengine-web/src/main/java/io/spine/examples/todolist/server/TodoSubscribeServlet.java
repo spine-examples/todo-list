@@ -37,7 +37,8 @@ import static io.spine.examples.todolist.server.Application.application;
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial",
+        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
 public final class TodoSubscribeServlet extends SubscribeServlet {
 
     static final String NAME = "Subscription Creation Service";

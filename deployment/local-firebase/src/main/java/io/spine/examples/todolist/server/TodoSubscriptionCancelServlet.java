@@ -30,18 +30,12 @@ import static io.spine.examples.todolist.server.Application.application;
 
 /**
  * The {@code /subscription/cancel} endpoint of the TodoList system.
- *
- * <p>Handles {@code POST} requests to cancel the subscription to a topic. See
- * {@link SubscriptionCancelServlet} for more details.
- *
- * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
-@WebServlet(name = TodoSubscriptionCancelServlet.NAME, value = "/subscription/cancel")
-@SuppressWarnings({"serial",
-        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
+@WebServlet("/subscription/cancel")
+@SuppressWarnings("DuplicateStringLiteralInspection") // Similar endpoint to `appengine-web`.
 public final class TodoSubscriptionCancelServlet extends SubscriptionCancelServlet {
 
-    static final String NAME = "Subscription Cancel Service";
+    private static final long serialVersionUID = 0L;
 
     public TodoSubscriptionCancelServlet() {
         super(application().subscriptionBridge());

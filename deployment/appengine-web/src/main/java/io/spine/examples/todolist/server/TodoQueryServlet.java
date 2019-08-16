@@ -36,7 +36,8 @@ import static io.spine.examples.todolist.server.Application.application;
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoQueryServlet.NAME, value = "/query")
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial",
+        "DuplicateStringLiteralInspection" /* Similar endpoint to `local-firebase`. */})
 public final class TodoQueryServlet extends QueryServlet {
 
     static final String NAME = "Query Service";

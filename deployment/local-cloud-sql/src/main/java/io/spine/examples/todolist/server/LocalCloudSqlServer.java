@@ -30,6 +30,7 @@ import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
+import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -84,8 +85,11 @@ public class LocalCloudSqlServer {
 
     public static void main(String[] args) throws IOException {
         String[] actualArguments = actualArgumentsFrom(args);
-        ServerEnvironment.instance()
-                         .configureStorage(createStorageFactory(actualArguments));
+
+        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
+        serverEnvironment.configureStorage(createStorageFactory(actualArguments));
+        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
         server.start();

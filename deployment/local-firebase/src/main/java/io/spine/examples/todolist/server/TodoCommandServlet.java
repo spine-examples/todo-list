@@ -20,17 +20,29 @@
 
 package io.spine.examples.todolist.server;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.web.command.CommandServlet;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-@DisplayName("LocalFirebaseServer should")
-class LocalFirebaseServerTest {
+import static io.spine.examples.todolist.server.Application.application;
 
-    @Test
-    @DisplayName("have the private parameterless constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalFirebaseServer.class);
+/**
+ * The {@code /command} endpoint of the TodoList system.
+ */
+@WebServlet("/command")
+@SuppressWarnings("DuplicateStringLiteralInspection") // Similar endpoint to `appengine-web`.
+public final class TodoCommandServlet extends CommandServlet {
+
+    private static final long serialVersionUID = 0L;
+
+    public TodoCommandServlet() {
+        super(application().commandService());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
     }
 }

@@ -30,6 +30,7 @@ import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
+import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -66,8 +67,9 @@ public class ComputeCloudSqlServer {
     }
 
     public static void main(String[] args) throws IOException {
-        ServerEnvironment.instance()
-                         .configureStorage(createStorageFactory());
+        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
+        serverEnvironment.configureStorage(createStorageFactory());
+        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
