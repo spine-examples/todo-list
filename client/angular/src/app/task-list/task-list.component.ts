@@ -43,11 +43,11 @@ export class TaskListComponent implements OnInit {
   ngOnInit(): void {
     if (!this.filter) {
       this.route.data
-        .pipe(first())
-        .subscribe((data: any): void => {
-          this.filter = data.filter;
-          this.initTaskList();
-        });
+          .pipe(first())
+          .subscribe((data: any): void => {
+            this.filter = data.filter;
+            this.initTaskList();
+          });
     } else {
       this.initTaskList();
     }

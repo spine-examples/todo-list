@@ -74,12 +74,12 @@ export class LabelAssignmentComponent extends WizardStep {
    */
   protected initOwnModel(): void {
     this.loadAvailableLabels
-      .then(labels => {
-        this.available = labels;
-      })
-      .catch(err => {
-        this.reportError(`Error when loading available labels: ${err}`);
-      });
+        .then(labels => {
+          this.available = labels;
+        })
+        .catch(err => {
+          this.reportError(`Error when loading available labels: ${err}`);
+        });
   }
 
   /**
@@ -87,13 +87,13 @@ export class LabelAssignmentComponent extends WizardStep {
    */
   initFromWizard(): void {
     this.loadAvailableLabels
-      .then(labels => {
-        const findMatch = id => labels.find(label => label.getId().getUuid() === id.getUuid());
-        this.selected = this.wizard.taskLabels.map(findMatch);
-      })
-      .catch(err => {
-        this.reportError(`Error when loading available labels: ${err}`);
-      });
+        .then(labels => {
+          const findMatch = id => labels.find(label => label.getId().getUuid() === id.getUuid());
+          this.selected = this.wizard.taskLabels.map(findMatch);
+        })
+        .catch(err => {
+          this.reportError(`Error when loading available labels: ${err}`);
+        });
   }
 
   /**

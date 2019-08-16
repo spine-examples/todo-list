@@ -4,14 +4,14 @@ A client for To-Do List application based on [Angular](https://angular.io/) vers
 
 The client connects to the local backend server.
 
-How to run:
+### Running the client:
 
-1. Start the local AppEngine backend server (from project root):
+1. Start the local Spine web server (from project root):
     ```bash
-    ./gradlew :appengine-web:appengineRun
+    ./gradlew :local-firebase:runServer
     ```
-    The local backend server will start on `localhost:8080`. For details about running the
-    application server locally see `appengine-web/README.md`. 
+    The local backend server will start on `localhost:8080`. For details see 
+    `local-firebase/README.md`. 
     
 2. Run the client (in separate terminal):
     ```bash
@@ -21,6 +21,6 @@ How to run:
     ```
     
     This command will run the web application on `localhost:4200` and adjust it to work
-    with a backend server on the `localhost:8080` and a development Firebase application.
+    with a backend server on the `localhost:8080` and local Firebase emulator.
     
 3. Navigate to `localhost:4200`.

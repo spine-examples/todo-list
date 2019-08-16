@@ -30,7 +30,7 @@ describe('DraftsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DraftsComponent]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {

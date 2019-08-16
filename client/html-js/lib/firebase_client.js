@@ -21,12 +21,7 @@
 let firebase = require("firebase/app");
 require("firebase/database");
 
-let config = {
-    apiKey: "AIzaSyBl2wQmozjqxLX7v9WT-_OjWAdUXs7f0Hg",
-    authDomain: "spine-todo-list-example.firebaseio.com",
-    databaseURL: "https://spine-todo-list-example.firebaseio.com",
-    projectId: "spine-todo-list-example",
-    storageBucket: "",
-    messagingSenderId: "297411113023"
-};
-export let application = firebase.initializeApp(config, "spine-todo-list-example");
+export let application = firebase.initializeApp({
+    databaseURL: 'ws://localhost:5000/',
+    authDomain: 'ws://localhost:5000/'
+});

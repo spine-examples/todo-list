@@ -36,7 +36,7 @@ describe('PageHeader', () => {
         MatDividerModule
       ]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {
@@ -55,11 +55,11 @@ describe('PageHeader', () => {
     fixture.detectChanges();
     const elements = fixture.nativeElement.querySelectorAll('p');
     elements.forEach(
-      element => {
-        if (element.classList.contains('mat-headline')) {
-          expect(element.textContent).toContain(text);
+        element => {
+          if (element.classList.contains('mat-headline')) {
+            expect(element.textContent).toContain(text);
+          }
         }
-      }
     );
   });
 });

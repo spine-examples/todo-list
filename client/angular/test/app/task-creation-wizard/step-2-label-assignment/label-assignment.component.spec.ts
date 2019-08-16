@@ -46,7 +46,7 @@ describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribe.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+      [chores()], [], [], unsubscribe
   ));
 
   let component: LabelAssignmentComponent;
@@ -84,7 +84,7 @@ describe('LabelAssignmentComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
 
     mockClient.fetch.and.callFake(initMockProcessWithLabels(selectedLabels, availableLabels));
     fixture = TestBed.createComponent(LabelAssignmentComponent);
@@ -116,14 +116,14 @@ describe('LabelAssignmentComponent', () => {
     newComponent.ngAfterViewInit();
     tick();
     expect(newComponent.errorViewport.text)
-      .toEqual(`Error when loading available labels: ${errorMessage}`);
+        .toEqual(`Error when loading available labels: ${errorMessage}`);
 
     newComponent.errorViewport.text = '';
 
     newComponent.initFromWizard();
     tick();
     expect(newComponent.errorViewport.text)
-      .toEqual(`Error when loading available labels: ${errorMessage}`);
+        .toEqual(`Error when loading available labels: ${errorMessage}`);
   }));
 
   it('should add label to selected and become non-completed', () => {
@@ -156,16 +156,16 @@ describe('LabelAssignmentComponent', () => {
   });
 
   it('should run `AddLabels` command with selected labels and navigate to next step',
-    fakeAsync(() => {
-      mockClient.sendCommand.and.callFake((command, resolve) => {
-        expect(command.getExistingLabelsList())
-          .toEqual(selectedLabels.map(label => label.getId()));
-        resolve();
-      });
-      component.next();
-      tick();
-      expect(component.stepper.next).toHaveBeenCalledTimes(1);
-    }));
+      fakeAsync(() => {
+        mockClient.sendCommand.and.callFake((command, resolve) => {
+          expect(command.getExistingLabelsList())
+              .toEqual(selectedLabels.map(label => label.getId()));
+          resolve();
+        });
+        component.next();
+        tick();
+        expect(component.stepper.next).toHaveBeenCalledTimes(1);
+      }));
 
   it('should run `SkipLabels` command if the selected label list is empty', fakeAsync(() => {
     component.selected = [];

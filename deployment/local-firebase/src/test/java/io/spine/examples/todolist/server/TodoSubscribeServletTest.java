@@ -23,14 +23,15 @@ package io.spine.examples.todolist.server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisplayName("LocalFirebaseServer should")
-class LocalFirebaseServerTest {
+@DisplayName("TodoSubscribeServlet should")
+class TodoSubscribeServletTest {
 
     @Test
-    @DisplayName("have the private parameterless constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalFirebaseServer.class);
+    @DisplayName("be instantiated with an empty constructor")
+    void instantiated() {
+        TodoSubscribeServlet servlet = new TodoSubscribeServlet();
+        assertNotNull(servlet);
     }
 }

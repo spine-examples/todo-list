@@ -37,7 +37,7 @@ describe('NavigationComponent', () => {
       declarations: [NavigationComponent],
       providers: [{provide: LayoutService, useValue: mockLayoutService()}]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {

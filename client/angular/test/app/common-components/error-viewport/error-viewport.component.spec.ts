@@ -30,7 +30,7 @@ describe('ErrorViewport', () => {
     TestBed.configureTestingModule({
       declarations: [ErrorViewport]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {

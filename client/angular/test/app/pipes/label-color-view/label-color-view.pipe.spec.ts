@@ -37,7 +37,7 @@ describe('LabelColorView', () => {
 
   it('should throw an error on unknown label color', () => {
     expect(() => pipe.transform(LabelColor.LC_UNDEFINED)).toThrowError(
-      `There is no known string representation for color ${LabelColor.LC_UNDEFINED}`
+        `There is no known string representation for color ${LabelColor.LC_UNDEFINED}`
     );
   });
 });

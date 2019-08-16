@@ -47,7 +47,7 @@ describe('TaskService', () => {
   }
 
   mockClient.subscribe.and.returnValue(observableSubscriptionDataOf(
-    addedTasksSubject.asObservable(), unsubscribe
+      addedTasksSubject.asObservable(), unsubscribe
   ));
   mockClient.fetch.and.returnValue(Promise.resolve([]));
 
@@ -131,10 +131,10 @@ describe('TaskService', () => {
     const theTask = chore();
     mockClient.fetch.and.returnValue(Promise.resolve([theTask]));
     service.fetchById(theTask.getId())
-      .then(taskView => expect(taskView).toEqual(theTask))
-      .catch(err =>
-        fail(`Task details should have been resolved, actually rejected with an error: ${err}`)
-      );
+           .then(taskView => expect(taskView).toEqual(theTask))
+           .catch(err =>
+               fail(`Task details should have been resolved, actually rejected with an error: ${err}`)
+           );
   }));
 
   it('should produce an error when no matching task is found during lookup', fakeAsync(() => {
@@ -142,8 +142,8 @@ describe('TaskService', () => {
     mockClient.fetch.and.returnValue(Promise.resolve([]));
 
     service.fetchById(taskId)
-      .then(() => fail('Task details lookup should have been rejected'))
-      .catch(err => expect(err).toEqual(`No task view found for ID: ${taskId}`));
+           .then(() => fail('Task details lookup should have been rejected'))
+           .catch(err => expect(err).toEqual(`No task view found for ID: ${taskId}`));
   }));
 
   it('should propagate errors from Spine Web Client on `fetchById`', fakeAsync(() => {
@@ -151,7 +151,7 @@ describe('TaskService', () => {
     mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
 
     service.fetchById(chore().getId())
-      .then(() => fail('Task details lookup should have been rejected'))
-      .catch(err => expect(err).toEqual(errorMessage));
+           .then(() => fail('Task details lookup should have been rejected'))
+           .catch(err => expect(err).toEqual(errorMessage));
   }));
 });

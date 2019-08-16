@@ -20,54 +20,90 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.api.client.http.HttpBackOffIOExceptionHandler;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.apache.ApacheHttpTransport;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.database.FirebaseDatabase;
+import io.spine.net.Url;
+import io.spine.web.firebase.FirebaseClient;
+import io.spine.web.firebase.rest.RemoteDatabaseClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 /**
- * A utility for working with the Firebase client API.
+ * A factory of Firebase Realtime Database clients.
  */
 final class FirebaseClients {
 
-    private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
-    private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
+    private static final Url EMULATOR_URL = Url
+            .newBuilder()
+            .setSpec("http://127.0.0.1:5000/")
+            .vBuild();
 
-    /** Prevents instantiation of this utility class. */
-    private FirebaseClients() {}
+    private static final FirebaseClient client = createClient();
 
     /**
-     * Initializes the Cloud Firestore API with the service account credentials.
-     *
-     * <p>To performs the initialization successfully, the configuration file
-     * {@code serviceAccount.json} should be present in the classpath.
-     *
-     * @return the initialized instance of {@link Firestore}
+     * Prevents the utility class instantiation.
      */
-    public static Firestore initializeFirestore() {
-        InputStream firebaseSecret = FirebaseClients.class
-                .getClassLoader()
-                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-        checkNotNull(firebaseSecret,
-                     "Required credentials file '%s' does not exist.", FIREBASE_SERVICE_ACC_SECRET);
-        GoogleCredentials credentials;
-        try {
-            credentials = GoogleCredentials.fromStream(firebaseSecret);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setDatabaseUrl(DATABASE_URL)
-                .setCredentials(credentials)
-                .build();
-        FirebaseApp.initializeApp(options);
-        Firestore firestore = FirestoreClient.getFirestore();
-        return firestore;
+    private FirebaseClients() {
+    }
+
+    static FirebaseClient client() {
+        return client;
+    }
+
+    private static FirebaseClient createClient() {
+        FirebaseDatabase database = emulatorDatabase();
+        HttpRequestFactory requestFactory = transportWithBackoff();
+        RemoteDatabaseClient client = RemoteDatabaseClient.create(database, requestFactory);
+        return client;
+    }
+
+    /**
+     * Initializes the {@code FirebaseDatabase} instance by establishing a connection to
+     * the Firebase RDB emulator.
+     */
+    private static FirebaseDatabase emulatorDatabase() {
+        AccessToken token = tokenForEmulator();
+        GoogleCredentials credentials = GoogleCredentials.newBuilder()
+                                                         .setAccessToken(token)
+                                                         .build();
+        FirebaseOptions options =
+                FirebaseOptions.builder()
+                               .setCredentials(credentials)
+                               .setDatabaseUrl(EMULATOR_URL.getSpec())
+                               .build();
+        FirebaseApp app = FirebaseApp.initializeApp(options);
+        return FirebaseDatabase.getInstance(app);
+    }
+
+    /**
+     * Creates an HTTP request factory which by default uses {@linkplain ExponentialBackOff
+     * exponential back-off} strategy upon an {@code IOException}.
+     */
+    private static HttpRequestFactory transportWithBackoff() {
+        HttpTransport transport = new ApacheHttpTransport();
+        return transport.createRequestFactory(
+                request -> request.setIOExceptionHandler(
+                        new HttpBackOffIOExceptionHandler(new ExponentialBackOff())));
+    }
+
+    /**
+     * Creates a fake {@code AccessToken} suitable for the Firebase RDB emulator.
+     */
+    private static AccessToken tokenForEmulator() {
+        Date expirationDate = Date.from(Instant.now()
+                                               .plus(Duration.of(1, ChronoUnit.DAYS)));
+        return new AccessToken("emulator-does-not-support-authentication",
+                               expirationDate);
     }
 }

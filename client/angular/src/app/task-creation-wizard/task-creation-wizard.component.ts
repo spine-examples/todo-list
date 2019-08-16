@@ -165,28 +165,28 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     this.initWizard
-      .then(() => {
-        this.ensureRouteHasId();
-        this.moveToCurrentStep();
+        .then(() => {
+          this.ensureRouteHasId();
+          this.moveToCurrentStep();
 
-        this.taskDefinition.initFromWizard();
-        this.labelAssignment.initFromWizard();
+          this.taskDefinition.initFromWizard();
+          this.labelAssignment.initFromWizard();
 
-        this.layoutService.update({
-          quitButtonHandler: () => this.currentStep().cancel()
-        });
+          this.layoutService.update({
+            quitButtonHandler: () => this.currentStep().cancel()
+          });
 
-        this.isLoading = false;
-        this.changeDetector.detectChanges();
-      })
-      .then(() => {
-        this.steps = new Map<number, WizardStep>([
-          [TaskCreation.Stage.TASK_DEFINITION, this.taskDefinition],
-          [TaskCreation.Stage.LABEL_ASSIGNMENT, this.labelAssignment],
-          [TaskCreation.Stage.CONFIRMATION, this.confirmation]
-        ]);
-      })
-      .catch(err => TaskCreationWizardComponent.reportFatalError(err));
+          this.isLoading = false;
+          this.changeDetector.detectChanges();
+        })
+        .then(() => {
+          this.steps = new Map<number, WizardStep>([
+            [TaskCreation.Stage.TASK_DEFINITION, this.taskDefinition],
+            [TaskCreation.Stage.LABEL_ASSIGNMENT, this.labelAssignment],
+            [TaskCreation.Stage.CONFIRMATION, this.confirmation]
+          ]);
+        })
+        .catch(err => TaskCreationWizardComponent.reportFatalError(err));
   }
 
   /**
@@ -216,7 +216,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
     const currentStage = this.wizard.stage;
     if (!currentStage) {
       TaskCreationWizardComponent.reportFatalError(
-        `There is no wizard step for stage ${currentStage}`
+          `There is no wizard step for stage ${currentStage}`
       );
       return;
     }
@@ -255,7 +255,7 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
 
   private currentStageIs(predicate: (stage: number) => boolean): boolean {
     const currentStage = this.wizard.stage;
-    console.log(currentStage + "current");
+    console.log(currentStage + 'current');
     return predicate(currentStage);
   }
 }
