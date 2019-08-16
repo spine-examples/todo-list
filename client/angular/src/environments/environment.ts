@@ -37,19 +37,15 @@ import 'zone.js/dist/zone-error'; // Included with Angular CLI.
  * and `test` commands without specifying of a `--configuration` property.
  *
  * Configures an application to work with:
- *  - a remote local backend server running on AppEngine emulator. See "Running the application
- *    locally" section of `deployment/appengine-web/README.md` for details.
- *  - a development "spine-dev" Firebase application.
+ *  - a local backend server.
+ *  - a local Firebase Realtime Database emulator. See `deployment/local-firebase/README.md` for
+ *  details.
  */
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
+    databaseURL: 'ws://localhost:5000/',
+    authDomain: 'ws://localhost:5000/'
   },
   host: 'http://localhost:8080'
 };
