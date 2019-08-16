@@ -31,19 +31,7 @@ dependencies {
     implementation "io.spine:spine-client:$deps.versions.spineCore"
 }
 
-/*
-    The JS part of this subproject consists of a single downloaded NPM module `firebase-server`,
-    which is a Firebase Database emulator we use.
- */
-
-apply from: "$rootDir/gradle/js/npm-cli.gradle"
-
-task installEmulator {
-    final def workDirectory = "$projectDir"
-    doLast {
-        executeNpm(workDirectory as File, 'install')
-    }
-}
+apply from: "$projectDir/scripts/install-firebase-emulator.gradle"
 
 task runEmulator(type: com.github.psxpaul.task.ExecFork) {
     workingDir = "$projectDir/node_modules/.bin"
