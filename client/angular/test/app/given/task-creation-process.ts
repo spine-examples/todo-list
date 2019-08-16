@@ -26,14 +26,14 @@ import {LabelIdsList} from 'proto/todolist/values_pb';
 import {LabelView, TaskView} from 'proto/todolist/views_pb';
 
 export function initMockProcess(stage?: TaskCreation.Stage)
-  : ({entity: cls, byIds: ids}) => Promise<any> {
+    : ({entity: cls, byIds: ids}) => Promise<any> {
   const creationProcess = taskCreationProcess(stage);
   const task = chore();
   return resolveWithOneOf(creationProcess, task);
 }
 
 export function initMockProcessWithLabels(selected: LabelView[], available: LabelView[])
-  : ({entity: cls, byIds: ids}) => Promise<any> {
+    : ({entity: cls, byIds: ids}) => Promise<any> {
   const creationProcess = taskCreationProcess(TaskCreation.Stage.LABEL_ASSIGNMENT);
   const task = chore();
 

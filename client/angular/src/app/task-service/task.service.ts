@@ -208,8 +208,8 @@ export class TaskService implements OnDestroy {
    */
   private sendTaskCommand(cmd, taskId): void {
     this.spineWebClient.sendCommand(cmd,
-      () => this.removeFromOptimisticallyChanged(taskId),
-      err => this.recoverPreviousState(err, taskId));
+        () => this.removeFromOptimisticallyChanged(taskId),
+        err => this.recoverPreviousState(err, taskId));
   }
 
   /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */
@@ -282,8 +282,8 @@ export class TaskService implements OnDestroy {
         }
       };
       this.spineWebClient.fetch({entity: TaskView, byIds: [id]})
-        .then(tasks => dataCallback(tasks))
-        .catch(err => reject(err));
+          .then(tasks => dataCallback(tasks))
+          .catch(err => reject(err));
     });
   }
 
@@ -304,8 +304,8 @@ export class TaskService implements OnDestroy {
     const taskAdded = view => {
       if (view) {
         const alreadyBroadcast = this.tasks
-          .map(value => value.getId().getUuid())
-          .includes(view.getId().getUuid());
+                                     .map(value => value.getId().getUuid())
+                                     .includes(view.getId().getUuid());
         if (!alreadyBroadcast) {
           const presentItems: TaskView[] = this.tasks.slice();
           presentItems.push(view);
@@ -315,20 +315,20 @@ export class TaskService implements OnDestroy {
     };
 
     return new Promise((resolve, reject) =>
-      this.spineWebClient.subscribe({entity: TaskView})
-        .then((subscriptionObject) => {
-          subscriptionObject.itemAdded.subscribe(taskAdded);
+        this.spineWebClient.subscribe({entity: TaskView})
+            .then((subscriptionObject) => {
+              subscriptionObject.itemAdded.subscribe(taskAdded);
 
-          // TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
-          resolve(subscriptionObject.unsubscribe);
-        })
-        .catch(err => {
-          console.log(
-            'Cannot subscribe to entities of type (`%s`): %s',
-            (TaskView).typeUrl(), err
-          );
-          reject(err);
-        })
+              // TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
+              resolve(subscriptionObject.unsubscribe);
+            })
+            .catch(err => {
+              console.log(
+                  'Cannot subscribe to entities of type (`%s`): %s',
+                  (TaskView).typeUrl(), err
+              );
+              reject(err);
+            })
     );
   }
 

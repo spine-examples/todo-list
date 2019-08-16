@@ -44,7 +44,7 @@ describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribe.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+      [chores()], [], [], unsubscribe
   ));
 
   let component: ConfirmationComponent;
@@ -74,7 +74,7 @@ describe('ConfirmationComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
 
     mockClient.fetch.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(ConfirmationComponent);

@@ -56,16 +56,16 @@ export class ActiveTasksComponent implements OnInit {
   private lowList: TaskListComponent;
 
   activeFilter: (t: TaskView) => boolean =
-    (taskView) => taskView.getStatus() === TaskStatus.OPEN || taskView.getStatus() === TaskStatus.FINALIZED;
+      (taskView) => taskView.getStatus() === TaskStatus.OPEN || taskView.getStatus() === TaskStatus.FINALIZED;
 
   urgentFilter: (t: TaskView) => boolean =
-    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.HIGH;
+      (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.HIGH;
 
   lowPriorityFilter: (t: TaskView) => boolean =
-    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.LOW;
+      (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.LOW;
 
   normalPriorityFilter: (t: TaskView) => boolean =
-    (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.TP_UNDEFINED;
+      (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a

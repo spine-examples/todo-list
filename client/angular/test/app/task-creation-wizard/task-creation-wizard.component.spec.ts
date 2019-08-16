@@ -67,7 +67,7 @@ describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
   mockClient.subscribe.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+      [chores()], [], [], unsubscribe
   ));
   const layoutService = mockLayoutService();
   const notificationService = mockNotificationService();
@@ -89,10 +89,10 @@ describe('TaskCreationWizardComponent', () => {
   function initChildElements(wizardComponent: TaskCreationWizardComponent) {
     wizardComponent.stepper = mockStepper();
     wizardComponent.taskDefinition = jasmine.createSpyObj<TaskDefinitionComponent>(
-      'TaskDefinitionComponent', ['initFromWizard']
+        'TaskDefinitionComponent', ['initFromWizard']
     );
     wizardComponent.labelAssignment = jasmine.createSpyObj<LabelAssignmentComponent>(
-      'LabelAssignmentComponent', ['initFromWizard']
+        'LabelAssignmentComponent', ['initFromWizard']
     );
   }
 
@@ -142,7 +142,7 @@ describe('TaskCreationWizardComponent', () => {
         {provide: NotificationService, useValue: notificationService}
       ]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {
@@ -162,14 +162,14 @@ describe('TaskCreationWizardComponent', () => {
     // Create a component by hand to use a different activated route.
     const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient, undefined));
     const changeDetector =
-      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
+        jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
     const location =
-      jasmine.createSpyObj<Location>('Location', ['isCurrentPathEqualTo', 'go']);
+        jasmine.createSpyObj<Location>('Location', ['isCurrentPathEqualTo', 'go']);
     const activated = new ActivatedRoute();
     activated.snapshot = new ActivatedRouteSnapshot();
 
     const theComponent =
-      new TaskCreationWizardComponent(wizard, changeDetector, location, activated, layoutService);
+        new TaskCreationWizardComponent(wizard, changeDetector, location, activated, layoutService);
     initChildElements(theComponent);
     theComponent.ngAfterViewInit();
     tick();

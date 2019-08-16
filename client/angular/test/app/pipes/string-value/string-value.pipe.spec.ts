@@ -46,7 +46,7 @@ describe('StringValue', () => {
   it('should produce an error when given a non-`stringValue` Proto type', () => {
     const labelDetails = new LabelDetails();
     expect(() => pipe.transform(labelDetails)).toThrowError(
-      `${StringValue.ERROR_MESSAGE}${labelDetails}`
+        `${StringValue.ERROR_MESSAGE}${labelDetails}`
     );
   });
 
@@ -64,7 +64,7 @@ describe('StringValue', () => {
   it('should produce an error when conversion to a non-`stringValue` type is requested', () => {
     const stringValue = 'some string value';
     expect(() => StringValue.back<LabelDetails>(stringValue, LabelDetails)).toThrowError(
-      `${StringValue.ERROR_MESSAGE}${LabelDetails}`
+        `${StringValue.ERROR_MESSAGE}${LabelDetails}`
     );
   });
 });

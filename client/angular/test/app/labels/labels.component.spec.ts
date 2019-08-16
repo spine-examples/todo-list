@@ -37,7 +37,7 @@ describe('LabelsComponent', () => {
       imports: [RouterTestingModule.withRoutes([])],
       providers: [LabelService, {provide: Client, useValue: mockSpineWebClient()}]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {

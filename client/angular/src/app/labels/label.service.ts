@@ -43,12 +43,12 @@ export class LabelService {
    */
   createBasicLabel(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        const cmd = new CreateBasicLabel();
-        const id = UuidGenerator.newId(LabelId);
-        cmd.setLabelId(id);
-        cmd.setLabelTitle('TestLabel');
-        this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
-      }
+          const cmd = new CreateBasicLabel();
+          const id = UuidGenerator.newId(LabelId);
+          cmd.setLabelId(id);
+          cmd.setLabelTitle('TestLabel');
+          this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
+        }
     );
   }
 
@@ -66,17 +66,17 @@ export class LabelService {
    */
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) => {
-        const dataCallback = labels => {
-          if (labels.length < 1) {
-            reject(`No label view found for ID: ${labelId}`);
-          } else {
-            resolve(labels[0]);
-          }
-        };
-        this.spineWebClient.fetch({entity: LabelView, byIds: [labelId]})
-          .then(labels => dataCallback(labels))
-          .catch(err => reject(err));
-      }
+          const dataCallback = labels => {
+            if (labels.length < 1) {
+              reject(`No label view found for ID: ${labelId}`);
+            } else {
+              resolve(labels[0]);
+            }
+          };
+          this.spineWebClient.fetch({entity: LabelView, byIds: [labelId]})
+              .then(labels => dataCallback(labels))
+              .catch(err => reject(err));
+        }
     );
   }
 }

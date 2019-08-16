@@ -50,7 +50,7 @@ export class TaskDefinitionComponent extends WizardStep {
    * Possible task priorities.
    */
   readonly TASK_PRIORITIES: TaskPriority =
-    [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
+      [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
 
   /**
    * Due date for tasks is allowed to be set starting from tomorrow.

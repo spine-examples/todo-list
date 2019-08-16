@@ -109,13 +109,13 @@ export abstract class WizardStep implements AfterViewInit {
   next(): void {
     this.clearError();
     this.doStep()
-      .then(() => {
-        this.setCompleted();
-        this.stepper.next();
-      })
-      .catch(err => {
-        this.reportError(err);
-      });
+        .then(() => {
+          this.setCompleted();
+          this.stepper.next();
+        })
+        .catch(err => {
+          this.reportError(err);
+        });
   }
 
   /**
@@ -130,11 +130,11 @@ export abstract class WizardStep implements AfterViewInit {
    */
   cancel(): void {
     this.wizard.cancelTaskCreation()
-      .then(() => this.quitWizard())
-      .catch(err => {
-        this.quitWizard();
-        WizardStep.reportFatalError(err);
-      });
+        .then(() => this.quitWizard())
+        .catch(err => {
+          this.quitWizard();
+          WizardStep.reportFatalError(err);
+        });
   }
 
   /**
@@ -144,11 +144,11 @@ export abstract class WizardStep implements AfterViewInit {
    */
   finish() {
     this.doStep()
-      .then(() => this.quitWizard())
-      .catch(err => {
-        this.quitWizard();
-        WizardStep.reportFatalError(err);
-      });
+        .then(() => this.quitWizard())
+        .catch(err => {
+          this.quitWizard();
+          WizardStep.reportFatalError(err);
+        });
   }
 
   /**

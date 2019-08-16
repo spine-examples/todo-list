@@ -46,11 +46,11 @@ describe('UuidGenerator', () => {
 
   it('should throw an error when a specified type is undefined', () => {
     expect(() => UuidGenerator.newId(undefined))
-      .toThrowError(UuidGenerator.ERROR_MESSAGE);
+        .toThrowError(UuidGenerator.ERROR_MESSAGE);
   });
 
   it('should throw an error when a specified type is not a UUID-value Proto type', () => {
     expect(() => UuidGenerator.newId(TaskDetails))
-      .toThrowError(UuidGenerator.ERROR_MESSAGE);
+        .toThrowError(UuidGenerator.ERROR_MESSAGE);
   });
 });
