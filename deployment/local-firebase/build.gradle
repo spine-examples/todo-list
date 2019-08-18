@@ -22,13 +22,9 @@ plugins {
     id 'com.github.psxpaul.execfork' version '0.1.11'
 }
 
-spine.enableJava()
-
 dependencies {
     implementation project(path: ':server')
     implementation "io.spine.gcloud:spine-firebase-web:$deps.versions.spineWeb"
-
-    implementation "io.spine:spine-client:$deps.versions.spineCore"
 }
 
 apply from: "$projectDir/scripts/install-firebase-emulator.gradle"
