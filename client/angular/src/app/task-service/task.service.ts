@@ -19,7 +19,7 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {Client} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -99,8 +99,17 @@ export class TaskService implements OnDestroy {
   private assureTasksInitialized(): void {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskView[]>([]);
-      this.subscribeToTasks().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+      this.fetchAllTasks();
+      this.subscribeToTaskUpdates().then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
+  }
+
+  /**
+   * Loads all currently existing tasks and reflects them to the corresponding array in this
+   * instance of the task service.
+   */
+  fetchAllTasks(): void {
+    this.fetchAll().then(tasks => this._tasks$.next(tasks));
   }
 
   /**
@@ -199,8 +208,8 @@ export class TaskService implements OnDestroy {
    */
   private sendTaskCommand(cmd, taskId): void {
     this.spineWebClient.sendCommand(cmd,
-      () => this.removeFromOptimisticallyChanged(taskId),
-      err => this.recoverPreviousState(err, taskId));
+        () => this.removeFromOptimisticallyChanged(taskId),
+        err => this.recoverPreviousState(err, taskId));
   }
 
   /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */
@@ -252,26 +261,34 @@ export class TaskService implements OnDestroy {
   }
 
   /**
+   * Fetches the details of all existing tasks.
+   */
+  fetchAll(): Promise<TaskView[]> {
+    return this.spineWebClient.fetch({entity: TaskView});
+  }
+
+  /**
    * Fetches a single task details.
    *
    * If nothing is found by the specified ID, the promise is rejected.
    */
   fetchById(id: TaskId): Promise<TaskView> {
     return new Promise<TaskView>((resolve, reject) => {
-      const dataCallback = task => {
-        if (!task) {
+      const dataCallback = tasks => {
+        if (tasks.length < 1) {
           reject(`No task view found for ID: ${id}`);
         } else {
-          resolve(task);
+          resolve(tasks[0]);
         }
       };
-      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
-      this.spineWebClient.fetchById(Type.forClass(TaskView), id, dataCallback, reject);
+      this.spineWebClient.fetch({entity: TaskView, byIds: [id]})
+          .then(tasks => dataCallback(tasks))
+          .catch(err => reject(err));
     });
   }
 
   /**
-   * Subscribes to the active tasks and reflects them to the array stored in this instance of the
+   * Subscribes to the task updates and reflects them to the array stored in this instance of the
    * task service.
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
@@ -283,38 +300,35 @@ export class TaskService implements OnDestroy {
    *
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
-  private subscribeToTasks(): Promise<() => void> {
-    const taskAdded = {
-      next: (view: TaskView): void => {
-        if (view) {
-          const alreadyBroadcast = this.tasks
-            .map(value => value.getId().getUuid())
-            .includes(view.getId().getUuid());
-          if (!alreadyBroadcast) {
-            const presentItems: TaskView[] = this.tasks.slice();
-            presentItems.push(view);
-            this._tasks$.next(presentItems);
-          }
+  private subscribeToTaskUpdates(): Promise<() => void> {
+    const taskAdded = view => {
+      if (view) {
+        const alreadyBroadcast = this.tasks
+                                     .map(value => value.getId().getUuid())
+                                     .includes(view.getId().getUuid());
+        if (!alreadyBroadcast) {
+          const presentItems: TaskView[] = this.tasks.slice();
+          presentItems.push(view);
+          this._tasks$.next(presentItems);
         }
       }
     };
 
-    const type = Type.forClass(TaskView);
     return new Promise((resolve, reject) =>
-      this.spineWebClient.subscribeToEntities({ofType: type})
-        .then((subscriptionObject) => {
-          subscriptionObject.itemAdded.subscribe(taskAdded);
+        this.spineWebClient.subscribe({entity: TaskView})
+            .then((subscriptionObject) => {
+              subscriptionObject.itemAdded.subscribe(taskAdded);
 
-          // TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
-          resolve(subscriptionObject.unsubscribe);
-        })
-        .catch(err => {
-          console.log(
-            'Cannot subscribe to entities of type (`%s`): %s',
-            (TaskView).typeUrl(), err
-          );
-          reject(err);
-        })
+              // TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
+              resolve(subscriptionObject.unsubscribe);
+            })
+            .catch(err => {
+              console.log(
+                  'Cannot subscribe to entities of type (`%s`): %s',
+                  (TaskView).typeUrl(), err
+              );
+              reject(err);
+            })
     );
   }
 

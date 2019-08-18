@@ -30,7 +30,7 @@ let spineWebTypes = require('spine-web/proto/index');
 let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../generated/main/js/todolist/values_pb").TaskDescription;
 let CreateBasicTask = require("../generated/main/js/todolist/commands_pb").CreateBasicTask;
-let MyListView = require("../generated/main/js/todolist/views_pb").MyListView;
+let TaskView = require("../generated/main/js/todolist/views_pb").TaskView;
 
 let firebase = require("./firebase_client.js");
 
@@ -51,7 +51,7 @@ const ACTOR = "TodoList-actor";
 export class Client {
 
     constructor() {
-        this._firebaseClient = spineWeb.init({
+        this._spineWebClient = spineWeb.init({
             protoIndexFiles: [knownTypes, spineWebTypes],
             endpointUrl: HOST,
             firebaseDatabase: firebase.application.database(),
@@ -66,33 +66,40 @@ export class Client {
      */
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
-        this._firebaseClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
+        this._spineWebClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
     }
 
     /**
-     * Subscribes to all task list changes on the server and displays the on the UI.
+     * Renders the task list to the given view.
+     *
+     * The task list is dynamically updated based on the changes that arrive from the server.
+     *
+     * @param table the view to display the tasks in
+     */
+    renderTasksTo(table) {
+        this.loadTasks(table);
+        this.subscribeToTaskChanges(table);
+    }
+
+    /**
+     * Loads all existing tasks and shows them at the given view.
+     *
+     * @param table the view to display the tasks in
+     */
+    loadTasks(table) {
+        this._spineWebClient.fetch({entity: TaskView})
+            .then(tasks => tasks.forEach(task => Client._addToTable(table, task)))
+    }
+
+    /**
+     * Subscribes to all task list changes on the server and displays them on the UI.
      *
      * @param table the view to display the tasks in
      */
     subscribeToTaskChanges(table) {
-        let typeUrl = new spineWeb.TypeUrl(
-            "type.spine.examples.todolist/spine.examples.todolist.MyListView"
-        );
-        let type = new spineWeb.Type(
-            MyListView,
-            typeUrl
-        );
-        // noinspection JSUnusedGlobalSymbols Used by the caller code.
-        let fillTable = {
-            next: (view) => {
-                Client._fillTable(table, view);
-            }
-        };
-        this._firebaseClient.subscribeToEntities({ofType: type})
+        this._spineWebClient.subscribe({entity: TaskView})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe(fillTable);
-                itemChanged.subscribe(fillTable);
-                itemRemoved.subscribe(fillTable);
+                itemAdded.subscribe(task => Client._addToTable(table, task));
             })
             .catch(errorCallback);
     }
@@ -103,11 +110,9 @@ export class Client {
         return new spineWeb.ActorProvider(userId);
     }
 
-    static _fillTable(table, myListView) {
-        let items = myListView.getMyList().getItemsList();
-        table.innerHTML = "";
-        for (let item of items) {
-            let description = item.getDescription().getValue();
+    static _addToTable(table, taskView) {
+        if (taskView) {
+            let description = taskView.getDescription().getValue();
             table.innerHTML += `<div class="task_item">${description}</div>`;
         }
     }

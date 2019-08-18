@@ -43,17 +43,26 @@ export class TaskListComponent implements OnInit {
   ngOnInit(): void {
     if (!this.filter) {
       this.route.data
-        .pipe(first())
-        .subscribe((data: any): void => {
-          this.filter = data.filter;
-          this.performSubscription();
-        });
+          .pipe(first())
+          .subscribe((data: any): void => {
+            this.filter = data.filter;
+            this.initTaskList();
+          });
     } else {
-      this.performSubscription();
+      this.initTaskList();
     }
   }
 
-  private performSubscription(): void {
+  private initTaskList(): void {
+    this.reloadTasks();
+    this.subscribeToTaskChanges();
+  }
+
+  private reloadTasks(): void {
+    this.taskService.fetchAllTasks();
+  }
+
+  private subscribeToTaskChanges(): void {
     this.taskService.tasks$.subscribe((tasks: TaskView[]) => {
       this.tasks = tasks.filter(this.filter);
       this.hasElements = this.tasks.length !== 0;

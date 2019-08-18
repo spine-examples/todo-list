@@ -45,13 +45,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
+      [chores()], [], [], unsubscribe
   ));
-
-  const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-  mockClient.fetchAll.and.returnValue(fetch);
-  fetch.atOnce.and.returnValue(Promise.resolve());
 
   let component: LabelAssignmentComponent;
   let fixture: ComponentFixture<LabelAssignmentComponent>;
@@ -88,10 +84,9 @@ describe('LabelAssignmentComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
 
-    fetch.atOnce.and.returnValue(Promise.resolve(availableLabels));
-    mockClient.fetchById.and.callFake(initMockProcessWithLabels(selectedLabels));
+    mockClient.fetch.and.callFake(initMockProcessWithLabels(selectedLabels, availableLabels));
     fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
     component.wizard.init(taskCreationProcess().getId().getUuid());
@@ -114,21 +109,21 @@ describe('LabelAssignmentComponent', () => {
 
   it('should redirect Errors during loading labels to error viewport', fakeAsync(() => {
     const errorMessage = 'Loading available labels failed';
-    fetch.atOnce.and.returnValue(Promise.reject(errorMessage));
+    mockClient.fetch.and.returnValue(Promise.reject(errorMessage));
     const newFixture = TestBed.createComponent(LabelAssignmentComponent);
     const newComponent = newFixture.componentInstance;
 
     newComponent.ngAfterViewInit();
     tick();
     expect(newComponent.errorViewport.text)
-      .toEqual(`Error when loading available labels: ${errorMessage}`);
+        .toEqual(`Error when loading available labels: ${errorMessage}`);
 
     newComponent.errorViewport.text = '';
 
     newComponent.initFromWizard();
     tick();
     expect(newComponent.errorViewport.text)
-      .toEqual(`Error when loading available labels: ${errorMessage}`);
+        .toEqual(`Error when loading available labels: ${errorMessage}`);
   }));
 
   it('should add label to selected and become non-completed', () => {
@@ -161,16 +156,16 @@ describe('LabelAssignmentComponent', () => {
   });
 
   it('should run `AddLabels` command with selected labels and navigate to next step',
-    fakeAsync(() => {
-      mockClient.sendCommand.and.callFake((command, resolve) => {
-        expect(command.getExistingLabelsList())
-          .toEqual(selectedLabels.map(label => label.getId()));
-        resolve();
-      });
-      component.next();
-      tick();
-      expect(component.stepper.next).toHaveBeenCalledTimes(1);
-    }));
+      fakeAsync(() => {
+        mockClient.sendCommand.and.callFake((command, resolve) => {
+          expect(command.getExistingLabelsList())
+              .toEqual(selectedLabels.map(label => label.getId()));
+          resolve();
+        });
+        component.next();
+        tick();
+        expect(component.stepper.next).toHaveBeenCalledTimes(1);
+      }));
 
   it('should run `SkipLabels` command if the selected label list is empty', fakeAsync(() => {
     component.selected = [];

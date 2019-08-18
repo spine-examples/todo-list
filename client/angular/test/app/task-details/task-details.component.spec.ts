@@ -48,7 +48,7 @@ describe('TaskDetailsComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {
@@ -65,7 +65,7 @@ describe('TaskDetailsComponent', () => {
 @Component({
   selector: 'app-test-host-component',
   template: `
-    <app-task-details [(task)]="task"></app-task-details>`
+      <app-task-details [(task)]="task"></app-task-details>`
 })
 class TestHostComponent {
 

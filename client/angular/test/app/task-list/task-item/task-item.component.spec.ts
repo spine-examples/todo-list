@@ -44,8 +44,8 @@ describe('TaskItemComponent', () => {
   let hostFixture;
   let childComponent: TaskDetailsComponent;
 
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [], [], [], jasmine.createSpy()
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
+      [], [], [], jasmine.createSpy()
   ));
 
   beforeEach(async(() => {
@@ -57,7 +57,7 @@ describe('TaskItemComponent', () => {
         BrowserAnimationsModule, LayoutModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}, LayoutService, NotificationService]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {
@@ -73,7 +73,8 @@ describe('TaskItemComponent', () => {
 
 @Component({
   selector: `app-test-host-component`,
-  template: `<app-task-item [task]="task"></app-task-item>`
+  template: `
+      <app-task-item [task]="task"></app-task-item>`
 })
 class TestHostComponent {
 

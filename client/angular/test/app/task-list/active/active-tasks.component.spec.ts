@@ -53,18 +53,18 @@ describe('ActiveTasksComponent', () => {
 
   function collectDisplayedTasks(): string[] {
     const taskLists = fixture.debugElement
-      .queryAll(By.css('app-task-list'));
+                             .queryAll(By.css('app-task-list'));
     const tasks = taskLists[1].queryAll(By.css('app-task-item'));
     return tasks.map(item =>
-      item.query(By.css('mat-panel-title'))
-        .query(By.css('div'))
-        .nativeElement.innerHTML);
+        item.query(By.css('mat-panel-title'))
+            .query(By.css('div'))
+            .nativeElement.innerHTML);
   }
 
   function addBasicTaskWith(taskDescription: string) {
     const input = fixture.debugElement
-      .query(By.css('input'))
-      .nativeElement;
+                         .query(By.css('input'))
+                         .nativeElement;
     input.value = taskDescription;
     const keyPressed = new KeyboardEvent('keydown', {
       key: 'Enter'
@@ -74,9 +74,10 @@ describe('ActiveTasksComponent', () => {
 
   const addedTasksSubject = new BehaviorSubject<TaskView>(chore());
 
-  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
-    addedTasksSubject.asObservable(), unsubscribe
+  mockClient.subscribe.and.returnValue(observableSubscriptionDataOf(
+      addedTasksSubject.asObservable(), unsubscribe
   ));
+  mockClient.fetch.and.returnValue(Promise.resolve([]));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
@@ -102,7 +103,7 @@ describe('ActiveTasksComponent', () => {
         useValue: mockClient
       }, LayoutService, NotificationService]
     })
-      .compileComponents();
+           .compileComponents();
 
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
@@ -121,14 +122,14 @@ describe('ActiveTasksComponent', () => {
   });
 
   it('should update the list of tasks without waiting for the response from the serve with a new task',
-    fakeAsync(() => {
-      const description = 'Wash my dog';
-      addBasicTaskWith(description);
-      tick();
-      fixture.detectChanges();
-      const taskDescriptions: string[] = collectDisplayedTasks();
-      expect(taskDescriptions).toContain(` ${description} `);
-    }));
+      fakeAsync(() => {
+        const description = 'Wash my dog';
+        addBasicTaskWith(description);
+        tick();
+        fixture.detectChanges();
+        const taskDescriptions: string[] = collectDisplayedTasks();
+        expect(taskDescriptions).toContain(` ${description} `);
+      }));
 
   it('should rollback invalid optimistic task creations', fakeAsync(() => {
     const description = 'Walk my dog';

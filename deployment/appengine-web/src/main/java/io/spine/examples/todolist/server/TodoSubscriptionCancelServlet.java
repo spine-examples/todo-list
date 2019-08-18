@@ -37,7 +37,8 @@ import static io.spine.examples.todolist.server.Application.application;
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoSubscriptionCancelServlet.NAME, value = "/subscription/cancel")
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial",
+        "DuplicateStringLiteralInspection" /* Standard Spine endpoint for subscriptions. */})
 public final class TodoSubscriptionCancelServlet extends SubscriptionCancelServlet {
 
     static final String NAME = "Subscription Cancel Service";

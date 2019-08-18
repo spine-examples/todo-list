@@ -45,7 +45,6 @@ dependencies {
         "com.google.appengine:appengine-api-1.0-sdk:$deps.versions.appengineSdk",
         "com.google.api-client:google-api-client:$deps.versions.googleApiClient",
 
-        "io.spine:spine-web:$deps.versions.spineWeb",
         "io.spine.gcloud:spine-firebase-web:$deps.versions.spineWeb",
         "io.spine.gcloud:spine-datastore:$deps.versions.spineGcloud",
         "io.spine.gcloud:spine-stackdriver-trace:$deps.versions.spineGcloud",

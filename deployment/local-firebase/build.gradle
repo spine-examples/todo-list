@@ -17,12 +17,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+plugins {
+    id "org.gretty" version "2.3.1"
+    id 'com.github.psxpaul.execfork' version '0.1.11'
+}
 
 dependencies {
-    implementation (
-        "com.google.firebase:firebase-admin:$deps.versions.firebaseAdmin",
-        "io.netty:netty-tcnative-boringssl-static:$deps.versions.nettyBoringssl",
-        "io.spine:spine-firebase-mirror:$deps.versions.spineFirebaseMirror",
-        project(path: ':server')
-    )
+    implementation project(path: ':server')
+    implementation "io.spine.gcloud:spine-firebase-web:$deps.versions.spineWeb"
+}
+
+apply from: "$projectDir/scripts/install-firebase-emulator.gradle"
+
+task runEmulator(type: com.github.psxpaul.task.ExecFork) {
+    workingDir = "$projectDir/node_modules/.bin"
+
+    final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+    final def extension = runsOnWindows ? '.cmd' : ''
+
+    executable = "$workingDir/firebase-server$extension"
+
+    final def rulesFile = "$projectDir/firebase-rules.json" as File
+    args = ['-e', '-r', rulesFile.getPath()]
+
+    waitForPort = 5000
+
+    dependsOn installEmulator
+}
+
+gretty {
+    contextPath = '/'
+    loggingLevel = 'ALL'
+    fastReload = false
+}
+
+task runServer {
+}
+
+project.afterEvaluate {
+    final def appStart = project(':local-firebase').getTasksByName('appStart', false)[0]
+    appStart.dependsOn runEmulator
+    runServer.dependsOn appStart
 }

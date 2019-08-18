@@ -36,7 +36,8 @@ import static io.spine.examples.todolist.server.Application.application;
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoCommandServlet.NAME, value = "/command")
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial",
+        "DuplicateStringLiteralInspection" /* Standard Spine endpoint for commands. */})
 public final class TodoCommandServlet extends CommandServlet {
 
     static final String NAME = "Command Service";

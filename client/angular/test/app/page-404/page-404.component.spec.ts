@@ -30,7 +30,7 @@ describe('Page404', () => {
     TestBed.configureTestingModule({
       declarations: [Page404]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {

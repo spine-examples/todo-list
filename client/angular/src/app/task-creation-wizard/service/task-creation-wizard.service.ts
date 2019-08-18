@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskService} from 'app/task-service/task.service';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
@@ -91,24 +91,24 @@ export class TaskCreationWizard {
    * on rejections.
    */
   updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
-    : Promise<void> {
+      : Promise<void> {
     if (!description) {
       return Promise.reject('Description value must be set.');
     }
     if (dueDate && dueDate.toDate() < new Date()) {
       return Promise.reject(
-        `Task due date is allowed starting from tomorrow, specified date: ${dueDate.toDate()}`
+          `Task due date is allowed starting from tomorrow, specified date: ${dueDate.toDate()}`
       );
     }
     const cmd = this.prepareUpdateCommand(description, priority, dueDate);
 
     const sendCommand =
-      !!cmd.getDescriptionChange() || !!cmd.getPriorityChange() || !!cmd.getDueDateChange();
+        !!cmd.getDescriptionChange() || !!cmd.getPriorityChange() || !!cmd.getDueDateChange();
     if (!sendCommand) {
       return Promise.resolve();
     }
     const updateTask = new Promise<void>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return updateTask.then(() => {
       this._taskDescription = description;
@@ -130,7 +130,7 @@ export class TaskCreationWizard {
   addLabels(labelIds: LabelId[]): Promise<void> {
     if (labelIds.length === 0) {
       return Promise.reject(
-        'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
+          'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
       );
     }
     const cmd = new AddLabels();
@@ -138,7 +138,7 @@ export class TaskCreationWizard {
     cmd.setExistingLabelsList(labelIds);
 
     const addLabels = new Promise<void>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return addLabels.then(() => {
       this._taskLabels = labelIds;
@@ -153,7 +153,7 @@ export class TaskCreationWizard {
     const cmd = new SkipLabels();
     cmd.setId(this._id);
     const skipLabels = new Promise<void>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
   }
@@ -165,7 +165,7 @@ export class TaskCreationWizard {
     const cmd = new CompleteTaskCreation();
     cmd.setId(this._id);
     const completeProcess = new Promise<void>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
   }
@@ -177,7 +177,7 @@ export class TaskCreationWizard {
     const cmd = new CancelTaskCreation();
     cmd.setId(this._id);
     const cancelProcess = new Promise<void>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
   }
@@ -193,15 +193,15 @@ export class TaskCreationWizard {
     cmd.setId(taskCreationId);
     cmd.setTaskId(taskId);
     return new Promise<TaskCreationId>((resolve, reject) => {
-        const startProcess = () => {
-          this._id = taskCreationId;
-          this._taskId = taskId;
-          this._stage = TaskCreation.Stage.TASK_DEFINITION;
-          this._taskLabels = [];
-          resolve();
-        };
-        this.spineWebClient.sendCommand(cmd, startProcess, reject, reject);
-      }
+          const startProcess = () => {
+            this._id = taskCreationId;
+            this._taskId = taskId;
+            this._stage = TaskCreation.Stage.TASK_DEFINITION;
+            this._taskLabels = [];
+            resolve();
+          };
+          this.spineWebClient.sendCommand(cmd, startProcess, reject, reject);
+        }
     );
   }
 
@@ -214,45 +214,46 @@ export class TaskCreationWizard {
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;
     return this.restoreProcessDetails()
-      .then(() => this.restoreTaskDetails());
+               .then(() => this.restoreTaskDetails());
   }
 
   private restoreProcessDetails(): Promise<void> {
     return this.fetchProcessDetails()
-      .then(taskCreation => {
-        this._taskId = taskCreation.getTaskId();
-        this._stage = taskCreation.getStage();
-      });
+               .then(taskCreation => {
+                 this._taskId = taskCreation.getTaskId();
+                 this._stage = taskCreation.getStage();
+               });
   }
 
   private fetchProcessDetails(): Promise<TaskCreation> {
     return new Promise<TaskCreation>((resolve, reject) => {
-      const dataCallback = processDetails => {
-        if (!processDetails) {
+      const dataCallback = taskCreationProcesses => {
+        if (taskCreationProcesses.length < 1) {
           reject(`No task creation process found for ID: ${this._id}`);
         } else {
-          resolve(processDetails);
+          resolve(taskCreationProcesses[0]);
         }
       };
-      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
-      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
+      this.spineWebClient.fetch({entity: TaskCreation, byIds: [this._id]})
+          .then(taskCreationProcesses => dataCallback(taskCreationProcesses))
+          .catch(err => reject(err));
     });
   }
 
   private restoreTaskDetails(): Promise<void> {
     return this.taskService.fetchById(this._taskId)
-      .then(task => {
-        if (task.getDescription()) {
-          this._taskDescription = task.getDescription();
-        }
-        if (task.getPriority()) {
-          this._taskPriority = task.getPriority();
-        }
-        if (task.getDueDate()) {
-          this._taskDueDate = task.getDueDate();
-        }
-        this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
-      });
+               .then(task => {
+                 if (task.getDescription()) {
+                   this._taskDescription = task.getDescription();
+                 }
+                 if (task.getPriority()) {
+                   this._taskPriority = task.getPriority();
+                 }
+                 if (task.getDueDate()) {
+                   this._taskDueDate = task.getDueDate();
+                 }
+                 this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
+               });
   }
 
   /**

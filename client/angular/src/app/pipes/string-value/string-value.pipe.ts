@@ -41,7 +41,7 @@ export class StringValue implements PipeTransform {
 
   /** Visible for testing. */
   static readonly ERROR_MESSAGE =
-    'Expected Proto Message type which contains a single `string` field named `value`, received: ';
+      'Expected Proto Message type which contains a single `string` field named `value`, received: ';
 
   /**
    * Creates a `StringValue`-like message from the given string.

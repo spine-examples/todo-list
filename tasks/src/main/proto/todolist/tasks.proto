@@ -113,7 +113,7 @@ message TaskLabel {
 //
 message TaskCreation {
     option (entity).kind = PROCESS_MANAGER;
-    option (entity).visibility = NONE;
+    option (entity).visibility = QUERY;
 
     // The ID of the process.
     TaskCreationId id = 1 [(required) = true];

@@ -41,7 +41,7 @@ export function subscriptionDataOf<T>(added: T[],
                                       changed: T[],
                                       removed: T[],
                                       unsubscribe: () => void)
-  : Promise<EntitySubscriptionObject<T>> {
+    : Promise<EntitySubscriptionObject<T>> {
   return Promise.resolve({
     itemAdded: observableOf(added),
     itemChanged: observableOf(changed),
@@ -52,7 +52,7 @@ export function subscriptionDataOf<T>(added: T[],
 
 export function observableSubscriptionDataOf<T>(added: Observable<T>,
                                                 unsubscribe: () => void)
-  : Promise<EntitySubscriptionObject<T>> {
+    : Promise<EntitySubscriptionObject<T>> {
   return Promise.resolve({
     itemAdded: added,
     itemChanged: observableOf([]),
@@ -64,7 +64,7 @@ export function observableSubscriptionDataOf<T>(added: Observable<T>,
 
 export function mockSpineWebClient() {
   return jasmine.createSpyObj<Client>(
-    'Client',
-    ['sendCommand', 'subscribeToEntities', 'fetchAll', 'fetchById']
+      'Client',
+      ['sendCommand', 'subscribe', 'fetch']
   );
 }

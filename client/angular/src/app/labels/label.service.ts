@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
@@ -43,12 +43,12 @@ export class LabelService {
    */
   createBasicLabel(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        const cmd = new CreateBasicLabel();
-        const id = UuidGenerator.newId(LabelId);
-        cmd.setLabelId(id);
-        cmd.setLabelTitle('TestLabel');
-        this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
-      }
+          const cmd = new CreateBasicLabel();
+          const id = UuidGenerator.newId(LabelId);
+          cmd.setLabelId(id);
+          cmd.setLabelTitle('TestLabel');
+          this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
+        }
     );
   }
 
@@ -56,7 +56,7 @@ export class LabelService {
    * Fetches a list of labels available in the application.
    */
   fetchAllLabels(): Promise<LabelView[]> {
-    return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
+    return this.spineWebClient.fetch({entity: LabelView});
   }
 
   /**
@@ -66,16 +66,17 @@ export class LabelService {
    */
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) => {
-        const dataCallback = label => {
-          if (!label) {
-            reject(`No label view found for ID: ${labelId}`);
-          } else {
-            resolve(label);
-          }
-        };
-        // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
-        this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, dataCallback, reject);
-      }
+          const dataCallback = labels => {
+            if (labels.length < 1) {
+              reject(`No label view found for ID: ${labelId}`);
+            } else {
+              resolve(labels[0]);
+            }
+          };
+          this.spineWebClient.fetch({entity: LabelView, byIds: [labelId]})
+              .then(labels => dataCallback(labels))
+              .catch(err => reject(err));
+        }
     );
   }
 }

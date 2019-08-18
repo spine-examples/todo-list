@@ -51,8 +51,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 describe('TaskDefinitionComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
+      [chores()], [], [], unsubscribe
   ));
 
   let component: TaskDefinitionComponent;
@@ -90,9 +90,9 @@ describe('TaskDefinitionComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
 
-    mockClient.fetchById.and.callFake(initMockProcess());
+    mockClient.fetch.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(TaskDefinitionComponent);
     component = fixture.componentInstance;
     component.wizard.init(taskCreationProcess().getId().getUuid());
@@ -141,20 +141,20 @@ describe('TaskDefinitionComponent', () => {
 
     mockClient.sendCommand.and.callFake((command, resolve) => {
       expect(command.getDescriptionChange().getPreviousValue())
-        .toEqual(component.wizard.taskDescription);
+          .toEqual(component.wizard.taskDescription);
       expect(command.getDescriptionChange().getNewValue().getValue())
-        .toEqual(newDescription);
+          .toEqual(newDescription);
 
       expect(command.getPriorityChange().getPreviousValue())
-        .toEqual(component.wizard.taskPriority);
+          .toEqual(component.wizard.taskPriority);
       expect(command.getPriorityChange().getNewValue())
-        .toEqual(newPriority);
+          .toEqual(newPriority);
 
       const dueDateForCheck = MomentFromTimestamp.back(newDueDate);
       expect(command.getDueDateChange().getPreviousValue())
-        .toEqual(component.wizard.taskDueDate);
+          .toEqual(component.wizard.taskDueDate);
       expect(command.getDueDateChange().getNewValue())
-        .toEqual(dueDateForCheck);
+          .toEqual(dueDateForCheck);
 
       resolve();
     });

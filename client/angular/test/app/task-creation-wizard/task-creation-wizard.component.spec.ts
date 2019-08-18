@@ -51,7 +51,7 @@ import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {chores} from 'test/given/tasks';
 import {LabelService} from 'app/labels/label.service';
-import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
+import {initMockProcess, initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
 
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
@@ -61,17 +61,18 @@ import {NotificationService} from 'app/layout/notification.service';
 import {LayoutModule} from 'app/layout/layout.module';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
+import {label1, label2} from 'test/given/labels';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
+      [chores()], [], [], unsubscribe
   ));
   const layoutService = mockLayoutService();
   const notificationService = mockNotificationService();
   const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-  mockClient.fetchAll.and.returnValue(fetch);
+  mockClient.fetch.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
 
   // It's actually not important which ID we have in route as initialization is done via mocks.
@@ -88,10 +89,10 @@ describe('TaskCreationWizardComponent', () => {
   function initChildElements(wizardComponent: TaskCreationWizardComponent) {
     wizardComponent.stepper = mockStepper();
     wizardComponent.taskDefinition = jasmine.createSpyObj<TaskDefinitionComponent>(
-      'TaskDefinitionComponent', ['initFromWizard']
+        'TaskDefinitionComponent', ['initFromWizard']
     );
     wizardComponent.labelAssignment = jasmine.createSpyObj<LabelAssignmentComponent>(
-      'LabelAssignmentComponent', ['initFromWizard']
+        'LabelAssignmentComponent', ['initFromWizard']
     );
   }
 
@@ -141,11 +142,11 @@ describe('TaskCreationWizardComponent', () => {
         {provide: NotificationService, useValue: notificationService}
       ]
     })
-      .compileComponents();
+           .compileComponents();
   }));
 
   beforeEach(() => {
-    mockClient.fetchById.and.callFake(initMockProcess());
+    mockClient.fetch.and.callFake(initMockProcessWithLabels([], [label1(), label2()]));
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
   });
 
@@ -161,14 +162,14 @@ describe('TaskCreationWizardComponent', () => {
     // Create a component by hand to use a different activated route.
     const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient, undefined));
     const changeDetector =
-      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
+        jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
     const location =
-      jasmine.createSpyObj<Location>('Location', ['isCurrentPathEqualTo', 'go']);
+        jasmine.createSpyObj<Location>('Location', ['isCurrentPathEqualTo', 'go']);
     const activated = new ActivatedRoute();
     activated.snapshot = new ActivatedRouteSnapshot();
 
     const theComponent =
-      new TaskCreationWizardComponent(wizard, changeDetector, location, activated, layoutService);
+        new TaskCreationWizardComponent(wizard, changeDetector, location, activated, layoutService);
     initChildElements(theComponent);
     theComponent.ngAfterViewInit();
     tick();
@@ -178,7 +179,7 @@ describe('TaskCreationWizardComponent', () => {
   }));
 
   it('should throw an Error when wizard initialization fails', fakeAsync(() => {
-    mockClient.fetchById.and.callFake((command, resolve, reject) => reject());
+    mockClient.fetch.and.returnValue(Promise.reject());
 
     fixture = TestBed.createComponent(TaskCreationWizardComponent);
     component = fixture.componentInstance;
@@ -201,7 +202,7 @@ describe('TaskCreationWizardComponent', () => {
   }));
 
   it('should throw an Error when trying to navigate to unknown stage', fakeAsync(() => {
-    mockClient.fetchById.and.callFake(initMockProcess(TaskCreation.Stage.TCS_UNKNOWN));
+    mockClient.fetch.and.callFake(initMockProcess(TaskCreation.Stage.TCS_UNKNOWN));
 
     fixture = TestBed.createComponent(TaskCreationWizardComponent);
     component = fixture.componentInstance;

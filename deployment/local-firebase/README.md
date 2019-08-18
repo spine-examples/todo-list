@@ -1,30 +1,24 @@
 # Local Firebase server
 
-A local server which uses in-memory storage and `FirebaseSubscriptionMirror`.
+A local web server which uses in-memory storage and Firebase Realtime Database emulator.
 
-### Description
+### Running the server
+The server can be run with the command:
+```bash
+./gradlew :local-firebase:runServer
+```
 
-This server configuration uses the in-memory storage. The difference between this config and 
-the [`local-inmem`](../local-inmem/) is in the fact that this configuration uses Cloud Firestore
-database to post the entity state updates to the clients.
+The command will start a local Firebase emulator and a local Spine web server at the address 
+`localhost:8080`.
 
-Note that the `SubscriptionService` is deployed as well for consistency. However, in a real-life 
-system, it would be better not to deploy the `SubscriptionService` gRPC service, but use only 
-the subscription mirror instead.
+After that, the [`html-js`](../../client/html-js) or [`angular`](../../client/angular) client can 
+be used to connect to the server via HTTP and run commands and queries related to the To-Do List 
+tasks.
 
-See [the Firebase subscription mirror](../../firebase-mirror/) for more details on the subscription 
-mirror usage.
+No additional configuration is required.
 
-### Preliminary configuration
+#### Server Networking Errors
 
-Running the local Firebase server requires a `serviceAccount.json` configuration file to be present
-in the server's classpath. The file contains sensitive information (such as RSA private key), thus
-it should not be tracked by the VCS. Follow these steps to launch the server:
- - Go to the [Firebase Console](https://console.firebase.google.com) and select 
- the `spine-firestore-test` project.
- - Go to `Settings` > `Project settings` > `Service accounts` > `Firebase Admin SDK` and generate 
- new private key.
- - Put the downloaded file under the `local-firebase/src/main/resources`. The file name should be 
- `serviceAccount.json`. Please, ensure that the file is **not** added to the VCS.
- 
-After following these steps, start the server (from `LocalFirebaseServer` class).
+Sometimes, the server prints errors caused by invalid HTTP responses from the Firebase emulator.
+This is an issue with the emulator itself, not with the client. Such errors are not reproducible on
+real-life instances of Firebase.

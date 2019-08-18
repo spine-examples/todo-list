@@ -43,8 +43,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [chores()], [], [], unsubscribe
+  mockClient.subscribe.and.returnValue(subscriptionDataOf(
+      [chores()], [], [], unsubscribe
   ));
 
   let component: ConfirmationComponent;
@@ -74,9 +74,9 @@ describe('ConfirmationComponent', () => {
         {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
-      .compileComponents();
+           .compileComponents();
 
-    mockClient.fetchById.and.callFake(initMockProcess());
+    mockClient.fetch.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(ConfirmationComponent);
     component = fixture.componentInstance;
     component.wizard.init(taskCreationProcess().getId().getUuid());
