@@ -320,10 +320,9 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Returns a processor of the `child_added` Firebase callback for tasks.
+   * Returns a processor of the `itemAdded` Spine web client callback for tasks.
    *
-   * Adds a new task to the task list and does nothing if the task with same ID is already
-   * present.
+   * Adds a new task to the task list or does nothing if the task with same ID is already present.
    */
   private taskAdded(): (taskView) => void {
     return taskView => {
@@ -341,7 +340,7 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Returns a processor of the `child_changed` Firebase callback for tasks.
+   * Returns a processor of the `itemChanged` Spine web client callback for tasks.
    *
    * Either updates an existing task in the list or, if it's not present, adds a new one.
    */
@@ -362,7 +361,7 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Returns a processor of the `child_removed` Firebase callback for tasks.
+   * Returns a processor of the `itemRemoved` Spine web client callback for tasks.
    *
    * Removes a task from the task list or does nothing if the given task is not present in the list.
    */
