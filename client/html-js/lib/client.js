@@ -27,6 +27,7 @@ let spineWeb = require("spine-web/index");
 let spineWebTypes = require('spine-web/proto/index');
 
 
+let TaskStatus = require("../generated/main/js/todolist/attributes_pb").TaskStatus;
 let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../generated/main/js/todolist/values_pb").TaskDescription;
 let CreateBasicTask = require("../generated/main/js/todolist/commands_pb").CreateBasicTask;
@@ -57,6 +58,7 @@ export class Client {
             firebaseDatabase: firebase.application.database(),
             actorProvider: Client._actorProvider()
         });
+        this._activeTasks = [];
     }
 
     /**
@@ -88,7 +90,7 @@ export class Client {
      */
     loadTasks(table) {
         this._spineWebClient.fetch({entity: TaskView})
-            .then(tasks => tasks.forEach(task => Client._addToTable(table, task)))
+            .then(tasks => tasks.forEach(task => this._addToTable(table, task)))
     }
 
     /**
@@ -99,22 +101,93 @@ export class Client {
     subscribeToTaskChanges(table) {
         this._spineWebClient.subscribe({entity: TaskView})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe(task => Client._addToTable(table, task));
+                itemAdded.subscribe(task => this._addToTable(table, task));
+                itemChanged.subscribe(task => this._update(table, task));
+                itemRemoved.subscribe(task => this._removeFromTable(table, task));
             })
             .catch(errorCallback);
+    }
+
+    /**
+     * Adds a task view to the displayed tasks.
+     *
+     * Only adds "active" tasks, i.e. those that have `OPEN` or `FINALIZED` status.
+     *
+     * @private
+     */
+    _addToTable(table, taskView) {
+        if (!taskView) {
+            return;
+        }
+        let status = taskView.getStatus();
+        let index = this._findIndex(taskView);
+        let alreadyBroadcast = index > -1;
+        if ((status === TaskStatus.OPEN || status === TaskStatus.FINALIZED) && !alreadyBroadcast) {
+            this._activeTasks.push(taskView);
+            this._refreshTasks(table);
+        }
+    }
+
+    /**
+     * Updates a task view within the table.
+     *
+     * If the given task is not present in the table, adds it.
+     *
+     * @private
+     */
+    _update(table, taskView) {
+        if (!taskView) {
+            return;
+        }
+        let index = this._findIndex(taskView);
+        if (index > -1) {
+            this._activeTasks[index] = taskView;
+        } else {
+            this._activeTasks.push(taskView);
+        }
+        this._refreshTasks(table);
+    }
+
+    /**
+     * Removes a given task view from the displayed task list.
+     *
+     * If the task is not present in the list, does nothing.
+     *
+     * @private
+     */
+    _removeFromTable(table, taskView) {
+        if (!taskView) {
+            return;
+        }
+        let index = this._findIndex(taskView);
+        if (index > -1) {
+            this._activeTasks.splice(index, 1);
+            this._refreshTasks(table);
+        }
+    }
+
+    /**
+     * Refreshes the table of displayed tasks.
+     *
+     * @private
+     */
+    _refreshTasks(table) {
+        table.innerHTML = '';
+        this._activeTasks.forEach(task => {
+            let description = task.getDescription().getValue();
+            table.innerHTML += `<div class="task_item">${description}</div>`;
+        });
+    }
+
+    _findIndex(taskView) {
+        let matchesById = task => task.getId().getUuid() === taskView.getId().getUuid();
+        return this._activeTasks.findIndex(matchesById);
     }
 
     static _actorProvider() {
         let userId = new UserId();
         userId.setValue(ACTOR);
         return new spineWeb.ActorProvider(userId);
-    }
-
-    static _addToTable(table, taskView) {
-        if (taskView) {
-            let description = taskView.getDescription().getValue();
-            table.innerHTML += `<div class="task_item">${description}</div>`;
-        }
     }
 
     static _createTaskCommand(description) {
