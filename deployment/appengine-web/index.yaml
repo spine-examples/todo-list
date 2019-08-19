@@ -57,7 +57,7 @@ indexes:
       - name: inbox_shard
       - name: when_received
 
-  # Todo-list context entities
+  # To-Do List context entities
 
   - kind: spine.examples.todolist.Task
     properties:
