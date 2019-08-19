@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '1.0.1'
+final def SPINE_VERSION = '1.0.2-SNAPSHOT'
 
 final def versions = [
         checkerFramework : "2.9.0",
@@ -61,11 +61,11 @@ final def versions = [
         googleApiClient  : '1.27.0',
 
         // Spine components versions.
-        spineBase        : SPINE_VERSION,
+        spineBase        : '1.0.1',
         spineCore        : SPINE_VERSION,
         spineWeb         : SPINE_VERSION,
-        spineJdbc        : SPINE_VERSION,
-        spineGcloud      : SPINE_VERSION
+        spineJdbc        : '1.0.1',
+        spineGcloud      : '1.0.1'
 ]
 
 //noinspection GroovyAssignabilityCheck
