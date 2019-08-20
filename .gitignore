@@ -64,7 +64,7 @@ firebase-debug.log
 # Must be kept secure (out of public Git repository at least)
 serviceAccount.json
 google-services.json
-**/spine-dev.json
+**/service-account.json
 
 # Web-specific entires.
 client/html-js/proto

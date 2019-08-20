@@ -22,8 +22,8 @@ import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {Client, Message} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {chore, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
+import {mockSpineWebClient, observableSubscriptionDataOf, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {chore, chore2, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
 import {TaskStatus, TaskView} from 'proto/todolist/views_pb';
 import {mockNotificationService} from 'test/given/layout-service';
@@ -67,7 +67,12 @@ describe('TaskService', () => {
 
   afterEach(() => {
     addedTasksSubject.next(chore());
+
     mockClient.sendCommand.and.callThrough();
+    mockClient.subscribe.and.returnValue(observableSubscriptionDataOf(
+        addedTasksSubject.asObservable(), unsubscribe
+    ));
+    mockClient.fetch.and.returnValue(Promise.resolve([]));
   });
 
   it('should be created', () => {
@@ -126,6 +131,28 @@ describe('TaskService', () => {
       expect(fetchedTasks[1].getDescription().getValue()).toBe(CHORE_2_DESC);
     });
   });
+
+  it('should subscribe to the task changes', fakeAsync(() => {
+    const task1 = chore();
+    const task2 = chore2();
+
+    // Initially, the `task1` is fetched.
+    mockClient.fetch.and.returnValue(Promise.resolve([task1]));
+
+    // The `task1` is deleted, the `task2` is added.
+    mockClient.subscribe.and.returnValue(subscriptionDataOf(
+        [task2], [], [task1], unsubscribe
+    ));
+
+    // Check fetched tasks contain only `task2`.
+    service.tasks$.toPromise().then(fetchedTasks => {
+      expect(fetchedTasks.length).toBe(1);
+      expect(fetchedTasks[0].getId().getUuid()).toBe(CHORE_2_ID);
+      expect(fetchedTasks[0].getDescription().getValue()).toBe(CHORE_2_DESC);
+    }).catch(err =>
+        fail(`Task lookup should have been resolved, actually rejected with an error: ${err}`)
+    );
+  }));
 
   it('should fetch a single task view by ID', fakeAsync(() => {
     const theTask = chore();

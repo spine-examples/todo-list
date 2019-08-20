@@ -301,25 +301,12 @@ export class TaskService implements OnDestroy {
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
   private subscribeToTaskUpdates(): Promise<() => void> {
-    const taskAdded = view => {
-      if (view) {
-        const alreadyBroadcast = this.tasks
-                                     .map(value => value.getId().getUuid())
-                                     .includes(view.getId().getUuid());
-        if (!alreadyBroadcast) {
-          const presentItems: TaskView[] = this.tasks.slice();
-          presentItems.push(view);
-          this._tasks$.next(presentItems);
-        }
-      }
-    };
-
     return new Promise((resolve, reject) =>
         this.spineWebClient.subscribe({entity: TaskView})
             .then((subscriptionObject) => {
-              subscriptionObject.itemAdded.subscribe(taskAdded);
-
-              // TODO:2019-04-26:serhii.lekariev: subscriptionObject.itemRemoved does not work
+              subscriptionObject.itemAdded.subscribe(this.taskAdded());
+              subscriptionObject.itemChanged.subscribe(this.taskChanged());
+              subscriptionObject.itemRemoved.subscribe(this.taskRemoved());
               resolve(subscriptionObject.unsubscribe);
             })
             .catch(err => {
@@ -330,6 +317,71 @@ export class TaskService implements OnDestroy {
               reject(err);
             })
     );
+  }
+
+  /**
+   * Returns a processor of the `itemAdded` Spine web client callback for tasks.
+   *
+   * Adds a new task to the task list or does nothing if the task with same ID is already present.
+   */
+  private taskAdded(): (taskView) => void {
+    return taskView => {
+      if (!taskView) {
+        return;
+      }
+      const index = this.findIndex(taskView);
+      const alreadyBroadcast = index > -1;
+      if (!alreadyBroadcast) {
+        const presentItems: TaskView[] = this.tasks.slice();
+        presentItems.push(taskView);
+        this._tasks$.next(presentItems);
+      }
+    };
+  }
+
+  /**
+   * Returns a processor of the `itemChanged` Spine web client callback for tasks.
+   *
+   * Either updates an existing task in the list or, if it's not present, adds a new one.
+   */
+  private taskChanged(): (taskView) => void {
+    return taskView => {
+      if (!taskView) {
+        return;
+      }
+      const index = this.tasks.findIndex(taskView);
+      const presentItems: TaskView[] = this.tasks.slice();
+      if (index > -1) {
+        presentItems[index] = taskView;
+      } else {
+        presentItems.push(taskView);
+      }
+      this._tasks$.next(presentItems);
+    };
+  }
+
+  /**
+   * Returns a processor of the `itemRemoved` Spine web client callback for tasks.
+   *
+   * Removes a task from the task list or does nothing if the given task is not present in the list.
+   */
+  private taskRemoved(): (taskView) => void {
+    return taskView => {
+      if (!taskView) {
+        return;
+      }
+      const index = this.tasks.findIndex(taskView);
+      const presentItems: TaskView[] = this.tasks.slice();
+      if (index > -1) {
+        presentItems.splice(index, 1);
+      }
+      this._tasks$.next(presentItems);
+    };
+  }
+
+  private findIndex(taskView: TaskView): number {
+    const matchesById = task => task.getId().getUuid() === taskView.getId().getUuid();
+    return this.tasks.findIndex(matchesById);
   }
 
   ngOnDestroy(): void {

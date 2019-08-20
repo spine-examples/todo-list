@@ -48,7 +48,7 @@ final class GoogleAuth {
      *
      * <p>When running under AppEngine, returns the default service account of this application.
      * Otherwise, reads and returns the service account credential from
-     * the {@code spine-dev.json} resource.
+     * the {@code service-account.json} resource.
      *
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
@@ -72,7 +72,7 @@ final class GoogleAuth {
      *
      * <p>When running under AppEngine, returns the default service account of this application.
      * Otherwise, reads and returns the service account credential from
-     * the {@code spine-dev.json} resource.
+     * the {@code service-account.json} resource.
      *
      * <p>This credential is used for accessing the GCP APIs, such as the Could Datastore API.
      *

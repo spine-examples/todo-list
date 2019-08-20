@@ -32,7 +32,7 @@ final def DATASTORE_EMULATOR_TASK_GROUP = "Datastore emulator"
 final def localDatastorePort = 8081
 
 /** The Google Cloud Platform project name to associate Datastore with */
-final def projectName = 'spine-dev'
+final def projectName = 'spine-todo-list-example'
 
 /**
  * Starts the Datastore emulator associated with a given Google Cloud project

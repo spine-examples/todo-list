@@ -21,8 +21,8 @@ jobs:
         # Upgrade the `npm` version shipped with Travis to the latest.
         - npm install -g npm@latest
         - chmod +x gradlew
-        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
+        - openssl aes-256-cbc -K $encrypted_service_account_key -iv $encrypted_service_account_iv -in service-account.json.enc -out service-account.json -d
+        - mv ./service-account.json ./deployment/appengine-web/src/main/resources/service-account.json
       # Skip the `install` step as described here https://docs.travis-ci.com/user/job-lifecycle/.
       install: true
       script:
@@ -46,12 +46,12 @@ jobs:
           # We cache the SDK so we don't have to download it again on subsequent builds.
           - "$HOME/google-cloud-sdk/"
       env:
-        - PROJECT_ID="spine-dev"
+        - PROJECT_ID="spine-todo-list-example"
         - CLOUDSDK_CORE_DISABLE_PROMPTS=1
       before_install:
         - chmod +x gradlew
-        - openssl aes-256-cbc -K $encrypted_aa93bcacb4f5_key -iv $encrypted_aa93bcacb4f5_iv -in spine-dev.json.enc -out spine-dev.json -d
-        - mv ./spine-dev.json ./deployment/appengine-web/src/main/resources/spine-dev.json
+        - openssl aes-256-cbc -K $encrypted_service_account_key -iv $encrypted_service_account_iv -in service-account.json.enc -out service-account.json -d
+        - mv ./service-account.json ./deployment/appengine-web/src/main/resources/service-account.json
 
         # If the SDK is not already cached, download it and unpack it.
         # Check the bin directory as the google-cloud-sdk is automatically created by the cache section.
@@ -59,7 +59,7 @@ jobs:
         - source /home/travis/google-cloud-sdk/path.bash.inc
 
         # Here we use the decrypted service account credentials to authenticate the command line tool.
-        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/spine-dev.json
+        - gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/service-account.json
         # Set the correct project to deploy to.
         - gcloud config set project $PROJECT_ID
       install:

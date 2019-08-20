@@ -54,7 +54,7 @@ dependencies {
 }
 
 appengine {
-    deploy.project = 'spine-dev'
+    deploy.project = 'spine-todo-list-example'
     run {
         port = 8080
         jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
