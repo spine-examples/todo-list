@@ -64,3 +64,7 @@ export function taskItem(id: TaskId, description: TaskDescription): TaskView {
 export function chore(): TaskView {
   return taskItem(CHORE_1_ID, CHORE_1_DESC);
 }
+
+export function chore2(): TaskView {
+  return taskItem(CHORE_2_ID, CHORE_2_DESC);
+}
