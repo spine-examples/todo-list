@@ -20,11 +20,6 @@
 
 package io.spine.examples.todolist.server;
 
-import com.google.api.client.http.HttpBackOffIOExceptionHandler;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.util.ExponentialBackOff;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -32,7 +27,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
 import io.spine.net.Url;
 import io.spine.web.firebase.FirebaseClient;
-import io.spine.web.firebase.rest.RemoteDatabaseClient;
+import io.spine.web.firebase.FirebaseClientFactory;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -63,8 +58,7 @@ final class FirebaseClients {
 
     private static FirebaseClient createClient() {
         FirebaseDatabase database = emulatorDatabase();
-        HttpRequestFactory requestFactory = transportWithBackoff();
-        RemoteDatabaseClient client = RemoteDatabaseClient.create(database, requestFactory);
+        FirebaseClient client = FirebaseClientFactory.remoteClient(database);
         return client;
     }
 
@@ -84,17 +78,6 @@ final class FirebaseClients {
                                .build();
         FirebaseApp app = FirebaseApp.initializeApp(options);
         return FirebaseDatabase.getInstance(app);
-    }
-
-    /**
-     * Creates an HTTP request factory which by default uses {@linkplain ExponentialBackOff
-     * exponential back-off} strategy upon an {@code IOException}.
-     */
-    private static HttpRequestFactory transportWithBackoff() {
-        HttpTransport transport = new ApacheHttpTransport();
-        return transport.createRequestFactory(
-                request -> request.setIOExceptionHandler(
-                        new HttpBackOffIOExceptionHandler(new ExponentialBackOff())));
     }
 
     /**
