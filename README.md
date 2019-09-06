@@ -1,12 +1,11 @@
 # ToDo List example application
 
-This repository contains an example project of a ToDo List service with multiple client 
-applications.
+This repository contains an example project of a Spine-based ToDo List service.
 
-Client applications are:
- * Simple web client based.
- * Angular based.
- * Command-line application, written in Java.
+The project contains multiple client applications:
+ * [A simple web client.](client/html-js)
+ * [An Angular-based web client.](client/angular)
+ * [A command-line application, written in Java.](client/cli)
  
 The example also shows multiple deployment options and storage options.
  
