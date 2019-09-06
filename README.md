@@ -1,6 +1,6 @@
 # ToDo List example application
 
-This repository contains an example project of a Spine-based ToDo List service.
+This repository contains an example project of a ToDo List service.
 
 The project contains multiple client applications:
  * [A simple web client.](client/html-js)
