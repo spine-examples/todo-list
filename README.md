@@ -1,11 +1,12 @@
 # ToDo List example application
 
-This repository contains an example project of a ToDo List service with multiple client applications.
+This repository contains an example project of a ToDo List service with multiple client 
+applications.
 
 Client applications are:
- * Web client based
+ * Simple web client based.
+ * Angular based.
  * Command-line application, written in Java.
- * Mobile app for Android platform.
  
 The example also shows multiple deployment options and storage options.
  
