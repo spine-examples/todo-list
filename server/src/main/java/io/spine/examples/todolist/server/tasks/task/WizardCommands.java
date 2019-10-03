@@ -82,7 +82,7 @@ final class WizardCommands {
      *         the source command
      * @return new commands generated from the given {@code src} command
      */
-    Collection<? extends CommandMessage> updateTaskDetails(UpdateTaskDetails src) {
+    Collection<CommandMessage> updateTaskDetails(UpdateTaskDetails src) {
         ImmutableSet.Builder<CommandMessage> commands = ImmutableSet.builder();
         DescriptionChange descriptionChange = src.getDescriptionChange();
         if (isNotDefault(descriptionChange)) {
@@ -182,8 +182,8 @@ final class WizardCommands {
      *         the command that defines the new labels to assign to the task
      * @return commands creating and assigning those labels
      */
-    Collection<? extends CommandMessage> assignNewLabels(AddLabels src) {
-        Collection<? extends CommandMessage> commands =
+    Collection<CommandMessage> assignNewLabels(AddLabels src) {
+        Collection<CommandMessage> commands =
                 src.getNewLabelsList()
                    .stream()
                    .flatMap(this::createAndAssignLabel)
@@ -199,7 +199,7 @@ final class WizardCommands {
      *         the label details describing the task to create
      * @return the command messages creating and assigning a label
      */
-    private Stream<? extends CommandMessage> createAndAssignLabel(LabelDetails label) {
+    private Stream<CommandMessage> createAndAssignLabel(LabelDetails label) {
         LabelId labelId = LabelId.generate();
         CreateBasicLabel createBasicLabel = createLabel(labelId, label);
         UpdateLabelDetails updateLabelDetails = setColorToLabel(labelId, label);

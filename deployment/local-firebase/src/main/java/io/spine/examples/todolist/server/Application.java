@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.server.tasks.TaskStorageFactory;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.SubscriptionService;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
@@ -62,7 +62,7 @@ final class Application {
 
     private static Application create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(new TaskStorageFactory());
+        serverEnvironment.configureStorage(InMemoryStorageFactory.newInstance());
         serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = TasksContextFactory.create();

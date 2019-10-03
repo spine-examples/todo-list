@@ -36,40 +36,6 @@ import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
 
-// Generic definition of a task list container.
-//
-message TaskListView {
-
-    // A list of tasks.
-    repeated TaskItem items = 1;
-}
-
-// Item of a task list view.
-//
-message TaskItem {
-
-    // Task identifier.
-    TaskId id = 1;
-
-    // Task description.
-    TaskDescription description = 2;
-
-    // Task priority.
-    TaskPriority priority = 3;
-
-    // Task label identifier.
-    LabelId label_id = 4;
-
-    // A color of the label.
-    LabelColor label_color = 5;
-
-    // The due date for the task.
-    google.protobuf.Timestamp due_date = 6;
-
-    // The task status.
-    TaskStatus status = 7;
-}
-
 // The details of a single task.
 //
 message TaskView {

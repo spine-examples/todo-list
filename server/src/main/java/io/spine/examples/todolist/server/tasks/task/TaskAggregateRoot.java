@@ -39,7 +39,7 @@ final class TaskAggregateRoot extends AggregateRoot<TaskId> {
      * @param id
      *         the ID of the aggregate
      */
-    public TaskAggregateRoot(BoundedContext context, TaskId id) {
+    TaskAggregateRoot(BoundedContext context, TaskId id) {
         super(context, id);
     }
 }

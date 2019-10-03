@@ -66,8 +66,8 @@ class TaskViewTest extends ViewTest {
     }
 
     @Test
-    @DisplayName("render TaskItem state")
-    void renderTaskItem() {
+    @DisplayName("render task state")
+    void renderTask() {
         String expectedResult =
                 DESCRIPTION_VALUE + task.getDescription() + lineSeparator() +
                         PRIORITY_VALUE + task.getPriority() + lineSeparator() +

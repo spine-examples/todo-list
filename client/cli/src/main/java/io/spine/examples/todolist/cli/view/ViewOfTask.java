@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.cli.view;
 
 import io.spine.examples.todolist.tasks.TaskId;
-import io.spine.examples.todolist.tasks.view.TaskItem;
 import io.spine.examples.todolist.tasks.view.TaskView;
 
 import java.util.List;
@@ -33,7 +32,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
- * An {@link EntityView} of a {@link TaskItem}.
+ * An {@link EntityView} of a task.
  *
  * <p>Renders a single task and provides actions for working with it.
  */

@@ -36,5 +36,4 @@ dependencies {
     annotationProcessor "io.spine.tools:spine-model-assembler:$deps.versions.spineCore"
 
     testImplementation project(path: ':testutil-api')
-    testImplementation "io.spine:spine-testutil-server:$deps.versions.spineCore"
 }
