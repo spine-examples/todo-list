@@ -21,10 +21,13 @@
 package io.spine.examples.todolist.server.tasks.task;
 
 import io.spine.base.CommandMessage;
+import io.spine.change.TimestampChange;
 import io.spine.core.CommandContext;
 import io.spine.examples.todolist.tasks.AddLabelsRejected;
+import io.spine.examples.todolist.tasks.DescriptionChange;
 import io.spine.examples.todolist.tasks.LabelDetails;
 import io.spine.examples.todolist.tasks.LabelId;
+import io.spine.examples.todolist.tasks.PriorityChange;
 import io.spine.examples.todolist.tasks.TaskCreation;
 import io.spine.examples.todolist.tasks.TaskCreation.Stage;
 import io.spine.examples.todolist.tasks.TaskCreationId;
@@ -126,10 +129,19 @@ final class TaskCreationWizard
     }
 
     @Command
-    Collection<? extends CommandMessage> handle(UpdateTaskDetails command, CommandContext context)
+    Iterable<CommandMessage> handle(UpdateTaskDetails command, CommandContext context)
             throws CannotMoveToStage, CannotUpdateTaskDetails {
         boolean isTaskDefinition = builder().getStage() == TASK_DEFINITION;
-        if (isTaskDefinition && isDefault(command.getDescriptionChange())) {
+        DescriptionChange descriptionChange = command.getDescriptionChange();
+        PriorityChange priorityChange = command.getPriorityChange();
+        TimestampChange dueDateChange = command.getDueDateChange();
+        if (isTaskDefinition && isDefault(descriptionChange)) {
+            throw rejection(command);
+        }
+        boolean noChanges = isDefault(descriptionChange)
+                && isDefault(priorityChange)
+                && isDefault(dueDateChange);
+        if (noChanges) {
             throw rejection(command);
         }
         return transit(LABEL_ASSIGNMENT,
@@ -137,7 +149,7 @@ final class TaskCreationWizard
     }
 
     @Command
-    Collection<? extends CommandMessage> handle(AddLabels command, CommandContext context)
+    Iterable<CommandMessage> handle(AddLabels command, CommandContext context)
             throws CannotMoveToStage, CannotAddLabels {
         List<LabelId> existingLabels = command.getExistingLabelsList();
         List<LabelDetails> newLabels = command.getNewLabelsList();
@@ -148,7 +160,7 @@ final class TaskCreationWizard
         return transit(CONFIRMATION, () -> {
             Collection<AssignLabelToTask> existingLabelsCommands =
                     commands.assignExistingLabels(command);
-            Collection<? extends CommandMessage> newLabelsCommands =
+            Collection<CommandMessage> newLabelsCommands =
                     commands.assignNewLabels(command);
             Collection<CommandMessage> result = newArrayList();
             result.addAll(existingLabelsCommands);

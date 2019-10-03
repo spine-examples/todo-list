@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.server.tasks.task;
 
-import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
+import io.spine.base.EventMessage;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.tasks.CompleteTaskRejected;
@@ -294,7 +294,7 @@ final class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggre
     }
 
     @Assign
-    List<? extends Message> handle(RestoreDeletedTask cmd)
+    Iterable<EventMessage> handle(RestoreDeletedTask cmd)
             throws CannotRestoreDeletedTask {
         TaskStatus currentStatus = state().getTaskStatus();
         boolean isValid = ensureDeleted(currentStatus);
@@ -307,7 +307,7 @@ final class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggre
                 .newBuilder()
                 .setTaskId(taskId)
                 .vBuild();
-        List<Message> result = newLinkedList();
+        List<EventMessage> result = newLinkedList();
         result.add(deletedTaskRestored);
 
         TaskLabels taskLabels = partState(TaskLabels.class);

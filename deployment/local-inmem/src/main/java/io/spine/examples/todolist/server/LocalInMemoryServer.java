@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.server.tasks.TaskStorageFactory;
 import io.spine.server.ServerEnvironment;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create
 
 /**
  * A local {@link Server} using
- * {@link io.spine.examples.todolist.server.tasks.TaskStorageFactory in-memory storage factory}.
+ * {@link io.spine.server.storage.memory.InMemoryStorageFactory in-memory storage factory}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -45,7 +45,7 @@ public final class LocalInMemoryServer {
 
     public static void main(String[] args) throws IOException {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(new TaskStorageFactory());
+        serverEnvironment.configureStorage(InMemoryStorageFactory.newInstance());
         serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
 
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());

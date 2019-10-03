@@ -144,7 +144,7 @@ final class TaskViewProjection extends Projection<TaskId, TaskView, TaskView.Bui
         LabelIdsList labels = LabelIdsList
                 .newBuilder()
                 .addAllIds(list)
-                .build();
+                .vBuild();
         builder().setLabelIdsList(labels);
     }
 
