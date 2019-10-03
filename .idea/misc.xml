@@ -7,7 +7,6 @@
       <item index="2" class="java.lang.String" itemvalue="io.spine.server.command.Assign" />
     </list>
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
