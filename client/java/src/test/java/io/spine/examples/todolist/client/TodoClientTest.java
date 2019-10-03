@@ -63,7 +63,7 @@ abstract class TodoClientTest {
 
     @AfterEach
     public void tearDown() {
-        server.shutdownNowAndWait();
+        server.shutdown();
         client().shutdown();
     }
 

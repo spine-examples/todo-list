@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -144,10 +143,9 @@ public final class Server implements Logging {
     }
 
     /**
-     * Initiates a forceful shutdown of this {@code Server} instance and awaits its termination.
+     * Initiates a shutdown of this {@code Server} instance.
      */
-    @VisibleForTesting
-    public void shutdownNowAndWait() {
-        grpcContainer.shutdownNowAndWait();
+    public void shutdown() {
+        grpcContainer.shutdown();
     }
 }
