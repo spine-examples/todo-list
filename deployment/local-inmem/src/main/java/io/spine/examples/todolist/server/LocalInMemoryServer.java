@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create
 
 /**
  * A local {@link Server} using
- * {@link io.spine.server.storage.memory.InMemoryStorageFactory in-memory storage factory}.
+ * {@linkplain io.spine.server.storage.memory.InMemoryStorageFactory in-memory storage factory}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
