@@ -55,7 +55,7 @@ abstract class ViewTest {
 
     @AfterEach
     public void tearDown() {
-        server.shutdown();
+        server.shutdownNowAndWait();
     }
 
     private void startServer() throws InterruptedException {
