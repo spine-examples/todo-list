@@ -19,7 +19,7 @@
  */
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '1.1.4' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '1.2.0' apply false
     id 'net.ltgt.errorprone' version '1.1.1' apply false
 }
 
@@ -63,7 +63,7 @@ subprojects {
                 "com.google.guava:guava:$deps.versions.guava",
                 "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
         )
-        runtimeOnly "io.grpc:grpc-netty:$deps.versions.netty"
+        runtimeOnly deps.grpc.grpcNetty
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit5"
     }
 

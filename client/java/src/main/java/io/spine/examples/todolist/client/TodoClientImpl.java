@@ -27,6 +27,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.spine.base.CommandMessage;
+import io.spine.base.EntityState;
 import io.spine.base.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
@@ -182,27 +183,27 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     /**
-     * Retrieves all the messages of the given type.
+     * Retrieves all the entities of the given type.
      *
      * @param cls
-     *         the class of the desired messages
-     * @param <M>
-     *         the compile-time type of the desired messages
+     *         the state class of the desired entities
+     * @param <S>
+     *         the entity state type
      * @return all the messages of the given type present in the system
      */
-    private <M extends Message> List<M> getByType(Class<M> cls) {
+    private <S extends EntityState> List<S> getByType(Class<S> cls) {
         Query query = requestFactory.query()
                                     .all(cls);
         List<Any> messages = query(query);
 
         @SuppressWarnings("unchecked") // Logically correct.
-                List<M> result = messages.stream()
-                                         .map(any -> (M) unpack(any))
+                List<S> result = messages.stream()
+                                         .map(any -> (S) unpack(any))
                                          .collect(toList());
         return result;
     }
 
-    private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
+    private <S extends EntityState> Optional<S> findById(Class<S> messageClass, Message id) {
         Query query = requestFactory.query()
                                     .byIds(messageClass, ImmutableSet.of(id));
         List<Any> messages = query(query);
@@ -212,8 +213,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
                    System.lineSeparator(), messages);
 
         @SuppressWarnings("unchecked") // Logically correct.
-                Optional<M> result = messages.stream()
-                                             .map(any -> (M) unpack(any))
+                Optional<S> result = messages.stream()
+                                             .map(any -> (S) unpack(any))
                                              .findFirst();
         return result;
     }
