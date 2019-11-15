@@ -196,7 +196,7 @@ final class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggre
         if (!samePriority) {
             TaskPriority newPriority = priorityChange.getNewValue();
             ValueMismatch mismatch =
-                    valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
+                    valueMismatch(expectedPriority, actualPriority, newPriority, version());
             throw rejection(cmd, mismatch);
         }
         TaskId taskId = cmd.getId();

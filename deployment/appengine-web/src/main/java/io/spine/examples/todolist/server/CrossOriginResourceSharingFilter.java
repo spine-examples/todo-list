@@ -23,11 +23,10 @@ package io.spine.examples.todolist.server;
 import io.spine.web.AllowAnyOriginFilter;
 
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpFilter;
 
 /**
- * An {@link HttpFilter} which appends the CORS headers to the {@code /command} and {@code /query}
- * HTTP responses.
+ * An {@linkplain javax.servlet.Filter filter} which appends the CORS headers to the
+ * {@code /command} and {@code /query} HTTP responses.
  *
  * @see AllowAnyOriginFilter
  */

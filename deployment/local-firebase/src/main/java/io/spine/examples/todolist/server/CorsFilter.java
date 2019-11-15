@@ -25,7 +25,7 @@ import io.spine.web.AllowAnyOriginFilter;
 import javax.servlet.annotation.WebFilter;
 
 /**
- * A {@link javax.servlet.Filter} which appends the CORS headers to the HTTP responses.
+ * A {@linkplain javax.servlet.Filter filter} which appends the CORS headers to the HTTP responses.
  *
  * @see AllowAnyOriginFilter
  */
