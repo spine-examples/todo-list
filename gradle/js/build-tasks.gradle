@@ -40,7 +40,6 @@ ext {
 }
 
 apply from: "$rootDir/gradle/js/npm-cli.gradle"
-apply from: "$rootDir/gradle/js/update-package-version.gradle"
 
 /**
  * Compiles Protobuf sources into JavaScript.
@@ -139,7 +138,6 @@ task buildJs {
     group = JAVA_SCRIPT_TASK_GROUP
     description = "Assembles the JavaScript source files."
 
-    dependsOn updatePackageVersion
     dependsOn installDependencies
     dependsOn compileProtoToJs
     assemble.dependsOn buildJs

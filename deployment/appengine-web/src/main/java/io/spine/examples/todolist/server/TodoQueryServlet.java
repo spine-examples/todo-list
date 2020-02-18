@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.web.firebase.query.FirebaseQueryResponse;
 import io.spine.web.query.QueryServlet;
 
 import javax.servlet.annotation.WebServlet;
@@ -38,7 +39,7 @@ import static io.spine.examples.todolist.server.Application.application;
 @WebServlet(name = TodoQueryServlet.NAME, value = "/query")
 @SuppressWarnings({"serial",
         "DuplicateStringLiteralInspection" /* Standard Spine endpoint for queries. */})
-public final class TodoQueryServlet extends QueryServlet {
+public final class TodoQueryServlet extends QueryServlet<FirebaseQueryResponse> {
 
     static final String NAME = "Query Service";
 

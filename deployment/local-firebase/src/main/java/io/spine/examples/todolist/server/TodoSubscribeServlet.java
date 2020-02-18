@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.web.firebase.subscription.FirebaseSubscription;
 import io.spine.web.subscription.servlet.SubscribeServlet;
 
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +34,7 @@ import static io.spine.examples.todolist.server.Application.application;
  */
 @WebServlet("/subscription/create")
 @SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for subscriptions.
-public final class TodoSubscribeServlet extends SubscribeServlet {
+public final class TodoSubscribeServlet extends SubscribeServlet<FirebaseSubscription> {
 
     private static final long serialVersionUID = 0L;
 

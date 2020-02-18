@@ -52,6 +52,7 @@ final class GoogleAuth {
      *
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
+    @SuppressWarnings("deprecation") // Needed for now to conform with the Spine API.
     static GoogleCredential serviceAccountCredential() {
         if (deploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredential::getApplicationDefault);

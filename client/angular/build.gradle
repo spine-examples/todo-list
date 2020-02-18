@@ -29,14 +29,6 @@ buildJs {
     }
 }
 
-testJs {
-    doLast {
-        npm 'run', 'test'
-    }
-
-    dependsOn buildJs
-}
-
 @SuppressWarnings("GrMethodMayBeStatic")
 def buildParameter() {
     if (ext.isDev()) {

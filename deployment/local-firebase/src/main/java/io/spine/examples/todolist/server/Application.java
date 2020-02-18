@@ -31,7 +31,6 @@ import io.spine.server.transport.memory.InMemoryTransportFactory;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
-import io.spine.web.query.QueryBridge;
 
 /**
  * The TodoList application.
@@ -85,7 +84,7 @@ final class Application {
         return application;
     }
 
-    QueryBridge queryBridge() {
+    FirebaseQueryBridge queryBridge() {
         return queryBridge;
     }
 

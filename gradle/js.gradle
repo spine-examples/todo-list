@@ -40,9 +40,6 @@ project.compileTestJava.enabled = false
 
 apply from: "$rootDir/gradle/js/build-tasks.gradle"
 
-// Do not update the package version as we are not going to publish it.
-buildJs.dependsOn.remove(updatePackageVersion)
-
 configurations {
     // Do not generate JS proto definitions for external dependencies.
     protobuf.exclude group: 'io.spine', module: 'spine-base'

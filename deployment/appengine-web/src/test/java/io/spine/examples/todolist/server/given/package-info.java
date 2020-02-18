@@ -18,32 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
-
-import io.spine.web.firebase.query.FirebaseQueryResponse;
-import io.spine.web.query.QueryServlet;
-
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static io.spine.examples.todolist.server.Application.application;
-
 /**
- * The {@code /query} endpoint of the TodoList system.
+ * The test environment classes for the To-Do List application server tests.
  */
-@WebServlet("/query")
-@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for queries.
-public final class TodoQueryServlet extends QueryServlet<FirebaseQueryResponse> {
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.given;
 
-    private static final long serialVersionUID = 0L;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    public TodoQueryServlet() {
-        super(application().queryBridge());
-    }
-
-    @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
-        // NO-OP.
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

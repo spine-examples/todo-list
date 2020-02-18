@@ -25,7 +25,7 @@ import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.server.SubscriptionService;
-import io.spine.server.transport.GrpcContainer;
+import io.spine.server.GrpcContainer;
 
 import java.io.IOException;
 
@@ -110,8 +110,7 @@ public final class Server implements Logging {
                                             QueryService queryService,
                                             SubscriptionService subscriptionService) {
         GrpcContainer.Builder result = GrpcContainer
-                .newBuilder()
-                .setPort(port)
+                .atPort(port)
                 .addService(commandService)
                 .addService(queryService)
                 .addService(subscriptionService);

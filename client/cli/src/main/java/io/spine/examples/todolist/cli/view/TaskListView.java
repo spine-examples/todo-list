@@ -33,7 +33,6 @@ import java.util.List;
 
 import static io.spine.examples.todolist.cli.AppConfig.getClient;
 import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
-import static java.lang.String.valueOf;
 
 /**
  * A view of all tasks.
@@ -100,7 +99,7 @@ public final class TaskListView extends ActionListView {
     newOpenTaskViewProducer(TaskView task, int viewIndex) {
         String name = task.getDescription()
                           .getValue();
-        String shortcutValue = valueOf(viewIndex + 1);
+        String shortcutValue = String.valueOf(viewIndex + 1);
         Shortcut shortcut = new Shortcut(shortcutValue);
         ViewOfTask destination = new ViewOfTask(task.getId());
         return transitionProducer(name, shortcut, destination);

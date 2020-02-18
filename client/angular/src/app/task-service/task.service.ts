@@ -264,7 +264,7 @@ export class TaskService implements OnDestroy {
    * Fetches the details of all existing tasks.
    */
   fetchAll(): Promise<TaskView[]> {
-    return this.spineWebClient.fetch({entity: TaskView});
+    return this.spineWebClient.select(TaskView).run();
   }
 
   /**
@@ -281,9 +281,11 @@ export class TaskService implements OnDestroy {
           resolve(tasks[0]);
         }
       };
-      this.spineWebClient.fetch({entity: TaskView, byIds: [id]})
-          .then(tasks => dataCallback(tasks))
-          .catch(err => reject(err));
+      this.spineWebClient.select(TaskView)
+                         .byId(id)
+                         .run()
+                         .then(tasks => dataCallback(tasks))
+                         .catch(err => reject(err));
     });
   }
 
@@ -302,7 +304,9 @@ export class TaskService implements OnDestroy {
    */
   private subscribeToTaskUpdates(): Promise<() => void> {
     return new Promise((resolve, reject) =>
-        this.spineWebClient.subscribe({entity: TaskView})
+        this.spineWebClient
+            .subscribeTo(TaskView)
+            .post()
             .then((subscriptionObject) => {
               subscriptionObject.itemAdded.subscribe(this.taskAdded());
               subscriptionObject.itemChanged.subscribe(this.taskChanged());

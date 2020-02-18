@@ -20,8 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.protobuf.Any;
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -29,21 +28,8 @@ import io.grpc.stub.StreamObserver;
 import io.spine.base.CommandMessage;
 import io.spine.base.EntityState;
 import io.spine.base.Identifier;
-import io.spine.client.ActorRequestFactory;
-import io.spine.client.EntityStateUpdate;
-import io.spine.client.EntityStateWithVersion;
-import io.spine.client.Query;
+import io.spine.client.Client;
 import io.spine.client.Subscription;
-import io.spine.client.SubscriptionUpdate;
-import io.spine.client.Topic;
-import io.spine.client.grpc.CommandServiceGrpc;
-import io.spine.client.grpc.CommandServiceGrpc.CommandServiceBlockingStub;
-import io.spine.client.grpc.QueryServiceGrpc;
-import io.spine.client.grpc.QueryServiceGrpc.QueryServiceBlockingStub;
-import io.spine.client.grpc.SubscriptionServiceGrpc;
-import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingStub;
-import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
-import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.tasks.LabelId;
 import io.spine.examples.todolist.tasks.Task;
@@ -52,7 +38,6 @@ import io.spine.examples.todolist.tasks.TaskLabel;
 import io.spine.examples.todolist.tasks.TaskLabels;
 import io.spine.examples.todolist.tasks.view.LabelView;
 import io.spine.examples.todolist.tasks.view.TaskView;
-import io.spine.time.ZoneOffsets;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -60,10 +45,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.stream.Collectors.toList;
 
 /**
  * An implementation of the TodoList gRPC client.
@@ -72,41 +54,40 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     private static final int TIMEOUT = 10;
 
-    private final ManagedChannel channel;
-    private final QueryServiceBlockingStub queryService;
-    private final CommandServiceBlockingStub commandService;
-    private final SubscriptionServiceStub subscriptionService;
-    private final SubscriptionServiceBlockingStub blockingSubscriptionService;
-    private final ActorRequestFactory requestFactory;
+    private final Client client;
+    private final UserId user;
 
     /**
      * Construct the client connecting to server at {@code host:port}.
      */
     TodoClientImpl(String host, int port) {
-        this.requestFactory = actorRequestFactoryInstance();
-        this.channel = initChannel(host, port);
-        this.commandService = CommandServiceGrpc.newBlockingStub(channel);
-        this.queryService = QueryServiceGrpc.newBlockingStub(channel);
-        this.subscriptionService = SubscriptionServiceGrpc.newStub(channel);
-        this.blockingSubscriptionService = SubscriptionServiceGrpc.newBlockingStub(channel);
+        ManagedChannel channel = initChannel(host, port);
+        this.client = initClient(channel);
+        this.user = userId();
     }
 
+    private static Client initClient(ManagedChannel channel) {
+        Client client = Client.usingChannel(channel)
+                              .shutdownTimout(TIMEOUT, SECONDS)
+                              .build();
+        return client;
+    }
+
+    @SuppressWarnings("CheckReturnValue")
+    // Rely on client shutdown for cancelling the subscriptions in this simple client.
     @Override
     public void postCommand(CommandMessage cmd) {
-        Command executableCmd = requestFactory.command()
-                                              .create(cmd);
-        commandService.post(executableCmd);
+        client.onBehalfOf(user)
+              .command(cmd)
+              .post();
     }
 
     @Override
     public List<TaskView> taskViews() {
-        Query query = requestFactory.query()
-                                    .all(TaskView.class);
-        List<Any> messages = query(query);
-        List<TaskView> result = messages
-                .stream()
-                .map(any -> unpack(any, TaskView.class))
-                .collect(toList());
+        ImmutableList<TaskView> result =
+                client.onBehalfOf(user)
+                      .select(TaskView.class)
+                      .run();
         return result;
     }
 
@@ -144,42 +125,22 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public Subscription subscribeToTasks(StreamObserver<TaskView> observer) {
-        Topic topic = requestFactory.topic()
-                                    .allOf(TaskView.class);
-        return subscribeTo(topic, observer);
+        Subscription subscription =
+                client.onBehalfOf(user)
+                      .subscribeTo(TaskView.class)
+                      .observe(observer::onNext)
+                      .post();
+        return subscription;
     }
 
     @Override
     public void unSubscribe(Subscription subscription) {
-        blockingSubscriptionService.cancel(subscription);
+        client.cancel(subscription);
     }
 
     @Override
     public void shutdown() {
-        try {
-            channel.shutdown()
-                   .awaitTermination(TIMEOUT, SECONDS);
-        } catch (InterruptedException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-    }
-
-    /**
-     * Subscribes the given {@link StreamObserver} to the given topic and activates
-     * the subscription.
-     *
-     * @param topic
-     *         the topic to subscribe to
-     * @param observer
-     *         the observer to subscribe
-     * @param <M>
-     *         the type of the result messages
-     * @return the activated subscription
-     */
-    private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
-        Subscription subscription = blockingSubscriptionService.subscribe(topic);
-        subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
-        return subscription;
+        client.shutdown();
     }
 
     /**
@@ -192,30 +153,26 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * @return all the messages of the given type present in the system
      */
     private <S extends EntityState> List<S> getByType(Class<S> cls) {
-        Query query = requestFactory.query()
-                                    .all(cls);
-        List<Any> messages = query(query);
-
-        @SuppressWarnings("unchecked") // Logically correct.
-                List<S> result = messages.stream()
-                                         .map(any -> (S) unpack(any))
-                                         .collect(toList());
+        ImmutableList<S> result =
+                client.onBehalfOf(user)
+                      .select(cls)
+                      .run();
         return result;
     }
 
     private <S extends EntityState> Optional<S> findById(Class<S> messageClass, Message id) {
-        Query query = requestFactory.query()
-                                    .byIds(messageClass, ImmutableSet.of(id));
-        List<Any> messages = query(query);
+        ImmutableList<S> messages =
+                client.onBehalfOf(user)
+                      .select(messageClass)
+                      .byId(id)
+                      .run();
         checkState(messages.size() <= 1,
                    "Too many %s-s with ID %s:%s %s",
                    messageClass.getSimpleName(), Identifier.toString(id),
                    System.lineSeparator(), messages);
 
-        @SuppressWarnings("unchecked") // Logically correct.
-                Optional<S> result = messages.stream()
-                                             .map(any -> (S) unpack(any))
-                                             .findFirst();
+        Optional<S> result = messages.stream()
+                                     .findFirst();
         return result;
     }
 
@@ -226,68 +183,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return result;
     }
 
-    /** Queries the read-side with the specified query. */
-    private List<Any> query(Query query) {
-        return queryService.read(query)
-                           .getMessageList()
-                           .stream()
-                           .map(EntityStateWithVersion::getState)
-                           .collect(toList());
-    }
-
-    private static ActorRequestFactory actorRequestFactoryInstance() {
-        UserId userId = UserId
-                .newBuilder()
-                .setValue(newUuid())
-                .vBuild();
-        ActorRequestFactory result = ActorRequestFactory
-                .newBuilder()
-                .setActor(userId)
-                .setZoneOffset(ZoneOffsets.utc())
-                .build();
-        return result;
-    }
-
-    /**
-     * A {@link StreamObserver} of {@link SubscriptionUpdate} messages translating the message
-     * payload to the given delegate {@code StreamObserver}.
-     *
-     * <p>The errors and completion acknowledgements are translated directly to the delegate.
-     *
-     * <p>The {@linkplain SubscriptionUpdate#getEntityUpdates() messages} are unpacked
-     * and sent to the delegate observer one by one.
-     *
-     * @param <M>
-     *         the type of the delegate observer messages
-     */
-    private static final class SubscriptionUpdateObserver<M extends Message>
-            implements StreamObserver<SubscriptionUpdate> {
-
-        private final StreamObserver<M> delegate;
-
-        private SubscriptionUpdateObserver(StreamObserver<M> targetObserver) {
-            this.delegate = targetObserver;
-        }
-
-        @SuppressWarnings("unchecked") // Logically correct.
-        @Override
-        public void onNext(SubscriptionUpdate value) {
-            value.getEntityUpdates()
-                 .getUpdateList()
-                 .stream()
-                 .map(EntityStateUpdate::getState)
-                 .map(any -> (M) unpack(any))
-                 .forEach(delegate::onNext);
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            delegate.onError(t);
-        }
-
-        @Override
-        public void onCompleted() {
-            delegate.onCompleted();
-        }
+    private static UserId userId() {
+        return UserId
+                    .newBuilder()
+                    .setValue(newUuid())
+                    .vBuild();
     }
 }

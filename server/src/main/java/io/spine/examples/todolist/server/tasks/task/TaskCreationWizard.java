@@ -63,7 +63,7 @@ import static io.spine.examples.todolist.tasks.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.TASK_DEFINITION;
-import static io.spine.validate.Validate.isDefault;
+import static io.spine.protobuf.Messages.isDefault;
 
 /**
  * A process manager supervising the task creation process.

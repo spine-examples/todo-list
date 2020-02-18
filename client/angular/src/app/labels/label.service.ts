@@ -56,7 +56,7 @@ export class LabelService {
    * Fetches a list of labels available in the application.
    */
   fetchAllLabels(): Promise<LabelView[]> {
-    return this.spineWebClient.fetch({entity: LabelView});
+    return this.spineWebClient.select(LabelView).run();
   }
 
   /**
@@ -73,9 +73,11 @@ export class LabelService {
               resolve(labels[0]);
             }
           };
-          this.spineWebClient.fetch({entity: LabelView, byIds: [labelId]})
-              .then(labels => dataCallback(labels))
-              .catch(err => reject(err));
+          this.spineWebClient.select(LabelView)
+                             .byId(labelId)
+                             .run()
+                             .then(labels => dataCallback(labels))
+                             .catch(err => reject(err));
         }
     );
   }
