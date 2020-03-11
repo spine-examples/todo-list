@@ -105,8 +105,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
     public TaskLabels labelsOf(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
         TaskLabels result = labels.orElse(TaskLabels.newBuilder()
-                                                            .setTaskId(taskId)
-                                                            .vBuild());
+                                                    .setTaskId(taskId)
+                                                    .vBuild());
         return result;
     }
 
