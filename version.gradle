@@ -19,20 +19,20 @@
  */
 
 
-final def SPINE_VERSION = '1.4.0'
+final def SPINE_VERSION = '1.5.0'
 
 final def versions = [
-        checkerFramework : "3.0.1",
+        checkerFramework : "3.2.0",
         errorProne       : "2.3.4",
         errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
         errorPronePlugin : "1.1.1",
-        pmd              : "6.20.0",
+        pmd              : "6.21.0",
         checkstyle       : "8.28",
         protobufPlugin   : "0.8.11",
         findBugs         : "3.0.2",
-        guava            : "28.1-jre",
+        guava            : "28.2-jre",
         protobuf         : "3.11.3",
-        grpc             : "1.26.0",
+        grpc             : "1.28.0",
         flogger          : "0.4",
         junit5           : "5.5.2",
         junitPlatform    : "1.5.2",
@@ -55,7 +55,7 @@ final def versions = [
         googleAuth       : '0.20.0',
 
         // Versions of Google APIs Client libraries.
-        googleApiClient  : '1.30.2',
+        googleApiClient  : '1.30.9',
 
         // Spine components versions.
         spineBase        : SPINE_VERSION,
