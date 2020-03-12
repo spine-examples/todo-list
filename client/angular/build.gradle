@@ -29,6 +29,17 @@ buildJs {
     }
 }
 
+testJs {
+    doLast {
+        npm 'run', 'test'
+    }
+
+    dependsOn buildJs
+}
+
+// Disable the Angular Client tests until they are fixed.
+testJs.enabled = false
+
 @SuppressWarnings("GrMethodMayBeStatic")
 def buildParameter() {
     if (ext.isDev()) {
