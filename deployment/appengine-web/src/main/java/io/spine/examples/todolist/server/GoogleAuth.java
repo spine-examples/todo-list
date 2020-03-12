@@ -52,7 +52,6 @@ final class GoogleAuth {
      *
      * @see #serviceAccountCredentials() for an alternative API for the same credential
      */
-    @SuppressWarnings("deprecation") // Currently needed to conform with the existing API.
     static GoogleCredential serviceAccountCredential() {
         if (deploymentType() == APPENGINE_CLOUD) {
             return propagateIoErrors(GoogleCredential::getApplicationDefault);

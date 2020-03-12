@@ -55,7 +55,7 @@ final def versions = [
         googleAuth       : '0.20.0',
 
         // Versions of Google APIs Client libraries.
-        googleApiClient  : '1.30.9',
+        googleApiClient  : '1.25.0',
 
         // Spine components versions.
         spineBase        : SPINE_VERSION,
