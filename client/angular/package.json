@@ -10,7 +10,8 @@
     "build-prod": "ng build --prod",
     "test": "ng test --no-watch --no-progress --code-coverage",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "preinstall": "npx npm-force-resolutions"
   },
   "private": true,
   "dependencies": {
@@ -34,7 +35,7 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.900.6",
+    "@angular-devkit/build-angular": "^0.13.9",
     "@angular/cli": "^7.3.8",
     "@angular/compiler-cli": "^7.2.14",
     "@angular/language-service": "^7.2.14",
@@ -56,5 +57,10 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.2.2"
+  },
+  "resolutions": {
+    "serialize-javascript": "2.1.1",
+    "tree-kill": "1.2.2",
+    "node-sass": "4.13.1"
   }
 }
