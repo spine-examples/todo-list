@@ -45,7 +45,9 @@ class CompleteTaskTest extends TaskCommandTestBase {
         CreateBasicTask createTask = createTaskInstance(taskId());
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask(createTask.getId()))
-                 .assertEmitted(TaskCompleted.class);
+                 .assertEvents()
+                 .withType(TaskCompleted.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -73,7 +75,9 @@ class CompleteTaskTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(completeTask)
-                 .assertRejectedWith(Rejections.CannotCompleteTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotCompleteTask.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -85,7 +89,9 @@ class CompleteTaskTest extends TaskCommandTestBase {
 
         context().receivesCommand(createDraft)
                  .receivesCommand(completeTask)
-                 .assertRejectedWith(Rejections.CannotCompleteTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotCompleteTask.class)
+                 .hasSize(1);
     }
 
     private static CompleteTask completeTask(TaskId taskId) {

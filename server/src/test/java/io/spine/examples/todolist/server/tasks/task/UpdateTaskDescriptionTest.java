@@ -50,7 +50,9 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
                 updateTaskDescriptionInstance(taskId(), previousDescription, NEW_DESCRIPTION);
         context().receivesCommand(createTask)
                  .receivesCommand(updateDescription)
-                 .assertEmitted(TaskDescriptionUpdated.class);
+                 .assertEvents()
+                 .withType(TaskDescriptionUpdated.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -85,7 +87,9 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(updateDescription)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskDescription.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -103,7 +107,9 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask)
                  .receivesCommand(updateDescription)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskDescription.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -118,6 +124,8 @@ class UpdateTaskDescriptionTest extends TaskCommandTestBase {
 
         context().receivesCommand(createTask)
                  .receivesCommand(updateDescription)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskDescription.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskDescription.class)
+                 .hasSize(1);
     }
 }

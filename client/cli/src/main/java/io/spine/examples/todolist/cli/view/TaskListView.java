@@ -27,10 +27,10 @@ import io.spine.examples.todolist.cli.action.TransitionAction;
 import io.spine.examples.todolist.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.tasks.view.TaskView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.examples.todolist.cli.AppConfig.getClient;
 import static io.spine.examples.todolist.cli.action.TransitionAction.transitionProducer;
 
@@ -58,7 +58,8 @@ public final class TaskListView extends ActionListView {
         clearActions();
 
         List<TaskView> views = getClient().taskViews();
-        Collection<TransitionActionProducer> producers = taskActionProducersFor(views);
+        Collection<TransitionActionProducer<TaskListView, ViewOfTask>> producers =
+                taskActionProducersFor(views);
 
         if (producers.isEmpty()) {
             screen.println(EMPTY_TASKS_LIST_MSG);
@@ -85,8 +86,9 @@ public final class TaskListView extends ActionListView {
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> taskActionProducersFor(List<TaskView> taskViews) {
-        Collection<TransitionActionProducer> producers = new ArrayList<>();
+    static Collection<TransitionActionProducer<TaskListView, ViewOfTask>>
+    taskActionProducersFor(List<TaskView> taskViews) {
+        Collection<TransitionActionProducer<TaskListView, ViewOfTask>> producers = newArrayList();
         for (int i = 0; i < taskViews.size(); i++) {
             TaskView task = taskViews.get(i);
             producers.add(newOpenTaskViewProducer(task, i));

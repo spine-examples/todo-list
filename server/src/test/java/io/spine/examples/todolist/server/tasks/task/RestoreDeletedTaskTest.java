@@ -65,7 +65,9 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
                  .receivesCommand(assignLabelToTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(restoreTask)
-                 .assertEmitted(LabelledTaskRestored.class);
+                 .assertEvents()
+                 .withType(LabelledTaskRestored.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -104,7 +106,9 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask)
                  .receivesCommand(restoreTask)
-                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotRestoreDeletedTask.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -116,7 +120,9 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         context().receivesCommand(createDraft)
                  .receivesCommand(finalizeDraft)
                  .receivesCommand(restoreTask)
-                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotRestoreDeletedTask.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -126,6 +132,8 @@ class RestoreDeletedTaskTest extends TaskCommandTestBase {
         RestoreDeletedTask restoreTask = restoreDeletedTaskInstance(taskId());
         context().receivesCommand(createDraft)
                  .receivesCommand(restoreTask)
-                 .assertRejectedWith(Rejections.CannotRestoreDeletedTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotRestoreDeletedTask.class)
+                 .hasSize(1);
     }
 }

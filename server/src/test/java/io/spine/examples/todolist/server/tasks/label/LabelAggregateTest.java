@@ -42,7 +42,7 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.update
 @DisplayName("LabelAggregate should")
 class LabelAggregateTest {
 
-    private BlackBoxBoundedContext context;
+    private BlackBoxBoundedContext<?> context;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +58,9 @@ class LabelAggregateTest {
         void produceEvent() {
             CreateBasicLabel createLabel = createLabelInstance();
             context.receivesCommand(createLabel)
-                   .assertEmitted(LabelCreated.class);
+                   .assertEvents()
+                   .withType(LabelCreated.class)
+                   .hasSize(1);
         }
 
         @Test
@@ -93,7 +95,9 @@ class LabelAggregateTest {
             UpdateLabelDetails updateDetails = updateLabelDetailsInstance(labelId);
             context.receivesCommand(createLabel)
                    .receivesCommand(updateDetails)
-                   .assertEmitted(LabelDetailsUpdated.class);
+                   .assertEvents()
+                   .withType(LabelDetailsUpdated.class)
+                   .hasSize(1);
         }
 
         @Test
@@ -143,7 +147,9 @@ class LabelAggregateTest {
                     updateLabelDetailsInstance(labelId, previousDetails, newDetails);
             context.receivesCommand(createLabel)
                    .receivesCommand(updateDetails)
-                   .assertRejectedWith(Rejections.CannotUpdateLabelDetails.class);
+                   .assertEvents()
+                   .withType(Rejections.CannotUpdateLabelDetails.class)
+                   .hasSize(1);
         }
 
         private LabelDetails newDetails() {

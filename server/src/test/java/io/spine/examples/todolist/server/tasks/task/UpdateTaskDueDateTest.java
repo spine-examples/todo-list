@@ -46,7 +46,9 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
 
         context().receivesCommand(createTask)
                  .receivesCommand(updateTaskDueDate)
-                 .assertEmitted(TaskDueDateUpdated.class);
+                 .assertEvents()
+                 .withType(TaskDueDateUpdated.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -75,7 +77,9 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask)
                  .receivesCommand(updateTaskDueDate)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskDueDate.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -89,7 +93,9 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask)
                  .receivesCommand(updateTaskDueDate)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskDueDate.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -105,7 +111,9 @@ class UpdateTaskDueDateTest extends TaskCommandTestBase {
         context()
                 .receivesCommand(createTask)
                 .receivesCommand(updateTaskDueDate)
-                .assertRejectedWith(Rejections.CannotUpdateTaskDueDate.class);
+                .assertEvents()
+                .withType(Rejections.CannotUpdateTaskDueDate.class)
+                .hasSize(1);
     }
 
 }
