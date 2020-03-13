@@ -207,9 +207,13 @@ export class TaskService implements OnDestroy {
    * @param taskId ID of the task that is related to the sent command
    */
   private sendTaskCommand(cmd, taskId): void {
-    this.spineWebClient.sendCommand(cmd,
-        () => this.removeFromOptimisticallyChanged(taskId),
-        err => this.recoverPreviousState(err, taskId));
+    const onSuccess = () => this.removeFromOptimisticallyChanged(taskId);
+    const onError = err => this.recoverPreviousState(err, taskId);
+    this.spineWebClient.command(cmd)
+                       .onOk(onSuccess)
+                       .onError(onError)
+                       .onRejection(onError)
+                       .post();
   }
 
   /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */

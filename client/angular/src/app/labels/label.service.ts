@@ -43,13 +43,16 @@ export class LabelService {
    */
   createBasicLabel(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-          const cmd = new CreateBasicLabel();
-          const id = UuidGenerator.newId(LabelId);
-          cmd.setLabelId(id);
-          cmd.setLabelTitle('TestLabel');
-          this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
-        }
-    );
+      const cmd = new CreateBasicLabel();
+      const id = UuidGenerator.newId(LabelId);
+      cmd.setLabelId(id);
+      cmd.setLabelTitle('TestLabel');
+      this.spineWebClient.command(cmd)
+                         .onOk(resolve)
+                         .onError(reject)
+                         .onRejection(reject)
+                         .post();
+    });
   }
 
   /**
