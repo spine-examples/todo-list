@@ -43,7 +43,9 @@ class CreateDraftTest extends TaskCommandTestBase {
     void produceEvent() {
         CreateDraft createDraftCmd = createDraftInstance();
         context().receivesCommand(createDraftCmd)
-                 .assertEmitted(TaskDraftCreated.class);
+                 .assertEvents()
+                 .withType(TaskDraftCreated.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -72,6 +74,8 @@ class CreateDraftTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(createDraft)
-                 .assertRejectedWith(Rejections.CannotCreateDraft.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotCreateDraft.class)
+                 .hasSize(1);
     }
 }

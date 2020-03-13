@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.examples.todolist.tasks.LabelColor.GRAY;
-import static io.spine.validate.Validate.isNotDefault;
+import static io.spine.protobuf.Messages.isNotDefault;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 

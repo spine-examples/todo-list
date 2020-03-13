@@ -19,34 +19,34 @@
  */
 
 
-final def SPINE_VERSION = '1.2.0'
+final def SPINE_VERSION = '1.5.0'
 
 final def versions = [
-        checkerFramework : "2.11.1",
-        errorProne       : "2.3.3",
+        checkerFramework : "3.2.0",
+        errorProne       : "2.3.4",
         errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
         errorPronePlugin : "1.1.1",
-        pmd              : "6.16.0",
-        checkstyle       : "8.19",
-        protobufPlugin   : "0.8.8",
+        pmd              : "6.21.0",
+        checkstyle       : "8.28",
+        protobufPlugin   : "0.8.11",
         findBugs         : "3.0.2",
-        guava            : "28.1-jre",
-        protobuf         : "3.10.0",
-        grpc             : "1.24.1",
+        guava            : "28.2-jre",
+        protobuf         : "3.11.3",
+        grpc             : "1.28.0",
         flogger          : "0.4",
-        junit5           : "5.5.1",
-        junitPlatform    : "1.5.1",
+        junit5           : "5.5.2",
+        junitPlatform    : "1.5.2",
         truth            : "1.0",
-        httpClient       : "1.29.0",
-        licensePlugin    : '1.6',
-        gretty           : '2.3.1',
+        httpClient       : "1.34.0",
+        licensePlugin    : '1.12',
+        gretty           : '3.0.1',
 
         shadowJar        : '4.0.4',
         mysqlDriver      : '6.0.6',
         nettyBoringssl   : '2.0.6.Final',
         hikariCp         : '2.4.3',
 
-        firebaseAdmin    : "6.8.0",
+        firebaseAdmin    : "6.12.0",
         appengineApi     : "1.9.73",
         appengineSdk     : "1.9.67",
         appenginePlugin  : "1.3.5",
@@ -54,7 +54,7 @@ final def versions = [
         cloudSqlSocketFactory : '1.0.4',
 
         // Versions of Google APIs Client libraries.
-        googleApiClient  : '1.30.2',
+        googleApiClient  : '1.25.0',
 
         // Spine components versions.
         spineBase        : SPINE_VERSION,

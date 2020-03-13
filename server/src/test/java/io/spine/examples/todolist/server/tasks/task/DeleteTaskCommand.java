@@ -46,7 +46,9 @@ class DeleteTaskCommand extends TaskCommandTestBase {
 
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
-                 .assertEmitted(TaskDeleted.class);
+                 .assertEvents()
+                 .withType(TaskDeleted.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -87,6 +89,8 @@ class DeleteTaskCommand extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(deleteTask)
-                 .assertRejectedWith(Rejections.CannotDeleteTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotDeleteTask.class)
+                 .hasSize(1);
     }
 }

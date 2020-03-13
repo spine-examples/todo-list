@@ -75,7 +75,8 @@ class TaskListViewTest extends ViewTest {
     void createActions() {
         int tasksCount = 5;
         List<TaskView> myListView = nCopies(5, taskView);
-        Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
+        Collection<TransitionActionProducer<TaskListView, ViewOfTask>> actions =
+                taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }
 

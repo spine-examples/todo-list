@@ -1,6 +1,6 @@
 {
   "name": "angular",
-  "version": "1.2.0",
+  "version": "1.5.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,7 +10,8 @@
     "build-prod": "ng build --prod",
     "test": "ng test --no-watch --no-progress --code-coverage",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "preinstall": "npx npm-force-resolutions"
   },
   "private": true,
   "dependencies": {
@@ -52,9 +53,14 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.4.0",
     "rxjs": "^6.5.2",
-    "spine-web": "1.2.0",
+    "spine-web": "1.5.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.2.2"
+  },
+  "resolutions": {
+    "serialize-javascript": "2.1.1",
+    "tree-kill": "1.2.2",
+    "node-sass": "4.13.1"
   }
 }

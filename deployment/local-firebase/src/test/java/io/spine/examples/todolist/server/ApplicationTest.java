@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.server.CommandService;
+import io.spine.web.firebase.query.FirebaseQueryBridge;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
-import io.spine.web.query.QueryBridge;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ class ApplicationTest {
     @Test
     @DisplayName("return non-null QueryBridge")
     void returnQueryBridge() {
-        QueryBridge bridge = application.queryBridge();
+        FirebaseQueryBridge bridge = application.queryBridge();
         assertNotNull(bridge);
     }
 

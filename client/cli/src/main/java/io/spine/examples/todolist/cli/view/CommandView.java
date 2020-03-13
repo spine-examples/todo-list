@@ -84,7 +84,7 @@ public abstract class CommandView<M extends Message, B extends ValidatingBuilder
      * <p>Handles a {@link ValidationException} in the case of occurrence.
      */
     @Override
-    protected void executeAction(Action action) {
+    protected void executeAction(Action<?, ?> action) {
         try {
             super.executeAction(action);
         } catch (ValidationException ex) {

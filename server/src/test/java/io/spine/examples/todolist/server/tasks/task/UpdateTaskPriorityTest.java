@@ -46,7 +46,9 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId());
         context().receivesCommand(createTask)
                  .receivesCommand(updateTaskPriority)
-                 .assertEmitted(TaskPriorityUpdated.class);
+                 .assertEvents()
+                 .withType(TaskPriorityUpdated.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -75,7 +77,9 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(updatePriority)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskPriority.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -90,7 +94,9 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(updatePriority)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskPriority.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -101,6 +107,8 @@ class UpdateTaskPriorityTest extends TaskCommandTestBase {
         UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, HIGH, LOW);
         context().receivesCommand(createTask)
                  .receivesCommand(updateTaskPriority)
-                 .assertRejectedWith(Rejections.CannotUpdateTaskPriority.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotUpdateTaskPriority.class)
+                 .hasSize(1);
     }
 }

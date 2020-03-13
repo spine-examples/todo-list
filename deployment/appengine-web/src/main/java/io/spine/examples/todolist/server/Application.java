@@ -35,7 +35,6 @@ import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
-import io.spine.web.query.QueryBridge;
 
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredentials;
@@ -99,7 +98,7 @@ final class Application {
         return application;
     }
 
-    QueryBridge queryBridge() {
+    FirebaseQueryBridge queryBridge() {
         return queryBridge;
     }
 

@@ -52,7 +52,9 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(completeTask)
                  .receivesCommand(reopenTask)
-                 .assertEmitted(TaskReopened.class);
+                 .assertEvents()
+                 .withType(TaskReopened.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -79,7 +81,9 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
 
         context().receivesCommand(createTask)
                  .receivesCommand(reopenTask)
-                 .assertRejectedWith(Rejections.CannotReopenTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotReopenTask.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -93,7 +97,9 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         context().receivesCommand(createTask)
                  .receivesCommand(deleteTask)
                  .receivesCommand(reopenTask)
-                 .assertRejectedWith(Rejections.CannotReopenTask.class);
+                 .assertEvents()
+                 .withType(Rejections.CannotReopenTask.class)
+                 .hasSize(1);
     }
 
     @Test
@@ -105,6 +111,8 @@ class ReopenTaskCommandTest extends TaskCommandTestBase {
         context()
                 .receivesCommand(createDraft)
                 .receivesCommand(reopenTask)
-                .assertRejectedWith(Rejections.CannotReopenTask.class);
+                .assertEvents()
+                .withType(Rejections.CannotReopenTask.class)
+                .hasSize(1);
     }
 }

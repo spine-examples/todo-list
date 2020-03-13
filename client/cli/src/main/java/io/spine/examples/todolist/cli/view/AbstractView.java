@@ -104,7 +104,7 @@ public abstract class AbstractView implements View {
      * @param action
      *         the action to execute
      */
-    protected void executeAction(Action action) {
+    protected void executeAction(Action<?, ?> action) {
         action.execute();
     }
 

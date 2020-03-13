@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 @DisplayName("Task view projection should")
 class TaskViewProjectionTest {
 
-    private BlackBoxBoundedContext boundedContext;
+    private BlackBoxBoundedContext<?> boundedContext;
     private TaskId taskId;
     private TaskViewRepository repository;
     private TaskViewProjectionTestEnv testEnv;

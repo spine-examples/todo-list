@@ -42,10 +42,10 @@ final def javaProjects = subprojects.findAll { it.pluginManager.hasPlugin('java'
 task jacocoRootReport(dependsOn: javaProjects.test, type: JacocoReport) {
     // It is required to set some default value in order for the task to initialize.
     // This value is overridden in `#doFirst` section.
-    additionalSourceDirs = files()
-    sourceDirectories = files()
-    executionData = files()
-    classDirectories = files()
+    additionalSourceDirs.from files()
+    sourceDirectories.from files()
+    executionData.from files()
+    classDirectories.from files()
 
     reports {
         html.enabled = true
@@ -57,12 +57,12 @@ task jacocoRootReport(dependsOn: javaProjects.test, type: JacocoReport) {
     }
     // Handle subprojects after their evaluation, when the task is run.
     doFirst {
-        additionalSourceDirs = CodebaseFilter.nonGeneratedOnly(files(javaProjects.sourceSets.main.java.srcDirs))
-        sourceDirectories = CodebaseFilter.nonGeneratedOnly(files(javaProjects.sourceSets.main.java.srcDirs))
+        additionalSourceDirs.from CodebaseFilter.nonGeneratedOnly(files(javaProjects.sourceSets.main.java.srcDirs))
+        sourceDirectories.from CodebaseFilter.nonGeneratedOnly(files(javaProjects.sourceSets.main.java.srcDirs))
 
         final def allExecutionData = files(javaProjects.jacocoTestReport.executionData)
         // In case some modules do not have the JaCoCo execution data files.
-        executionData = files(allExecutionData.findAll {
+        executionData.from files(allExecutionData.findAll {
             it.exists()
         })
 
@@ -72,7 +72,7 @@ task jacocoRootReport(dependsOn: javaProjects.test, type: JacocoReport) {
                 javaProjects.sourceSets.main.java.srcDirs,
                 javaProjects.sourceSets.main.output)
         final def nonGeneratedFiles = filter.findNonGeneratedCompiledFiles()
-        classDirectories = files(nonGeneratedFiles)
+        classDirectories.from files(nonGeneratedFiles)
     }
 }
 

@@ -100,7 +100,7 @@ enum TaskStatusTransition {
      *         {@code false} otherwise
      */
     static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
-        for (TaskStatusTransition transition : TaskStatusTransition.values()) {
+        for (TaskStatusTransition transition : values()) {
             if (transition.matches(currentStatus, newStatus)) {
                 return true;
             }

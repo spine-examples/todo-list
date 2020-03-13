@@ -68,7 +68,11 @@ export class Client {
      */
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
-        this._spineWebClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
+        this._spineWebClient.command(command)
+                            .onOk(logSuccess)
+                            .onError(errorCallback)
+                            .onRejection(errorCallback)
+                            .post();
     }
 
     /**
@@ -89,8 +93,9 @@ export class Client {
      * @param table the view to display the tasks in
      */
     loadTasks(table) {
-        this._spineWebClient.fetch({entity: TaskView})
-            .then(tasks => tasks.forEach(task => this._addToTable(table, task)))
+        this._spineWebClient.select(TaskView)
+                            .run()
+                            .then(tasks => tasks.forEach(task => this._addToTable(table, task)))
     }
 
     /**
@@ -99,13 +104,14 @@ export class Client {
      * @param table the view to display the tasks in
      */
     subscribeToTaskChanges(table) {
-        this._spineWebClient.subscribe({entity: TaskView})
-            .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe(task => this._addToTable(table, task));
-                itemChanged.subscribe(task => this._update(table, task));
-                itemRemoved.subscribe(task => this._removeFromTable(table, task));
-            })
-            .catch(errorCallback);
+        this._spineWebClient.subscribeTo(TaskView)
+                            .post()
+                            .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
+                                itemAdded.subscribe(task => this._addToTable(table, task));
+                                itemChanged.subscribe(task => this._update(table, task));
+                                itemRemoved.subscribe(task => this._removeFromTable(table, task));
+                            })
+                            .catch(errorCallback);
     }
 
     /**

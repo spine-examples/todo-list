@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.core.Response;
 import io.spine.web.subscription.servlet.SubscriptionCancelServlet;
 
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +40,7 @@ import static io.spine.examples.todolist.server.Application.application;
 @WebServlet(name = TodoSubscriptionCancelServlet.NAME, value = "/subscription/cancel")
 @SuppressWarnings({"serial",
         "DuplicateStringLiteralInspection" /* Standard Spine endpoint for subscriptions. */})
-public final class TodoSubscriptionCancelServlet extends SubscriptionCancelServlet {
+public final class TodoSubscriptionCancelServlet extends SubscriptionCancelServlet<Response> {
 
     static final String NAME = "Subscription Cancel Service";
 

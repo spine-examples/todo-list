@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 plugins {
-    id "org.gretty" version "2.3.1"
-    id 'com.github.psxpaul.execfork' version '0.1.11'
+    id "org.gretty" version "3.0.1"
+    id 'com.github.psxpaul.execfork' version '0.1.13'
 }
 
 dependencies {

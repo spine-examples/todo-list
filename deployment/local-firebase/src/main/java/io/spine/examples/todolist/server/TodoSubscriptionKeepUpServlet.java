@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.core.Response;
 import io.spine.web.subscription.servlet.SubscriptionKeepUpServlet;
 
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +34,7 @@ import static io.spine.examples.todolist.server.Application.application;
  */
 @WebServlet("/subscription/keep-up")
 @SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for subscriptions.
-public class TodoSubscriptionKeepUpServlet extends SubscriptionKeepUpServlet {
+public class TodoSubscriptionKeepUpServlet extends SubscriptionKeepUpServlet<Response> {
 
     private static final long serialVersionUID = 0L;
 

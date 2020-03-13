@@ -40,7 +40,6 @@ ext {
 }
 
 apply from: "$rootDir/gradle/js/npm-cli.gradle"
-apply from: "$rootDir/gradle/js/update-package-version.gradle"
 
 /**
  * Compiles Protobuf sources into JavaScript.
@@ -89,15 +88,10 @@ task auditNodePackages {
     inputs.dir nodeModulesDir
 
     doLast {
-        npm 'set', 'audit-level', 'high'
+        npm 'set', 'audit-level', 'critical'
         npm 'audit'
     }
 }
-
-// TODO:2019-05-22:yegor.udovchenko: Enable audit of NPM packages when
-// `npm audit` command stops failing due to NPM server overload.
-// See: https://github.com/SpineEventEngine/config/issues/64
-auditNodePackages.enabled = false
 
 /**
  * Installs the module dependencies and checks them for vulnerabilities.
@@ -139,7 +133,6 @@ task buildJs {
     group = JAVA_SCRIPT_TASK_GROUP
     description = "Assembles the JavaScript source files."
 
-    dependsOn updatePackageVersion
     dependsOn installDependencies
     dependsOn compileProtoToJs
     assemble.dependsOn buildJs

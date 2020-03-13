@@ -47,6 +47,8 @@ import io.spine.examples.todolist.tasks.command.UpdateTaskDueDate;
 import io.spine.examples.todolist.tasks.command.UpdateTaskPriority;
 import io.spine.examples.todolist.tasks.event.LabelAssignmentSkipped;
 import io.spine.examples.todolist.tasks.rejection.Rejections;
+import io.spine.testing.server.CommandSubject;
+import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,11 +57,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.tasks.TaskCreation.Stage.TASK_DEFINITION;
-import static io.spine.testing.client.blackbox.Count.once;
-import static io.spine.testing.client.blackbox.Count.thrice;
-import static io.spine.testing.client.blackbox.Count.twice;
-import static io.spine.testing.server.blackbox.VerifyCommands.emittedCommand;
-import static io.spine.testing.server.blackbox.VerifyCommands.emittedCommands;
 
 @DisplayName("Task creation wizard on ")
 class TaskCreationWizardTest {
@@ -78,7 +75,9 @@ class TaskCreationWizardTest {
                     .setTaskId(taskId())
                     .setStage(TASK_DEFINITION)
                     .vBuild();
-            context().assertThat(emittedCommand(CreateDraft.class, once()));
+            context().assertCommands()
+                     .withType(CreateDraft.class)
+                     .hasSize(1);
             context().assertEntity(TaskCreationWizard.class, processId())
                      .hasStateThat()
                      .comparingExpectedFieldsOnly()
@@ -127,10 +126,14 @@ class TaskCreationWizardTest {
                     .setDueDateChange(dueDateChange)
                     .vBuild();
 
-            context().receivesCommand(cmd)
-                     .assertThat(emittedCommands(UpdateTaskDescription.class,
-                                                 UpdateTaskPriority.class,
-                                                 UpdateTaskDueDate.class));
+            CommandSubject assertCommands = context().receivesCommand(cmd)
+                                                     .assertCommands();
+            assertCommands.withType(UpdateTaskDescription.class)
+                          .hasSize(1);
+            assertCommands.withType(UpdateTaskPriority.class)
+                          .hasSize(1);
+            assertCommands.withType(UpdateTaskDueDate.class)
+                          .hasSize(1);
         }
 
         @Test
@@ -147,7 +150,9 @@ class TaskCreationWizardTest {
                     .setPriorityChange(priorityChange)
                     .vBuild();
             context().receivesCommand(cmd)
-                     .assertRejectedWith(Rejections.CannotUpdateTaskDetails.class);
+                     .assertEvents()
+                     .withType(Rejections.CannotUpdateTaskDetails.class)
+                     .hasSize(1);
         }
 
         @Test
@@ -179,10 +184,13 @@ class TaskCreationWizardTest {
                     .setPriorityChange(priorityChange)
                     .vBuild();
 
-            context().receivesCommand(cmd1)
-                     .receivesCommand(cmd2)
-                     .assertThat(emittedCommands(UpdateTaskDescription.class,
-                                                 UpdateTaskPriority.class));
+            CommandSubject assertCommands = context().receivesCommand(cmd1)
+                                                     .receivesCommand(cmd2)
+                                                     .assertCommands();
+            assertCommands.withType(UpdateTaskDescription.class)
+                          .hasSize(1);
+            assertCommands.withType(UpdateTaskPriority.class)
+                          .hasSize(1);
         }
 
         @Test
@@ -226,7 +234,9 @@ class TaskCreationWizardTest {
             context().receivesCommand(cmd1)
                      .receivesCommand(cmd2)
                      .receivesCommand(newUpdate)
-                     .assertThat(emittedCommand(UpdateTaskDescription.class, twice()));
+                     .assertCommands()
+                     .withType(UpdateTaskDescription.class)
+                     .hasSize(2);
         }
     }
 
@@ -259,9 +269,13 @@ class TaskCreationWizardTest {
                     .addNewLabels(newLabel)
                     .vBuild();
             context().receivesCommand(cmd);
-            context().assertThat(emittedCommand(AssignLabelToTask.class, thrice()))
-                     .assertThat(emittedCommand(CreateBasicLabel.class, once()))
-                     .assertThat(emittedCommand(UpdateLabelDetails.class, once()));
+            CommandSubject assertCommands = context().assertCommands();
+            assertCommands.withType(AssignLabelToTask.class)
+                          .hasSize(3);
+            assertCommands.withType(CreateBasicLabel.class)
+                          .hasSize(1);
+            assertCommands.withType(UpdateLabelDetails.class)
+                          .hasSize(1);
         }
 
         @Test
@@ -272,7 +286,9 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .vBuild();
             context().receivesCommand(cmd)
-                     .assertRejectedWith(Rejections.CannotAddLabels.class);
+                     .assertEvents()
+                     .withType(Rejections.CannotAddLabels.class)
+                     .hasSize(1);
         }
     }
 
@@ -296,7 +312,9 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .vBuild();
             context().receivesCommand(cmd)
-                     .assertEmitted(LabelAssignmentSkipped.class);
+                     .assertEvents()
+                     .withType(LabelAssignmentSkipped.class)
+                     .hasSize(1);
         }
     }
 
@@ -320,11 +338,13 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .vBuild();
-            context().receivesCommand(cmd)
-                     .assertThat(emittedCommand(FinalizeDraft.class, once()))
-                     .assertEntity(TaskCreationWizard.class, processId())
-                     .archivedFlag()
-                     .isTrue();
+            BlackBoxBoundedContext<?> context = context().receivesCommand(cmd);
+            context.assertCommands()
+                   .withType(FinalizeDraft.class)
+                   .hasSize(1);
+            context.assertEntity(TaskCreationWizard.class, processId())
+                   .archivedFlag()
+                   .isTrue();
         }
     }
 
@@ -373,7 +393,9 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .vBuild();
             context().receivesCommand(cmd)
-                     .assertRejectedWith(Rejections.CannotMoveToStage.class);
+                     .assertEvents()
+                     .withType(Rejections.CannotMoveToStage.class)
+                     .hasSize(1);
         }
     }
 }
