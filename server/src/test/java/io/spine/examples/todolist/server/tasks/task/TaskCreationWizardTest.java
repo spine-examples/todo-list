@@ -75,7 +75,9 @@ class TaskCreationWizardTest {
                     .setTaskId(taskId())
                     .setStage(TASK_DEFINITION)
                     .vBuild();
-            context().assertCommands().withType(CreateDraft.class).hasSize(1);
+            context().assertCommands()
+                     .withType(CreateDraft.class)
+                     .hasSize(1);
             context().assertEntity(TaskCreationWizard.class, processId())
                      .hasStateThat()
                      .comparingExpectedFieldsOnly()
