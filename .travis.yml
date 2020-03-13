@@ -27,7 +27,7 @@ jobs:
       install: true
       script:
         # Default Travis behaviour for Gradle.
-        - ./gradlew check --info --stacktrace
+        - ./gradlew check --stacktrace
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
