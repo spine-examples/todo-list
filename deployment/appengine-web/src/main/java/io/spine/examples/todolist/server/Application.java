@@ -24,6 +24,7 @@ import com.google.common.flogger.FluentLogger;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
+import io.spine.base.Production;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -36,7 +37,6 @@ import io.spine.web.firebase.FirebaseCredentials;
 import io.spine.web.firebase.query.FirebaseQueryBridge;
 import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
 
-import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredential;
 import static io.spine.examples.todolist.server.GoogleAuth.serviceAccountCredentials;
 import static io.spine.web.firebase.FirebaseClientFactory.remoteClient;
 
@@ -70,9 +70,9 @@ final class Application {
 
     private static Application create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureTracing(Tracing.createTracing());
-        serverEnvironment.configureStorage(Storage.createStorage());
-        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+        serverEnvironment.use(Tracing.createTracing(), Production.class);
+        serverEnvironment.use(Storage.createStorage(), Production.class);
+        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();
@@ -112,7 +112,7 @@ final class Application {
 
     private static FirebaseClient firebaseClient() {
         FirebaseCredentials credentials =
-                FirebaseCredentials.fromGoogleCredentials(serviceAccountCredential());
+                FirebaseCredentials.fromGoogleCredentials(serviceAccountCredentials());
 
         FirebaseOptions options = FirebaseOptions
                 .builder()
@@ -125,8 +125,8 @@ final class Application {
         return client;
     }
 
-    private static
-    FirebaseQueryBridge newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
+    private static FirebaseQueryBridge newQueryBridge(QueryService queryService,
+                                                      FirebaseClient firebaseClient) {
         return FirebaseQueryBridge
                 .newBuilder()
                 .setQueryService(queryService)

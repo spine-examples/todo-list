@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.auth.oauth2.GoogleCredentials;
 import io.spine.server.DeploymentType;
 import io.spine.server.ServerEnvironment;
@@ -50,33 +49,7 @@ final class GoogleAuth {
      * Otherwise, reads and returns the service account credential from
      * the {@code service-account.json} resource.
      *
-     * @see #serviceAccountCredentials() for an alternative API for the same credential
-     */
-    static GoogleCredential serviceAccountCredential() {
-        if (deploymentType() == APPENGINE_CLOUD) {
-            return propagateIoErrors(GoogleCredential::getApplicationDefault);
-        } else {
-            String credentialsResource = Configuration.instance()
-                                                      .serviceAccCredentialsResource();
-            InputStream inputStream =
-                    readResource(credentialsResource);
-            GoogleCredential credential = propagateIoErrors(
-                    () -> GoogleCredential.fromStream(inputStream)
-            );
-            return credential;
-        }
-    }
-
-    /**
-     * Obtains the service account credential.
-     *
-     * <p>When running under AppEngine, returns the default service account of this application.
-     * Otherwise, reads and returns the service account credential from
-     * the {@code service-account.json} resource.
-     *
      * <p>This credential is used for accessing the GCP APIs, such as the Could Datastore API.
-     *
-     * @see #serviceAccountCredential() for an alternative API for the same credential
      */
     static GoogleCredentials serviceAccountCredentials() {
         if (deploymentType() == APPENGINE_CLOUD) {
