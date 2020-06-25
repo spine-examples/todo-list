@@ -19,13 +19,14 @@
  */
 
 
-final def SPINE_VERSION = '1.5.0'
+final def SPINE_VERSION = '1.5.21'
+final def SPINE_WEB_VERSION = '1.5.24'
 
 final def versions = [
         checkerFramework : "3.2.0",
         errorProne       : "2.3.4",
         errorProneJavac  : "9+181-r4173-1", // taken from here: https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
-        errorPronePlugin : "1.1.1",
+        errorPronePlugin : "1.2.1",
         pmd              : "6.21.0",
         checkstyle       : "8.28",
         protobufPlugin   : "0.8.11",
@@ -54,12 +55,12 @@ final def versions = [
         cloudSqlSocketFactory : '1.0.4',
 
         // Versions of Google APIs Client libraries.
-        googleApiClient  : '1.25.0',
+        googleApiClient  : '1.30.9',
 
         // Spine components versions.
         spineBase        : SPINE_VERSION,
         spineCore        : SPINE_VERSION,
-        spineWeb         : SPINE_VERSION,
+        spineWeb         : SPINE_WEB_VERSION,
         spineJdbc        : SPINE_VERSION,
         spineGcloud      : SPINE_VERSION
 ]
