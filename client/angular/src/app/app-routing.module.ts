@@ -31,22 +31,22 @@ const routes: Routes = [
   // todo everything statically into the main module.
   {
     path: 'tasks',
-    loadChildren: 'app/task-list/task-list.module#TaskListModule'
+    loadChildren: () => import('app/task-list/task-list.module').then(m => m.TaskListModule)
   },
 
   {
     path: 'labels',
-    loadChildren: 'app/labels/labels.module#LabelsModule'
+    loadChildren: () => import('app/labels/labels.module').then(m => m.LabelsModule)
   },
 
   {
     path: 'wizard',
-    loadChildren: 'app/task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
+    loadChildren: () => import('app/task-creation-wizard/task-creation-wizard.module').then(m => m.TaskCreationWizardModule)
   },
 
   {
     path: '**',
-    loadChildren: 'app/page-404/page-404.module#Page404Module'
+    loadChildren: () => import('app/page-404/page-404.module').then(m => m.Page404Module)
   }
 ];
 

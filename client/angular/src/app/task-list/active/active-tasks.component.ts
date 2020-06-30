@@ -46,13 +46,13 @@ export class ActiveTasksComponent implements OnInit {
 
   createBasicTaskForms: FormGroup;
 
-  @ViewChild('urgentList')
+  @ViewChild('urgentList', { static: true })
   private urgentList: TaskListComponent;
 
-  @ViewChild('normalList')
+  @ViewChild('normalList', { static: true })
   private normalList: TaskListComponent;
 
-  @ViewChild('lowList')
+  @ViewChild('lowList', { static: true })
   private lowList: TaskListComponent;
 
   activeFilter: (t: TaskView) => boolean =

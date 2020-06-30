@@ -79,19 +79,19 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    *
    * Visible for testing.
    */
-  @ViewChild(MatStepper)
+  @ViewChild(MatStepper, { static: true })
   stepper: MatStepper;
 
   /** Visible for testing. */
-  @ViewChild(TaskDefinitionComponent)
+  @ViewChild(TaskDefinitionComponent, { static: true })
   taskDefinition: TaskDefinitionComponent;
 
   /** Visible for testing. */
-  @ViewChild(LabelAssignmentComponent)
+  @ViewChild(LabelAssignmentComponent, { static: true })
   labelAssignment: LabelAssignmentComponent;
 
   /** Visible for testing. */
-  @ViewChild(ConfirmationComponent)
+  @ViewChild(ConfirmationComponent, { static: true })
   confirmation: ConfirmationComponent;
 
   @ViewChild(ErrorViewport)
