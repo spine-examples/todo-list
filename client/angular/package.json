@@ -21,6 +21,7 @@
     "@angular/compiler": "^9.1.11",
     "@angular/core": "^9.1.11",
     "@angular/fire": "latest",
+    "@angular/flex-layout": "^7.0.0-beta.24",
     "@angular/forms": "^9.1.11",
     "@angular/material": "^7.3.7",
     "@angular/material-moment-adapter": "^7.3.7",
