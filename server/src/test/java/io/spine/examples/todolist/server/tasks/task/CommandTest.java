@@ -28,7 +28,7 @@ import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.command.SkipLabels;
 import io.spine.examples.todolist.tasks.command.StartTaskCreation;
 import io.spine.examples.todolist.tasks.command.UpdateTaskDetails;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
+import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -36,13 +36,13 @@ import org.junit.jupiter.api.BeforeEach;
  */
 abstract class CommandTest {
 
-    private BlackBoxBoundedContext<?> context;
+    private BlackBoxContext context;
     private TaskId taskId;
     private TaskCreationId processId;
 
     @BeforeEach
     void setUp() {
-        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
+        context = BlackBoxContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
         processId = TaskCreationId.generate();
     }
@@ -81,7 +81,7 @@ abstract class CommandTest {
         context.receivesCommand(cmd);
     }
 
-    BlackBoxBoundedContext<?> context() {
+    BlackBoxContext context() {
         return context;
     }
 

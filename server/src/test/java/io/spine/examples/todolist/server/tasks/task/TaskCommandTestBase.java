@@ -24,7 +24,7 @@ import io.spine.base.CommandMessage;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.view.TaskView;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
+import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -37,17 +37,17 @@ import org.junit.jupiter.api.BeforeEach;
  */
 class TaskCommandTestBase {
 
-    private BlackBoxBoundedContext<?> context;
+    private BlackBoxContext context;
     private TaskId taskId;
 
     @BeforeEach
     void setUp() {
-        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
+        context = BlackBoxContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
     }
 
     /** Obtains an instance of bounded context that is used during the test. */
-    BlackBoxBoundedContext<?> context() {
+    BlackBoxContext context() {
         return context;
     }
 
@@ -72,7 +72,7 @@ class TaskCommandTestBase {
         for (CommandMessage command : commandMessages) {
             context().receivesCommand(command);
         }
-        context.assertEntity(TaskViewProjection.class, taskId)
+        context.assertEntity(taskId, TaskViewProjection.class)
                .hasStateThat()
                .comparingExpectedFieldsOnly()
                .isEqualTo(expected);

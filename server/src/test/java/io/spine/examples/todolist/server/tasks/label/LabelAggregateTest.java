@@ -30,7 +30,7 @@ import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
 import io.spine.examples.todolist.tasks.event.LabelCreated;
 import io.spine.examples.todolist.tasks.event.LabelDetailsUpdated;
 import io.spine.examples.todolist.tasks.rejection.Rejections;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
+import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,11 +42,11 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.update
 @DisplayName("LabelAggregate should")
 class LabelAggregateTest {
 
-    private BlackBoxBoundedContext<?> context;
+    private BlackBoxContext context;
 
     @BeforeEach
     void setUp() {
-        context = BlackBoxBoundedContext.from(TasksContextFactory.builder());
+        context = BlackBoxContext.from(TasksContextFactory.builder());
     }
 
     @Nested
@@ -76,7 +76,7 @@ class LabelAggregateTest {
                     .build();
 
             context.receivesCommand(createLabel)
-                   .assertEntity(LabelAggregate.class, labelId)
+                   .assertEntity(labelId, LabelAggregate.class)
                    .hasStateThat()
                    .comparingExpectedFieldsOnly()
                    .isEqualTo(expected);
@@ -122,7 +122,7 @@ class LabelAggregateTest {
             context.receivesCommand(createLabel)
                    .receivesCommand(firstUpdate)
                    .receivesCommand(secondUpdate)
-                   .assertEntity(LabelAggregate.class, labelId)
+                   .assertEntity(labelId, LabelAggregate.class)
                    .hasStateThat()
                    .isEqualTo(expected);
         }

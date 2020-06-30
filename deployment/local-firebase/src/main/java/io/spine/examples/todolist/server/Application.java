@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.base.Production;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -61,8 +62,8 @@ final class Application {
 
     private static Application create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(InMemoryStorageFactory.newInstance());
-        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class);
+        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = TasksContextFactory.create();
         CommandService commandService = CommandService

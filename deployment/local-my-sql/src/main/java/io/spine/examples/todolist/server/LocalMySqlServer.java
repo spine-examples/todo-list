@@ -25,6 +25,8 @@ import com.google.common.flogger.FluentLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
+import io.spine.base.Production;
+import io.spine.base.Tests;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
@@ -77,8 +79,8 @@ public class LocalMySqlServer {
         String[] actualArguments = actualArgumentsFrom(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(createStorageFactory(actualArguments));
-        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+        serverEnvironment.use(createStorageFactory(actualArguments), Production.class);
+        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
@@ -139,14 +141,14 @@ public class LocalMySqlServer {
      *
      * <p>The value will be obtained from the {@link #properties}.
      *
-     * <p>If the {@link Environment#isTests() environment} is tests,
-     * the method returns prefix for connection to an in-memory database.
+     * <p>If the environment is {@linkplain Tests tests}, the method returns prefix for connection
+     * to an in-memory database.
      *
      * @return the prefix for a connection {@code URL}
      */
     private static String dbUrlPrefix() {
         Environment environment = Environment.instance();
-        String prefix = environment.isTests()
+        String prefix = environment.is(Tests.class)
                         ? "jdbc:h2:mem:"
                         : properties.getProperty("db.prefix");
         return prefix;

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.base.Production;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
@@ -45,8 +46,8 @@ public final class LocalInMemoryServer {
 
     public static void main(String[] args) throws IOException {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.configureStorage(InMemoryStorageFactory.newInstance());
-        serverEnvironment.configureTransport(InMemoryTransportFactory.newInstance());
+        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class);
+        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
 
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
         server.start();
