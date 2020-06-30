@@ -20,7 +20,7 @@
 
 import {Location} from '@angular/common';
 import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {MatStepper} from '@angular/material';
+import {MatStepper} from '@angular/material/stepper';
 import {ActivatedRoute} from '@angular/router';
 
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';

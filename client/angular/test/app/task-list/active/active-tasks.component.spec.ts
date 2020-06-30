@@ -21,7 +21,7 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material';
+import { MatInputModule } from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';

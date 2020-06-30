@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable, OnDestroy} from '@angular/core';
+import {Inject, Injectable, OnDestroy} from '@angular/core';
 import {Client} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
@@ -58,7 +58,7 @@ export class TaskService implements OnDestroy {
    * @param notificationService a service that notifies users about events that happen in
    * the application
    */
-  constructor(private spineWebClient: Client, private notificationService: NotificationService) {
+  constructor(@Inject(Client) private spineWebClient: Client, private notificationService: NotificationService) {
   }
 
   /**
@@ -210,10 +210,10 @@ export class TaskService implements OnDestroy {
     const onSuccess = () => this.removeFromOptimisticallyChanged(taskId);
     const onError = err => this.recoverPreviousState(err, taskId);
     this.spineWebClient.command(cmd)
-                       .onOk(onSuccess)
-                       .onError(onError)
-                       .onRejection(onError)
-                       .post();
+        .onOk(onSuccess)
+        .onError(onError)
+        .onRejection(onError)
+        .post();
   }
 
   /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */
@@ -286,10 +286,10 @@ export class TaskService implements OnDestroy {
         }
       };
       this.spineWebClient.select(TaskView)
-                         .byId(id)
-                         .run()
-                         .then(tasks => dataCallback(tasks))
-                         .catch(err => reject(err));
+          .byId(id)
+          .run()
+          .then(tasks => dataCallback(tasks))
+          .catch(err => reject(err));
     });
   }
 
@@ -357,7 +357,8 @@ export class TaskService implements OnDestroy {
       if (!taskView) {
         return;
       }
-      const index = this.tasks.findIndex(taskView);
+
+      const index = this.tasks.findIndex(t => t.getId().getUuid() === taskView.getId().getUuid());
       const presentItems: TaskView[] = this.tasks.slice();
       if (index > -1) {
         presentItems[index] = taskView;
