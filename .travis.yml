@@ -15,9 +15,13 @@ jobs:
     #
     - stage: Unit and Integration Tests
       language: java
+      env:
+        - NODE_VERSION="12.18.2"
+
       jdk:
         - openjdk8
       before_install:
+        - nvm install $NODE_VERSION
         # Upgrade the `npm` version shipped with Travis to the latest.
         - npm install -g npm@latest
         - chmod +x gradlew
