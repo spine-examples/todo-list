@@ -50,10 +50,10 @@ import static java.lang.String.format;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- *     <li>Install {@code gcloud} tool.</li>
- *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
- *     <li>Create a Cloud SQL instance.</li>
- *     <li>Create a database.</li>
+ * <li>Install {@code gcloud} tool.</li>
+ * <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
+ * <li>Create a Cloud SQL instance.</li>
+ * <li>Create a database.</li>
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
@@ -89,8 +89,8 @@ public class LocalCloudSqlServer {
         String[] actualArguments = actualArgumentsFrom(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(actualArguments), Production.class);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
+        serverEnvironment.use(createStorageFactory(actualArguments), Production.class)
+                         .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);

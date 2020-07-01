@@ -70,8 +70,8 @@ public class ComputeCloudSqlServer {
 
     public static void main(String[] args) throws IOException {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(), Production.class);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
+        serverEnvironment.use(createStorageFactory(), Production.class)
+                         .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);

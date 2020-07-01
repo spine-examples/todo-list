@@ -79,8 +79,8 @@ public class LocalMySqlServer {
         String[] actualArguments = actualArgumentsFrom(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(actualArguments), Production.class);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
+        serverEnvironment.use(createStorageFactory(actualArguments), Production.class)
+                         .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);

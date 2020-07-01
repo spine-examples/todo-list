@@ -70,9 +70,9 @@ final class Application {
 
     private static Application create() {
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(Tracing.createTracing(), Production.class);
-        serverEnvironment.use(Storage.createStorage(), Production.class);
-        serverEnvironment.use(InMemoryTransportFactory.newInstance(), Production.class);
+        serverEnvironment.use(Tracing.createTracing(), Production.class)
+                         .use(Storage.createStorage(), Production.class)
+                         .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();
