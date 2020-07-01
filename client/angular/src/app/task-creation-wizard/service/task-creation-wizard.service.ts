@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskService} from 'app/task-service/task.service';
@@ -59,7 +59,7 @@ export class TaskCreationWizard {
   private _taskDueDate: Timestamp;
   private _taskLabels: LabelId[];
 
-  constructor(private readonly spineWebClient: Client,
+  constructor(@Inject(Client) private readonly spineWebClient: Client,
               private readonly taskService: TaskService) {
   }
 
@@ -109,10 +109,10 @@ export class TaskCreationWizard {
     }
     const updateTask = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-                           .onOk(resolve)
-                           .onError(reject)
-                           .onRejection(reject)
-                           .post()
+            .onOk(resolve)
+            .onError(reject)
+            .onRejection(reject)
+            .post()
     );
     return updateTask.then(() => {
       this._taskDescription = description;
@@ -143,10 +143,10 @@ export class TaskCreationWizard {
 
     const addLabels = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-                           .onOk(resolve)
-                           .onError(reject)
-                           .onRejection(reject)
-                           .post()
+            .onOk(resolve)
+            .onError(reject)
+            .onRejection(reject)
+            .post()
     );
     return addLabels.then(() => {
       this._taskLabels = labelIds;
@@ -162,10 +162,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const skipLabels = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-                           .onOk(resolve)
-                           .onError(reject)
-                           .onRejection(reject)
-                           .post()
+            .onOk(resolve)
+            .onError(reject)
+            .onRejection(reject)
+            .post()
     );
     return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
   }
@@ -178,10 +178,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const completeProcess = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-                           .onOk(resolve)
-                           .onError(reject)
-                           .onRejection(reject)
-                           .post()
+            .onOk(resolve)
+            .onError(reject)
+            .onRejection(reject)
+            .post()
     );
     return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
   }
@@ -194,10 +194,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const cancelProcess = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-                           .onOk(resolve)
-                           .onError(reject)
-                           .onRejection(reject)
-                           .post()
+            .onOk(resolve)
+            .onError(reject)
+            .onRejection(reject)
+            .post()
     );
     return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
   }
@@ -221,10 +221,10 @@ export class TaskCreationWizard {
             resolve();
           };
           this.spineWebClient.command(cmd)
-                             .onOk(startProcess)
-                             .onError(reject)
-                             .onRejection(reject)
-                             .post();
+              .onOk(startProcess)
+              .onError(reject)
+              .onRejection(reject)
+              .post();
         }
     );
   }

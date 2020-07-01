@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
@@ -35,7 +35,7 @@ export class LabelService {
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
-  constructor(private readonly spineWebClient: Client) {
+  constructor(@Inject(Client) private readonly spineWebClient: Client) {
   }
 
   /**
@@ -48,10 +48,10 @@ export class LabelService {
       cmd.setLabelId(id);
       cmd.setLabelTitle('TestLabel');
       this.spineWebClient.command(cmd)
-                         .onOk(resolve)
-                         .onError(reject)
-                         .onRejection(reject)
-                         .post();
+          .onOk(resolve)
+          .onError(reject)
+          .onRejection(reject)
+          .post();
     });
   }
 
@@ -77,10 +77,10 @@ export class LabelService {
             }
           };
           this.spineWebClient.select(LabelView)
-                             .byId(labelId)
-                             .run()
-                             .then(labels => dataCallback(labels))
-                             .catch(err => reject(err));
+              .byId(labelId)
+              .run()
+              .then(labels => dataCallback(labels))
+              .catch(err => reject(err));
         }
     );
   }

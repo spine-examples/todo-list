@@ -242,20 +242,17 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   isLastStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const lastStage = keys.sort()[keys.length - 1];
-    console.log(keys.sort());
     return this.currentStageIs(stage => stage === lastStage);
   }
 
   isFirstStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const firstStage = keys.sort()[0];
-    console.log(keys.sort());
     return this.currentStageIs(stage => stage === firstStage);
   }
 
   private currentStageIs(predicate: (stage: number) => boolean): boolean {
     const currentStage = this.wizard.stage;
-    console.log(currentStage + 'current');
     return predicate(currentStage);
   }
 }
