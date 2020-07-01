@@ -95,6 +95,9 @@ export class TaskCreationWizard {
     if (!description) {
       return Promise.reject('Description value must be set.');
     }
+    if (!TaskCreationWizard.descriptionIsValid(description)) {
+      return Promise.reject(`Task description must be at least 3 alphanumeric characters.`);
+    }
     if (dueDate && dueDate.toDate() < new Date()) {
       return Promise.reject(
           `Task due date is allowed starting from tomorrow, specified date: ${dueDate.toDate()}`
@@ -313,6 +316,13 @@ export class TaskCreationWizard {
       cmd.setDueDateChange(dueDateChange);
     }
     return cmd;
+  }
+
+  // tslint:disable-next-line:member-ordering
+  private static descriptionIsValid(description: TaskDescription): boolean {
+    const stringValue: string = description.getValue().trim();
+    const atLeastThreeAlphanumeric = '(.*?[a-zA-Z0-9]){3,}.*';
+    return !!stringValue.match(atLeastThreeAlphanumeric);
   }
 
   get id(): TaskCreationId {
