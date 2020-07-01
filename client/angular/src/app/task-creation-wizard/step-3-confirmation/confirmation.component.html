@@ -25,6 +25,6 @@
     with a priority: <i>'{{wizard.taskPriority | taskPriorityName}}'</i>
 </p>
 <p *ngIf="wizard.taskDueDate" class="mat-h3">
-    with a due date: <i>'{{wizard.taskDueDate | moment}}'</i>
+    with a due date: <i>'{{wizard.taskDueDate.toDate() | date: 'dd-MM-yyyy'}}'</i>
 </p>
 <app-error-viewport></app-error-viewport>

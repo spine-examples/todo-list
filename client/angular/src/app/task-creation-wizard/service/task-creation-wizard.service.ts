@@ -206,7 +206,7 @@ export class TaskCreationWizard {
   }
 
   /**
-   * Starts the task creation process "from scracth", creating a new process manager instance and a
+   * Starts the task creation process "from scratch", creating a new process manager instance and a
    * new task draft on the server side.
    */
   private start(): Promise<void> {
@@ -261,7 +261,11 @@ export class TaskCreationWizard {
           resolve(taskCreationProcesses[0]);
         }
       };
-      this.spineWebClient.fetch({entity: TaskCreation, byIds: [this._id]})
+      const query = this.spineWebClient.newQuery()
+          .select(TaskCreation)
+          .byIds([this._id])
+          .build();
+      this.spineWebClient.read(query)
           .then(taskCreationProcesses => dataCallback(taskCreationProcesses))
           .catch(err => reject(err));
     });
