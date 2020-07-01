@@ -20,6 +20,7 @@
 
 import {Pipe, PipeTransform} from '@angular/core';
 import {TaskView} from 'proto/todolist/views_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 
 /**
  * Given a `TaskView`, obtains a string representation of its due date in a human-readable format.
@@ -31,9 +32,19 @@ import {TaskView} from 'proto/todolist/views_pb';
 })
 export class TaskDueDatePipe implements PipeTransform {
 
-  transform(value: TaskView): string {
-    const dueDate = value.getDueDate();
+  static dueDateMissing(taskView: TaskView): boolean {
+    const dueDate = taskView.getDueDate();
     if (!dueDate) {
+      return true;
+    } else {
+      const defaultDate = new Timestamp();
+      return dueDate.toDate().getTime() === defaultDate.toDate().getTime();
+    }
+  }
+
+  transform(taskView: TaskView): string {
+    const dueDate = taskView.getDueDate();
+    if (TaskDueDatePipe.dueDateMissing(taskView)) {
       return 'No due date';
     }
     const date = new Date(0);
