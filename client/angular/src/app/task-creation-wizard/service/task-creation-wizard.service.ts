@@ -322,6 +322,7 @@ export class TaskCreationWizard {
     return cmd;
   }
 
+  // This utility method should not appear above the public API methods.
   // tslint:disable-next-line:member-ordering
   private static descriptionIsValid(description: TaskDescription): boolean {
     const stringValue: string = description.getValue().trim();
