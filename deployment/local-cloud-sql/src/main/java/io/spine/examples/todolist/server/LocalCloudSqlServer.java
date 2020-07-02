@@ -50,10 +50,10 @@ import static java.lang.String.format;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- * <li>Install {@code gcloud} tool.</li>
- * <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
- * <li>Create a Cloud SQL instance.</li>
- * <li>Create a database.</li>
+ *     <li>Install {@code gcloud} tool.</li>
+ *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
+ *     <li>Create a Cloud SQL instance.</li>
+ *     <li>Create a database.</li>
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
