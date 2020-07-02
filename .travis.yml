@@ -16,6 +16,7 @@ jobs:
     - stage: Unit and Integration Tests
       language: java
       env:
+        - # LTS Node version. Required to build the Angular client.
         - NODE_VERSION="12.18.2"
 
       jdk:
