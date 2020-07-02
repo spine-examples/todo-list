@@ -125,8 +125,8 @@ final class Application {
         return client;
     }
 
-    private static FirebaseQueryBridge newQueryBridge(QueryService queryService,
-                                                      FirebaseClient firebaseClient) {
+    private static FirebaseQueryBridge
+    newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
         return FirebaseQueryBridge
                 .newBuilder()
                 .setQueryService(queryService)
