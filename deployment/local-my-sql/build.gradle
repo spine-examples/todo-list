@@ -20,9 +20,6 @@
 
 dependencies {
     implementation(
-            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-            "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
-            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
             project(path: ':server'),
             project(path: ':rdbms-common')
     )

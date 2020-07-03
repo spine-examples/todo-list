@@ -20,9 +20,6 @@
 
 dependencies {
     implementation(
-            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
-            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-            "com.google.cloud.sql:mysql-socket-factory:$deps.versions.cloudSqlSocketFactory",
             project(path: ':server'),
             project(path: ':rdbms-common')
     )
