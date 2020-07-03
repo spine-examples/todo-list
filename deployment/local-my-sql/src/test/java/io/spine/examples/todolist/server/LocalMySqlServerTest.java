@@ -20,18 +20,20 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.truth.StringSubject;
+import com.google.common.truth.Truth;
+import io.spine.examples.todolist.DbCredentials;
+import io.spine.examples.todolist.rdbms.DbProperties;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Stream;
+
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.server.LocalMySqlServer.createContext;
-import static io.spine.examples.todolist.server.LocalMySqlServer.actualArgumentsFrom;
-import static io.spine.examples.todolist.server.LocalMySqlServer.defaultArguments;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("LocalMySqlServer should")
 class LocalMySqlServerTest {
@@ -43,22 +45,33 @@ class LocalMySqlServerTest {
     }
 
     @Test
-    @DisplayName("return default arguments on invalid custom arguments")
+    @DisplayName("assemble DB properties from resources if command line args are insufficient")
     void returnDefaultArguments() {
-        String[] customArguments = {"firstArg", "secondArg"};
-        assertNotEquals(customArguments.length, defaultArguments().length);
+        String[] insufficientCmdArgs = {"dbName", "username"};
 
-        String[] actualArguments = actualArgumentsFrom(customArguments);
-        assertArrayEquals(defaultArguments(), actualArguments);
+        DbProperties properties = LocalMySqlServer.properties(insufficientCmdArgs);
+        DbCredentials credentials = properties.credentials();
+        Stream.of(properties.dbName(),
+                  credentials.getUsername(),
+                  credentials.getPassword())
+              .map(Truth::assertThat)
+              .forEach(StringSubject::isNotEmpty);
     }
 
     @Test
-    @DisplayName("return specified arguments if match length requirements")
-    void returnSpecifiedArguments() {
-        int requiredLength = defaultArguments().length;
-        String[] customArguments = new String[requiredLength];
-        String[] actualArguments = actualArgumentsFrom(customArguments);
-        assertEquals(customArguments, actualArguments);
+    @DisplayName("use the DB properties specified as command line args")
+    void useCmdArgsAsDbProps() {
+        final String dbName = "myDb";
+        final String username = "admin";
+        final String password = username + "123";
+
+        String[] customProperties = {dbName, username, password};
+
+        DbProperties properties = LocalMySqlServer.properties(customProperties);
+        DbCredentials credentials = properties.credentials();
+        assertThat(properties.dbName()).isEqualTo(dbName);
+        assertThat(credentials.getUsername()).isEqualTo(username);
+        assertThat(credentials.getPassword()).isEqualTo(password);
     }
 
     @Test

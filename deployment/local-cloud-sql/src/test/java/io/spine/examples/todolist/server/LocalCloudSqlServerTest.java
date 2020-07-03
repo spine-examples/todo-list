@@ -20,18 +20,19 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.truth.StringSubject;
+import com.google.common.truth.Truth;
+import io.spine.examples.todolist.rdbms.DbProperties;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Stream;
+
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.server.LocalCloudSqlServer.createContext;
-import static io.spine.examples.todolist.server.LocalCloudSqlServer.defaultArguments;
-import static io.spine.examples.todolist.server.LocalCloudSqlServer.actualArgumentsFrom;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("LocalCloudSqlServer should")
 class LocalCloudSqlServerTest {
@@ -43,22 +44,38 @@ class LocalCloudSqlServerTest {
     }
 
     @Test
-    @DisplayName("return default arguments on invalid custom arguments")
-    void returnDefaultArguments() {
-        String[] customArguments = {"firstArg", "secondArg"};
-        assertNotEquals(customArguments.length, defaultArguments().length);
+    @DisplayName("assemble DB properties from resources if command line args are insufficient")
+    void assemblePropsFromResources() {
+        String[] insufficientCmdArgs = {"dbName", "username"};
 
-        String[] actualArguments = actualArgumentsFrom(customArguments);
-        assertArrayEquals(defaultArguments(), actualArguments);
+        DbProperties properties = LocalCloudSqlServer.properties(insufficientCmdArgs);
+        Stream.of(properties.dbName(),
+                  properties.credentials()
+                            .getUsername(),
+                  properties.credentials()
+                            .getPassword(),
+                  properties.instanceName())
+              .map(Truth::assertThat)
+              .forEach(StringSubject::isNotEmpty);
     }
 
     @Test
-    @DisplayName("return specified arguments if match length requirements")
-    void returnSpecifiedArguments() {
-        int requiredLength = defaultArguments().length;
-        String[] customArguments = new String[requiredLength];
-        String[] actualArguments = actualArgumentsFrom(customArguments);
-        assertEquals(customArguments, actualArguments);
+    @DisplayName("use the DB properties specified as command line args")
+    void useCmdArgsAsDbProps() {
+        final String dbInstance = "instance_1";
+        final String dbName = "myDb";
+        final String username = "admin";
+        final String password = username + "123";
+
+        String[] customProperties = {dbInstance, dbName, username, password};
+
+        DbProperties properties = LocalCloudSqlServer.properties(customProperties);
+        assertThat(properties.dbName()).isEqualTo(dbName);
+        assertThat(properties.credentials()
+                             .getUsername()).isEqualTo(username);
+        assertThat(properties.credentials()
+                             .getPassword()).isEqualTo(password);
+        assertThat(properties.instanceName()).isEqualTo(dbInstance);
     }
 
     @Test
