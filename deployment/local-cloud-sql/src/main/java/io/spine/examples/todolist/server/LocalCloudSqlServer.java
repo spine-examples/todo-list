@@ -53,8 +53,7 @@ import static io.spine.examples.todolist.server.Server.newServer;
  * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
- * {@linkplain #defaultArguments() default arguments} will be used.
- * The arguments are stored in the properties file {@code cloud-sql.properties}.
+ * a configuration from resources is going to be used instead, see {@code cloud-sql.properties}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.

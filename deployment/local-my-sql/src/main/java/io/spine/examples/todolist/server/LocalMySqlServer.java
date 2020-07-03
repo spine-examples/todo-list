@@ -46,8 +46,8 @@ import static java.lang.String.format;
  * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
- * {@linkplain #defaultArguments() default arguments} will be used.
- * The arguments are stored in the properties file {@code jdbc-storage.properties}.
+ * a configuration file from resources is going to be used instead, see
+ * {@code jdbc-storage.properties}.
  *
  * <p>As the server uses {@code MySQL}, the database with the specified name should be created
  * and the username and password should be correct.
