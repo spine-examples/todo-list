@@ -48,10 +48,10 @@ export class LabelService {
       cmd.setLabelId(id);
       cmd.setLabelTitle('TestLabel');
       this.spineWebClient.command(cmd)
-          .onOk(resolve)
-          .onError(reject)
-          .onRejection(reject)
-          .post();
+                         .onOk(resolve)
+                         .onError(reject)
+                         .onRejection(reject)
+                         .post();
     });
   }
 
@@ -77,10 +77,10 @@ export class LabelService {
             }
           };
           this.spineWebClient.select(LabelView)
-              .byId(labelId)
-              .run()
-              .then(labels => dataCallback(labels))
-              .catch(err => reject(err));
+                             .byId(labelId)
+                             .run()
+                             .then(labels => dataCallback(labels))
+                             .catch(err => reject(err));
         }
     );
   }

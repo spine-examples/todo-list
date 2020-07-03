@@ -210,10 +210,10 @@ export class TaskService implements OnDestroy {
     const onSuccess = () => this.removeFromOptimisticallyChanged(taskId);
     const onError = err => this.recoverPreviousState(err, taskId);
     this.spineWebClient.command(cmd)
-        .onOk(onSuccess)
-        .onError(onError)
-        .onRejection(onError)
-        .post();
+                       .onOk(onSuccess)
+                       .onError(onError)
+                       .onRejection(onError)
+                       .post();
   }
 
   /** Updates the `optimisticallyChanged` list by removing the state with the specified ID. */
@@ -286,10 +286,10 @@ export class TaskService implements OnDestroy {
         }
       };
       this.spineWebClient.select(TaskView)
-          .byId(id)
-          .run()
-          .then(tasks => dataCallback(tasks))
-          .catch(err => reject(err));
+                         .byId(id)
+                         .run()
+                         .then(tasks => dataCallback(tasks))
+                         .catch(err => reject(err));
     });
   }
 

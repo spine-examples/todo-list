@@ -112,10 +112,10 @@ export class TaskCreationWizard {
     }
     const updateTask = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-            .onOk(resolve)
-            .onError(reject)
-            .onRejection(reject)
-            .post()
+                           .onOk(resolve)
+                           .onError(reject)
+                           .onRejection(reject)
+                           .post()
     );
     return updateTask.then(() => {
       this._taskDescription = description;
@@ -146,10 +146,10 @@ export class TaskCreationWizard {
 
     const addLabels = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-            .onOk(resolve)
-            .onError(reject)
-            .onRejection(reject)
-            .post()
+                           .onOk(resolve)
+                           .onError(reject)
+                           .onRejection(reject)
+                           .post()
     );
     return addLabels.then(() => {
       this._taskLabels = labelIds;
@@ -165,10 +165,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const skipLabels = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-            .onOk(resolve)
-            .onError(reject)
-            .onRejection(reject)
-            .post()
+                           .onOk(resolve)
+                           .onError(reject)
+                           .onRejection(reject)
+                           .post()
     );
     return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
   }
@@ -181,10 +181,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const completeProcess = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-            .onOk(resolve)
-            .onError(reject)
-            .onRejection(reject)
-            .post()
+                           .onOk(resolve)
+                           .onError(reject)
+                           .onRejection(reject)
+                           .post()
     );
     return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
   }
@@ -197,10 +197,10 @@ export class TaskCreationWizard {
     cmd.setId(this._id);
     const cancelProcess = new Promise<void>((resolve, reject) =>
         this.spineWebClient.command(cmd)
-            .onOk(resolve)
-            .onError(reject)
-            .onRejection(reject)
-            .post()
+                           .onOk(resolve)
+                           .onError(reject)
+                           .onRejection(reject)
+                           .post()
     );
     return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
   }
@@ -224,10 +224,10 @@ export class TaskCreationWizard {
             resolve();
           };
           this.spineWebClient.command(cmd)
-              .onOk(startProcess)
-              .onError(reject)
-              .onRejection(reject)
-              .post();
+                             .onOk(startProcess)
+                             .onError(reject)
+                             .onRejection(reject)
+                             .post();
         }
     );
   }
@@ -262,9 +262,9 @@ export class TaskCreationWizard {
         }
       };
       const query = this.spineWebClient.newQuery()
-          .select(TaskCreation)
-          .byIds([this._id])
-          .build();
+                                       .select(TaskCreation)
+                                       .byIds([this._id])
+                                       .build();
       this.spineWebClient.read(query)
           .then(taskCreationProcesses => dataCallback(taskCreationProcesses))
           .catch(err => reject(err));
