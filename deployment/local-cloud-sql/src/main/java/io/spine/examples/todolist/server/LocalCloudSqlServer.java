@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
+import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.CloudSqlServers;
 import io.spine.examples.todolist.rdbms.DbProperties;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
@@ -99,8 +100,8 @@ public class LocalCloudSqlServer {
 
     private static StorageFactory createStorageFactory(DbProperties props) {
         String dbUrl = CloudSqlServers.dbUrl(props);
-        RdbmsStorageFactorySupplier supplier =
-                new RdbmsStorageFactorySupplier(dbUrl, props.username(), props.password());
+        DbCredentials credentials = props.credentials();
+        RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, credentials);
         return supplier.get();
     }
 

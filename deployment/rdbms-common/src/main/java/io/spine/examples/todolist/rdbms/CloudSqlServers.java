@@ -20,7 +20,14 @@
 
 package io.spine.examples.todolist.rdbms;
 
+/**
+ * A utility class that contains methods for working with Cloud SQL-backed servers.
+ */
 public final class CloudSqlServers {
+
+    /** Prevent instantiation of this utility class. */
+    private CloudSqlServers() {
+    }
 
     public static DbProperties propertiesFromResourceFile() {
         return DbProperties.fromResourceFile("cloud-sql.properties");
@@ -37,7 +44,7 @@ public final class CloudSqlServers {
                                       ".SocketFactory",
                               prefix(properties).toString(),
                               properties.dbName(),
-                              properties.dbInstance());
+                              properties.instanceName());
         return result;
     }
 }

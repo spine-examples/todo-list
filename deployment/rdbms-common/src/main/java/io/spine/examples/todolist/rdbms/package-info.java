@@ -18,31 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * This package contains functionality shared among modules that deploy the To-Do list backed
+ * by a SQL storage.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
 package io.spine.examples.todolist.rdbms;
 
-import io.spine.base.Environment;
-import io.spine.base.Tests;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-public final class DbUrlPrefix {
-
-    private final DbProperties properties;
-    private final String testValue;
-
-    public DbUrlPrefix(DbProperties properties, String value) {
-        this.properties = properties;
-        this.testValue = value;
-    }
-
-    public static DbUrlPrefix propsOrLocalH2(DbProperties properties) {
-        return new DbUrlPrefix(properties, "jdbc:h2:mem:");
-    }
-
-    @Override
-    public String toString() {
-        Environment environment = Environment.instance();
-        String result = environment.is(Tests.class)
-                        ? testValue
-                        : properties.connectionUrlPrefix();
-        return result;
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

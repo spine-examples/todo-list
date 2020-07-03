@@ -23,26 +23,27 @@ package io.spine.examples.todolist.rdbms;
 import com.google.common.flogger.FluentLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.spine.examples.todolist.DbCredentials;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 
 import javax.sql.DataSource;
 import java.util.function.Supplier;
 
-public class RdbmsStorageFactorySupplier implements Supplier<StorageFactory> {
+/**
+ * A supplier of the storage factory backed by a relational database.
+ */
+public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactory> {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private final String dbUrl;
-    private final String username;
-    private final String password;
+    private final DbCredentials dbCredentials;
 
     public RdbmsStorageFactorySupplier(String dbConnectionUrl,
-                                       String username,
-                                       String password) {
+                                       DbCredentials dbCredentials) {
         this.dbUrl = dbConnectionUrl;
-        this.username = username;
-        this.password = password;
+        this.dbCredentials = dbCredentials;
     }
 
     @Override
@@ -61,11 +62,11 @@ public class RdbmsStorageFactorySupplier implements Supplier<StorageFactory> {
         config.setJdbcUrl(dbUrl);
         info.log("JDBC URL: %s", dbUrl);
 
-        config.setUsername(username);
-        info.log("Username: %s", username);
+        config.setUsername(dbCredentials.getUsername());
+        info.log("Username: %s", dbCredentials.getUsername());
 
-        config.setPassword(password);
-        info.log("Password: %s", password);
+        config.setPassword(dbCredentials.getPassword());
+        info.log("Password: %s", dbCredentials.getPassword());
 
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;

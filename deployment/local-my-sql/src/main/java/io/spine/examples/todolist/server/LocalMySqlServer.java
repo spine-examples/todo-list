@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
+import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.DbProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
@@ -82,10 +83,10 @@ public final class LocalMySqlServer {
     static DbProperties properties(String[] args) {
         if (args.length == 3) {
             DbProperties result = DbProperties.newBuilder()
-                                             .setDbName(args[0])
-                                             .setUsername(args[1])
-                                             .setPassword(args[2])
-                                             .build();
+                                              .setDbName(args[0])
+                                              .setUsername(args[1])
+                                              .setPassword(args[2])
+                                              .build();
             return result;
         } else {
             return DB_PROPERTIES;
@@ -99,10 +100,8 @@ public final class LocalMySqlServer {
 
     private static StorageFactory createStorageFactory(DbProperties properties) {
         String dbUrl = format(DB_URL_FORMAT, URL_PREFIX.toString(), properties.dbName());
-
-        RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, properties.username(),
-                                                                               properties.password());
-
+        DbCredentials credentials = properties.credentials();
+        RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, credentials);
         return supplier.get();
     }
 }

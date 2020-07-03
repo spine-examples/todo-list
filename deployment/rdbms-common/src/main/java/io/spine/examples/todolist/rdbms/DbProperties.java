@@ -22,6 +22,7 @@ package io.spine.examples.todolist.rdbms;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import io.spine.examples.todolist.DbCredentials;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
+/**
+ * Properties for connecting to a database.
+ */
 public final class DbProperties {
 
     private static final String NAME = "db.name";
@@ -41,48 +45,71 @@ public final class DbProperties {
     private static final String PREFIX = "db.prefix";
     private static final String INSTANCE = "db.instance";
     private static final String USERNAME = "db.username";
+
     private final Map<String, String> properties;
 
     private DbProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
+    /**
+     * Tries to load the properties from a resource file with the specified name.
+     *
+     * <p>If there was an IO error reading the file, an {@code IllegalStateException} is thrown.
+     *
+     * @param fileName
+     *         name of the resource file with the DB properties
+     */
     public static DbProperties fromResourceFile(String fileName) {
         Properties properties = loadProperties(fileName);
         ImmutableMap<String, String> map = Maps.fromProperties(properties);
         return new DbProperties(map);
     }
 
+    /**
+     * Returns a new builder for manual composition of the DB options.
+     *
+     * @return a new builder instance
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /** Returns the name of the database. */
     public String dbName() {
         String result = value(NAME);
         return result;
     }
 
-    public String username() {
-        String result = value(USERNAME);
+    public DbCredentials credentials() {
+        String username = value(USERNAME);
+        String password = value(PASSWORD);
+
+        DbCredentials result = DbCredentials
+                .newBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .vBuild();
         return result;
     }
 
-    public String password() {
-        String result = value(PASSWORD);
-        return result;
-    }
-
-    public String dbPrefix() {
+    /** Returns a prefix for the DB connection URL. */
+    public String connectionUrlPrefix() {
         String result = value(PREFIX);
         return result;
     }
 
-    public String dbInstance() {
+    /**
+     * Returns the name of the instance to connect to.
+     *
+     * <p>Applicable to Cloud SQL databases only.
+     */
+    public String instanceName() {
         String result = value(INSTANCE);
         return result;
     }
 
-    public String value(String key) {
+    private String value(String key) {
         checkNotNull(key);
         return Optional.ofNullable(properties.get(key))
                        .orElseThrow(() -> newIllegalStateException(
@@ -101,39 +128,50 @@ public final class DbProperties {
         return properties;
     }
 
+    /**
+     * A builder of DB connection properties.
+     */
     public static class Builder {
+
         private final Map<String, String> properties = new HashMap<>(5);
 
+        /** Sets the database name to specified one. */
         public Builder setDbName(String name) {
             checkNotNull(name);
             properties.put(NAME, name);
             return this;
         }
 
+        /** Sets username to the to the specified one. */
         public Builder setUsername(String username) {
             checkNotNull(username);
             properties.put(USERNAME, username);
             return this;
         }
 
+        /** Sets the password to the specified one. */
         public Builder setPassword(String password) {
             checkNotNull(password);
             properties.put(PASSWORD, password);
             return this;
         }
 
+        /** Sets the connection URL prefix to the specified one. */
+        @SuppressWarnings("unused")
         public Builder setUrlPrefix(String urlPrefix) {
             checkNotNull(urlPrefix);
             properties.put(PREFIX, urlPrefix);
             return this;
         }
 
+        /** Sets the instance name to the specified one. */
         public Builder setInstanceName(String instanceName) {
             checkNotNull(instanceName);
             properties.put(INSTANCE, instanceName);
             return this;
         }
 
+        /** Returns a new instance of the DB properties. */
         public DbProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
             return new DbProperties(properties);

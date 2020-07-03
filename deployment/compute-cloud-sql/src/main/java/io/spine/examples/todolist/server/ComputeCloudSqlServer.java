@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
+import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.CloudSqlServers;
 import io.spine.examples.todolist.rdbms.DbProperties;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
@@ -70,11 +71,10 @@ public class ComputeCloudSqlServer {
         DbProperties properties = CloudSqlServers.propertiesFromResourceFile();
         String dbUrl = CloudSqlServers.dbUrl(properties);
 
-        String username = properties.username();
-        String password = properties.password();
+        DbCredentials credentials = properties.credentials();
+
         RdbmsStorageFactorySupplier storageFactory = new RdbmsStorageFactorySupplier(dbUrl,
-                                                                                     username,
-                                                                                     password);
+                                                                                     credentials);
         return storageFactory.get();
     }
 }
