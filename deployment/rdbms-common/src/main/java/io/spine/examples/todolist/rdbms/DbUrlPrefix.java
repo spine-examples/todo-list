@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,21 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    implementation(
-            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-            "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
-            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
-            project(path: ':server'),
-            project(path: ':rdbms-common')
-    )
-}
+package io.spine.examples.todolist.rdbms;
 
-// A task to run the server. See `LocalMySqlServer` for the details.
-task runServer(dependsOn: jar, type: JavaExec) {
-    if (project.hasProperty('conf')) {
-        args(conf.split(','))
+import io.spine.base.Environment;
+import io.spine.base.Tests;
+
+public final class DbUrlPrefix {
+
+    private final DbProperties properties;
+    private final String testValue;
+
+    public DbUrlPrefix(DbProperties properties, String value) {
+        this.properties = properties;
+        this.testValue = value;
     }
-    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
-    classpath = sourceSets.main.runtimeClasspath
+
+    public static DbUrlPrefix propsOrLocalH2(DbProperties properties) {
+        return new DbUrlPrefix(properties, "jdbc:h2:mem:");
+    }
+
+    @Override
+    public String toString() {
+        Environment environment = Environment.instance();
+        String result = environment.is(Tests.class)
+                        ? testValue
+                        : properties.dbPrefix();
+        return result;
+    }
 }

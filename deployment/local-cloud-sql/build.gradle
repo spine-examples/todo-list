@@ -19,17 +19,18 @@
  */
 
 dependencies {
-    implementation (
+    implementation(
             "io.spine:spine-rdbms:$deps.versions.spineJdbc",
             "com.zaxxer:HikariCP:$deps.versions.hikariCp",
             "com.google.cloud.sql:mysql-socket-factory:$deps.versions.cloudSqlSocketFactory",
-            project(path: ':server')
+            project(path: ':server'),
+            project(path: ':rdbms-common')
     )
 }
 
 // A task to run the server. See `LocalCloudSqlServer` for the details.
 task runServer(dependsOn: jar, type: JavaExec) {
-    if(project.hasProperty('conf')){
+    if (project.hasProperty('conf')) {
         args(conf.split(','))
     }
     main = 'io.spine.examples.todolist.server.LocalCloudSqlServer'

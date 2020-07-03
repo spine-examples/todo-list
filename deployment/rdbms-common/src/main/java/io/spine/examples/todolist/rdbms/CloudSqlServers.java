@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,21 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    implementation(
-            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-            "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
-            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
-            project(path: ':server'),
-            project(path: ':rdbms-common')
-    )
-}
+package io.spine.examples.todolist.rdbms;
 
-// A task to run the server. See `LocalMySqlServer` for the details.
-task runServer(dependsOn: jar, type: JavaExec) {
-    if (project.hasProperty('conf')) {
-        args(conf.split(','))
+public final class CloudSqlServers {
+
+    public static DbProperties propertiesFromResourceFile() {
+        return DbProperties.fromResourceFile("cloud-sql.properties");
     }
-    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
-    classpath = sourceSets.main.runtimeClasspath
+
+    public static DbUrlPrefix prefix(DbProperties properties) {
+        return DbUrlPrefix.propsOrLocalH2(properties);
+    }
+
+    public static String dbUrl(DbProperties properties) {
+        String result =
+                String.format("%s//google/%s?cloudSqlInstance=%s&" +
+                                      "useSSL=false&socketFactory=com.google.cloud.sql.mysql" +
+                                      ".SocketFactory",
+                              prefix(properties).toString(),
+                              properties.dbName(),
+                              properties.dbInstance());
+        return result;
+    }
 }

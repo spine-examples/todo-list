@@ -21,28 +21,20 @@
 package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.flogger.FluentLogger;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import io.spine.base.Environment;
 import io.spine.base.Production;
-import io.spine.base.Tests;
+import io.spine.examples.todolist.rdbms.CloudSqlServers;
+import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.StorageFactory;
-import io.spine.server.storage.jdbc.JdbcStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 
-import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
-import static java.lang.String.format;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -50,10 +42,10 @@ import static java.lang.String.format;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- *     <li>Install {@code gcloud} tool.</li>
- *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
- *     <li>Create a Cloud SQL instance.</li>
- *     <li>Create a database.</li>
+ * <li>Install {@code gcloud} tool.</li>
+ * <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
+ * <li>Create a Cloud SQL instance.</li>
+ * <li>Create a database.</li>
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
@@ -70,26 +62,19 @@ import static java.lang.String.format;
  * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
  *         creation</a>
  */
-@SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
-                                                        for servers in different modules. */)
 public class LocalCloudSqlServer {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private static final String DB_PROPERTIES_FILE = "cloud-sql.properties";
-    private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
-
-    private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
-            "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
+    private static final DbProperties DB_PROPERTIES = CloudSqlServers.propertiesFromResourceFile();
 
     /** Prevents instantiation of this class. */
     private LocalCloudSqlServer() {
     }
 
     public static void main(String[] args) throws IOException {
-        String[] actualArguments = actualArgumentsFrom(args);
+        DbProperties properties = properties(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(actualArguments), Production.class)
+        serverEnvironment.use(createStorageFactory(properties), Production.class)
                          .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
@@ -97,94 +82,30 @@ public class LocalCloudSqlServer {
         server.start();
     }
 
-    private static StorageFactory createStorageFactory(String[] args) {
-        return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(createDataSource(args))
-                                 .build();
+    @VisibleForTesting
+    static DbProperties properties(String[] args) {
+        if (args.length == 4) {
+            DbProperties result = DbProperties.newBuilder()
+                                              .setInstanceName(args[0])
+                                              .setDbName(args[1])
+                                              .setUsername(args[2])
+                                              .setPassword(args[3])
+                                              .build();
+            return result;
+        } else {
+            return DB_PROPERTIES;
+        }
     }
 
-    @VisibleForTesting
-    static String[] actualArgumentsFrom(String[] commandLineArguments) {
-
-        String[] defaultArguments = defaultArguments();
-        if (commandLineArguments.length != defaultArguments.length) {
-            logger.atInfo().log(
-                "The specified arguments do not match the length requirement. " +
-                             "Required arguments size: %d. Default arguments will be used: %s.",
-                     defaultArguments.length, defaultArguments);
-            return defaultArguments;
-        } else {
-            return commandLineArguments;
-        }
+    private static StorageFactory createStorageFactory(DbProperties props) {
+        String dbUrl = CloudSqlServers.dbUrl(props);
+        RdbmsStorageFactorySupplier supplier =
+                new RdbmsStorageFactorySupplier(dbUrl, props.username(), props.password());
+        return supplier.get();
     }
 
     @VisibleForTesting
     static BoundedContext createContext() {
         return TasksContextFactory.create();
-    }
-
-    private static DataSource createDataSource(String[] args) {
-        FluentLogger.Api info = logger.atInfo();
-
-        HikariConfig config = new HikariConfig();
-
-        String instanceConnectionName = args[0];
-        String dbName = args[1];
-        String username = args[2];
-        String password = args[3];
-
-        info.log("Start `DataSource` creation. The following parameters will be used:");
-        String dbUrl =
-                format(DB_URL_FORMAT, dbUrlPrefix(), dbName, instanceConnectionName);
-        config.setJdbcUrl(dbUrl);
-        info.log("JDBC URL: %s", dbUrl);
-
-        config.setUsername(username);
-        info.log("Username: %s", username);
-
-        config.setPassword(password);
-        info.log("Password: %s", password);
-
-        DataSource dataSource = new HikariDataSource(config);
-        return dataSource;
-    }
-
-    /**
-     * Obtains the prefix of the connection {@code URL} for the database.
-     *
-     * <p>The value will be obtained from the {@link #properties}.
-     *
-     * <p>If the environment is {@linkplain Tests tests}, the method returns prefix for connection
-     * to an in-memory database.
-     *
-     * @return the prefix for a connection {@code URL}
-     */
-    private static String dbUrlPrefix() {
-        Environment environment = Environment.instance();
-        String prefix = environment.is(Tests.class)
-                        ? "jdbc:h2:mem:"
-                        : properties.getProperty("db.prefix");
-        return prefix;
-    }
-
-    @VisibleForTesting
-    static String[] defaultArguments() {
-        String instance = properties.getProperty("db.instance");
-        String dbName = properties.getProperty("db.name");
-        String username = properties.getProperty("db.username");
-        String password = properties.getProperty("db.password");
-        return new String[]{instance, dbName, username, password};
-    }
-
-    private static Properties getProperties(String propertiesFile) {
-        Properties properties = new Properties();
-        InputStream stream = LocalCloudSqlServer.class.getClassLoader()
-                                                      .getResourceAsStream(propertiesFile);
-        try {
-            properties.load(stream);
-        } catch (IOException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-        return properties;
     }
 }
