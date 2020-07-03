@@ -19,7 +19,7 @@
  */
 
 import {CdkStep} from '@angular/cdk/stepper';
-import { MatStepper } from '@angular/material/stepper';
+import {MatStepper} from '@angular/material/stepper';
 
 export function mockStepper(): jasmine.SpyObj<MatStepper> {
   const mock = jasmine.createSpyObj<MatStepper>('MatStepper', ['previous', 'next']);
