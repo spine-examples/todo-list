@@ -40,6 +40,10 @@ public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactor
     private final String dbUrl;
     private final DbCredentials dbCredentials;
 
+    /**
+     * Creates a new storage factory supplier using the specified connection URL and the specified
+     * database credentials.
+     */
     public RdbmsStorageFactorySupplier(String dbConnectionUrl,
                                        DbCredentials dbCredentials) {
         this.dbUrl = dbConnectionUrl;

@@ -81,6 +81,12 @@ public final class DbProperties {
         return result;
     }
 
+    /**
+     * Returns the credentials for connecting to the database.
+     *
+     * <p>Credentials are assembled from 2 values: username and password, which are specified
+     * separately when building the properties object.
+     */
     public DbCredentials credentials() {
         String username = value(USERNAME);
         String password = value(PASSWORD);
