@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A utility class that contains methods for working with Cloud SQL-backed servers.
  */
@@ -34,10 +36,12 @@ public final class CloudSqlServers {
     }
 
     public static DbUrlPrefix prefix(DbProperties properties) {
+        checkNotNull(properties);
         return DbUrlPrefix.propsOrLocalH2(properties);
     }
 
     public static String dbUrl(DbProperties properties) {
+        checkNotNull(properties);
         String result =
                 String.format("%s//google/%s?cloudSqlInstance=%s&" +
                                       "useSSL=false&socketFactory=com.google.cloud.sql.mysql" +

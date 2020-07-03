@@ -20,21 +20,48 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Environment;
 import io.spine.base.Tests;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * A prefix to the database connection URL string.
+ *
+ * <p>Get the actual value with {@link #toString()}.
+ *
+ * <p>If the value is obtained during tests, returns a predefined test value. Otherwise, attempts
+ * to get the value from the specified {@link DbProperties}.
+ */
 public final class DbUrlPrefix {
+
+    @VisibleForTesting
+    static final String LOCAL_H2 = "jdbc:h2:mem:";
 
     private final DbProperties properties;
     private final String testValue;
 
-    public DbUrlPrefix(DbProperties properties, String value) {
+    /**
+     * Creates a new instance of the connection URL prefix.
+     *
+     * @param properties
+     *         properties to get the prefix value from
+     * @param testsValue
+     *         value to use for tests
+     */
+    public DbUrlPrefix(DbProperties properties, String testsValue) {
+        checkNotNull(properties);
+        checkNotNull(testsValue);
         this.properties = properties;
-        this.testValue = value;
+        this.testValue = testsValue;
     }
 
+    /**
+     * Returns a new connection URL prefix known to be usable to connect to local h2 databases.
+     */
     public static DbUrlPrefix propsOrLocalH2(DbProperties properties) {
-        return new DbUrlPrefix(properties, "jdbc:h2:mem:");
+        return new DbUrlPrefix(properties, LOCAL_H2);
     }
 
     @Override
