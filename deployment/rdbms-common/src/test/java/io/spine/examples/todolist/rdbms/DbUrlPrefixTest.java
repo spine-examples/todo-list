@@ -47,8 +47,8 @@ final class DbUrlPrefixTest {
     @DisplayName("throw on null ctor values")
     void throwOnNull() {
         NullPointerTester tester = new NullPointerTester();
-        tester.setDefault(DbProperties.class, DbProperties.newBuilder()
-                                                          .build());
+        tester.setDefault(DbConnectionProperties.class, DbConnectionProperties.newBuilder()
+                                                                              .build());
         tester.testAllPublicConstructors(DbUrlPrefix.class);
     }
 
@@ -58,7 +58,7 @@ final class DbUrlPrefixTest {
         Environment.instance()
                    .setTo(Production.class);
 
-        DbProperties props = DbProperties
+        DbConnectionProperties props = DbConnectionProperties
                 .newBuilder()
                 .setUrlPrefix(EXPECTED_PREFIX)
                 .build();
@@ -73,9 +73,9 @@ final class DbUrlPrefixTest {
         Environment.instance()
                    .setTo(Tests.class);
 
-        DbProperties properties = DbProperties.newBuilder()
-                                              .setUrlPrefix(LOCAL_H2)
-                                              .build();
+        DbConnectionProperties properties = DbConnectionProperties.newBuilder()
+                                                                  .setUrlPrefix(LOCAL_H2)
+                                                                  .build();
 
         DbUrlPrefix prefix = new DbUrlPrefix(properties, EXPECTED_PREFIX);
         assertThat(prefix.toString()).isEqualTo(EXPECTED_PREFIX);
@@ -87,8 +87,8 @@ final class DbUrlPrefixTest {
         Environment.instance()
                    .setTo(Production.class);
 
-        DbProperties properties = DbProperties.newBuilder()
-                                              .build();
+        DbConnectionProperties properties = DbConnectionProperties.newBuilder()
+                                                                  .build();
 
         DbUrlPrefix prefix = new DbUrlPrefix(properties, LOCAL_H2);
         assertThrows(IllegalStateException.class, prefix::toString);

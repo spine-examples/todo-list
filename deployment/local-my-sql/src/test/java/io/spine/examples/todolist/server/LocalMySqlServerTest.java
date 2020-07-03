@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Truth;
 import io.spine.examples.todolist.DbCredentials;
-import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class LocalMySqlServerTest {
     void returnDefaultArguments() {
         String[] insufficientCmdArgs = {"dbName", "username"};
 
-        DbProperties properties = LocalMySqlServer.properties(insufficientCmdArgs);
+        DbConnectionProperties properties = LocalMySqlServer.properties(insufficientCmdArgs);
         DbCredentials credentials = properties.credentials();
         Stream.of(properties.dbName(),
                   credentials.getUsername(),
@@ -67,7 +67,7 @@ class LocalMySqlServerTest {
 
         String[] customProperties = {dbName, username, password};
 
-        DbProperties properties = LocalMySqlServer.properties(customProperties);
+        DbConnectionProperties properties = LocalMySqlServer.properties(customProperties);
         DbCredentials credentials = properties.credentials();
         assertThat(properties.dbName()).isEqualTo(dbName);
         assertThat(credentials.getUsername()).isEqualTo(username);

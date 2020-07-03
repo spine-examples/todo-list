@@ -24,7 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
 import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.CloudSqlServers;
-import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
@@ -64,14 +64,14 @@ import static io.spine.examples.todolist.server.Server.newServer;
  */
 public class LocalCloudSqlServer {
 
-    private static final DbProperties DB_PROPERTIES = CloudSqlServers.propertiesFromResourceFile();
+    private static final DbConnectionProperties DB_PROPERTIES = CloudSqlServers.propertiesFromResourceFile();
 
     /** Prevents instantiation of this class. */
     private LocalCloudSqlServer() {
     }
 
     public static void main(String[] args) throws IOException {
-        DbProperties properties = properties(args);
+        DbConnectionProperties properties = properties(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         serverEnvironment.use(createStorageFactory(properties), Production.class)
@@ -83,21 +83,21 @@ public class LocalCloudSqlServer {
     }
 
     @VisibleForTesting
-    static DbProperties properties(String[] args) {
+    static DbConnectionProperties properties(String[] args) {
         if (args.length == 4) {
-            DbProperties result = DbProperties.newBuilder()
-                                              .setInstanceName(args[0])
-                                              .setDbName(args[1])
-                                              .setUsername(args[2])
-                                              .setPassword(args[3])
-                                              .build();
+            DbConnectionProperties result = DbConnectionProperties.newBuilder()
+                                                                  .setInstanceName(args[0])
+                                                                  .setDbName(args[1])
+                                                                  .setUsername(args[2])
+                                                                  .setPassword(args[3])
+                                                                  .build();
             return result;
         } else {
             return DB_PROPERTIES;
         }
     }
 
-    private static StorageFactory createStorageFactory(DbProperties props) {
+    private static StorageFactory createStorageFactory(DbConnectionProperties props) {
         String dbUrl = CloudSqlServers.dbUrl(props);
         DbCredentials credentials = props.credentials();
         RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, credentials);

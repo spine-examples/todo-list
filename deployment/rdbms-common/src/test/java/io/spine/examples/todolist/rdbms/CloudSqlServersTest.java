@@ -36,11 +36,11 @@ final class CloudSqlServersTest extends UtilityClassTest<CloudSqlServers> {
     @Test
     @DisplayName("return an h2 connection URL prefix")
     void localH2Prefix() {
-        DbProperties props = DbProperties.newBuilder()
-                                         .setDbName("database")
-                                         .setUsername("admin")
-                                         .setPassword("admin")
-                                         .build();
+        DbConnectionProperties props = DbConnectionProperties.newBuilder()
+                                                             .setDbName("database")
+                                                             .setUsername("admin")
+                                                             .setPassword("admin")
+                                                             .build();
 
         DbUrlPrefix prefix = CloudSqlServers.prefix(props);
         assertThat(prefix.toString()).isEqualTo(DbUrlPrefix.LOCAL_H2);

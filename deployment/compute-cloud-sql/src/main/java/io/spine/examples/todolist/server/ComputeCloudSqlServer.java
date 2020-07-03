@@ -24,7 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
 import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.CloudSqlServers;
-import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
@@ -68,7 +68,7 @@ public class ComputeCloudSqlServer {
     }
 
     private static StorageFactory createStorageFactory() {
-        DbProperties properties = CloudSqlServers.propertiesFromResourceFile();
+        DbConnectionProperties properties = CloudSqlServers.propertiesFromResourceFile();
         String dbUrl = CloudSqlServers.dbUrl(properties);
 
         DbCredentials credentials = properties.credentials();

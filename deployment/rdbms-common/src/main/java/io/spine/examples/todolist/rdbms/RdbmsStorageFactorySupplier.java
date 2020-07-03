@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.rdbms;
 
-import com.google.common.flogger.FluentLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.examples.todolist.DbCredentials;
+import io.spine.logging.Logging;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 
@@ -33,20 +33,17 @@ import java.util.function.Supplier;
 /**
  * A supplier of the storage factory backed by a relational database.
  */
-public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactory> {
+public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactory>, Logging {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
-    private final String dbUrl;
+    private final String connectionUrl;
     private final DbCredentials dbCredentials;
 
     /**
      * Creates a new storage factory supplier using the specified connection URL and the specified
      * database credentials.
      */
-    public RdbmsStorageFactorySupplier(String dbConnectionUrl,
-                                       DbCredentials dbCredentials) {
-        this.dbUrl = dbConnectionUrl;
+    public RdbmsStorageFactorySupplier(String dbConnectionUrl, DbCredentials dbCredentials) {
+        this.connectionUrl = dbConnectionUrl;
         this.dbCredentials = dbCredentials;
     }
 
@@ -59,18 +56,13 @@ public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactor
     }
 
     private DataSource datasource() {
-        FluentLogger.Api info = logger.atInfo();
         HikariConfig config = new HikariConfig();
 
-        info.log("Start `DataSource` creation. The following parameters will be used:");
-        config.setJdbcUrl(dbUrl);
-        info.log("JDBC URL: %s", dbUrl);
+        _debug().log("Connecting to the database. URL: `%s`", connectionUrl);
 
+        config.setJdbcUrl(connectionUrl);
         config.setUsername(dbCredentials.getUsername());
-        info.log("Username: %s", dbCredentials.getUsername());
-
         config.setPassword(dbCredentials.getPassword());
-        info.log("Password: %s", dbCredentials.getPassword());
 
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;

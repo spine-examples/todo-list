@@ -32,14 +32,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>Get the actual value with {@link #toString()}.
  *
  * <p>If the value is obtained during tests, returns a predefined test value. Otherwise, attempts
- * to get the value from the specified {@link DbProperties}.
+ * to get the value from the specified {@link DbConnectionProperties}.
  */
 public final class DbUrlPrefix {
 
     @VisibleForTesting
     static final String LOCAL_H2 = "jdbc:h2:mem:";
 
-    private final DbProperties properties;
+    private final DbConnectionProperties properties;
     private final String testValue;
 
     /**
@@ -50,7 +50,7 @@ public final class DbUrlPrefix {
      * @param testsValue
      *         value to use for tests
      */
-    public DbUrlPrefix(DbProperties properties, String testsValue) {
+    public DbUrlPrefix(DbConnectionProperties properties, String testsValue) {
         checkNotNull(properties);
         checkNotNull(testsValue);
         this.properties = properties;
@@ -60,7 +60,7 @@ public final class DbUrlPrefix {
     /**
      * Returns a new connection URL prefix known to be usable to connect to local h2 databases.
      */
-    public static DbUrlPrefix propsOrLocalH2(DbProperties properties) {
+    public static DbUrlPrefix propsOrLocalH2(DbConnectionProperties properties) {
         return new DbUrlPrefix(properties, LOCAL_H2);
     }
 

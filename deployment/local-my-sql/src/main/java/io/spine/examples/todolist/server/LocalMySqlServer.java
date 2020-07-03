@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
 import io.spine.examples.todolist.DbCredentials;
-import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
@@ -57,8 +57,8 @@ import static java.lang.String.format;
  */
 public final class LocalMySqlServer {
 
-    private static final DbProperties DB_PROPERTIES =
-            DbProperties.fromResourceFile("jdbc-storage.properties");
+    private static final DbConnectionProperties DB_PROPERTIES =
+            DbConnectionProperties.fromResourceFile("jdbc-storage.properties");
 
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
     private static final DbUrlPrefix URL_PREFIX = DbUrlPrefix.propsOrLocalH2(DB_PROPERTIES);
@@ -68,10 +68,10 @@ public final class LocalMySqlServer {
     }
 
     public static void main(String[] args) throws IOException {
-        DbProperties dbProperties = properties(args);
+        DbConnectionProperties dbConnectionProperties = properties(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(dbProperties), Production.class)
+        serverEnvironment.use(createStorageFactory(dbConnectionProperties), Production.class)
                          .use(InMemoryTransportFactory.newInstance(), Production.class);
 
         BoundedContext context = createContext();
@@ -80,13 +80,13 @@ public final class LocalMySqlServer {
     }
 
     @VisibleForTesting
-    static DbProperties properties(String[] args) {
+    static DbConnectionProperties properties(String[] args) {
         if (args.length == 3) {
-            DbProperties result = DbProperties.newBuilder()
-                                              .setDbName(args[0])
-                                              .setUsername(args[1])
-                                              .setPassword(args[2])
-                                              .build();
+            DbConnectionProperties result = DbConnectionProperties.newBuilder()
+                                                                  .setDbName(args[0])
+                                                                  .setUsername(args[1])
+                                                                  .setPassword(args[2])
+                                                                  .build();
             return result;
         } else {
             return DB_PROPERTIES;
@@ -98,7 +98,7 @@ public final class LocalMySqlServer {
         return TasksContextFactory.create();
     }
 
-    private static StorageFactory createStorageFactory(DbProperties properties) {
+    private static StorageFactory createStorageFactory(DbConnectionProperties properties) {
         String dbUrl = format(DB_URL_FORMAT, URL_PREFIX.toString(), properties.dbName());
         DbCredentials credentials = properties.credentials();
         RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, credentials);

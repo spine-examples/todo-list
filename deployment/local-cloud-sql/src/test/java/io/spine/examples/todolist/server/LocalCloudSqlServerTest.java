@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Truth;
-import io.spine.examples.todolist.rdbms.DbProperties;
+import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class LocalCloudSqlServerTest {
     void assemblePropsFromResources() {
         String[] insufficientCmdArgs = {"dbName", "username"};
 
-        DbProperties properties = LocalCloudSqlServer.properties(insufficientCmdArgs);
+        DbConnectionProperties properties = LocalCloudSqlServer.properties(insufficientCmdArgs);
         Stream.of(properties.dbName(),
                   properties.credentials()
                             .getUsername(),
@@ -69,7 +69,7 @@ class LocalCloudSqlServerTest {
 
         String[] customProperties = {dbInstance, dbName, username, password};
 
-        DbProperties properties = LocalCloudSqlServer.properties(customProperties);
+        DbConnectionProperties properties = LocalCloudSqlServer.properties(customProperties);
         assertThat(properties.dbName()).isEqualTo(dbName);
         assertThat(properties.credentials()
                              .getUsername()).isEqualTo(username);

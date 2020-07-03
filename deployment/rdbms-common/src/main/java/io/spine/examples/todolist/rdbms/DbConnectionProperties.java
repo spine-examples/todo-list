@@ -38,7 +38,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 /**
  * Properties for connecting to a database.
  */
-public final class DbProperties {
+public final class DbConnectionProperties {
 
     private static final String NAME = "db.name";
     private static final String PASSWORD = "db.password";
@@ -48,7 +48,7 @@ public final class DbProperties {
 
     private final Map<String, String> properties;
 
-    private DbProperties(Map<String, String> properties) {
+    private DbConnectionProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
@@ -60,10 +60,10 @@ public final class DbProperties {
      * @param fileName
      *         name of the resource file with the DB properties
      */
-    public static DbProperties fromResourceFile(String fileName) {
+    public static DbConnectionProperties fromResourceFile(String fileName) {
         Properties properties = loadProperties(fileName);
         ImmutableMap<String, String> map = Maps.fromProperties(properties);
-        return new DbProperties(map);
+        return new DbConnectionProperties(map);
     }
 
     /**
@@ -124,8 +124,8 @@ public final class DbProperties {
 
     private static Properties loadProperties(String propertiesFile) {
         Properties properties = new Properties();
-        InputStream stream = DbProperties.class.getClassLoader()
-                                               .getResourceAsStream(propertiesFile);
+        InputStream stream = DbConnectionProperties.class.getClassLoader()
+                                                         .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -178,9 +178,9 @@ public final class DbProperties {
         }
 
         /** Returns a new instance of the DB properties. */
-        public DbProperties build() {
+        public DbConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
-            return new DbProperties(properties);
+            return new DbConnectionProperties(properties);
         }
     }
 }

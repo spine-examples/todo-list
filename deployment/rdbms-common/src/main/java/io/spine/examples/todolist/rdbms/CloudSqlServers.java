@@ -32,18 +32,18 @@ public final class CloudSqlServers {
     }
 
     /**
-     * Returns the {@code DbProperties} object assembled from a Cloud SQL config file in the
-     * resources.
+     * Returns the {@code DbConnectionProperties} object assembled from a Cloud SQL config file in
+     * the resources.
      */
-    public static DbProperties propertiesFromResourceFile() {
-        return DbProperties.fromResourceFile("cloud-sql.properties");
+    public static DbConnectionProperties propertiesFromResourceFile() {
+        return DbConnectionProperties.fromResourceFile("cloud-sql.properties");
     }
 
     /**
      * Returns the connection URL prefix that is either taken from the specified {@code
-     * DbProperties} object, or falls back to the local H2-compatible prefix.
+     * DbConnectionProperties} object, or falls back to the local H2-compatible prefix.
      */
-    public static DbUrlPrefix prefix(DbProperties properties) {
+    public static DbUrlPrefix prefix(DbConnectionProperties properties) {
         checkNotNull(properties);
         return DbUrlPrefix.propsOrLocalH2(properties);
     }
@@ -52,7 +52,7 @@ public final class CloudSqlServers {
      * Returns a connection URL for a Google Cloud SQL database. The connection URL is composed
      * using the specified properties.
      */
-    public static String dbUrl(DbProperties properties) {
+    public static String dbUrl(DbConnectionProperties properties) {
         checkNotNull(properties);
         String result =
                 String.format("%s//google/%s?cloudSqlInstance=%s&" +
