@@ -20,7 +20,7 @@
 
 /**
  * This package contains functionality shared among modules that deploy the To-Do list backed
- * by a SQL storage.
+ * by a relational database.
  */
 @CheckReturnValue
 @ParametersAreNonnullByDefault

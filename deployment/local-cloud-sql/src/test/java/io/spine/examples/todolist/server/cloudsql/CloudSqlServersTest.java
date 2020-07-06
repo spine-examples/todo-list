@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import io.spine.examples.todolist.DbCredentials;
+import io.spine.examples.todolist.rdbms.DbCredentials;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 import io.spine.testing.UtilityClassTest;

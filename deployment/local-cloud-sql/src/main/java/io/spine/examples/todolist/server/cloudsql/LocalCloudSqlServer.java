@@ -22,8 +22,8 @@ package io.spine.examples.todolist.server.cloudsql;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Production;
-import io.spine.examples.todolist.DbCredentials;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
+import io.spine.examples.todolist.rdbms.DbCredentials;
 import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;

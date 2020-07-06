@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server.localmysql;
 
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Truth;
-import io.spine.examples.todolist.DbCredentials;
+import io.spine.examples.todolist.rdbms.DbCredentials;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.server.BoundedContext;
 import org.junit.jupiter.api.DisplayName;
