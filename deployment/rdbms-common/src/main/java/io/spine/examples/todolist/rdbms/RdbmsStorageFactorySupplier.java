@@ -22,7 +22,6 @@ package io.spine.examples.todolist.rdbms;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.spine.examples.todolist.DbCredentials;
 import io.spine.logging.Logging;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;

@@ -22,7 +22,6 @@ package io.spine.examples.todolist.rdbms;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import io.spine.examples.todolist.DbCredentials;
 
 import java.io.IOException;
 import java.io.InputStream;
