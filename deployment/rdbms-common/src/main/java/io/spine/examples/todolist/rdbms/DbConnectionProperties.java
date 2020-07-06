@@ -84,7 +84,7 @@ public final class DbConnectionProperties {
      * Returns the credentials for connecting to the database.
      *
      * <p>Credentials are assembled from 2 values: username and password, which are specified
-     * separately when building the properties object.
+     * separately when building the connection properties object.
      */
     public DbCredentials credentials() {
         String username = value(USERNAME);
@@ -107,7 +107,7 @@ public final class DbConnectionProperties {
     /**
      * Returns the name of the instance to connect to.
      *
-     * <p>Applicable to Cloud SQL databases only.
+     * <p>Applicable to non-local databases only.
      */
     public String instanceName() {
         String result = value(INSTANCE);
@@ -162,7 +162,6 @@ public final class DbConnectionProperties {
         }
 
         /** Sets the connection URL prefix to the specified one. */
-        @SuppressWarnings("unused")
         public Builder setUrlPrefix(String urlPrefix) {
             checkNotNull(urlPrefix);
             properties.put(PREFIX, urlPrefix);
@@ -176,7 +175,7 @@ public final class DbConnectionProperties {
             return this;
         }
 
-        /** Returns a new instance of the DB properties. */
+        /** Returns a new instance of the DB connection properties. */
         public DbConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
             return new DbConnectionProperties(properties);
