@@ -40,7 +40,8 @@ spine.enableJava() {
 dependencies {
     implementation(
             project(path: ':server'),
-            project(path: ':rdbms-common')
+            project(path: ':rdbms-common'),
+            project(path: ':local-cloud-sql')
     )
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.

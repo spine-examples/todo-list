@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class DbUrlPrefix {
 
     @VisibleForTesting
-    static final String LOCAL_H2 = "jdbc:h2:mem:";
+    public static final String LOCAL_H2 = "jdbc:h2:mem:";
 
     private final DbConnectionProperties properties;
     private final String testValue;

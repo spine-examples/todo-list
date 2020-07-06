@@ -17,21 +17,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.firebaselocal;
 
-import "spine/options.proto";
+import io.spine.web.firebase.query.FirebaseQueryResponse;
+import io.spine.web.query.QueryServlet;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+import static io.spine.examples.todolist.server.firebaselocal.Application.application;
 
-    string username = 1 [(required) = true];
+/**
+ * The {@code /query} endpoint of the TodoList system.
+ */
+@WebServlet("/query")
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for queries.
+public final class TodoQueryServlet extends QueryServlet<FirebaseQueryResponse> {
 
-    string password = 2 [(required) = true];
+    private static final long serialVersionUID = 0L;
+
+    public TodoQueryServlet() {
+        super(application().queryBridge());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
+    }
 }

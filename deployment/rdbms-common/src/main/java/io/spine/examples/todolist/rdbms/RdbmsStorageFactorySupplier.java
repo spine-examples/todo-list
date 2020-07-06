@@ -59,11 +59,9 @@ public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactor
         HikariConfig config = new HikariConfig();
 
         _debug().log("Connecting to the database. URL: `%s`", connectionUrl);
-
         config.setJdbcUrl(connectionUrl);
         config.setUsername(dbCredentials.getUsername());
         config.setPassword(dbCredentials.getPassword());
-
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;
     }

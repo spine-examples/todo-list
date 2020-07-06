@@ -17,21 +17,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.computecloudsql;
 
-import "spine/options.proto";
+import io.spine.server.BoundedContext;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import static io.spine.examples.todolist.server.computecloudsql.ComputeCloudSqlServer.createContext;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.Assert.assertFalse;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+@DisplayName("ComputeCloudSqlServer should")
+class ComputeCloudSqlServerTest {
 
-    string username = 1 [(required) = true];
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ComputeCloudSqlServer.class);
+    }
 
-    string password = 2 [(required) = true];
+    @Test
+    @DisplayName("create signletenant BoundedContext")
+    void createSingletenantBoundedContext() {
+        BoundedContext context = createContext();
+        assertFalse(context.isMultitenant());
+    }
 }

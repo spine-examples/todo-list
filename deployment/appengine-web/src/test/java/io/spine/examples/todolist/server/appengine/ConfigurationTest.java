@@ -17,21 +17,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.appengine;
 
-import "spine/options.proto";
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+/**
+ * Unit tests for {@link Configuration}.
+ */
+@DisplayName("Configuration should")
+class ConfigurationTest {
 
-    string username = 1 [(required) = true];
+    @Test
+    @DisplayName("create instance")
+    void createInstance() {
+        Configuration instance = Configuration.instance();
+        assertNotNull(instance);
+    }
 
-    string password = 2 [(required) = true];
+    @Test
+    @DisplayName("load properties")
+    void loadProperties() {
+        Configuration instance = Configuration.instance();
+        assertNotNull(instance.firebaseDatabaseUrl());
+        assertNotNull(instance.projectId());
+        assertNotNull(instance.serviceAccCredentialsResource());
+    }
 }

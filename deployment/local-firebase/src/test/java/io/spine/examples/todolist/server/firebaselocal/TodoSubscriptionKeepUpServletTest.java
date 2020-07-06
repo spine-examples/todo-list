@@ -17,21 +17,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.firebaselocal;
 
-import "spine/options.proto";
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+@DisplayName("TodoSubscriptionKeepUpServlet should")
+class TodoSubscriptionKeepUpServletTest {
 
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
+    @Test
+    @DisplayName("be instantiated with an empty constructor")
+    void instantiated() {
+        TodoSubscriptionKeepUpServlet servlet = new TodoSubscriptionKeepUpServlet();
+        assertNotNull(servlet);
+    }
 }

@@ -17,21 +17,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+/**
+ * Contains an implementation of a local web server based on a Firebase Realtime Database emulator.
+ */
 
-import "spine/options.proto";
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.firebaselocal;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import com.google.errorprone.annotations.CheckReturnValue;
 
-// Credentials for connecting to a database.
-message DbCredentials {
-
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
-}
+import javax.annotation.ParametersAreNonnullByDefault;

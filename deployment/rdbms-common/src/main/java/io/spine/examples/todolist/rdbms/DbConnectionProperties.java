@@ -119,7 +119,7 @@ public final class DbConnectionProperties {
         checkNotNull(key);
         return Optional.ofNullable(properties.get(key))
                        .orElseThrow(() -> newIllegalStateException(
-                               "Could not read `%s` from the DB properties file.", key));
+                               "Could not read `%s` from the database connection properties.", key));
     }
 
     private static Properties loadProperties(String propertiesFile) {

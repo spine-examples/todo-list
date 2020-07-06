@@ -17,21 +17,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+/**
+ * A server implementation based on Google App Engine Standard Environment.
+ */
 
-import "spine/options.proto";
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.appengine;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import com.google.errorprone.annotations.CheckReturnValue;
 
-// Credentials for connecting to a database.
-message DbCredentials {
-
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
-}
+import javax.annotation.ParametersAreNonnullByDefault;

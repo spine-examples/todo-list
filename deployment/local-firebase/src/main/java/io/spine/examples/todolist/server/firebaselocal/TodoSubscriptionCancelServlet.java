@@ -17,21 +17,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.firebaselocal;
 
-import "spine/options.proto";
+import io.spine.core.Response;
+import io.spine.web.subscription.servlet.SubscriptionCancelServlet;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+import static io.spine.examples.todolist.server.firebaselocal.Application.application;
 
-    string username = 1 [(required) = true];
+/**
+ * The {@code /subscription/cancel} endpoint of the TodoList system.
+ */
+@WebServlet("/subscription/cancel")
+@SuppressWarnings("DuplicateStringLiteralInspection") // Standard Spine endpoint for subscriptions.
+public final class TodoSubscriptionCancelServlet extends SubscriptionCancelServlet<Response> {
 
-    string password = 2 [(required) = true];
+    private static final long serialVersionUID = 0L;
+
+    public TodoSubscriptionCancelServlet() {
+        super(application().subscriptionBridge());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
+    }
 }

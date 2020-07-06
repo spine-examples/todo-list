@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -17,21 +17,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.appengine;
 
-import "spine/options.proto";
+import io.spine.web.AllowAnyOriginFilter;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import javax.servlet.annotation.WebFilter;
 
-// Credentials for connecting to a database.
-message DbCredentials {
-
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
+/**
+ * An {@linkplain javax.servlet.Filter filter} which appends the CORS headers to the
+ * {@code /command} and {@code /query} HTTP responses.
+ *
+ * @see AllowAnyOriginFilter
+ */
+@WebFilter(filterName = AllowAnyOriginFilter.NAME, urlPatterns = AllowAnyOriginFilter.ANY_URL)
+public final class CrossOriginResourceSharingFilter extends AllowAnyOriginFilter {
 }

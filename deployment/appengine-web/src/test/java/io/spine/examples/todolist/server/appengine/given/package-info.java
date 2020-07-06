@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -17,21 +17,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+/**
+ * The test environment classes for the To-Do List application server tests.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.appengine.given;
 
-import "spine/options.proto";
+import com.google.errorprone.annotations.CheckReturnValue;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
-
-// Credentials for connecting to a database.
-message DbCredentials {
-
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
-}
+import javax.annotation.ParametersAreNonnullByDefault;

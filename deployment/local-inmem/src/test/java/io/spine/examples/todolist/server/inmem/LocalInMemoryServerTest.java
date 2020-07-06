@@ -17,21 +17,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-syntax = "proto3";
 
-package spine.core;
+package io.spine.examples.todolist.server.inmem;
 
-import "spine/options.proto";
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.examples.todolist.rdbms";
-option java_multiple_files = true;
-option java_outer_classname = "DbCredentialsProto";
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 
-// Credentials for connecting to a database.
-message DbCredentials {
+@DisplayName("LocalInMemoryServer should")
+class LocalInMemoryServerTest {
 
-    string username = 1 [(required) = true];
-
-    string password = 2 [(required) = true];
+    @Test
+    @DisplayName("have the private parameterless constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(LocalInMemoryServer.class);
+    }
 }
