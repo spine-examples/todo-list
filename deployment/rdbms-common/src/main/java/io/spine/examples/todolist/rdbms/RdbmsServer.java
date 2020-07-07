@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Environment;
 import io.spine.base.Production;
 import io.spine.base.Tests;
@@ -43,7 +44,8 @@ import static io.spine.examples.todolist.server.Server.newServer;
  */
 public abstract class RdbmsServer {
 
-    private static final String LOCAL_H2 = "jdbc:h2:mem:";
+    @VisibleForTesting
+    static final String LOCAL_H2 = "jdbc:h2:mem:";
 
     /**
      * Starts the server.
@@ -77,13 +79,14 @@ public abstract class RdbmsServer {
      */
     protected abstract ConnectionUrl connectionUrl(ConnectionProperties properties);
 
-    private ConnectionUrl composeUrl(ConnectionProperties properties) {
+    @VisibleForTesting
+    final ConnectionUrl composeUrl(ConnectionProperties properties) {
         Environment environment = Environment.instance();
         ConnectionProperties props = environment.is(Tests.class)
-                                     ? properties
-                                     : properties.toBuilder()
+                                     ? properties.toBuilder()
                                                  .setUrlPrefix(LOCAL_H2)
-                                                 .build();
+                                                 .build()
+                                     : properties;
         ConnectionUrl result = connectionUrl(props);
         return result;
     }

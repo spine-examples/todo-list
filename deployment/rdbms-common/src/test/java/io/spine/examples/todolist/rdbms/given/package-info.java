@@ -18,34 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.rdbms;
-
-import com.google.common.annotations.VisibleForTesting;
-
 /**
- * A URL for connecting to a database.
+ * Contains the environment for testing {@link io.spine.examples.todolist.rdbms.RdbmsServer}.
  */
-public abstract class ConnectionUrl {
 
-    private final ConnectionProperties properties;
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.rdbms.given;
 
-    protected ConnectionUrl(ConnectionProperties properties) {
-        this.properties = properties;
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    /**
-     * Given the specified properties, composes a database connection string.
-     */
-    protected abstract String stringValue(ConnectionProperties properties);
-
-    @Override
-    public String toString() {
-        String result = stringValue(properties);
-        return result;
-    }
-
-    @VisibleForTesting
-    ConnectionProperties properties() {
-        return properties;
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;
