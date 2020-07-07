@@ -20,15 +20,12 @@
 
 package io.spine.examples.todolist.server.localmysql;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.RdbmsServer;
 import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.tasks.TasksContextFactory;
-import io.spine.server.BoundedContext;
 
-import static java.lang.String.format;
+import java.io.IOException;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -52,15 +49,10 @@ public final class LocalMySqlServer extends RdbmsServer {
     private static final ConnectionProperties DB_PROPERTIES =
             ConnectionProperties.fromResourceFile("jdbc-storage.properties");
 
-    /** Prevents instantiation of this class. */
-    private LocalMySqlServer() {
+    public static void main(String[] args) throws IOException {
+        LocalMySqlServer server = new LocalMySqlServer();
+        server.start(args);
     }
-
-    @VisibleForTesting
-    static BoundedContext createContext() {
-        return TasksContextFactory.create();
-    }
-
 
     @Override
     protected ConnectionProperties properties(String[] args) {

@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.server.Server;
 
@@ -53,10 +52,6 @@ import java.util.Optional;
  *         creation</a>
  */
 public class LocalCloudSqlServer extends CloudSqlServer {
-
-    @VisibleForTesting
-    LocalCloudSqlServer() {
-    }
 
     public static void main(String[] args) throws IOException {
         LocalCloudSqlServer server = new LocalCloudSqlServer();

@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server.computecloudsql;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.server.cloudsql.CloudSqlServer;
@@ -37,10 +36,6 @@ import java.util.Optional;
  * <p>For the details, see the {@code README.md}.
  */
 public final class ComputeCloudSqlServer extends CloudSqlServer {
-
-    @VisibleForTesting
-    ComputeCloudSqlServer() {
-    }
 
     public static void main(String[] args) throws IOException {
         ComputeCloudSqlServer server = new ComputeCloudSqlServer();

@@ -19,8 +19,7 @@
  */
 
 /**
- * This package contains functionality shared among modules that deploy the To-Do list backed
- * by a relational database.
+ * This package defines an abstract base for To-Do list servers backed by a relational storage.
  */
 @CheckReturnValue
 @ParametersAreNonnullByDefault

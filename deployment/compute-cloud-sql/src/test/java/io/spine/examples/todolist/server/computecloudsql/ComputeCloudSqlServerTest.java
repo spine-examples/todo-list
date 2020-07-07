@@ -34,7 +34,7 @@ import static com.google.common.truth.Truth8.assertThat;
 @DisplayName("`ComputeCloudSqlServer` should")
 class ComputeCloudSqlServerTest {
 
-    @DisplayName("never use the cmd arguments")
+    @DisplayName("never use the command line arguments")
     @ParameterizedTest
     @MethodSource("sampleArgs")
     void alwaysUseConfig(String[] args) {

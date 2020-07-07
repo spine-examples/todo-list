@@ -39,7 +39,7 @@ import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTes
 public class CloudSqlServerTest {
 
     @Test
-    @DisplayName("use the value from the properties file if CMD args are insufficient")
+    @DisplayName("use the value from the properties file if command line args are insufficient")
     void fallbackToProperties() {
         TestCloudSqlServer server = new TestCloudSqlServer();
         String[] args = {"name", "password"};
