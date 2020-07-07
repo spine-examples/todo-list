@@ -37,7 +37,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 /**
  * Properties for connecting to a database.
  */
-public final class DbConnectionProperties {
+public final class ConnectionProperties {
 
     private static final String NAME = "db.name";
     private static final String PASSWORD = "db.password";
@@ -47,7 +47,7 @@ public final class DbConnectionProperties {
 
     private final Map<String, String> properties;
 
-    private DbConnectionProperties(Map<String, String> properties) {
+    private ConnectionProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
@@ -59,10 +59,10 @@ public final class DbConnectionProperties {
      * @param fileName
      *         name of the resource file with the DB properties
      */
-    public static DbConnectionProperties fromResourceFile(String fileName) {
+    public static ConnectionProperties fromResourceFile(String fileName) {
         Properties properties = loadProperties(fileName);
         ImmutableMap<String, String> map = Maps.fromProperties(properties);
-        return new DbConnectionProperties(map);
+        return new ConnectionProperties(map);
     }
 
     /**
@@ -115,6 +115,11 @@ public final class DbConnectionProperties {
         return result;
     }
 
+    /**
+     * Returns a new {@code Builder} based on this instance.
+     *
+     * <p>This instance is not affected by changes to the returned builder.
+     */
     public Builder toBuilder() {
         return new Builder(new HashMap<>(properties));
     }
@@ -129,8 +134,8 @@ public final class DbConnectionProperties {
 
     private static Properties loadProperties(String propertiesFile) {
         Properties properties = new Properties();
-        InputStream stream = DbConnectionProperties.class.getClassLoader()
-                                                         .getResourceAsStream(propertiesFile);
+        InputStream stream = ConnectionProperties.class.getClassLoader()
+                                                       .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -190,9 +195,9 @@ public final class DbConnectionProperties {
         }
 
         /** Returns a new instance of the DB connection properties. */
-        public DbConnectionProperties build() {
+        public ConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
-            return new DbConnectionProperties(new HashMap<>(properties));
+            return new ConnectionProperties(new HashMap<>(properties));
         }
     }
 }

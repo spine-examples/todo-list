@@ -21,24 +21,13 @@
 package io.spine.examples.todolist.server.localmysql;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.base.Production;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbCredentials;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.rdbms.DbUrlPrefix;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.RdbmsServer;
-import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
 import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
-import io.spine.server.ServerEnvironment;
-import io.spine.server.storage.StorageFactory;
-import io.spine.server.transport.memory.InMemoryTransportFactory;
 
-import java.io.IOException;
-
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.server.Server.newServer;
 import static java.lang.String.format;
 
 /**
@@ -60,8 +49,8 @@ import static java.lang.String.format;
  */
 public final class LocalMySqlServer extends RdbmsServer {
 
-    private static final DbConnectionProperties DB_PROPERTIES =
-            DbConnectionProperties.fromResourceFile("jdbc-storage.properties");
+    private static final ConnectionProperties DB_PROPERTIES =
+            ConnectionProperties.fromResourceFile("jdbc-storage.properties");
 
     /** Prevents instantiation of this class. */
     private LocalMySqlServer() {
@@ -74,13 +63,13 @@ public final class LocalMySqlServer extends RdbmsServer {
 
 
     @Override
-    protected DbConnectionProperties properties(String[] args) {
+    protected ConnectionProperties properties(String[] args) {
         if (args.length == 3) {
-            DbConnectionProperties result = DbConnectionProperties.newBuilder()
-                                                                  .setDbName(args[0])
-                                                                  .setUsername(args[1])
-                                                                  .setPassword(args[2])
-                                                                  .build();
+            ConnectionProperties result = ConnectionProperties.newBuilder()
+                                                              .setDbName(args[0])
+                                                              .setUsername(args[1])
+                                                              .setPassword(args[2])
+                                                              .build();
             return result;
         } else {
             return DB_PROPERTIES;
@@ -88,7 +77,7 @@ public final class LocalMySqlServer extends RdbmsServer {
     }
 
     @Override
-    protected ConnectionUrl connectionUrl(DbConnectionProperties properties) {
+    protected ConnectionUrl connectionUrl(ConnectionProperties properties) {
         LocalMySqlConnectionUrl result = new LocalMySqlConnectionUrl(properties);
         return result;
     }

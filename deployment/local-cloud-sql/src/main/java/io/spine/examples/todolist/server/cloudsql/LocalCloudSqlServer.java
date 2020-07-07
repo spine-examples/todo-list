@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.rdbms.RdbmsServer;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
@@ -63,18 +61,32 @@ public class LocalCloudSqlServer extends CloudSqlServer {
 
     public static void main(String[] args) throws IOException {
         LocalCloudSqlServer server = new LocalCloudSqlServer();
-        server.run(args);
+        server.start(args);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>To launch a local Cloud SQL server, arguments must specify the following:
+     * <ol>
+     *     <li>name of the instance to connect to;
+     *     <li>name of the database to connect to;
+     *     <li>name of the database user;
+     *     <li>a user password;
+     * </ol>
+     *
+     * @param args command line arguments specified to launch the application
+     * @return
+     */
     @Override
-    protected Optional<DbConnectionProperties> fromArgs(String[] args) {
+    protected Optional<ConnectionProperties> connectionProperties(String[] args) {
         if (args.length == 4) {
-            DbConnectionProperties result = DbConnectionProperties.newBuilder()
-                                                                  .setInstanceName(args[0])
-                                                                  .setDbName(args[1])
-                                                                  .setUsername(args[2])
-                                                                  .setPassword(args[3])
-                                                                  .build();
+            ConnectionProperties result = ConnectionProperties.newBuilder()
+                                                              .setInstanceName(args[0])
+                                                              .setDbName(args[1])
+                                                              .setUsername(args[2])
+                                                              .setPassword(args[3])
+                                                              .build();
             return Optional.of(result);
         } else {
             return Optional.empty();

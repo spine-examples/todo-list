@@ -21,26 +21,41 @@
 package io.spine.examples.todolist.server.cloudsql;
 
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.RdbmsServer;
 
 import java.util.Optional;
 
+/**
+ * A server backed by a Google Cloud SQL-based storage.
+ *
+ * <p>By convention, Google Cloud SQL servers may be configured using a properties file
+ * with a predefined name.
+ */
 public abstract class CloudSqlServer extends RdbmsServer {
 
-    private static final DbConnectionProperties CLOUD_SQL_PROPERTIES =
-            DbConnectionProperties.fromResourceFile("cloud-sql.properties");
+    private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
+            ConnectionProperties.fromResourceFile("cloud-sql.properties");
 
     @Override
-    public final DbConnectionProperties properties(String[] args) {
-        DbConnectionProperties result = fromArgs(args).orElse(CLOUD_SQL_PROPERTIES);
+    public final ConnectionProperties properties(String[] args) {
+        ConnectionProperties result = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
         return result;
     }
 
-    protected abstract Optional<DbConnectionProperties> fromArgs(String[] commandLineArgs);
+    /**
+     * If the specified command line arguments are sufficient to construct
+     * {@code ConnectionProperties}, returns them. Otherwise, returns an empty {@code Optional}.
+     *
+     * <p>If {@code Optional} is returned, the {@linkplain #CLOUD_SQL_PROPERTIES fallback
+     * properties} are used instead.
+     *
+     * @param args command line arguments specified to launch the application
+     */
+    protected abstract Optional<ConnectionProperties> connectionProperties(String[] args);
 
     @Override
-    public final ConnectionUrl connectionUrl(DbConnectionProperties properties) {
+    public final ConnectionUrl connectionUrl(ConnectionProperties properties) {
         CloudSqlConnectionUrl result = new CloudSqlConnectionUrl(properties);
         return result;
     }

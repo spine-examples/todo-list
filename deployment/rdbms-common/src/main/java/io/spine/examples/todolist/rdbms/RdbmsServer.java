@@ -35,24 +35,27 @@ import java.io.IOException;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 
+/**
+ * A server implementation backed by a relational database.
+ *
+ * <p>Run the server by passing the {@code args} from the {@code main} method to
+ * {@link #start(String[])}.
+ */
 public abstract class RdbmsServer {
 
     private static final String LOCAL_H2 = "jdbc:h2:mem:";
 
-    public void run(String[] argus) throws IOException {
-        ServerEnvironment environment = ServerEnvironment.instance();
-        DbConnectionProperties connectionProperties = properties(argus);
-        configureServerEnvironment(environment, connectionProperties);
-    }
+    /**
+     * Starts the server.
+     *
+     * @param args
+     *         command line arguments
+     */
+    public final void start(String[] args) throws IOException {
+        ConnectionProperties connectionProperties = properties(args);
+        StorageFactory factory = storageFactory(connectionProperties);
 
-    private void
-    configureServerEnvironment(ServerEnvironment serverEnvironment,
-                               DbConnectionProperties connectionProperties) throws IOException {
-        ConnectionUrl connectionUrl = composeUrl(connectionProperties);
-        RdbmsStorageFactorySupplier supplier =
-                new RdbmsStorageFactorySupplier(connectionUrl, connectionProperties.credentials());
-
-        StorageFactory factory = supplier.get();
+        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         serverEnvironment.use(factory, Production.class)
                          .use(InMemoryTransportFactory.newInstance(), Production.class);
         BoundedContext context = TasksContextFactory.create();
@@ -60,18 +63,36 @@ public abstract class RdbmsServer {
         server.start();
     }
 
-    protected abstract DbConnectionProperties properties(String[] commandLineArguments);
+    /**
+     * Extracts the connection properties from the command line arguments.
+     *
+     * @param commandLineArguments
+     *         arguments used to launch the server
+     * @return properties for connecting to a relational database
+     */
+    protected abstract ConnectionProperties properties(String[] commandLineArguments);
 
-    protected abstract ConnectionUrl connectionUrl(DbConnectionProperties properties);
+    /**
+     * Constructs a DB connection URL based on the specified properties.
+     */
+    protected abstract ConnectionUrl connectionUrl(ConnectionProperties properties);
 
-    private ConnectionUrl composeUrl(DbConnectionProperties properties) {
+    private ConnectionUrl composeUrl(ConnectionProperties properties) {
         Environment environment = Environment.instance();
-        DbConnectionProperties props = environment.is(Tests.class)
-                                       ? properties
-                                       : properties.toBuilder()
-                                                   .setUrlPrefix(LOCAL_H2)
-                                                   .build();
+        ConnectionProperties props = environment.is(Tests.class)
+                                     ? properties
+                                     : properties.toBuilder()
+                                                 .setUrlPrefix(LOCAL_H2)
+                                                 .build();
         ConnectionUrl result = connectionUrl(props);
         return result;
+    }
+
+    private StorageFactory storageFactory(ConnectionProperties connectionProperties) {
+        ConnectionUrl connectionUrl = composeUrl(connectionProperties);
+        RelationalStorage supplier =
+                new RelationalStorage(connectionUrl, connectionProperties.credentials());
+
+        return supplier.get();
     }
 }

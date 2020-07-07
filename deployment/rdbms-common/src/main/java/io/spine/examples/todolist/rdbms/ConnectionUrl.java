@@ -20,15 +20,21 @@
 
 package io.spine.examples.todolist.rdbms;
 
+/**
+ * A URL for connecting to a database.
+ */
 public abstract class ConnectionUrl {
 
-    private final DbConnectionProperties properties;
+    private final ConnectionProperties properties;
 
-    protected ConnectionUrl(DbConnectionProperties properties) {
+    protected ConnectionUrl(ConnectionProperties properties) {
         this.properties = properties;
     }
 
-    protected abstract String stringValue(DbConnectionProperties properties);
+    /**
+     * Given the specified properties, composes a database connection string.
+     */
+    protected abstract String stringValue(ConnectionProperties properties);
 
     @Override
     public String toString() {

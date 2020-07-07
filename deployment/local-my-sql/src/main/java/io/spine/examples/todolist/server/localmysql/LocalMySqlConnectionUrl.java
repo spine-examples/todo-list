@@ -21,19 +21,22 @@
 package io.spine.examples.todolist.server.localmysql;
 
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 
 import static java.lang.String.format;
 
+/**
+ * A URL for connecting to a local MySQL database.
+ */
 public class LocalMySqlConnectionUrl extends ConnectionUrl {
 
-    protected LocalMySqlConnectionUrl(DbConnectionProperties properties) {
+    LocalMySqlConnectionUrl(ConnectionProperties properties) {
         super(properties);
     }
 
     @Override
-    protected String stringValue(DbConnectionProperties properties) {
+    protected String stringValue(ConnectionProperties properties) {
         DbUrlPrefix prefix = properties.connectionUrlPrefix();
         String result = format("%s/%s?useSSL=false", prefix.toString(), properties.dbName());
         return result;

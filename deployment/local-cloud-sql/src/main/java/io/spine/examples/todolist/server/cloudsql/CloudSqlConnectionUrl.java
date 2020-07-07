@@ -20,18 +20,21 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 
+/**
+ * A URL for connecting to a Google Cloud SQL database.
+ */
 public final class CloudSqlConnectionUrl extends ConnectionUrl {
 
-    public CloudSqlConnectionUrl(DbConnectionProperties properties) {
+    CloudSqlConnectionUrl(ConnectionProperties properties) {
         super(properties);
     }
 
     @Override
-    public final String stringValue(DbConnectionProperties properties) {
+    public final String stringValue(ConnectionProperties properties) {
         DbUrlPrefix prefix = properties.connectionUrlPrefix();
         String result =
                 String.format("%s//google/%s?cloudSqlInstance=%s&" +

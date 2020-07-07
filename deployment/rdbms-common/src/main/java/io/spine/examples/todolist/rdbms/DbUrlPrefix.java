@@ -20,19 +20,16 @@
 
 package io.spine.examples.todolist.rdbms;
 
-import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
+import io.spine.value.StringTypeValue;
 
-public final class DbUrlPrefix {
+/**
+ * A prefix to the DB connection URL.
+ */
+public final class DbUrlPrefix extends StringTypeValue {
 
-    private final String value;
+    private static final long serialVersionUID = 0L;
 
-    public DbUrlPrefix(String value) {
-        checkNotEmptyOrBlank(value);
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return value;
+    DbUrlPrefix(String value) {
+        super(value);
     }
 }
