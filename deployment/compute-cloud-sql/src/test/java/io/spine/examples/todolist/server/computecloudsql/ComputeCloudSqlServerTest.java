@@ -20,26 +20,43 @@
 
 package io.spine.examples.todolist.server.computecloudsql;
 
-import io.spine.server.BoundedContext;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.Assert.assertFalse;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.google.common.truth.Truth8.assertThat;
 
 @DisplayName("`ComputeCloudSqlServer` should")
 class ComputeCloudSqlServerTest {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(ComputeCloudSqlServer.class);
+    @DisplayName("never use the cmd arguments")
+    @ParameterizedTest
+    @MethodSource("sampleArgs")
+    void alwaysUseConfig(String[] args) {
+        ComputeCloudSqlServer server = new ComputeCloudSqlServer();
+        Optional<ConnectionProperties> properties = server.connectionProperties(args);
+        assertThat(properties).isEmpty();
     }
 
-    @Test
-    @DisplayName("create signletenant BoundedContext")
-    void createSingletenantBoundedContext() {
-        BoundedContext context = createContext();
-        assertFalse(context.isMultitenant());
+    @SuppressWarnings("ConfusingArgumentToVarargsMethod")
+    private static Stream<Arguments> sampleArgs() {
+        String dbName = "sample_name";
+        String prefix = "sample_prefix";
+        String username = "sample_username";
+        String password = "sample_password";
+        String instanceName = "sample_instance";
+
+        return Stream.of(
+                Arguments.of(new String[]{dbName}),
+                Arguments.of(new String[]{dbName, prefix}),
+                Arguments.of(new String[]{dbName, prefix, username}),
+                Arguments.of(new String[]{dbName, prefix, username, password}),
+                Arguments.of(new String[]{dbName, prefix, username, password, instanceName})
+        );
     }
 }
