@@ -18,31 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.computecloudsql;
+package io.spine.examples.todolist.server.cloudsql;
 
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.cloudsql.CloudSqlServer;
+import io.spine.examples.todolist.rdbms.RdbmsServer;
 
 import java.util.Optional;
 
-/**
- * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory} for working with Cloud SQL.
- *
- * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
- *
- * <p>For the details, see the {@code README.md}.
- */
-public final class ComputeCloudSqlServer extends CloudSqlServer {
+public abstract class CloudSqlServer extends RdbmsServer {
 
-    /** Prevents instantiation of this class. */
-    private ComputeCloudSqlServer() {
-    }
+    private static final DbConnectionProperties CLOUD_SQL_PROPERTIES =
+            DbConnectionProperties.fromResourceFile("cloud-sql.properties");
 
     @Override
-    protected Optional<DbConnectionProperties> fromArgs(String[] commandLineArgs) {
-        // Compute Engine based server cannot be instantiated using command line arguments.
-        return Optional.empty();
+    public final DbConnectionProperties properties(String[] args) {
+        DbConnectionProperties result = fromArgs(args).orElse(CLOUD_SQL_PROPERTIES);
+        return result;
+    }
+
+    protected abstract Optional<DbConnectionProperties> fromArgs(String[] commandLineArgs);
+
+    @Override
+    public final ConnectionUrl connectionUrl(DbConnectionProperties properties) {
+        CloudSqlConnectionUrl result = new CloudSqlConnectionUrl(properties);
+        return result;
     }
 }

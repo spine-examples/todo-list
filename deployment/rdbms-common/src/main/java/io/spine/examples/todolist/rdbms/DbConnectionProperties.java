@@ -98,12 +98,6 @@ public final class DbConnectionProperties {
         return result;
     }
 
-    /** Returns a prefix for the DB connection URL. */
-    public String connectionUrlPrefix() {
-        String result = value(PREFIX);
-        return result;
-    }
-
     /**
      * Returns the name of the instance to connect to.
      *
@@ -114,11 +108,23 @@ public final class DbConnectionProperties {
         return result;
     }
 
+    /** Returns a prefix for the DB connection URL. */
+    public DbUrlPrefix connectionUrlPrefix() {
+        String stringValue = value(PREFIX);
+        DbUrlPrefix result = new DbUrlPrefix(stringValue);
+        return result;
+    }
+
+    public Builder toBuilder() {
+        return new Builder(new HashMap<>(properties));
+    }
+
     private String value(String key) {
         checkNotNull(key);
         return Optional.ofNullable(properties.get(key))
                        .orElseThrow(() -> newIllegalStateException(
-                               "Could not read `%s` from the database connection properties.", key));
+                               "Could not read `%s` from the database connection properties.",
+                               key));
     }
 
     private static Properties loadProperties(String propertiesFile) {
@@ -138,7 +144,15 @@ public final class DbConnectionProperties {
      */
     public static class Builder {
 
-        private final Map<String, String> properties = new HashMap<>(5);
+        private final Map<String, String> properties;
+
+        private Builder(Map<String, String> props) {
+            this.properties = props;
+        }
+
+        private Builder() {
+            this.properties = new HashMap<>(5);
+        }
 
         /** Sets the database name to specified one. */
         public Builder setDbName(String name) {
@@ -178,7 +192,7 @@ public final class DbConnectionProperties {
         /** Returns a new instance of the DB connection properties. */
         public DbConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
-            return new DbConnectionProperties(properties);
+            return new DbConnectionProperties(new HashMap<>(properties));
         }
     }
 }

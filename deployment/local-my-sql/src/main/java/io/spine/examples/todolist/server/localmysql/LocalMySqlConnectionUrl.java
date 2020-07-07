@@ -18,31 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.computecloudsql;
+package io.spine.examples.todolist.server.localmysql;
 
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.cloudsql.CloudSqlServer;
+import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 
-import java.util.Optional;
+import static java.lang.String.format;
 
-/**
- * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory} for working with Cloud SQL.
- *
- * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
- *
- * <p>For the details, see the {@code README.md}.
- */
-public final class ComputeCloudSqlServer extends CloudSqlServer {
+public class LocalMySqlConnectionUrl extends ConnectionUrl {
 
-    /** Prevents instantiation of this class. */
-    private ComputeCloudSqlServer() {
+    protected LocalMySqlConnectionUrl(DbConnectionProperties properties) {
+        super(properties);
     }
 
     @Override
-    protected Optional<DbConnectionProperties> fromArgs(String[] commandLineArgs) {
-        // Compute Engine based server cannot be instantiated using command line arguments.
-        return Optional.empty();
+    protected String stringValue(DbConnectionProperties properties) {
+        DbUrlPrefix prefix = properties.connectionUrlPrefix();
+        String result = format("%s/%s?useSSL=false", prefix.toString(), properties.dbName());
+        return result;
     }
 }

@@ -20,56 +20,19 @@
 
 package io.spine.examples.todolist.rdbms;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.base.Environment;
-import io.spine.base.Tests;
+import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * A prefix to the database connection URL string.
- *
- * <p>Get the actual value with {@link #toString()}.
- *
- * <p>If the value is obtained during tests, returns a predefined test value. Otherwise, attempts
- * to get the value from the specified {@link DbConnectionProperties}.
- */
 public final class DbUrlPrefix {
 
-    @VisibleForTesting
-    public static final String LOCAL_H2 = "jdbc:h2:mem:";
+    private final String value;
 
-    private final DbConnectionProperties properties;
-    private final String testValue;
-
-    /**
-     * Creates a new instance of the connection URL prefix.
-     *
-     * @param properties
-     *         properties to get the prefix value from
-     * @param testsValue
-     *         value to use for tests
-     */
-    public DbUrlPrefix(DbConnectionProperties properties, String testsValue) {
-        checkNotNull(properties);
-        checkNotNull(testsValue);
-        this.properties = properties;
-        this.testValue = testsValue;
-    }
-
-    /**
-     * Returns a new connection URL prefix known to be usable to connect to local h2 databases.
-     */
-    public static DbUrlPrefix propsOrLocalH2(DbConnectionProperties properties) {
-        return new DbUrlPrefix(properties, LOCAL_H2);
+    public DbUrlPrefix(String value) {
+        checkNotEmptyOrBlank(value);
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        Environment environment = Environment.instance();
-        String result = environment.is(Tests.class)
-                        ? testValue
-                        : properties.connectionUrlPrefix();
-        return result;
+        return value;
     }
 }

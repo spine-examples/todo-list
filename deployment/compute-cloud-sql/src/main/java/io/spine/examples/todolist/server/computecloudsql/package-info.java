@@ -19,7 +19,8 @@
  */
 
 /**
- * This package contains a server implementation backed by a remote Google Cloud SQL storage.
+ * This package contains a server implementation backed by a remote Google Cloud SQL storage
+ * instance.
  */
 
 @CheckReturnValue

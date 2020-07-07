@@ -34,15 +34,15 @@ import java.util.function.Supplier;
  */
 public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactory>, Logging {
 
-    private final String connectionUrl;
+    private final ConnectionUrl connectionUrl;
     private final DbCredentials dbCredentials;
 
     /**
      * Creates a new storage factory supplier using the specified connection URL and the specified
      * database credentials.
      */
-    public RdbmsStorageFactorySupplier(String dbConnectionUrl, DbCredentials dbCredentials) {
-        this.connectionUrl = dbConnectionUrl;
+    public RdbmsStorageFactorySupplier(ConnectionUrl connectionUrl, DbCredentials dbCredentials) {
+        this.connectionUrl = connectionUrl;
         this.dbCredentials = dbCredentials;
     }
 
@@ -58,7 +58,7 @@ public final class RdbmsStorageFactorySupplier implements Supplier<StorageFactor
         HikariConfig config = new HikariConfig();
 
         _debug().log("Connecting to the database. URL: `%s`", connectionUrl);
-        config.setJdbcUrl(connectionUrl);
+        config.setJdbcUrl(connectionUrl.toString());
         config.setUsername(dbCredentials.getUsername());
         config.setPassword(dbCredentials.getPassword());
         DataSource dataSource = new HikariDataSource(config);

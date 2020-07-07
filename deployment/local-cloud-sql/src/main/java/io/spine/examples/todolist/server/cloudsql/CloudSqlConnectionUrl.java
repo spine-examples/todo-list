@@ -20,48 +20,24 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
 import io.spine.examples.todolist.rdbms.DbUrlPrefix;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+public final class CloudSqlConnectionUrl extends ConnectionUrl {
 
-/**
- * A utility class that contains methods for working with Cloud SQL-backed servers.
- */
-public final class CloudSqlServers {
-
-    /** Prevent instantiation of this utility class. */
-    private CloudSqlServers() {
+    public CloudSqlConnectionUrl(DbConnectionProperties properties) {
+        super(properties);
     }
 
-    /**
-     * Returns the {@code DbConnectionProperties} object assembled from a Cloud SQL config file in
-     * the resources.
-     */
-    public static DbConnectionProperties propertiesFromResourceFile() {
-        return DbConnectionProperties.fromResourceFile("cloud-sql.properties");
-    }
-
-    /**
-     * Returns the connection URL prefix that is either taken from the specified {@code
-     * DbConnectionProperties} object, or falls back to the local H2-compatible prefix.
-     */
-    public static DbUrlPrefix prefix(DbConnectionProperties properties) {
-        checkNotNull(properties);
-        return DbUrlPrefix.propsOrLocalH2(properties);
-    }
-
-    /**
-     * Returns a connection URL for a Google Cloud SQL database. The connection URL is composed
-     * using the specified properties.
-     */
-    public static String dbUrl(DbConnectionProperties properties) {
-        checkNotNull(properties);
+    @Override
+    public final String stringValue(DbConnectionProperties properties) {
+        DbUrlPrefix prefix = properties.connectionUrlPrefix();
         String result =
                 String.format("%s//google/%s?cloudSqlInstance=%s&" +
                                       "useSSL=false&socketFactory=com.google.cloud.sql.mysql" +
                                       ".SocketFactory",
-                              prefix(properties).toString(),
+                              prefix.toString(),
                               properties.dbName(),
                               properties.instanceName());
         return result;

@@ -55,7 +55,7 @@ dependencies {
 
 configurations.all({
     resolutionStrategy {
-        // Force the `google-api-client` version required by the Spine Web.	
+        // Force the `google-api-client` version required by the Spine Web.
         force "com.google.api-client:google-api-client:1.25.0"
     }
 })

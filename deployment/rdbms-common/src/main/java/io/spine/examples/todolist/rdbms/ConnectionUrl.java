@@ -18,31 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.computecloudsql;
+package io.spine.examples.todolist.rdbms;
 
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.cloudsql.CloudSqlServer;
+public abstract class ConnectionUrl {
 
-import java.util.Optional;
+    private final DbConnectionProperties properties;
 
-/**
- * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory} for working with Cloud SQL.
- *
- * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
- *
- * <p>For the details, see the {@code README.md}.
- */
-public final class ComputeCloudSqlServer extends CloudSqlServer {
-
-    /** Prevents instantiation of this class. */
-    private ComputeCloudSqlServer() {
+    protected ConnectionUrl(DbConnectionProperties properties) {
+        this.properties = properties;
     }
 
+    protected abstract String stringValue(DbConnectionProperties properties);
+
     @Override
-    protected Optional<DbConnectionProperties> fromArgs(String[] commandLineArgs) {
-        // Compute Engine based server cannot be instantiated using command line arguments.
-        return Optional.empty();
+    public String toString() {
+        String result = stringValue(properties);
+        return result;
     }
 }

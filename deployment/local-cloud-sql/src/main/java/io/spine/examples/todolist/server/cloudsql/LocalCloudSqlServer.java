@@ -20,22 +20,13 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.base.Production;
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.rdbms.DbCredentials;
-import io.spine.examples.todolist.rdbms.RdbmsStorageFactorySupplier;
+import io.spine.examples.todolist.rdbms.RdbmsServer;
 import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.server.tasks.TasksContextFactory;
-import io.spine.server.BoundedContext;
-import io.spine.server.ServerEnvironment;
-import io.spine.server.storage.StorageFactory;
-import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
-
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.server.Server.newServer;
+import java.util.Optional;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -62,28 +53,21 @@ import static io.spine.examples.todolist.server.Server.newServer;
  * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
  *         creation</a>
  */
-public class LocalCloudSqlServer {
+public class LocalCloudSqlServer extends CloudSqlServer {
 
-    private static final DbConnectionProperties DB_PROPERTIES = CloudSqlServers.propertiesFromResourceFile();
+
 
     /** Prevents instantiation of this class. */
     private LocalCloudSqlServer() {
     }
 
     public static void main(String[] args) throws IOException {
-        DbConnectionProperties properties = properties(args);
-
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(createStorageFactory(properties), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
-
-        BoundedContext context = createContext();
-        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
-        server.start();
+        LocalCloudSqlServer server = new LocalCloudSqlServer();
+        server.run(args);
     }
 
-    @VisibleForTesting
-    static DbConnectionProperties properties(String[] args) {
+    @Override
+    protected Optional<DbConnectionProperties> fromArgs(String[] args) {
         if (args.length == 4) {
             DbConnectionProperties result = DbConnectionProperties.newBuilder()
                                                                   .setInstanceName(args[0])
@@ -91,21 +75,9 @@ public class LocalCloudSqlServer {
                                                                   .setUsername(args[2])
                                                                   .setPassword(args[3])
                                                                   .build();
-            return result;
+            return Optional.of(result);
         } else {
-            return DB_PROPERTIES;
+            return Optional.empty();
         }
-    }
-
-    private static StorageFactory createStorageFactory(DbConnectionProperties props) {
-        String dbUrl = CloudSqlServers.dbUrl(props);
-        DbCredentials credentials = props.credentials();
-        RdbmsStorageFactorySupplier supplier = new RdbmsStorageFactorySupplier(dbUrl, credentials);
-        return supplier.get();
-    }
-
-    @VisibleForTesting
-    static BoundedContext createContext() {
-        return TasksContextFactory.create();
     }
 }
