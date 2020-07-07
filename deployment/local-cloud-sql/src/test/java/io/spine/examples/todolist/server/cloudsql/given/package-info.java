@@ -18,28 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.computecloudsql;
+/**
+ * An environment for tests of
+ * {@link io.spine.examples.todolist.server.cloudsql.CloudSqlServer} and its descendants.
+ */
 
-import io.spine.server.BoundedContext;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.cloudsql.given;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.Assert.assertFalse;
+import com.google.errorprone.annotations.CheckReturnValue;
 
-@DisplayName("`ComputeCloudSqlServer` should")
-class ComputeCloudSqlServerTest {
-
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(ComputeCloudSqlServer.class);
-    }
-
-    @Test
-    @DisplayName("create signletenant BoundedContext")
-    void createSingletenantBoundedContext() {
-        BoundedContext context = createContext();
-        assertFalse(context.isMultitenant());
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

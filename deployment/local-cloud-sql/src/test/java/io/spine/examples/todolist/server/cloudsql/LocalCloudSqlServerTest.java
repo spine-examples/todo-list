@@ -20,68 +20,49 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import com.google.common.truth.StringSubject;
-import com.google.common.truth.Truth;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.server.BoundedContext;
+import io.spine.examples.todolist.rdbms.ConnectionProperties;
+import io.spine.examples.todolist.rdbms.DbCredentials;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.server.cloudsql.LocalCloudSqlServer.createContext;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.Assert.assertFalse;
+import static com.google.common.truth.Truth8.assertThat;
 
-@DisplayName("LocalCloudSqlServer should")
+@DisplayName("`LocalCloudSqlServer` should")
 class LocalCloudSqlServerTest {
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalCloudSqlServer.class);
-    }
+    @DisplayName("use the properties from the command line")
+    void commandLineProps() {
+        LocalCloudSqlServer server = new LocalCloudSqlServer();
+        String instanceName = "instance";
+        String dbName = "db";
 
-    @Test
-    @DisplayName("assemble DB properties from resources if command line args are insufficient")
-    void assemblePropsFromResources() {
-        String[] insufficientCmdArgs = {"dbName", "username"};
+        DbCredentials credentials =
+                DbCredentials.newBuilder()
+                             .setUsername("user")
+                             .setPassword("password")
+                             .vBuild();
 
-        DbConnectionProperties properties = LocalCloudSqlServer.properties(insufficientCmdArgs);
-        Stream.of(properties.dbName(),
-                  properties.credentials()
-                            .getUsername(),
-                  properties.credentials()
-                            .getPassword(),
-                  properties.instanceName())
-              .map(Truth::assertThat)
-              .forEach(StringSubject::isNotEmpty);
-    }
-
-    @Test
-    @DisplayName("use the DB properties specified as command line args")
-    void useCmdArgsAsDbProps() {
-        final String dbInstance = "instance_1";
-        final String dbName = "myDb";
-        final String username = "admin";
-        final String password = username + "123";
-
-        String[] customProperties = {dbInstance, dbName, username, password};
-
-        DbConnectionProperties properties = LocalCloudSqlServer.properties(customProperties);
+        String[] args = {instanceName, dbName, credentials.getUsername(), credentials.getPassword()};
+        Optional<ConnectionProperties> maybeProperties = server.connectionProperties(args);
+        assertThat(maybeProperties).isPresent();
+        ConnectionProperties properties = maybeProperties.get();
+        assertThat(properties.instanceName()).isEqualTo(instanceName);
         assertThat(properties.dbName()).isEqualTo(dbName);
-        assertThat(properties.credentials()
-                             .getUsername()).isEqualTo(username);
-        assertThat(properties.credentials()
-                             .getPassword()).isEqualTo(password);
-        assertThat(properties.instanceName()).isEqualTo(dbInstance);
+        assertThat(properties.credentials()).isEqualTo(credentials);
     }
 
     @Test
-    @DisplayName("create signletenant BoundedContext")
-    void createSingletenantBoundedContext() {
-        BoundedContext context = createContext();
-        assertFalse(context.isMultitenant());
+    @DisplayName("use the values from resources if the command line arguments are insufficient")
+    void fromResources() {
+        CloudSqlServer server = new LocalCloudSqlServer();
+        String[] args = {"instance_name", "db_name"};
+
+        Optional<ConnectionProperties> properties = server.connectionProperties(args);
+        assertThat(properties).isEmpty();
     }
 }

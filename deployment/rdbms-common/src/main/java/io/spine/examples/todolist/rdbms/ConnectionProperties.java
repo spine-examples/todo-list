@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -45,9 +46,9 @@ public final class ConnectionProperties {
     private static final String INSTANCE = "db.instance";
     private static final String USERNAME = "db.username";
 
-    private final Map<String, String> properties;
+    private final ImmutableMap<String, String> properties;
 
-    private ConnectionProperties(Map<String, String> properties) {
+    private ConnectionProperties(ImmutableMap<String, String> properties) {
         this.properties = properties;
     }
 
@@ -138,10 +139,27 @@ public final class ConnectionProperties {
                                                        .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ConnectionProperties that = (ConnectionProperties) o;
+        return Objects.equal(properties, that.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(properties);
     }
 
     /**
@@ -197,7 +215,7 @@ public final class ConnectionProperties {
         /** Returns a new instance of the DB connection properties. */
         public ConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
-            return new ConnectionProperties(new HashMap<>(properties));
+            return new ConnectionProperties(ImmutableMap.copyOf(properties));
         }
     }
 }

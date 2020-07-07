@@ -18,49 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.cloudsql;
+package io.spine.examples.todolist.rdbms;
 
-import io.spine.examples.todolist.rdbms.DbCredentials;
-import io.spine.examples.todolist.rdbms.DbConnectionProperties;
-import io.spine.examples.todolist.rdbms.DbUrlPrefix;
-import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("`CloudSqlServers` utility class should")
-final class CloudSqlServersTest extends UtilityClassTest<CloudSqlServers> {
+@DisplayName("`ConnectionProperties` should")
+class ConnectionPropertiesTest {
 
-    CloudSqlServersTest() {
-        super(CloudSqlServers.class);
+    private static final String RESOURCE_FILE_NAME = "test.properties";
+
+    @Test
+    @DisplayName("throw if no resource file exists")
+    void throwIfNoFile() {
+        String badName = "non_existing_" + RESOURCE_FILE_NAME;
+        assertThrows(IllegalStateException.class,
+                     () -> ConnectionProperties.fromResourceFile(badName));
     }
 
     @Test
-    @DisplayName("return an h2 connection URL prefix")
-    void localH2Prefix() {
-        DbConnectionProperties props = DbConnectionProperties.newBuilder()
-                                                             .setDbName("database")
-                                                             .setUsername("admin")
-                                                             .setPassword("admin")
-                                                             .build();
-
-        DbUrlPrefix prefix = CloudSqlServers.prefix(props);
-        assertThat(prefix.toString()).isEqualTo(DbUrlPrefix.LOCAL_H2);
-    }
-
-    @Test
-    @DisplayName("read the properties from resources")
-    void readFromResources() {
-        // All values in the test properties file are prefixed with `_test'.
+    @DisplayName("initialize from a resource file")
+    void initializeOk() {
+        ConnectionProperties properties = ConnectionProperties.fromResourceFile(RESOURCE_FILE_NAME);
         String testPrefix = "test_";
-        DbConnectionProperties properties = CloudSqlServers.propertiesFromResourceFile();
         assertThat(properties.dbName()).isEqualTo(testPrefix + "db");
         assertThat(properties.instanceName()).isEqualTo(testPrefix + "instance");
-        assertThat(properties.connectionUrlPrefix()).startsWith(testPrefix + "prefix");
-
+        assertThat(properties.connectionUrlPrefix()
+                             .toString()).isEqualTo(testPrefix + "prefix");
         DbCredentials credentials = properties.credentials();
         assertThat(credentials.getUsername()).isEqualTo(testPrefix + "user");
-        assertThat(credentials.getPassword()).isEqualTo(testPrefix + "password");
+        assertThat(credentials.getPassword()).startsWith(testPrefix + "password");
     }
 }
