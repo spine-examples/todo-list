@@ -51,16 +51,14 @@ class ComputeCloudSqlServerTest {
         String instanceName = "sample_instance";
 
         return Stream.of(
-                Arguments.of(stringArrArgument(new String[]{dbName})),
-                Arguments.of(stringArrArgument(new String[]{dbName, prefix})),
-                Arguments.of(stringArrArgument(new String[]{dbName, prefix, username})),
-                Arguments.of(stringArrArgument(new String[]{dbName, prefix, username, password})),
-                Arguments.of(stringArrArgument(
-                        new String[]{dbName, prefix, username, password, instanceName}))
-        );
+                stringArrArgument(dbName),
+                stringArrArgument(dbName, prefix),
+                stringArrArgument(dbName, prefix, username),
+                stringArrArgument(dbName, prefix, username, password),
+                stringArrArgument(dbName, prefix, username, password, instanceName));
     }
 
-    private static Arguments stringArrArgument(String[] args) {
-        return Arguments.of((Object[]) args);
+    private static Arguments stringArrArgument(String... args) {
+        return Arguments.of((Object) args);
     }
 }
