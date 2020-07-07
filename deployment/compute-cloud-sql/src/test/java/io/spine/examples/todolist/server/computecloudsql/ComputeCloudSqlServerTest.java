@@ -43,7 +43,6 @@ class ComputeCloudSqlServerTest {
         assertThat(properties).isEmpty();
     }
 
-    @SuppressWarnings("ConfusingArgumentToVarargsMethod")
     private static Stream<Arguments> sampleArgs() {
         String dbName = "sample_name";
         String prefix = "sample_prefix";
@@ -52,11 +51,16 @@ class ComputeCloudSqlServerTest {
         String instanceName = "sample_instance";
 
         return Stream.of(
-                Arguments.of(new String[]{dbName}),
-                Arguments.of(new String[]{dbName, prefix}),
-                Arguments.of(new String[]{dbName, prefix, username}),
-                Arguments.of(new String[]{dbName, prefix, username, password}),
-                Arguments.of(new String[]{dbName, prefix, username, password, instanceName})
+                Arguments.of(stringArrArgument(new String[]{dbName})),
+                Arguments.of(stringArrArgument(new String[]{dbName, prefix})),
+                Arguments.of(stringArrArgument(new String[]{dbName, prefix, username})),
+                Arguments.of(stringArrArgument(new String[]{dbName, prefix, username, password})),
+                Arguments.of(stringArrArgument(
+                        new String[]{dbName, prefix, username, password, instanceName}))
         );
+    }
+
+    private static Arguments stringArrArgument(String[] args) {
+        return Arguments.of((Object[]) args);
     }
 }
