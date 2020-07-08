@@ -23,6 +23,7 @@ package io.spine.examples.todolist.rdbms.given;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.JdbcConnectionProtocol;
+import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 import static java.lang.String.format;
@@ -37,7 +38,7 @@ public final class RdbmsTestEnv {
      *
      * <p>Always returns the predefined connection properties specified to the ctor.
      */
-    public static class TestServer extends RunsOnRdbms {
+    public static final class TestServer extends RunsOnRdbms {
 
         private final ConnectionProperties properties;
 
@@ -46,13 +47,8 @@ public final class RdbmsTestEnv {
         }
 
         @Override
-        public ConnectionProperties properties(String[] commandLineArguments) {
-            return properties;
-        }
-
-        @Override
-        public ConnectionUrl connectionUrl(ConnectionProperties properties) {
-            ConnectionUrl result = new ConnectionUrl(properties) {
+        public RelationalStorage storage(String[] args) {
+            ConnectionUrl connectionUrl = new ConnectionUrl(properties) {
                 @Override
                 protected String stringValue(ConnectionProperties properties) {
                     JdbcConnectionProtocol protocol = properties.connectionProtocol();
@@ -61,7 +57,7 @@ public final class RdbmsTestEnv {
                     return result;
                 }
             };
-            return result;
+            return new RelationalStorage(connectionUrl, properties.credentials());
         }
     }
 }

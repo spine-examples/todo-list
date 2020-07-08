@@ -21,40 +21,30 @@
 package io.spine.examples.todolist.server.cloudsql;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
-import io.spine.examples.todolist.rdbms.DbCredentials;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.JDBC_PROTOCOL;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
+import static com.google.common.truth.Truth8.assertThat;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.TestCloudSqlServer;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.USERNAME;
 
 @DisplayName("`CloudSqlServer` should")
-public class CloudSqlServerTest {
+class CloudSqlServerTest {
 
     @Test
     @DisplayName("use the value from the properties file if command line args are insufficient")
     void fallbackToProperties() {
         TestCloudSqlServer server = new TestCloudSqlServer();
         String[] args = {"name", "password"};
-        ConnectionProperties properties = server.properties(args);
-
-        assertThat(properties.connectionProtocol()
-                             .getValue()).isEqualTo(JDBC_PROTOCOL);
-        assertThat(properties.instanceName()).isEqualTo(INSTANCE_NAME);
-        assertThat(properties.dbName()).isEqualTo(DB_NAME);
-
-        DbCredentials credentials = properties.credentials();
-        assertThat(credentials.getUsername()).isEqualTo(USERNAME);
-        assertThat(credentials.getPassword()).isEqualTo(PASSWORD);
+        Optional<ConnectionProperties> properties = server.connectionProperties(args);
+        assertThat(properties).isEmpty();
     }
 
     @Test
     @DisplayName("use the values specified to the command line")
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     void useArgs() {
         String dbName = "test_database";
         String username = "test-user";
@@ -70,7 +60,7 @@ public class CloudSqlServerTest {
 
         String[] args = {dbName, username, password};
         TestCloudSqlServer server = new TestCloudSqlServer();
-        ConnectionProperties properties = server.properties(args);
-        assertThat(properties).isEqualTo(expectedProperties);
+        Optional<ConnectionProperties> properties = server.connectionProperties(args);
+        assertThat(properties.get()).isEqualTo(expectedProperties);
     }
 }

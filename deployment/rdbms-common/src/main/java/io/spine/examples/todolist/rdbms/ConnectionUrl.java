@@ -54,6 +54,11 @@ public abstract class ConnectionUrl {
         return result;
     }
 
+    @VisibleForTesting
+    public ConnectionProperties properties() {
+        return properties;
+    }
+
     @Override
     public final String toString() {
         String result = composeString(properties);

@@ -37,9 +37,8 @@ class LocalMySqlServerTest {
         String username = "username";
         String password = "password";
 
-        LocalMySqlServer server = new LocalMySqlServer();
         String[] args = {dbName, username, password};
-        ConnectionProperties properties = server.properties(args);
+        ConnectionProperties properties = LocalMySqlServer.properties(args);
         assertThat(properties.dbName()).isEqualTo(dbName);
 
         DbCredentials credentials = properties.credentials();

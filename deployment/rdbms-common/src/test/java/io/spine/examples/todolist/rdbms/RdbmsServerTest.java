@@ -56,7 +56,7 @@ class RdbmsServerTest {
         ConnectionProperties props = testProperties.setEnvType(Production.class)
                                                    .build();
         TestServer server = new TestServer(props);
-        ConnectionUrl connectionUrl = connectionUrl(server);
+        ConnectionUrl connectionUrl = server.storage(EMPTY_ARGS).connectionUrl();
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(props.connectionProtocol()
                                                 .getValue());
@@ -68,13 +68,8 @@ class RdbmsServerTest {
         ConnectionProperties props = testProperties.setEnvType(Tests.class)
                                                    .build();
         TestServer server = new TestServer(props);
-        ConnectionUrl connectionUrl = connectionUrl(server);
+        ConnectionUrl connectionUrl = server.storage(EMPTY_ARGS).connectionUrl();
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(LOCAL_H2_PROTOCOL);
-    }
-
-    private static ConnectionUrl connectionUrl(RunsOnRdbms server) {
-        ConnectionProperties props = server.properties(EMPTY_ARGS);
-        return server.connectionUrl(props);
     }
 }

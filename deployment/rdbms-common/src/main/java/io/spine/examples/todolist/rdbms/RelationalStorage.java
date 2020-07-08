@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.logging.Logging;
@@ -31,7 +32,7 @@ import javax.sql.DataSource;
 /**
  * A storage factory backed by a relational database.
  */
-final class RelationalStorage implements Logging {
+public final class RelationalStorage implements Logging {
 
     private final ConnectionUrl connectionUrl;
     private final DbCredentials dbCredentials;
@@ -40,7 +41,7 @@ final class RelationalStorage implements Logging {
      * Creates a new relation storage using the specified connection URL and the specified
      * database credentials.
      */
-    RelationalStorage(ConnectionUrl connectionUrl, DbCredentials dbCredentials) {
+    public RelationalStorage(ConnectionUrl connectionUrl, DbCredentials dbCredentials) {
         this.connectionUrl = connectionUrl;
         this.dbCredentials = dbCredentials;
     }
@@ -61,5 +62,10 @@ final class RelationalStorage implements Logging {
         config.setPassword(dbCredentials.getPassword());
         DataSource dataSource = new HikariDataSource(config);
         return dataSource;
+    }
+
+    @VisibleForTesting
+    ConnectionUrl connectionUrl() {
+        return connectionUrl;
     }
 }

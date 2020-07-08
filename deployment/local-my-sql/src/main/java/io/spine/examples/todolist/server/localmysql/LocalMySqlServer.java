@@ -24,6 +24,7 @@ import io.spine.base.Environment;
 import io.spine.base.EnvironmentType;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
+import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 import io.spine.examples.todolist.server.Server;
 
@@ -59,7 +60,13 @@ public final class LocalMySqlServer extends RunsOnRdbms {
     }
 
     @Override
-    protected ConnectionProperties properties(String[] args) {
+    protected RelationalStorage storage(String[] args) {
+        ConnectionProperties properties = properties(args);
+        ConnectionUrl url = new LocalMySqlConnectionUrl(properties);
+        return new RelationalStorage(url, properties.credentials());
+    }
+
+    static ConnectionProperties properties(String[] args) {
         if (args.length == 3) {
             Class<? extends EnvironmentType> envType = Environment.instance()
                                                                   .type();
@@ -75,11 +82,5 @@ public final class LocalMySqlServer extends RunsOnRdbms {
         } else {
             return DB_PROPERTIES;
         }
-    }
-
-    @Override
-    protected ConnectionUrl connectionUrl(ConnectionProperties properties) {
-        LocalMySqlConnectionUrl result = new LocalMySqlConnectionUrl(properties);
-        return result;
     }
 }

@@ -20,8 +20,9 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
+import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 import java.util.Optional;
@@ -37,12 +38,6 @@ public abstract class CloudSqlServer extends RunsOnRdbms {
     private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
             ConnectionProperties.fromResourceFile("cloud-sql.properties");
 
-    @Override
-    public final ConnectionProperties properties(String[] args) {
-        ConnectionProperties result = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
-        return result;
-    }
-
     /**
      * If the specified command line arguments are sufficient to construct
      * {@code ConnectionProperties}, returns them. Otherwise, returns an empty {@code Optional}.
@@ -50,13 +45,20 @@ public abstract class CloudSqlServer extends RunsOnRdbms {
      * <p>If {@code Optional} is returned, the {@linkplain #CLOUD_SQL_PROPERTIES fallback
      * properties} are used instead.
      *
-     * @param args command line arguments specified to launch the application
+     * @param args
+     *         command line arguments specified to launch the application
      */
     protected abstract Optional<ConnectionProperties> connectionProperties(String[] args);
 
     @Override
-    public final ConnectionUrl connectionUrl(ConnectionProperties properties) {
-        CloudSqlConnectionUrl result = new CloudSqlConnectionUrl(properties);
+    protected RelationalStorage storage(String[] args) {
+        ConnectionProperties properties = properties(args);
+        ConnectionUrl url = new CloudSqlConnectionUrl(properties);
+        return new RelationalStorage(url, properties.credentials());
+    }
+
+    private ConnectionProperties properties(String[] args) {
+        ConnectionProperties result = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
         return result;
     }
 }

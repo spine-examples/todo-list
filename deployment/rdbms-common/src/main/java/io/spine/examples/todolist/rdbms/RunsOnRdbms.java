@@ -25,7 +25,6 @@ import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
-import io.spine.server.storage.StorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 
 import java.io.IOException;
@@ -50,36 +49,15 @@ public abstract class RunsOnRdbms {
      *         command line arguments from the {@code main} method
      */
     public final void start(String[] args) throws IOException {
-        ConnectionProperties connectionProperties = properties(args);
-        StorageFactory factory = storageFactory(connectionProperties);
+        RelationalStorage storage = storage(args);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(factory, Production.class)
+        serverEnvironment.use(storage.storageFactory(), Production.class)
                          .use(InMemoryTransportFactory.newInstance(), Production.class);
         BoundedContext context = TasksContextFactory.create();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
         server.start();
     }
 
-    /**
-     * Extracts the connection properties from the command line arguments.
-     *
-     * @param commandLineArguments
-     *         arguments used to launch the server
-     * @return properties for connecting to a relational database
-     */
-    protected abstract ConnectionProperties properties(String[] commandLineArguments);
-
-    /**
-     * Constructs a DB connection URL based on the specified properties.
-     */
-    protected abstract ConnectionUrl connectionUrl(ConnectionProperties properties);
-
-    private StorageFactory storageFactory(ConnectionProperties connectionProperties) {
-        ConnectionUrl connectionUrl = connectionUrl(connectionProperties);
-        RelationalStorage storage =
-                new RelationalStorage(connectionUrl, connectionProperties.credentials());
-
-        return storage.storageFactory();
-    }
+    protected abstract RelationalStorage storage(String[] args);
 }
