@@ -22,7 +22,7 @@ package io.spine.examples.todolist.rdbms.given;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.RdbmsServer;
+import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 public final class RdbmsServerTestEnv {
 
@@ -44,7 +44,7 @@ public final class RdbmsServerTestEnv {
      * <p>Always returns the predefined {@linkplain RdbmsServerTestEnv#TEST_PROPERTIES predefined
      * connection properties}.
      */
-    public static class TestRdbmsServer extends RdbmsServer {
+    public static class TestRdbmsServer extends RunsOnRdbms {
 
         @Override
         public ConnectionProperties properties(String[] commandLineArguments) {

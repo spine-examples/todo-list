@@ -29,10 +29,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.rdbms.RdbmsServer.LOCAL_H2;
+import static io.spine.examples.todolist.rdbms.RunsOnRdbms.LOCAL_H2;
 import static io.spine.examples.todolist.rdbms.given.RdbmsServerTestEnv.TEST_PROPERTIES;
 
-@DisplayName("`RdbmsServer` should")
+@DisplayName("Servers that run on relational databases should")
 class RdbmsServerTest {
 
     private static final String[] EMPTY_ARGS = {};
@@ -50,7 +50,7 @@ class RdbmsServerTest {
                    .setTo(Production.class);
 
         TestRdbmsServer server = new TestRdbmsServer();
-        DbUrlPrefix prefix = prefix(server);
+        ConnectionUrlPrefix prefix = prefix(server);
         assertThat(prefix).isEqualTo(TEST_PROPERTIES.connectionUrlPrefix());
     }
 
@@ -61,11 +61,11 @@ class RdbmsServerTest {
                    .setTo(Tests.class);
 
         TestRdbmsServer server = new TestRdbmsServer();
-        DbUrlPrefix prefix = prefix(server);
-        assertThat(prefix.toString()).isEqualTo(LOCAL_H2);
+        ConnectionUrlPrefix prefix = prefix(server);
+        assertThat(prefix.getValue()).isEqualTo(LOCAL_H2);
     }
 
-    private static DbUrlPrefix prefix(RdbmsServer server) {
+    private static ConnectionUrlPrefix prefix(RunsOnRdbms server) {
         ConnectionProperties props = server.properties(EMPTY_ARGS);
         return server.composeUrl(props)
                      .properties()

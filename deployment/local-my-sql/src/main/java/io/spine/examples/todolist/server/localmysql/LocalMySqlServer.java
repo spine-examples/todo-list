@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server.localmysql;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.RdbmsServer;
+import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ import java.io.IOException;
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  */
-public final class LocalMySqlServer extends RdbmsServer {
+public final class LocalMySqlServer extends RunsOnRdbms {
 
     private static final ConnectionProperties DB_PROPERTIES =
             ConnectionProperties.fromResourceFile("jdbc-storage.properties");

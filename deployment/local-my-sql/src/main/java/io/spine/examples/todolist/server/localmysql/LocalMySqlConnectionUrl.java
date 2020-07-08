@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.server.localmysql;
 
-import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
-import io.spine.examples.todolist.rdbms.DbUrlPrefix;
+import io.spine.examples.todolist.rdbms.ConnectionUrl;
+import io.spine.examples.todolist.rdbms.ConnectionUrlPrefix;
 
 import static java.lang.String.format;
 
@@ -37,7 +37,7 @@ public class LocalMySqlConnectionUrl extends ConnectionUrl {
 
     @Override
     protected String stringValue(ConnectionProperties properties) {
-        DbUrlPrefix prefix = properties.connectionUrlPrefix();
+        ConnectionUrlPrefix prefix = properties.connectionUrlPrefix();
         String result = format("%s/%s?useSSL=false", prefix.toString(), properties.dbName());
         return result;
     }

@@ -25,8 +25,6 @@ import io.spine.examples.todolist.rdbms.DbCredentials;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
@@ -46,7 +44,7 @@ public class CloudSqlServerTest {
         ConnectionProperties properties = server.properties(args);
 
         assertThat(properties.connectionUrlPrefix()
-                             .toString()).isEqualTo(PREFIX_VALUE);
+                             .getValue()).isEqualTo(PREFIX_VALUE);
         assertThat(properties.instanceName()).isEqualTo(INSTANCE_NAME);
         assertThat(properties.dbName()).isEqualTo(DB_NAME);
 

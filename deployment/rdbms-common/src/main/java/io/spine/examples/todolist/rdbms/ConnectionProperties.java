@@ -110,9 +110,12 @@ public final class ConnectionProperties {
     }
 
     /** Returns a prefix for the DB connection URL. */
-    public DbUrlPrefix connectionUrlPrefix() {
+    public ConnectionUrlPrefix connectionUrlPrefix() {
         String stringValue = value(PREFIX);
-        DbUrlPrefix result = new DbUrlPrefix(stringValue);
+        ConnectionUrlPrefix result = ConnectionUrlPrefix
+                .newBuilder()
+                .setValue(stringValue)
+                .vBuild();
         return result;
     }
 

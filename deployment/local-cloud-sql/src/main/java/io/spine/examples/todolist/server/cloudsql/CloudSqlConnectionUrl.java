@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server.cloudsql;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.DbUrlPrefix;
+import io.spine.examples.todolist.rdbms.ConnectionUrlPrefix;
 
 /**
  * A URL for connecting to a Google Cloud SQL database.
@@ -35,12 +35,12 @@ public final class CloudSqlConnectionUrl extends ConnectionUrl {
 
     @Override
     public final String stringValue(ConnectionProperties properties) {
-        DbUrlPrefix prefix = properties.connectionUrlPrefix();
+        ConnectionUrlPrefix prefix = properties.connectionUrlPrefix();
         String result =
                 String.format("%s//google/%s?cloudSqlInstance=%s&" +
                                       "useSSL=false&socketFactory=com.google.cloud.sql.mysql" +
                                       ".SocketFactory",
-                              prefix.toString(),
+                              prefix.getValue(),
                               properties.dbName(),
                               properties.instanceName());
         return result;

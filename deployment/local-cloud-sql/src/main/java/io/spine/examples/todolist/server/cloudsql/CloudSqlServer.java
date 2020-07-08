@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server.cloudsql;
 
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
-import io.spine.examples.todolist.rdbms.RdbmsServer;
+import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ import java.util.Optional;
  * <p>By convention, Google Cloud SQL servers may be configured using a properties file
  * with a predefined name.
  */
-public abstract class CloudSqlServer extends RdbmsServer {
+public abstract class CloudSqlServer extends RunsOnRdbms {
 
     private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
             ConnectionProperties.fromResourceFile("cloud-sql.properties");

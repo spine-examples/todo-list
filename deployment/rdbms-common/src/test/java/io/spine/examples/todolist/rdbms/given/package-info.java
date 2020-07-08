@@ -19,7 +19,7 @@
  */
 
 /**
- * Contains the environment for testing {@link io.spine.examples.todolist.rdbms.RdbmsServer}.
+ * Contains the environment for testing {@link io.spine.examples.todolist.rdbms.RunsOnRdbms}.
  */
 
 @CheckReturnValue

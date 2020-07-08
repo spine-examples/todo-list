@@ -42,7 +42,7 @@ import static io.spine.examples.todolist.server.Server.newServer;
  * <p>Run the server by passing the {@code args} from the {@code main} method to
  * {@link #start(String[])}.
  */
-public abstract class RdbmsServer {
+public abstract class RunsOnRdbms {
 
     @VisibleForTesting
     static final String LOCAL_H2 = "jdbc:h2:mem:";

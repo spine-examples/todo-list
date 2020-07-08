@@ -17,19 +17,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+syntax = "proto3";
 
-package io.spine.examples.todolist.rdbms;
+package spine.core;
 
-import io.spine.value.StringTypeValue;
+import "spine/options.proto";
 
-/**
- * A prefix to the DB connection URL.
- */
-public final class DbUrlPrefix extends StringTypeValue {
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.examples.todolist.rdbms";
+option java_multiple_files = true;
+option java_outer_classname = "ConnectionUrlPrefixProto";
 
-    private static final long serialVersionUID = 0L;
+// A prefix to a database connection URL string.
+message ConnectionUrlPrefix {
 
-    DbUrlPrefix(String value) {
-        super(value);
-    }
+    string value = 1 [(required) = true];
 }
