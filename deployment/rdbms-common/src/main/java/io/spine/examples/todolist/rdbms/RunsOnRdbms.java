@@ -59,5 +59,13 @@ public abstract class RunsOnRdbms {
         server.start();
     }
 
+    /**
+     * Constructs a {@code RelationalStorage} using the command line arguments.
+     *
+     * <p>Extenders are free to ignore the arguments and use other data to assemble the storage.
+     *
+     * @param args
+     *         command line arguments specified to the {@code main} method
+     */
     protected abstract RelationalStorage storage(String[] args);
 }

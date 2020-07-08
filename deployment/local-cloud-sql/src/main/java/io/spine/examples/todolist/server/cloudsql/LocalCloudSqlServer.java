@@ -43,8 +43,7 @@ import java.util.Optional;
  * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
  *
  * <p>If the parameters were omitted, a default configuration is parsed from a configuration file
- * in resources.
- * See {@code /resources/cloud-sql.properties}.
+ * in resources. See {@code /resources/cloud-sql.properties}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -56,7 +55,7 @@ import java.util.Optional;
 public class LocalCloudSqlServer extends CloudSqlServer {
 
     /**
-     * Launches the To-Do List application.
+     * Starts the To-Do List application server.
      *
      * @see Server#start()
      */

@@ -37,7 +37,7 @@ import java.util.Optional;
 public final class ComputeCloudSqlServer extends CloudSqlServer {
 
     /**
-     * Starts the To-Do list application on Compute Engine.
+     * Starts the Compute Engine based To-Do List application server.
      *
      * @see Server#start()
      */

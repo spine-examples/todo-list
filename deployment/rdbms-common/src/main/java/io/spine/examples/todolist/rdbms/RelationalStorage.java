@@ -46,6 +46,13 @@ public final class RelationalStorage implements Logging {
         this.dbCredentials = dbCredentials;
     }
 
+    /**
+     * Constructs the {@code StorageFactory} backed by a JDBC {@code DataSource}.
+     *
+     * <p>Uses the connection URL and credentials specified to ctor.
+     *
+     * @return a new {@code StorageFactory} instance
+     */
     StorageFactory storageFactory() {
         return JdbcStorageFactory
                 .newBuilder()

@@ -39,11 +39,12 @@ public abstract class CloudSqlServer extends RunsOnRdbms {
             ConnectionProperties.fromResourceFile("cloud-sql.properties");
 
     /**
-     * If the specified command line arguments are sufficient to construct
-     * {@code ConnectionProperties}, returns them. Otherwise, returns an empty {@code Optional}.
+     * Returns the {@code ConnectionProperties} assembled from the command line arguments.
      *
-     * <p>If {@code Optional} is returned, the {@linkplain #CLOUD_SQL_PROPERTIES fallback
-     * properties} are used instead.
+     * <p>If the command line arguments could not be assembled, returns an empty {@code Optional}.
+     *
+     * <p>If extenders return an empty {@code Optional}, a default configuration is used when
+     * {@linkplain #storage(String[]) creating the storage}.
      *
      * @param args
      *         command line arguments specified to launch the application
@@ -52,13 +53,8 @@ public abstract class CloudSqlServer extends RunsOnRdbms {
 
     @Override
     protected RelationalStorage storage(String[] args) {
-        ConnectionProperties properties = properties(args);
+        ConnectionProperties properties = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
         ConnectionUrl url = new CloudSqlConnectionUrl(properties);
         return new RelationalStorage(url, properties.credentials());
-    }
-
-    private ConnectionProperties properties(String[] args) {
-        ConnectionProperties result = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
-        return result;
     }
 }

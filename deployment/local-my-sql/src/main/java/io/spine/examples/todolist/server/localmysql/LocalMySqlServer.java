@@ -50,7 +50,7 @@ public final class LocalMySqlServer extends RunsOnRdbms {
             ConnectionProperties.fromResourceFile("jdbc-storage.properties");
 
     /**
-     * Launches the To-Do list application.
+     * Starts the To-Do list application server.
      *
      * @see Server#start()
      */
