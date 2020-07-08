@@ -44,8 +44,10 @@ public abstract class RunsOnRdbms {
     /**
      * Starts the server.
      *
+     * <p>Please pass the command line arguments from {@code main} to this method.
+     *
      * @param args
-     *         command line arguments
+     *         command line arguments from the {@code main} method
      */
     public final void start(String[] args) throws IOException {
         ConnectionProperties connectionProperties = properties(args);
