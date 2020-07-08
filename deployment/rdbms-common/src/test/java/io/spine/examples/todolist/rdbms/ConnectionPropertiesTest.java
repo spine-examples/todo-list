@@ -24,6 +24,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.spine.examples.todolist.rdbms.ConnectionProperties.INSTANCE;
+import static io.spine.examples.todolist.rdbms.ConnectionProperties.NAME;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("`ConnectionProperties` should")
@@ -51,5 +53,22 @@ class ConnectionPropertiesTest {
         DbCredentials credentials = properties.credentials();
         assertThat(credentials.getUsername()).isEqualTo(testPrefix + "user");
         assertThat(credentials.getPassword()).startsWith(testPrefix + "password");
+    }
+
+    @Test
+    @DisplayName("initialize from system properties")
+    @SuppressWarnings("AccessOfSystemProperties")
+    void initFromSystemProps() {
+        String name = "name";
+        String instanceName = "instance_name";
+
+        System.setProperty(NAME, name);
+        System.setProperty(INSTANCE, instanceName);
+
+        ConnectionProperties properties = ConnectionProperties.fromProperties();
+        assertThat(properties.dbName()).isEqualTo(name);
+        assertThat(properties.instanceName()).isEqualTo(instanceName);
+
+        assertThrows(IllegalStateException.class, properties::connectionProtocol);
     }
 }

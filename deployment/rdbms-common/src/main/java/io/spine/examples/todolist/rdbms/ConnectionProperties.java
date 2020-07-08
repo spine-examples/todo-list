@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.rdbms;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
@@ -42,11 +44,16 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 public final class ConnectionProperties {
 
-    private static final String NAME = "db.name";
-    private static final String PASSWORD = "db.password";
-    private static final String PROTOCOL = "db.protocol";
-    private static final String INSTANCE = "db.instance";
-    private static final String USERNAME = "db.username";
+    @VisibleForTesting
+    static final String NAME = "db.name";
+    @VisibleForTesting
+    static final String PROTOCOL = "db.protocol";
+    @VisibleForTesting
+    static final String INSTANCE = "db.instance";
+    @VisibleForTesting
+    static final String USERNAME = "db.username";
+    @VisibleForTesting
+    static final String PASSWORD = "db.password";
 
     private final ImmutableMap<String, String> properties;
     private final Class<? extends EnvironmentType> envType;
@@ -69,6 +76,22 @@ public final class ConnectionProperties {
         Properties properties = loadProperties(fileName);
         ImmutableMap<String, String> map = Maps.fromProperties(properties);
         return new ConnectionProperties(map, currentEnvType());
+    }
+
+    /**
+     * Tries to assemble the properties from system properties, specified with the {@code -D} Java
+     * option.
+     *
+     * @return the connection properties assembled using system properties
+     * @see System#getProperty(String)
+     */
+    public static ConnectionProperties fromProperties() {
+        ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
+        Stream.of(NAME, PASSWORD, PROTOCOL, INSTANCE, USERNAME)
+              .forEach(systemProperty -> insertIfSet(properties, systemProperty));
+        Class<? extends EnvironmentType> envType = Environment.instance()
+                                                              .type();
+        return new ConnectionProperties(properties.build(), envType);
     }
 
     /**
@@ -160,6 +183,18 @@ public final class ConnectionProperties {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
+    }
+
+    private static void insertIfSet(ImmutableMap.Builder<String, String> mapBuilder,
+                                    String systemOptionKey) {
+        Optional<String> value = systemOption(systemOptionKey);
+        value.ifPresent(v -> mapBuilder.put(systemOptionKey, v));
+    }
+
+    @SuppressWarnings("AccessOfSystemProperties")
+    private static Optional<String> systemOption(String optionKey) {
+        Optional<String> result = Optional.ofNullable(System.getProperty(optionKey));
+        return result;
     }
 
     @Override
