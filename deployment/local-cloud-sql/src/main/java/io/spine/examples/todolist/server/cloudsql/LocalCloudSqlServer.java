@@ -70,21 +70,24 @@ public class LocalCloudSqlServer extends CloudSqlServer {
      *     <li>the user password;
      * </ol>
      *
-     * @param args command line arguments specified to launch the application
+     * @param args
+     *         command line arguments specified to launch the application
      * @return
      */
     @Override
     protected Optional<ConnectionProperties> connectionProperties(String[] args) {
         if (args.length == 4) {
             Class<? extends EnvironmentType> envType = Environment.instance()
-                                                               .type();
-            ConnectionProperties result = ConnectionProperties.newBuilder()
-                                                              .setInstanceName(args[0])
-                                                              .setDbName(args[1])
-                                                              .setUsername(args[2])
-                                                              .setPassword(args[3])
-                                                              .setEnvType(envType)
-                                                              .build();
+                                                                  .type();
+            ConnectionProperties result =
+                    ConnectionProperties
+                            .newBuilder()
+                            .setInstanceName(args[0])
+                            .setDbName(args[1])
+                            .setUsername(args[2])
+                            .setPassword(args[3])
+                            .setEnvType(envType)
+                            .build();
             return Optional.of(result);
         } else {
             return Optional.empty();

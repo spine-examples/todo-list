@@ -27,18 +27,17 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
 
 import javax.sql.DataSource;
-import java.util.function.Supplier;
 
 /**
- * A supplier of the storage factory backed by a relational database.
+ * A storage factory backed by a relational database.
  */
-public final class RelationalStorage implements Supplier<StorageFactory>, Logging {
+final class RelationalStorage implements Logging {
 
     private final ConnectionUrl connectionUrl;
     private final DbCredentials dbCredentials;
 
     /**
-     * Creates a new storage factory supplier using the specified connection URL and the specified
+     * Creates a new relation storage using the specified connection URL and the specified
      * database credentials.
      */
     RelationalStorage(ConnectionUrl connectionUrl, DbCredentials dbCredentials) {
@@ -46,8 +45,7 @@ public final class RelationalStorage implements Supplier<StorageFactory>, Loggin
         this.dbCredentials = dbCredentials;
     }
 
-    @Override
-    public StorageFactory get() {
+    StorageFactory storageFactory() {
         return JdbcStorageFactory
                 .newBuilder()
                 .setDataSource(datasource())

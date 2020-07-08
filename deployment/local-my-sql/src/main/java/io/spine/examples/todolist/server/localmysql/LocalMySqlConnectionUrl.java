@@ -27,7 +27,7 @@ import io.spine.examples.todolist.rdbms.JdbcConnectionProtocol;
 import static java.lang.String.format;
 
 /**
- * A URL for connecting to a local MySQL database.
+ * A URL for connecting to a MySQL database.
  */
 public class LocalMySqlConnectionUrl extends ConnectionUrl {
 

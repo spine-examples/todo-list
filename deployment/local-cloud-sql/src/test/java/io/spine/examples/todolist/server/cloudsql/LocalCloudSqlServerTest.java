@@ -42,10 +42,11 @@ class LocalCloudSqlServerTest {
         String dbName = "db";
 
         DbCredentials credentials =
-                DbCredentials.newBuilder()
-                             .setUsername("user")
-                             .setPassword("password")
-                             .vBuild();
+                DbCredentials
+                        .newBuilder()
+                        .setUsername("user")
+                        .setPassword("password")
+                        .vBuild();
 
         String[] args = {instanceName, dbName, credentials.getUsername(), credentials.getPassword()};
         Optional<ConnectionProperties> maybeProperties = server.connectionProperties(args);

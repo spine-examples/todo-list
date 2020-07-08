@@ -23,7 +23,7 @@ package io.spine.examples.todolist.rdbms;
 import io.spine.base.Environment;
 import io.spine.base.Production;
 import io.spine.base.Tests;
-import io.spine.examples.todolist.rdbms.given.RdbmsServerTestEnv.TestRdbmsServer;
+import io.spine.examples.todolist.rdbms.given.RdbmsTestEnv.TestServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class RdbmsServerTest {
     void useSpecifiedForProd() {
         ConnectionProperties props = testProperties.setEnvType(Production.class)
                                                    .build();
-        TestRdbmsServer server = new TestRdbmsServer(props);
+        TestServer server = new TestServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(props.connectionProtocol()
@@ -67,7 +67,7 @@ class RdbmsServerTest {
     void usePredefinedForTests() {
         ConnectionProperties props = testProperties.setEnvType(Tests.class)
                                                    .build();
-        TestRdbmsServer server = new TestRdbmsServer(props);
+        TestServer server = new TestServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(LOCAL_H2_PROTOCOL);

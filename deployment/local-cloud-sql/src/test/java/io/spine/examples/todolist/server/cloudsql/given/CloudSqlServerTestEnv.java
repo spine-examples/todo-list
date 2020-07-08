@@ -45,12 +45,13 @@ public final class CloudSqlServerTestEnv {
         @Override
         protected Optional<ConnectionProperties> connectionProperties(String[] args) {
             if (args.length == 3) {
-                ConnectionProperties result = ConnectionProperties
-                        .newBuilder()
-                        .setDbName(args[0])
-                        .setUsername(args[1])
-                        .setPassword(args[2])
-                        .build();
+                ConnectionProperties result =
+                        ConnectionProperties
+                                .newBuilder()
+                                .setDbName(args[0])
+                                .setUsername(args[1])
+                                .setPassword(args[2])
+                                .build();
                 return Optional.of(result);
             } else {
                 return Optional.empty();

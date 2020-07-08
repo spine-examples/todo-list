@@ -55,7 +55,7 @@ public abstract class ConnectionUrl {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         String result = composeString(properties);
         return result;
     }

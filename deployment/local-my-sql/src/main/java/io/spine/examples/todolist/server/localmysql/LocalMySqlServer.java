@@ -59,13 +59,15 @@ public final class LocalMySqlServer extends RunsOnRdbms {
     protected ConnectionProperties properties(String[] args) {
         if (args.length == 3) {
             Class<? extends EnvironmentType> envType = Environment.instance()
-                                                               .type();
-            ConnectionProperties result = ConnectionProperties.newBuilder()
-                                                              .setDbName(args[0])
-                                                              .setUsername(args[1])
-                                                              .setPassword(args[2])
-                                                              .setEnvType(envType)
-                                                              .build();
+                                                                  .type();
+            ConnectionProperties result =
+                    ConnectionProperties
+                            .newBuilder()
+                            .setDbName(args[0])
+                            .setUsername(args[1])
+                            .setPassword(args[2])
+                            .setEnvType(envType)
+                            .build();
             return result;
         } else {
             return DB_PROPERTIES;

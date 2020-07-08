@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.JDBC_PROTOCOL;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.TestCloudSqlServer;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.USERNAME;
 
@@ -60,12 +60,13 @@ public class CloudSqlServerTest {
         String username = "test-user";
         String password = "test-password";
 
-        ConnectionProperties expectedProperties = ConnectionProperties
-                .newBuilder()
-                .setDbName(dbName)
-                .setUsername(username)
-                .setPassword(password)
-                .build();
+        ConnectionProperties expectedProperties =
+                ConnectionProperties
+                        .newBuilder()
+                        .setDbName(dbName)
+                        .setUsername(username)
+                        .setPassword(password)
+                        .build();
 
         String[] args = {dbName, username, password};
         TestCloudSqlServer server = new TestCloudSqlServer();

@@ -96,11 +96,12 @@ public final class ConnectionProperties {
         String username = value(USERNAME);
         String password = value(PASSWORD);
 
-        DbCredentials result = DbCredentials
-                .newBuilder()
-                .setUsername(username)
-                .setPassword(password)
-                .vBuild();
+        DbCredentials result =
+                DbCredentials
+                        .newBuilder()
+                        .setUsername(username)
+                        .setPassword(password)
+                        .vBuild();
         return result;
     }
 
@@ -117,10 +118,11 @@ public final class ConnectionProperties {
     /** Returns a JDBC connection protocol. */
     public JdbcConnectionProtocol connectionProtocol() {
         String stringValue = value(PROTOCOL);
-        JdbcConnectionProtocol result = JdbcConnectionProtocol
-                .newBuilder()
-                .setValue(stringValue)
-                .vBuild();
+        JdbcConnectionProtocol result =
+                JdbcConnectionProtocol
+                        .newBuilder()
+                        .setValue(stringValue)
+                        .vBuild();
         return result;
     }
 

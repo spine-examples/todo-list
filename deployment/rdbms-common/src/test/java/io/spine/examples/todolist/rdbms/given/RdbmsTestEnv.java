@@ -27,22 +27,21 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 import static java.lang.String.format;
 
-public final class RdbmsServerTestEnv {
+public final class RdbmsTestEnv {
 
-    private RdbmsServerTestEnv() {
+    private RdbmsTestEnv() {
     }
 
     /**
      * A dummy implementation of an RDBMS-backed server for tests.
      *
-     * <p>Always returns the predefined {@linkplain RdbmsServerTestEnv#TEST_PROPERTIES predefined
-     * connection properties}.
+     * <p>Always returns the predefined connection properties specified to the ctor.
      */
-    public static class TestRdbmsServer extends RunsOnRdbms {
+    public static class TestServer extends RunsOnRdbms {
 
         private final ConnectionProperties properties;
 
-        public TestRdbmsServer(ConnectionProperties properties) {
+        public TestServer(ConnectionProperties properties) {
             this.properties = properties;
         }
 

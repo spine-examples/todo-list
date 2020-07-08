@@ -77,9 +77,9 @@ public abstract class RunsOnRdbms {
 
     private StorageFactory storageFactory(ConnectionProperties connectionProperties) {
         ConnectionUrl connectionUrl = connectionUrl(connectionProperties);
-        RelationalStorage supplier =
+        RelationalStorage storage =
                 new RelationalStorage(connectionUrl, connectionProperties.credentials());
 
-        return supplier.get();
+        return storage.storageFactory();
     }
 }
