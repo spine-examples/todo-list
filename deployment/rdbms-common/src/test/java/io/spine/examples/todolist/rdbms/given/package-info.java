@@ -19,7 +19,8 @@
  */
 
 /**
- * Contains the environment for testing {@link io.spine.examples.todolist.rdbms.RunsOnRdbms}.
+ * Contains the environment for testing {@linkplain io.spine.examples.todolist.rdbms.RunsOnRdbms
+ * servers that use relational DBs for storage}.
  */
 
 @CheckReturnValue

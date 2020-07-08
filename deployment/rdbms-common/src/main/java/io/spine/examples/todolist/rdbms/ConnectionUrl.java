@@ -38,7 +38,7 @@ public abstract class ConnectionUrl {
     }
 
     /**
-     * Given the specified properties, composes a database connection string.
+     * Composes a database connection string based on the specified properties.
      */
     protected abstract String stringValue(ConnectionProperties properties);
 

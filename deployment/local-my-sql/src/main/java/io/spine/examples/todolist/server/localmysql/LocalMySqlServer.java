@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server.localmysql;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.Environment;
 import io.spine.base.EnvironmentType;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
@@ -39,7 +40,7 @@ import java.io.IOException;
  * <p>If the parameters were omitted, a default configuration is parsed from the resource file.
  * See {@code /resources/jdbc-storage.properties}.
  *
- * <p>The application relies on a properly configured launched MySQL database.
+ * <p>The application relies on a properly configured, launched MySQL database.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -66,6 +67,7 @@ public final class LocalMySqlServer extends RunsOnRdbms {
         return new RelationalStorage(url, properties.credentials());
     }
 
+    @VisibleForTesting
     static ConnectionProperties properties(String[] args) {
         if (args.length == 3) {
             Class<? extends EnvironmentType> envType = Environment.instance()
