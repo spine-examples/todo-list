@@ -21,11 +21,16 @@
 package io.spine.examples.todolist.rdbms;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.base.Environment;
+import io.spine.base.Tests;
 
 /**
  * A URL for connecting to a database.
  */
 public abstract class ConnectionUrl {
+
+    @VisibleForTesting
+    static final String LOCAL_H2 = "jdbc:h2:mem:";
 
     private final ConnectionProperties properties;
 
@@ -38,14 +43,20 @@ public abstract class ConnectionUrl {
      */
     protected abstract String stringValue(ConnectionProperties properties);
 
-    @Override
-    public String toString() {
+    private String composeString(ConnectionProperties props) {
+        Environment environment = Environment.instance();
+        ConnectionProperties properties = environment.is(Tests.class)
+                                          ? props.toBuilder()
+                                                 .setUrlPrefix(LOCAL_H2)
+                                                 .build()
+                                          : props;
         String result = stringValue(properties);
         return result;
     }
 
-    @VisibleForTesting
-    ConnectionProperties properties() {
-        return properties;
+    @Override
+    public String toString() {
+        String result = composeString(properties);
+        return result;
     }
 }
