@@ -20,13 +20,9 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import io.spine.base.Environment;
-import io.spine.base.EnvironmentType;
-import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * A local {@link Server} that is backed by a storage based on a Google Cloud SQL emulator.
@@ -52,7 +48,11 @@ import java.util.Optional;
  * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
  *         creation</a>
  */
-public class LocalCloudSqlServer extends CloudSqlServer {
+public class LocalCloudSqlServer {
+
+    /** Prevents direct instantiation. */
+    private LocalCloudSqlServer() {
+    }
 
     /**
      * Starts the To-Do List application server.
@@ -60,42 +60,7 @@ public class LocalCloudSqlServer extends CloudSqlServer {
      * @see Server#start()
      */
     public static void main(String[] args) throws IOException {
-        LocalCloudSqlServer server = new LocalCloudSqlServer();
-        server.start(args);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>To launch a local Cloud SQL server, the following values must be specified:
-     * <ol>
-     *     <li>the name of the instance to connect to;
-     *     <li>the name of the database to connect to;
-     *     <li>the name of the database user;
-     *     <li>the user password;
-     * </ol>
-     *
-     * @param args
-     *         command line arguments specified to launch the application
-     * @return
-     */
-    @Override
-    protected Optional<ConnectionProperties> connectionProperties(String[] args) {
-        if (args.length == 4) {
-            Class<? extends EnvironmentType> envType = Environment.instance()
-                                                                  .type();
-            ConnectionProperties result =
-                    ConnectionProperties
-                            .newBuilder()
-                            .setInstanceName(args[0])
-                            .setDbName(args[1])
-                            .setUsername(args[2])
-                            .setPassword(args[3])
-                            .setEnvType(envType)
-                            .build();
-            return Optional.of(result);
-        } else {
-            return Optional.empty();
-        }
+        CloudSqlServer server = new CloudSqlServer();
+        server.start();
     }
 }

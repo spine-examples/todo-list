@@ -65,7 +65,7 @@ class ConnectionPropertiesTest {
         System.setProperty(NAME, name);
         System.setProperty(INSTANCE, instanceName);
 
-        ConnectionProperties properties = ConnectionProperties.fromProperties();
+        ConnectionProperties properties = ConnectionProperties.fromSystemProperties();
         assertThat(properties.dbName()).isEqualTo(name);
         assertThat(properties.instanceName()).isEqualTo(instanceName);
 

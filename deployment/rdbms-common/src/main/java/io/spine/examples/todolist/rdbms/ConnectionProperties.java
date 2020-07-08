@@ -47,13 +47,11 @@ public final class ConnectionProperties {
     @VisibleForTesting
     static final String NAME = "db.name";
     @VisibleForTesting
-    static final String PROTOCOL = "db.protocol";
-    @VisibleForTesting
     static final String INSTANCE = "db.instance";
-    @VisibleForTesting
-    static final String USERNAME = "db.username";
-    @VisibleForTesting
-    static final String PASSWORD = "db.password";
+
+    private static final String PROTOCOL = "db.protocol";
+    private static final String USERNAME = "db.username";
+    private static final String PASSWORD = "db.password";
 
     private final ImmutableMap<String, String> properties;
     private final Class<? extends EnvironmentType> envType;
@@ -85,7 +83,7 @@ public final class ConnectionProperties {
      * @return the connection properties assembled using system properties
      * @see System#getProperty(String)
      */
-    public static ConnectionProperties fromProperties() {
+    public static ConnectionProperties fromSystemProperties() {
         ImmutableMap.Builder<String, String> properties = ImmutableMap.builder();
         Stream.of(NAME, PASSWORD, PROTOCOL, INSTANCE, USERNAME)
               .forEach(systemProperty -> insertIfSet(properties, systemProperty));
@@ -150,6 +148,27 @@ public final class ConnectionProperties {
     }
 
     /**
+     * Returns {@code true} if this instance of properties has a DB name set.
+     */
+    public boolean hasDbName() {
+        return has(NAME);
+    }
+
+    /**
+     * Returns {@code true} if this instance of properties has both username and password set.
+     */
+    public boolean hasCredentials() {
+        return has(USERNAME) && has(PASSWORD);
+    }
+
+    /**
+     * Returns {@code true} if this instance of properties the instance name set.
+     */
+    public boolean hasInstanceName() {
+        return has(INSTANCE);
+    }
+
+    /**
      * Returns a new {@code Builder} based on this instance.
      *
      * <p>This instance is not affected by changes to the returned builder.
@@ -163,6 +182,10 @@ public final class ConnectionProperties {
      */
     Class<? extends EnvironmentType> environmentType() {
         return envType;
+    }
+
+    private boolean has(String key) {
+        return properties.containsKey(key);
     }
 
     private String value(String key) {

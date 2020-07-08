@@ -25,36 +25,47 @@ import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
-import java.util.Optional;
-
 /**
- * An abstract base for servers backed by a Google Cloud SQL-based storage.
+ * A To-Do list application server backed by a Google Cloud SQL-based storage.
  *
- * <p>By convention, Google Cloud SQL servers may be configured using a properties file
- * with a predefined name.
+ * <p>To run the server, use {@link #start()}. The application must be launched with the necessary
+ * configuration provided via named properties (the {@code -DpropertyName="value"}.
+ *
+ * <p>The necessary properties are:
+ * <ol>
+ *     <li>JDBC protocol via the {@code db.protocol} property;
+ *     <li>name of the database instance via the {@code db.instance} property;
+ *     <li>name of the database via the {@code db.name} property;
+ *     <li>username to use to connect to the database via the {@code db.username} property;
+ *     <li>user password via the {@code db.password} property;
+ * </ol>
+ *
+ * <p>If at least one of the properties is not specified, the configuration is taken from the
+ * resource file. See {@code /resources/cloud-sql.properties} of the module which launches the
+ * application.
  */
-public abstract class CloudSqlServer extends RunsOnRdbms {
+public final class CloudSqlServer extends RunsOnRdbms {
 
     private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
             ConnectionProperties.fromResourceFile("cloud-sql.properties");
 
-    /**
-     * Returns the {@code ConnectionProperties} assembled from the command line arguments.
-     *
-     * <p>If the command line arguments could not be assembled, returns an empty {@code Optional}.
-     *
-     * <p>If extenders return an empty {@code Optional}, a default configuration is used when
-     * {@linkplain #storage(String[]) creating the storage}.
-     *
-     * @param args
-     *         command line arguments specified to launch the application
-     */
-    protected abstract Optional<ConnectionProperties> connectionProperties(String[] args);
-
     @Override
-    protected RelationalStorage storage(String[] args) {
-        ConnectionProperties properties = connectionProperties(args).orElse(CLOUD_SQL_PROPERTIES);
+    protected RelationalStorage storage(ConnectionProperties properties) {
         ConnectionUrl url = new CloudSqlConnectionUrl(properties);
         return new RelationalStorage(url, properties.credentials());
+    }
+
+    @Override
+    protected final ConnectionProperties connectionProperties() {
+        ConnectionProperties properties = super.connectionProperties();
+        return enoughProperties(properties)
+               ? properties
+               : CLOUD_SQL_PROPERTIES;
+    }
+
+    private static boolean enoughProperties(ConnectionProperties properties) {
+        return properties.hasInstanceName()
+                && properties.hasCredentials()
+                && properties.hasDbName();
     }
 }

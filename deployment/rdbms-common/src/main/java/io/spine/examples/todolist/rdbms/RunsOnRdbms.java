@@ -33,23 +33,16 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
- * An abstract base for To-Do List servers backed by a relational database.
- *
- * <p>The server can be run by passing the {@code args} from the {@code main} method to
- * {@link #start(String[])}.
+ * todoAS DPbASD jbiASDBj[DSA
  */
 public abstract class RunsOnRdbms {
 
     /**
-     * Starts the server.
-     *
-     * <p>Please pass the command line arguments from {@code main} to this method.
-     *
-     * @param args
-     *         command line arguments from the {@code main} method
+     * todo AS PIDbASD ADS
      */
-    public final void start(String[] args) throws IOException {
-        RelationalStorage storage = storage(args);
+    public final void start() throws IOException {
+        ConnectionProperties properties = connectionProperties();
+        RelationalStorage storage = storage(properties);
 
         ServerEnvironment serverEnvironment = ServerEnvironment.instance();
         serverEnvironment.use(storage.storageFactory(), Production.class)
@@ -63,9 +56,11 @@ public abstract class RunsOnRdbms {
      * Constructs a {@code RelationalStorage} using the command line arguments.
      *
      * <p>Extenders are free to ignore the arguments and use other data to assemble the storage.
-     *
-     * @param args
-     *         command line arguments specified to the {@code main} method
      */
-    protected abstract RelationalStorage storage(String[] args);
+    protected abstract RelationalStorage storage(ConnectionProperties connectionProperties);
+
+    protected ConnectionProperties connectionProperties() {
+        ConnectionProperties result = ConnectionProperties.fromSystemProperties();
+        return result;
+    }
 }

@@ -20,11 +20,7 @@
 
 package io.spine.examples.todolist.server.localmysql;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.base.Environment;
-import io.spine.base.EnvironmentType;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
-import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 import io.spine.examples.todolist.server.Server;
@@ -57,32 +53,22 @@ public final class LocalMySqlServer extends RunsOnRdbms {
      */
     public static void main(String[] args) throws IOException {
         LocalMySqlServer server = new LocalMySqlServer();
-        server.start(args);
+        server.start();
     }
 
     @Override
-    protected RelationalStorage storage(String[] args) {
-        ConnectionProperties properties = properties(args);
-        ConnectionUrl url = new LocalMySqlConnectionUrl(properties);
-        return new RelationalStorage(url, properties.credentials());
+    protected RelationalStorage storage(ConnectionProperties connectionProperties) {
+        MySqlConnectionUrl url = new MySqlConnectionUrl(connectionProperties);
+        RelationalStorage result = new RelationalStorage(url, connectionProperties.credentials());
+        return result;
     }
 
-    @VisibleForTesting
-    static ConnectionProperties properties(String[] args) {
-        if (args.length == 3) {
-            Class<? extends EnvironmentType> envType = Environment.instance()
-                                                                  .type();
-            ConnectionProperties result =
-                    ConnectionProperties
-                            .newBuilder()
-                            .setDbName(args[0])
-                            .setUsername(args[1])
-                            .setPassword(args[2])
-                            .setEnvType(envType)
-                            .build();
-            return result;
-        } else {
-            return DB_PROPERTIES;
-        }
+    @Override
+    protected ConnectionProperties connectionProperties() {
+        ConnectionProperties properties = super.connectionProperties();
+        boolean hasNecessaryValues = properties.hasDbName() && properties.hasCredentials();
+        return hasNecessaryValues
+               ? properties
+               : DB_PROPERTIES;
     }
 }

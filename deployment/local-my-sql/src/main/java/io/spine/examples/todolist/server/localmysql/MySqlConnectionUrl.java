@@ -29,9 +29,9 @@ import static java.lang.String.format;
 /**
  * A URL for connecting to a MySQL database.
  */
-public final class LocalMySqlConnectionUrl extends ConnectionUrl {
+public final class MySqlConnectionUrl extends ConnectionUrl {
 
-    LocalMySqlConnectionUrl(ConnectionProperties properties) {
+    MySqlConnectionUrl(ConnectionProperties properties) {
         super(properties);
     }
 
