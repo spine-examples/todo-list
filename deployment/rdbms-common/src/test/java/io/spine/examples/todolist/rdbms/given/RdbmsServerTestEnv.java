@@ -22,7 +22,7 @@ package io.spine.examples.todolist.rdbms.given;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.ConnectionUrlPrefix;
+import io.spine.examples.todolist.rdbms.JdbcConnectionProtocol;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
 import static java.lang.String.format;
@@ -56,8 +56,8 @@ public final class RdbmsServerTestEnv {
             ConnectionUrl result = new ConnectionUrl(properties) {
                 @Override
                 protected String stringValue(ConnectionProperties properties) {
-                    ConnectionUrlPrefix prefix = properties.connectionUrlPrefix();
-                    String result = format("%s//%s", prefix.getValue(),
+                    JdbcConnectionProtocol protocol = properties.connectionProtocol();
+                    String result = format("%s//%s", protocol.getValue(),
                                            properties.instanceName());
                     return result;
                 }

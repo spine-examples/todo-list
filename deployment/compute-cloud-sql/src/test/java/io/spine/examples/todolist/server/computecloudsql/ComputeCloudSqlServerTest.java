@@ -45,17 +45,17 @@ class ComputeCloudSqlServerTest {
 
     private static Stream<Arguments> sampleArgs() {
         String dbName = "sample_name";
-        String prefix = "sample_prefix";
+        String protocol = "sample_protocol";
         String username = "sample_username";
         String password = "sample_password";
         String instanceName = "sample_instance";
 
         return Stream.of(
                 stringArrArgument(dbName),
-                stringArrArgument(dbName, prefix),
-                stringArrArgument(dbName, prefix, username),
-                stringArrArgument(dbName, prefix, username, password),
-                stringArrArgument(dbName, prefix, username, password, instanceName));
+                stringArrArgument(dbName, protocol),
+                stringArrArgument(dbName, protocol, username),
+                stringArrArgument(dbName, protocol, username, password),
+                stringArrArgument(dbName, protocol, username, password, instanceName));
     }
 
     private static Arguments stringArrArgument(String... args) {

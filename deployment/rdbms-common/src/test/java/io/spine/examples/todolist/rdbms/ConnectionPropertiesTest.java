@@ -46,8 +46,8 @@ class ConnectionPropertiesTest {
         String testPrefix = "test_";
         assertThat(properties.dbName()).isEqualTo(testPrefix + "db");
         assertThat(properties.instanceName()).isEqualTo(testPrefix + "instance");
-        assertThat(properties.connectionUrlPrefix()
-                             .getValue()).isEqualTo(testPrefix + "prefix");
+        assertThat(properties.connectionProtocol()
+                             .getValue()).isEqualTo(testPrefix + "protocol");
         DbCredentials credentials = properties.credentials();
         assertThat(credentials.getUsername()).isEqualTo(testPrefix + "user");
         assertThat(credentials.getPassword()).startsWith(testPrefix + "password");

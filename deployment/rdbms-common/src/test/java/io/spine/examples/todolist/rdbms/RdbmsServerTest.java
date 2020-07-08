@@ -29,7 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2_PREFIX;
+import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2_PROTOCOL;
 
 @DisplayName("Servers that run on relational databases should")
 class RdbmsServerTest {
@@ -42,7 +42,7 @@ class RdbmsServerTest {
                                 .setPassword("password")
                                 .setUsername("test_user")
                                 .setInstanceName("test_instance")
-                                .setUrlPrefix("test_prefix");
+                                .setConnectionProtocol("test_protocol");
 
     @AfterEach
     void afterEach() {
@@ -51,26 +51,26 @@ class RdbmsServerTest {
     }
 
     @Test
-    @DisplayName("use the specified prefix for the production environment")
+    @DisplayName("use the specified protocol for the production environment")
     void useSpecifiedForProd() {
         ConnectionProperties props = testProperties.setEnvType(Production.class)
                                                    .build();
         TestRdbmsServer server = new TestRdbmsServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
-        assertThat(stringValue).startsWith(props.connectionUrlPrefix()
+        assertThat(stringValue).startsWith(props.connectionProtocol()
                                                 .getValue());
     }
 
     @Test
-    @DisplayName("use a predefined prefix for the testing environment")
+    @DisplayName("use a predefined protocol for the testing environment")
     void usePredefinedForTests() {
         ConnectionProperties props = testProperties.setEnvType(Tests.class)
                                                    .build();
         TestRdbmsServer server = new TestRdbmsServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
-        assertThat(stringValue).startsWith(LOCAL_H2_PREFIX);
+        assertThat(stringValue).startsWith(LOCAL_H2_PROTOCOL);
     }
 
     private static ConnectionUrl connectionUrl(RunsOnRdbms server) {

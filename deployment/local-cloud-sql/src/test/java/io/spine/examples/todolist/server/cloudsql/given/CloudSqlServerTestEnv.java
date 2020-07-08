@@ -31,7 +31,7 @@ public final class CloudSqlServerTestEnv {
      * Database properties from the `cloud-sql.properties` resource file.
      */
 
-    public static final String PREFIX_VALUE = "local-sql";
+    public static final String JDBC_PROTOCOL = "local-sql:";
     public static final String INSTANCE_NAME = "instance_1";
     public static final String DB_NAME = "tests";
     public static final String USERNAME = "test_user";

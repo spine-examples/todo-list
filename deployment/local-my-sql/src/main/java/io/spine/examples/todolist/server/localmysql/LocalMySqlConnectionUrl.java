@@ -22,7 +22,7 @@ package io.spine.examples.todolist.server.localmysql;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
-import io.spine.examples.todolist.rdbms.ConnectionUrlPrefix;
+import io.spine.examples.todolist.rdbms.JdbcConnectionProtocol;
 
 import static java.lang.String.format;
 
@@ -37,8 +37,8 @@ public class LocalMySqlConnectionUrl extends ConnectionUrl {
 
     @Override
     protected String stringValue(ConnectionProperties properties) {
-        ConnectionUrlPrefix prefix = properties.connectionUrlPrefix();
-        String result = format("%s/%s?useSSL=false", prefix.toString(), properties.dbName());
+        JdbcConnectionProtocol protocol = properties.connectionProtocol();
+        String result = format("%s/%s?useSSL=false", protocol.toString(), properties.dbName());
         return result;
     }
 }

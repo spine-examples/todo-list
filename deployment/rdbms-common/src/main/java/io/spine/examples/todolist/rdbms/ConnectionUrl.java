@@ -29,7 +29,7 @@ import io.spine.base.Tests;
 public abstract class ConnectionUrl {
 
     @VisibleForTesting
-    static final String LOCAL_H2_PREFIX = "jdbc:h2:mem:";
+    static final String LOCAL_H2_PROTOCOL = "jdbc:h2:mem:";
 
     private final ConnectionProperties properties;
 
@@ -47,7 +47,7 @@ public abstract class ConnectionUrl {
                                .equals(Tests.class);
         ConnectionProperties properties = isTests
                                           ? props.toBuilder()
-                                                 .setUrlPrefix(LOCAL_H2_PREFIX)
+                                                 .setConnectionProtocol(LOCAL_H2_PROTOCOL)
                                                  .build()
                                           : props;
         String result = stringValue(properties);

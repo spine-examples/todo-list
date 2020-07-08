@@ -29,7 +29,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PREFIX_VALUE;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.JDBC_PROTOCOL;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.TestCloudSqlServer;
 import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.USERNAME;
 
@@ -43,8 +43,8 @@ public class CloudSqlServerTest {
         String[] args = {"name", "password"};
         ConnectionProperties properties = server.properties(args);
 
-        assertThat(properties.connectionUrlPrefix()
-                             .getValue()).isEqualTo(PREFIX_VALUE);
+        assertThat(properties.connectionProtocol()
+                             .getValue()).isEqualTo(JDBC_PROTOCOL);
         assertThat(properties.instanceName()).isEqualTo(INSTANCE_NAME);
         assertThat(properties.dbName()).isEqualTo(DB_NAME);
 

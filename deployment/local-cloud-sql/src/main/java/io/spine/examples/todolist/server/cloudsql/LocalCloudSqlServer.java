@@ -64,10 +64,10 @@ public class LocalCloudSqlServer extends CloudSqlServer {
      *
      * <p>To launch a local Cloud SQL server, arguments must specify the following:
      * <ol>
-     *     <li>name of the instance to connect to;
-     *     <li>name of the database to connect to;
-     *     <li>name of the database user;
-     *     <li>a user password;
+     *     <li>the name of the instance to connect to;
+     *     <li>the name of the database to connect to;
+     *     <li>the name of the database user;
+     *     <li>the user password;
      * </ol>
      *
      * @param args command line arguments specified to launch the application

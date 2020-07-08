@@ -44,7 +44,7 @@ public final class ConnectionProperties {
 
     private static final String NAME = "db.name";
     private static final String PASSWORD = "db.password";
-    private static final String PREFIX = "db.prefix";
+    private static final String PROTOCOL = "db.protocol";
     private static final String INSTANCE = "db.instance";
     private static final String USERNAME = "db.username";
 
@@ -114,10 +114,10 @@ public final class ConnectionProperties {
         return result;
     }
 
-    /** Returns a prefix for the DB connection URL. */
-    public ConnectionUrlPrefix connectionUrlPrefix() {
-        String stringValue = value(PREFIX);
-        ConnectionUrlPrefix result = ConnectionUrlPrefix
+    /** Returns a JDBC connection protocol. */
+    public JdbcConnectionProtocol connectionProtocol() {
+        String stringValue = value(PROTOCOL);
+        JdbcConnectionProtocol result = JdbcConnectionProtocol
                 .newBuilder()
                 .setValue(stringValue)
                 .vBuild();
@@ -220,10 +220,10 @@ public final class ConnectionProperties {
             return this;
         }
 
-        /** Sets the connection URL prefix to the specified one. */
-        public Builder setUrlPrefix(String urlPrefix) {
-            checkNotNull(urlPrefix);
-            properties.put(PREFIX, urlPrefix);
+        /** Sets the JDBC connection protocol to the specified one. */
+        public Builder setConnectionProtocol(String connectionProtocol) {
+            checkNotNull(connectionProtocol);
+            properties.put(PROTOCOL, connectionProtocol);
             return this;
         }
 

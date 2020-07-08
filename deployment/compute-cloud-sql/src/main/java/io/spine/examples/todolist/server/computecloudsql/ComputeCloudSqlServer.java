@@ -49,7 +49,7 @@ public final class ComputeCloudSqlServer extends CloudSqlServer {
      */
     @Override
     protected Optional<ConnectionProperties> connectionProperties(String[] args) {
-        // Compute Engine based server cannot be instantiated using command line arguments.
+        // Compute Engine based servers cannot be instantiated using command line arguments.
         return Optional.empty();
     }
 }

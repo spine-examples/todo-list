@@ -29,7 +29,8 @@ option java_multiple_files = true;
 option java_outer_classname = "ConnectionUrlPrefixProto";
 
 // A prefix to a database connection URL string.
-message ConnectionUrlPrefix {
+// More: https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-jdbc-url-format.html
+message JdbcConnectionProtocol {
 
     string value = 1 [(required) = true];
 }
