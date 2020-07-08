@@ -34,9 +34,10 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
+ * An abstract base for To-Do List servers backed by a relational database.
  * A server implementation backed by a relational database.
  *
- * <p>Run the server by passing the {@code args} from the {@code main} method to
+ * <p>The server can be run by passing the {@code args} from the {@code main} method to
  * {@link #start(String[])}.
  */
 public abstract class RunsOnRdbms {

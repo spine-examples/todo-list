@@ -29,7 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2;
+import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2_PREFIX;
 
 @DisplayName("Servers that run on relational databases should")
 class RdbmsServerTest {
@@ -70,7 +70,7 @@ class RdbmsServerTest {
         TestRdbmsServer server = new TestRdbmsServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
-        assertThat(stringValue).startsWith(LOCAL_H2);
+        assertThat(stringValue).startsWith(LOCAL_H2_PREFIX);
     }
 
     private static ConnectionUrl connectionUrl(RunsOnRdbms server) {
