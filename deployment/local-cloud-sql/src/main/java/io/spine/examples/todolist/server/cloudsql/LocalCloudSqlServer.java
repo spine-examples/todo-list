@@ -42,8 +42,9 @@ import java.util.Optional;
  * <p>To run the server from a command-line run the command as follows:
  * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
  *
- * <p>If the parameters were not specified to a command or the server was ran directly,
- * a configuration from resources is going to be used instead, see {@code cloud-sql.properties}.
+ * <p>If the parameters were omitted, a default configuration is parsed from a configuration file
+ * in resources.
+ * See {@code /resources/cloud-sql.properties}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -54,6 +55,11 @@ import java.util.Optional;
  */
 public class LocalCloudSqlServer extends CloudSqlServer {
 
+    /**
+     * Launches the To-Do List application.
+     *
+     * @see Server#start()
+     */
     public static void main(String[] args) throws IOException {
         LocalCloudSqlServer server = new LocalCloudSqlServer();
         server.start(args);
@@ -62,7 +68,7 @@ public class LocalCloudSqlServer extends CloudSqlServer {
     /**
      * {@inheritDoc}
      *
-     * <p>To launch a local Cloud SQL server, arguments must specify the following:
+     * <p>To launch a local Cloud SQL server, the following values must be specified:
      * <ol>
      *     <li>the name of the instance to connect to;
      *     <li>the name of the database to connect to;

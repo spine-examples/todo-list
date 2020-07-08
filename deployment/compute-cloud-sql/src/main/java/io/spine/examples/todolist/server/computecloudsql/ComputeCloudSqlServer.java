@@ -36,6 +36,11 @@ import java.util.Optional;
  */
 public final class ComputeCloudSqlServer extends CloudSqlServer {
 
+    /**
+     * Starts the To-Do list application on Compute Engine.
+     *
+     * @see Server#start()
+     */
     public static void main(String[] args) throws IOException {
         ComputeCloudSqlServer server = new ComputeCloudSqlServer();
         server.start(args);

@@ -35,12 +35,10 @@ import java.io.IOException;
  * <p>To run the server from a command-line run the command as follows:
  * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
  *
- * <p>If the parameters were not specified to a command or the server was ran directly,
- * a configuration file from resources is going to be used instead, see
- * {@code jdbc-storage.properties}.
+ * <p>If the parameters were omitted, a default configuration is parsed from the resource file.
+ * See {@code /resources/jdbc-storage.properties}.
  *
- * <p>As the server uses {@code MySQL}, the database with the specified name should be created
- * and the username and password should be correct.
+ * <p>The application relies on a properly configured launched MySQL database.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -50,6 +48,11 @@ public final class LocalMySqlServer extends RunsOnRdbms {
     private static final ConnectionProperties DB_PROPERTIES =
             ConnectionProperties.fromResourceFile("jdbc-storage.properties");
 
+    /**
+     * Launches the To-Do list application.
+     *
+     * @see Server#start()
+     */
     public static void main(String[] args) throws IOException {
         LocalMySqlServer server = new LocalMySqlServer();
         server.start(args);
