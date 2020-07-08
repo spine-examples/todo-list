@@ -19,9 +19,8 @@
  */
 
 /**
- * This package contains a server implementation backed by a local Google Cloud SQL database.
- *
- * <p>It also contains Google Cloud SQL-related utilities.
+ * This package contains an abstract base for Google Cloud SQL based servers, and an implementation
+ * of a server backed by a local Cloud SQL emulator.
  */
 
 @CheckReturnValue

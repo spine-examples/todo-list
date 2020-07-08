@@ -29,8 +29,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory} with {@code Cloud SQL} instance as a data source.
+ * A local {@link Server} that is backed by a storage based on a Google Cloud SQL emulator.
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>

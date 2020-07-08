@@ -35,7 +35,6 @@ import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
  * An abstract base for To-Do List servers backed by a relational database.
- * A server implementation backed by a relational database.
  *
  * <p>The server can be run by passing the {@code args} from the {@code main} method to
  * {@link #start(String[])}.

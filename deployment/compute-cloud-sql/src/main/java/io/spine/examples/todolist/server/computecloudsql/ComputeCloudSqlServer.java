@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory} for working with Cloud SQL.
+ * A Compute Engine {@link Server} backed by a remote Google Cloud SQL storage instance.
  *
  * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
  *

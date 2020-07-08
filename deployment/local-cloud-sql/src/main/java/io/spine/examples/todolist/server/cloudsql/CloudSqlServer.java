@@ -27,7 +27,7 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 import java.util.Optional;
 
 /**
- * A server backed by a Google Cloud SQL-based storage.
+ * An abstract base for servers backed by a Google Cloud SQL-based storage.
  *
  * <p>By convention, Google Cloud SQL servers may be configured using a properties file
  * with a predefined name.

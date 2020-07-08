@@ -30,8 +30,7 @@ import io.spine.examples.todolist.server.Server;
 import java.io.IOException;
 
 /**
- * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory}, {@code MySQL} in particular.
+ * A local {@link Server} backed by a MySQL-based storage.
  *
  * <p>To run the server from a command-line run the command as follows:
  * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
