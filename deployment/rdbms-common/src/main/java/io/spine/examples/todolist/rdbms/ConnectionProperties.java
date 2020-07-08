@@ -23,6 +23,8 @@ package io.spine.examples.todolist.rdbms;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import io.spine.base.Environment;
+import io.spine.base.EnvironmentType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,9 +49,12 @@ public final class ConnectionProperties {
     private static final String USERNAME = "db.username";
 
     private final ImmutableMap<String, String> properties;
+    private final Class<? extends EnvironmentType> envType;
 
-    private ConnectionProperties(ImmutableMap<String, String> properties) {
+    private ConnectionProperties(ImmutableMap<String, String> properties,
+                                 Class<? extends EnvironmentType> envType) {
         this.properties = properties;
+        this.envType = envType;
     }
 
     /**
@@ -63,7 +68,7 @@ public final class ConnectionProperties {
     public static ConnectionProperties fromResourceFile(String fileName) {
         Properties properties = loadProperties(fileName);
         ImmutableMap<String, String> map = Maps.fromProperties(properties);
-        return new ConnectionProperties(map);
+        return new ConnectionProperties(map, currentEnvType());
     }
 
     /**
@@ -128,6 +133,13 @@ public final class ConnectionProperties {
         return new Builder(new HashMap<>(properties));
     }
 
+    /**
+     * Returns the type of the environment that the server connecting to a database is in.
+     */
+    Class<? extends EnvironmentType> environmentType() {
+        return envType;
+    }
+
     private String value(String key) {
         checkNotNull(key);
         return Optional.ofNullable(properties.get(key))
@@ -165,12 +177,19 @@ public final class ConnectionProperties {
         return Objects.hashCode(properties);
     }
 
+    private static Class<? extends EnvironmentType> currentEnvType() {
+        Environment env = Environment.instance();
+        Class<? extends EnvironmentType> result = env.type();
+        return result;
+    }
+
     /**
      * A builder of DB connection properties.
      */
     public static class Builder {
 
         private final Map<String, String> properties;
+        private Class<? extends EnvironmentType> envType;
 
         private Builder(Map<String, String> props) {
             this.properties = props;
@@ -215,10 +234,20 @@ public final class ConnectionProperties {
             return this;
         }
 
+        /** Sets the environment type to the specified one. */
+        public Builder setEnvType(Class<? extends EnvironmentType> envType) {
+            checkNotNull(envType);
+            this.envType = envType;
+            return this;
+        }
+
         /** Returns a new instance of the DB connection properties. */
         public ConnectionProperties build() {
             properties.forEach((k, v) -> checkNotNull(v));
-            return new ConnectionProperties(ImmutableMap.copyOf(properties));
+            Class<? extends EnvironmentType> environmentType = envType != null
+                                                               ? envType
+                                                               : currentEnvType();
+            return new ConnectionProperties(ImmutableMap.copyOf(properties), environmentType);
         }
     }
 }

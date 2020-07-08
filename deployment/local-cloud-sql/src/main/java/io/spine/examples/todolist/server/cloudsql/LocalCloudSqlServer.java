@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
+import io.spine.base.Environment;
+import io.spine.base.EnvironmentType;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.server.Server;
 
@@ -75,11 +77,14 @@ public class LocalCloudSqlServer extends CloudSqlServer {
     @Override
     protected Optional<ConnectionProperties> connectionProperties(String[] args) {
         if (args.length == 4) {
+            Class<? extends EnvironmentType> envType = Environment.instance()
+                                                               .type();
             ConnectionProperties result = ConnectionProperties.newBuilder()
                                                               .setInstanceName(args[0])
                                                               .setDbName(args[1])
                                                               .setUsername(args[2])
                                                               .setPassword(args[3])
+                                                              .setEnvType(envType)
                                                               .build();
             return Optional.of(result);
         } else {

@@ -24,21 +24,28 @@ import io.spine.base.Environment;
 import io.spine.base.Production;
 import io.spine.base.Tests;
 import io.spine.examples.todolist.rdbms.given.RdbmsServerTestEnv.TestRdbmsServer;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2;
-import static io.spine.examples.todolist.rdbms.given.RdbmsServerTestEnv.TEST_PROPERTIES;
 
 @DisplayName("Servers that run on relational databases should")
 class RdbmsServerTest {
 
     private static final String[] EMPTY_ARGS = {};
 
-    @AfterAll
-    static void afterAll() {
+    private final ConnectionProperties.Builder testProperties =
+            ConnectionProperties.newBuilder()
+                                .setDbName("db_name")
+                                .setPassword("password")
+                                .setUsername("test_user")
+                                .setInstanceName("test_instance")
+                                .setUrlPrefix("test_prefix");
+
+    @AfterEach
+    void afterEach() {
         Environment.instance()
                    .reset();
     }
@@ -46,23 +53,21 @@ class RdbmsServerTest {
     @Test
     @DisplayName("use the specified prefix for the production environment")
     void useSpecifiedForProd() {
-        Environment.instance()
-                   .setTo(Production.class);
-
-        TestRdbmsServer server = new TestRdbmsServer();
+        ConnectionProperties props = testProperties.setEnvType(Production.class)
+                                                   .build();
+        TestRdbmsServer server = new TestRdbmsServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
-        assertThat(stringValue).startsWith(TEST_PROPERTIES.connectionUrlPrefix()
-                                                          .getValue());
+        assertThat(stringValue).startsWith(props.connectionUrlPrefix()
+                                                .getValue());
     }
 
     @Test
     @DisplayName("use a predefined prefix for the testing environment")
     void usePredefinedForTests() {
-        Environment.instance()
-                   .setTo(Tests.class);
-
-        TestRdbmsServer server = new TestRdbmsServer();
+        ConnectionProperties props = testProperties.setEnvType(Tests.class)
+                                                   .build();
+        TestRdbmsServer server = new TestRdbmsServer(props);
         ConnectionUrl connectionUrl = connectionUrl(server);
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(LOCAL_H2);

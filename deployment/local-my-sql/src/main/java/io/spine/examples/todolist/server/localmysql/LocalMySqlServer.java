@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.server.localmysql;
 
+import io.spine.base.Environment;
+import io.spine.base.EnvironmentType;
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
 import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
@@ -57,10 +59,13 @@ public final class LocalMySqlServer extends RunsOnRdbms {
     @Override
     protected ConnectionProperties properties(String[] args) {
         if (args.length == 3) {
+            Class<? extends EnvironmentType> envType = Environment.instance()
+                                                               .type();
             ConnectionProperties result = ConnectionProperties.newBuilder()
                                                               .setDbName(args[0])
                                                               .setUsername(args[1])
                                                               .setPassword(args[2])
+                                                              .setEnvType(envType)
                                                               .build();
             return result;
         } else {

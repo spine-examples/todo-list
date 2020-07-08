@@ -29,15 +29,6 @@ import static java.lang.String.format;
 
 public final class RdbmsServerTestEnv {
 
-    public static final ConnectionProperties TEST_PROPERTIES = ConnectionProperties
-            .newBuilder()
-            .setDbName("db_name")
-            .setPassword("password")
-            .setUsername("test_user")
-            .setInstanceName("test_instance")
-            .setUrlPrefix("test_prefix")
-            .build();
-
     private RdbmsServerTestEnv() {
     }
 
@@ -49,9 +40,15 @@ public final class RdbmsServerTestEnv {
      */
     public static class TestRdbmsServer extends RunsOnRdbms {
 
+        private final ConnectionProperties properties;
+
+        public TestRdbmsServer(ConnectionProperties properties) {
+            this.properties = properties;
+        }
+
         @Override
         public ConnectionProperties properties(String[] commandLineArguments) {
-            return TEST_PROPERTIES;
+            return properties;
         }
 
         @Override

@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.rdbms;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.base.Environment;
 import io.spine.base.Tests;
 
 /**
@@ -44,8 +43,9 @@ public abstract class ConnectionUrl {
     protected abstract String stringValue(ConnectionProperties properties);
 
     private String composeString(ConnectionProperties props) {
-        Environment environment = Environment.instance();
-        ConnectionProperties properties = environment.is(Tests.class)
+        boolean isTests = props.environmentType()
+                               .equals(Tests.class);
+        ConnectionProperties properties = isTests
                                           ? props.toBuilder()
                                                  .setUrlPrefix(LOCAL_H2)
                                                  .build()
