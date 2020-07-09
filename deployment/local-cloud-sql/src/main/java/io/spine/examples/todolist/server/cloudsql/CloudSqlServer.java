@@ -44,7 +44,7 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
  * resource file. See {@code /resources/cloud-sql.properties} of the module which launches the
  * application.
  */
-public class CloudSqlServer extends RunsOnRdbms {
+public final class CloudSqlServer extends RunsOnRdbms {
 
     private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
             ConnectionProperties.fromResourceFile("cloud-sql.properties");
