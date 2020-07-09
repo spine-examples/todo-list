@@ -73,7 +73,7 @@ class DeleteTaskCommand extends TaskCommandTestBase {
         EntitySubject projectionSubject = context()
                 .receivesCommand(createDraft)
                 .receivesCommand(deleteTask)
-                .assertEntity(TaskViewProjection.class, taskId());
+                .assertEntity(taskId(), TaskViewProjection.class);
         projectionSubject.deletedFlag()
                          .isTrue();
         projectionSubject.archivedFlag()

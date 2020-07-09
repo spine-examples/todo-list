@@ -91,6 +91,7 @@ import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isV
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.server.tasks.task.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
+import static io.spine.examples.todolist.tasks.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.tasks.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.tasks.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.tasks.TaskStatus.FINALIZED;
@@ -115,6 +116,7 @@ final class TaskPart extends AggregatePart<TaskId, Task, Task.Builder, TaskAggre
         TaskDetails taskDetails = TaskDetails
                 .newBuilder()
                 .setStatus(OPEN)
+                .setPriority(NORMAL)
                 .setDescription(cmd.getDescription())
                 .buildPartial();
         TaskCreated result = TaskCreated

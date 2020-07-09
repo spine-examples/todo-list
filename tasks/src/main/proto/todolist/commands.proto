@@ -35,7 +35,6 @@ import "spine/change/change.proto";
 import "todolist/identifiers.proto";
 import "todolist/changes.proto";
 import "todolist/values.proto";
-import "todolist/attributes.proto";
 
 // An attempt to create a task in a "Quick" mode.
 //

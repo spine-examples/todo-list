@@ -19,19 +19,21 @@
  */
 
 dependencies {
-    implementation (
-        "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-        "mysql:mysql-connector-java:$deps.versions.mysqlDriver",
-        "io.spine:spine-rdbms:$deps.versions.spineJdbc",
-        project(path: ':server')
+    implementation(
+            project(path: ':server'),
+            project(path: ':rdbms-common')
     )
 }
 
 // A task to run the server. See `LocalMySqlServer` for the details.
 task runServer(dependsOn: jar, type: JavaExec) {
-    if(project.hasProperty('conf')){
-        args(conf.split(','))
-    }
-    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
+    main = 'io.spine.examples.todolist.server.localmysql.LocalJdbcServer'
     classpath = sourceSets.main.runtimeClasspath
+
+    // Accept properties specified via -D.
+    System.properties.each { k,v->
+        if (k.startsWith("db.")) {
+            systemProperty k, v
+        }
+    }
 }

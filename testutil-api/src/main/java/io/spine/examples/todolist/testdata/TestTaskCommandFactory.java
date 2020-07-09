@@ -174,7 +174,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId taskId) {
         UpdateTaskPriority result = updateTaskPriorityInstance(taskId,
-                                                               TaskPriority.TP_UNDEFINED,
+                                                               TaskPriority.NORMAL,
                                                                TaskPriority.HIGH);
         return result;
     }

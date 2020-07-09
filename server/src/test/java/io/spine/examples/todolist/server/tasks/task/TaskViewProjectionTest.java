@@ -21,14 +21,18 @@
 package io.spine.examples.todolist.server.tasks.task;
 
 import com.google.protobuf.Timestamp;
+import io.spine.base.EntityState;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.server.tasks.task.given.TaskViewProjectionTestEnv;
+import io.spine.examples.todolist.tasks.TaskDetails;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.TaskPriority;
 import io.spine.examples.todolist.tasks.TaskStatus;
 import io.spine.examples.todolist.tasks.event.TaskCreated;
+import io.spine.examples.todolist.tasks.event.TaskDeleted;
 import io.spine.examples.todolist.tasks.view.TaskView;
-import io.spine.server.entity.AbstractEntity;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,23 +40,20 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Predicate;
 
 import static io.spine.examples.todolist.server.tasks.task.given.TaskViewProjectionTestEnv.theDayAfterTomorrow;
-import static io.spine.util.Exceptions.newIllegalStateException;
 import static org.junit.Assert.assertTrue;
 
 @DisplayName("Task view projection should")
 class TaskViewProjectionTest {
 
-    private BlackBoxBoundedContext<?> boundedContext;
+    private BlackBoxContext boundedContext;
     private TaskId taskId;
-    private TaskViewRepository repository;
     private TaskViewProjectionTestEnv testEnv;
 
     @BeforeEach
     void setUp() {
         taskId = TaskId.generate();
-        repository = new TaskViewRepository();
-        boundedContext = BlackBoxBoundedContext.singleTenant()
-                                               .with(repository);
+        BoundedContextBuilder builder = TasksContextFactory.builder();
+        boundedContext = BlackBoxContext.from(builder);
         testEnv = new TaskViewProjectionTestEnv(taskId);
     }
 
@@ -85,11 +86,9 @@ class TaskViewProjectionTest {
     void testDeletedDraftErased() {
         boundedContext.receivesEvent(testEnv.draftCreated())
                       .receivesEvent(testEnv.taskDeleted());
-        TaskViewProjection projection = repository
-                .find(taskId)
-                .orElseThrow(() -> newIllegalStateException("Projection not found"));
-        boolean projectionGotErased = projection.isDeleted();
-        assertTrue(projectionGotErased);
+        boundedContext.assertEntity(taskId, TaskViewProjection.class)
+                      .deletedFlag()
+                      .isTrue();
     }
 
     @DisplayName("update the description upon receiving `TaskDescriptionUpdated` event")
@@ -144,8 +143,10 @@ class TaskViewProjectionTest {
     }
 
     private TaskView projectionState() {
-        return repository.find(taskId)
-                         .map(AbstractEntity::state)
-                         .orElseThrow(() -> newIllegalStateException("Projection not found"));
+        EntityState rawState = boundedContext.assertEntity(taskId, TaskViewProjection.class)
+                                             .actual()
+                                             .state();
+        TaskView state = (TaskView) rawState;
+        return state;
     }
 }

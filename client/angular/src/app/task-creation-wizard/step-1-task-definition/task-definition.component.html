@@ -23,6 +23,7 @@
         <mat-label>Description</mat-label>
         <input autocomplete="off"
                [ngModel]="description | stringValue"
+               pattern="(.*?[a-zA-Z0-9]){3,}.*"
                (ngModelChange)="setDescription($event)"
                matInput placeholder="Description" required>
     </mat-form-field>

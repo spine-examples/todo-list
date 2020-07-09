@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
@@ -35,7 +35,7 @@ export class LabelService {
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
-  constructor(private readonly spineWebClient: Client) {
+  constructor(@Inject(Client) private readonly spineWebClient: Client) {
   }
 
   /**

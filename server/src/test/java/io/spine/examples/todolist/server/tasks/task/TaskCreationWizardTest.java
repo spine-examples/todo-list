@@ -48,7 +48,7 @@ import io.spine.examples.todolist.tasks.command.UpdateTaskPriority;
 import io.spine.examples.todolist.tasks.event.LabelAssignmentSkipped;
 import io.spine.examples.todolist.tasks.rejection.Rejections;
 import io.spine.testing.server.CommandSubject;
-import io.spine.testing.server.blackbox.BlackBoxBoundedContext;
+import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -78,7 +78,7 @@ class TaskCreationWizardTest {
             context().assertCommands()
                      .withType(CreateDraft.class)
                      .hasSize(1);
-            context().assertEntity(TaskCreationWizard.class, processId())
+            context().assertEntity(processId(), TaskCreationWizard.class)
                      .hasStateThat()
                      .comparingExpectedFieldsOnly()
                      .isEqualTo(expectedWizardState);
@@ -338,11 +338,11 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .vBuild();
-            BlackBoxBoundedContext<?> context = context().receivesCommand(cmd);
+            BlackBoxContext context = context().receivesCommand(cmd);
             context.assertCommands()
                    .withType(FinalizeDraft.class)
                    .hasSize(1);
-            context.assertEntity(TaskCreationWizard.class, processId())
+            context.assertEntity(processId(), TaskCreationWizard.class)
                    .archivedFlag()
                    .isTrue();
         }
@@ -368,7 +368,7 @@ class TaskCreationWizardTest {
                     .setId(processId())
                     .vBuild();
             context().receivesCommand(cmd)
-                     .assertEntity(TaskCreationWizard.class, processId())
+                     .assertEntity(processId(), TaskCreationWizard.class)
                      .archivedFlag()
                      .isTrue();
         }

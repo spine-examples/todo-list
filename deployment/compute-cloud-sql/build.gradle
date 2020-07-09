@@ -38,11 +38,10 @@ spine.enableJava() {
 }
 
 dependencies {
-    implementation (
-        "com.google.cloud.sql:mysql-socket-factory:$deps.versions.cloudSqlSocketFactory",
-        "com.zaxxer:HikariCP:$deps.versions.hikariCp",
-        "io.spine:spine-rdbms:$deps.versions.spineJdbc",
-        project(path: ':server')
+    implementation(
+            project(path: ':server'),
+            project(path: ':rdbms-common'),
+            project(path: ':local-cloud-sql')
     )
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.
@@ -53,7 +52,7 @@ dependencies {
     }
 }
 
-mainClassName = "io.spine.examples.todolist.server.ComputeCloudSqlServer"
+mainClassName = "io.spine.examples.todolist.server.computecloudsql.ComputeCloudSqlServer"
 
 // A task to build a `uber-jar`.
 shadowJar {

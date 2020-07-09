@@ -46,13 +46,13 @@ export class ActiveTasksComponent implements OnInit {
 
   createBasicTaskForms: FormGroup;
 
-  @ViewChild('urgentList')
+  @ViewChild('urgentList', {static: true})
   private urgentList: TaskListComponent;
 
-  @ViewChild('normalList')
+  @ViewChild('normalList', {static: true})
   private normalList: TaskListComponent;
 
-  @ViewChild('lowList')
+  @ViewChild('lowList', {static: true})
   private lowList: TaskListComponent;
 
   activeFilter: (t: TaskView) => boolean =
@@ -65,7 +65,8 @@ export class ActiveTasksComponent implements OnInit {
       (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.LOW;
 
   normalPriorityFilter: (t: TaskView) => boolean =
-      (taskView) => this.activeFilter(taskView) && taskView.getPriority() === TaskPriority.TP_UNDEFINED;
+      (taskView) => this.activeFilter(taskView) &&
+          (taskView.getPriority() === TaskPriority.TP_UNDEFINED || taskView.getPriority() === TaskPriority.NORMAL);
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a

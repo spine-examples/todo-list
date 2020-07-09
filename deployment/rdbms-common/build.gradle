@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation (
+            "com.google.cloud.sql:mysql-socket-factory:$deps.versions.cloudSqlSocketFactory",
+            "com.zaxxer:HikariCP:$deps.versions.hikariCp",
+            "io.spine:spine-rdbms:$deps.versions.spineJdbc",
+            project(path: ':server')
+    )
+}

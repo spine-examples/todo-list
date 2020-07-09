@@ -23,7 +23,9 @@ import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
 
-import {MatChipsModule, MatIconModule, MatListModule} from '@angular/material';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
 import {TodoListComponentsModule} from 'app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';

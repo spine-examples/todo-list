@@ -152,7 +152,6 @@ public final class Server implements Logging {
     /**
      * Initiates a shutdown of this {@code Server} instance and waits for its complete termination.
      */
-    @SuppressWarnings("TestOnlyProblems") // It's OK to use test API as this method is test-only.
     @VisibleForTesting
     public void shutdownNowAndWait() {
         grpcContainer.shutdownNowAndWait();

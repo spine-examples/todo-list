@@ -1,6 +1,6 @@
 # Angular Client for To-Do List
 
-A client for To-Do List application based on [Angular](https://angular.io/) version 7.
+A client for To-Do List application based on [Angular](https://angular.io/) version 10.
 
 The client connects to the local backend server.
 

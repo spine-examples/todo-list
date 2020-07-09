@@ -20,7 +20,7 @@
 
 import {Location} from '@angular/common';
 import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {MatStepper} from '@angular/material';
+import {MatStepper} from '@angular/material/stepper';
 import {ActivatedRoute} from '@angular/router';
 
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
@@ -79,19 +79,19 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
    *
    * Visible for testing.
    */
-  @ViewChild(MatStepper)
+  @ViewChild(MatStepper, { static: true })
   stepper: MatStepper;
 
   /** Visible for testing. */
-  @ViewChild(TaskDefinitionComponent)
+  @ViewChild(TaskDefinitionComponent, { static: true })
   taskDefinition: TaskDefinitionComponent;
 
   /** Visible for testing. */
-  @ViewChild(LabelAssignmentComponent)
+  @ViewChild(LabelAssignmentComponent, { static: true })
   labelAssignment: LabelAssignmentComponent;
 
   /** Visible for testing. */
-  @ViewChild(ConfirmationComponent)
+  @ViewChild(ConfirmationComponent, { static: true })
   confirmation: ConfirmationComponent;
 
   @ViewChild(ErrorViewport)
@@ -242,20 +242,17 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   isLastStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const lastStage = keys.sort()[keys.length - 1];
-    console.log(keys.sort());
     return this.currentStageIs(stage => stage === lastStage);
   }
 
   isFirstStage(): boolean {
     const keys = Array.from(this.steps.keys());
     const firstStage = keys.sort()[0];
-    console.log(keys.sort());
     return this.currentStageIs(stage => stage === firstStage);
   }
 
   private currentStageIs(predicate: (stage: number) => boolean): boolean {
     const currentStage = this.wizard.stage;
-    console.log(currentStage + 'current');
     return predicate(currentStage);
   }
 }

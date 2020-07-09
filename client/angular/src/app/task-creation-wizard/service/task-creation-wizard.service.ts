@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Client} from 'spine-web';
 import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 import {TaskService} from 'app/task-service/task.service';
@@ -59,7 +59,7 @@ export class TaskCreationWizard {
   private _taskDueDate: Timestamp;
   private _taskLabels: LabelId[];
 
-  constructor(private readonly spineWebClient: Client,
+  constructor(@Inject(Client) private readonly spineWebClient: Client,
               private readonly taskService: TaskService) {
   }
 
@@ -94,6 +94,9 @@ export class TaskCreationWizard {
       : Promise<void> {
     if (!description) {
       return Promise.reject('Description value must be set.');
+    }
+    if (!TaskCreationWizard.descriptionIsValid(description)) {
+      return Promise.reject(`Task description must be at least 3 alphanumeric characters.`);
     }
     if (dueDate && dueDate.toDate() < new Date()) {
       return Promise.reject(
@@ -203,7 +206,7 @@ export class TaskCreationWizard {
   }
 
   /**
-   * Starts the task creation process "from scracth", creating a new process manager instance and a
+   * Starts the task creation process "from scratch", creating a new process manager instance and a
    * new task draft on the server side.
    */
   private start(): Promise<void> {
@@ -258,7 +261,11 @@ export class TaskCreationWizard {
           resolve(taskCreationProcesses[0]);
         }
       };
-      this.spineWebClient.fetch({entity: TaskCreation, byIds: [this._id]})
+      const query = this.spineWebClient.newQuery()
+                                       .select(TaskCreation)
+                                       .byIds([this._id])
+                                       .build();
+      this.spineWebClient.read(query)
           .then(taskCreationProcesses => dataCallback(taskCreationProcesses))
           .catch(err => reject(err));
     });
@@ -313,6 +320,14 @@ export class TaskCreationWizard {
       cmd.setDueDateChange(dueDateChange);
     }
     return cmd;
+  }
+
+  // This utility method should not appear above the public API methods.
+  // tslint:disable-next-line:member-ordering
+  private static descriptionIsValid(description: TaskDescription): boolean {
+    const stringValue: string = description.getValue().trim();
+    const atLeastThreeAlphanumeric = '(.*?[a-zA-Z0-9]){3,}.*';
+    return !!stringValue.match(atLeastThreeAlphanumeric);
   }
 
   get id(): TaskCreationId {

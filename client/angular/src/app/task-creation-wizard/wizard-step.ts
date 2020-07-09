@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {AfterViewInit, Input, ViewChild} from '@angular/core';
-import {MatStepper} from '@angular/material';
+import {AfterViewInit, Directive, Input, ViewChild} from '@angular/core';
+import {MatStepper} from '@angular/material/stepper';
 import {Router} from '@angular/router';
 
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
@@ -28,6 +28,7 @@ import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport
 /**
  * A common base for components that represent Task Creation Wizard steps.
  */
+@Directive()
 export abstract class WizardStep implements AfterViewInit {
 
   /**
@@ -50,7 +51,7 @@ export abstract class WizardStep implements AfterViewInit {
    *
    * Visible for testing.
    */
-  @ViewChild(ErrorViewport)
+  @ViewChild(ErrorViewport, {static: true})
   errorViewport: ErrorViewport;
 
   /* Fields are visible for testing. */

@@ -134,8 +134,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
+    @SuppressWarnings("CheckReturnValue")
     public void unSubscribe(Subscription subscription) {
-        client.cancel(subscription);
+        client.subscriptions().cancel(subscription);
     }
 
     @Override
