@@ -29,10 +29,10 @@ import java.io.IOException;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- * <li>Install {@code gcloud} tool.
- * <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.
- * <li>Create a Cloud SQL instance.
- * <li>Create a database.
+ *     <li>Install {@code gcloud} tool.
+ *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.
+ *     <li>Create a Cloud SQL instance.
+ *     <li>Create a database.
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:

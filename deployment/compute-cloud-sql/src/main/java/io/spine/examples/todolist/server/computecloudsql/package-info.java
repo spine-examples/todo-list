@@ -19,8 +19,7 @@
  */
 
 /**
- * This package contains a server implementation backed by a remote Google Cloud SQL storage
- * instance.
+ * This package contains a To-Do List application server backed by a Google Cloud SQL database.
  */
 
 @CheckReturnValue
