@@ -27,9 +27,9 @@ import io.spine.examples.todolist.rdbms.JdbcConnectionProtocol;
 /**
  * A URL for connecting to a Google Cloud SQL database.
  */
-final class CloudSqlConnectionUrl extends ConnectionUrl {
+final class CloudSqlUrl extends ConnectionUrl {
 
-    CloudSqlConnectionUrl(ConnectionProperties properties) {
+    CloudSqlUrl(ConnectionProperties properties) {
         super(properties);
     }
 

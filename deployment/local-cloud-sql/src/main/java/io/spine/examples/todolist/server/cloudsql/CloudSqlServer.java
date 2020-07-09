@@ -52,7 +52,7 @@ public final class CloudSqlServer extends RunsOnRdbms {
 
     @Override
     protected RelationalStorage storage(ConnectionProperties properties) {
-        ConnectionUrl url = new CloudSqlConnectionUrl(properties);
+        ConnectionUrl url = new CloudSqlUrl(properties);
         return new RelationalStorage(url, properties.credentials());
     }
 
