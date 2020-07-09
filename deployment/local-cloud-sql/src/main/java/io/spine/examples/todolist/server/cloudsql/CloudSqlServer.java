@@ -25,6 +25,8 @@ import io.spine.examples.todolist.rdbms.ConnectionUrl;
 import io.spine.examples.todolist.rdbms.RelationalStorage;
 import io.spine.examples.todolist.rdbms.RunsOnRdbms;
 
+import static io.spine.examples.todolist.rdbms.ConnectionProperties.fromResourceFile;
+
 /**
  * A To-Do list application server backed by a Google Cloud SQL-based storage.
  *
@@ -46,8 +48,7 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
  */
 public final class CloudSqlServer extends RunsOnRdbms {
 
-    private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
-            ConnectionProperties.fromResourceFile("cloud-sql.properties");
+    private static final String CONFIGURATION_FILE = "cloud-sql.properties";
 
     @Override
     protected RelationalStorage storage(ConnectionProperties properties) {
@@ -72,7 +73,7 @@ public final class CloudSqlServer extends RunsOnRdbms {
         ConnectionProperties properties = super.connectionProperties();
         return enoughProperties(properties)
                ? properties
-               : CLOUD_SQL_PROPERTIES;
+               : fromResourceFile(CONFIGURATION_FILE);
     }
 
     private static boolean enoughProperties(ConnectionProperties properties) {

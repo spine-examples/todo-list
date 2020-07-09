@@ -27,6 +27,8 @@ import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
 
+import static io.spine.examples.todolist.rdbms.ConnectionProperties.fromResourceFile;
+
 /**
  * A local {@link Server} backed by a MySQL-based storage.
  *
@@ -44,8 +46,7 @@ import java.io.IOException;
  */
 public final class LocalMySqlServer extends RunsOnRdbms {
 
-    private static final ConnectionProperties DB_PROPERTIES =
-            ConnectionProperties.fromResourceFile("jdbc-storage.properties");
+    private static final String CONFIGURATION_FILE = "jdbc-storage.properties";
 
     /**
      * Starts the To-Do list application server.
@@ -80,6 +81,6 @@ public final class LocalMySqlServer extends RunsOnRdbms {
         boolean hasNecessaryValues = properties.hasDbName() && properties.hasCredentials();
         return hasNecessaryValues
                ? properties
-               : DB_PROPERTIES;
+               : fromResourceFile(CONFIGURATION_FILE);
     }
 }
