@@ -60,9 +60,9 @@ final class LocalMySqlServer extends RunsOnRdbms {
     }
 
     @Override
-    protected RelationalStorage storage(ConnectionProperties connectionProperties) {
-        MySqlConnectionUrl url = new MySqlConnectionUrl(connectionProperties);
-        RelationalStorage result = new RelationalStorage(url, connectionProperties.credentials());
+    protected RelationalStorage storage(ConnectionProperties properties) {
+        MySqlConnectionUrl url = new MySqlConnectionUrl(properties);
+        RelationalStorage result = new RelationalStorage(url, properties.credentials());
         return result;
     }
 

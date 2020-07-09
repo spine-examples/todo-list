@@ -48,8 +48,8 @@ public final class RdbmsTestEnv {
 
 
         @Override
-        public RelationalStorage storage(ConnectionProperties connectionProperties) {
-            ConnectionUrl connectionUrl = new ConnectionUrl(properties) {
+        public RelationalStorage storage(ConnectionProperties properties) {
+            ConnectionUrl connectionUrl = new ConnectionUrl(TestServer.this.properties) {
                 @Override
                 protected String stringValue(ConnectionProperties properties) {
                     JdbcConnectionProtocol protocol = properties.connectionProtocol();
@@ -58,7 +58,7 @@ public final class RdbmsTestEnv {
                     return result;
                 }
             };
-            return new RelationalStorage(connectionUrl, properties.credentials());
+            return new RelationalStorage(connectionUrl, this.properties.credentials());
         }
     }
 }

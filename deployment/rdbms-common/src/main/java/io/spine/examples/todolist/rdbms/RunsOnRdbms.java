@@ -60,18 +60,15 @@ public abstract class RunsOnRdbms {
     }
 
     /**
-     * Constructs a {@code RelationalStorage} using the specified connection properties.
+     * Creates an instance of a {@code RelationalStorage} with the specified connection properties.
      */
-    protected abstract RelationalStorage storage(ConnectionProperties connectionProperties);
+    protected abstract RelationalStorage storage(ConnectionProperties properties);
 
     /**
-     * Parses the connection properties using {@code System.getProperty} for each connection
-     * property.
+     * Parses the connection properties using {@code System.getProperty()}
+     * for each connection property.
      *
-     * <p>The return value of this method is used to create the {@code RelationalStorage}.
-     * Extend this to use values that do not come from system properties.
-     *
-     * @return connection properties to create the {@code RelationalStorage}
+     * @return connection properties
      */
     protected ConnectionProperties connectionProperties() {
         ConnectionProperties result = ConnectionProperties.fromSystemProperties();
