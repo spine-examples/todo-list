@@ -29,25 +29,30 @@ import java.io.IOException;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- *     <li>Install {@code gcloud} tool.
- *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.
- *     <li>Create a Cloud SQL instance.
- *     <li>Create a database.
+ *     <li>install {@code gcloud} tool;
+ *     <li>authenticate using {@code gcloud}; {@code Cloud SQL client} role is required;
+ *     <li>create a Cloud SQL instance;
+ *     <li>create a database;
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-cloud-sql:runServer -Ddb.name=<db_name> -Ddb.instance=<db_instance>
- * -Ddb.username=<username> -Ddb.password=<password> -Ddb.protocol=<protocol>}
+ * <pre>
+ *      gradle :local-cloud-sql:runServer
+ *          -Ddb.name=$db_name
+ *          -Ddb.instance=$db_instance
+ *          -Ddb.username=$username
+ *          -Ddb.password=$password
+ *          -Ddb.protocol=$protocol
+ * </pre>
  *
- * <p>If the parameters were omitted, a default configuration is parsed from a configuration file
+ * <p>If the parameters are omitted, a default configuration is parsed from a configuration file
  * in resources. See {@code /resources/cloud-sql.properties}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * @see <a href="https://cloud.google.com/sdk/gcloud/">gcloud tool</a>
- * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
- *         creation</a>
+ * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">How to create a Cloud SQL instance</a>
  */
 final class LocalCloudSqlServer {
 
