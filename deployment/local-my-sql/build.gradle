@@ -27,7 +27,7 @@ dependencies {
 
 // A task to run the server. See `LocalMySqlServer` for the details.
 task runServer(dependsOn: jar, type: JavaExec) {
-    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
+    main = 'io.spine.examples.todolist.server.localmysql.LocalJdbcServer'
     classpath = sourceSets.main.runtimeClasspath
 
     // Accept properties specified via -D.
