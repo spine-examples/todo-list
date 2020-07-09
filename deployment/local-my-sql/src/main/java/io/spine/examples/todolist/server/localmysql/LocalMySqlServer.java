@@ -44,7 +44,7 @@ import static io.spine.examples.todolist.rdbms.ConnectionProperties.fromResource
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  */
-public final class LocalMySqlServer extends RunsOnRdbms {
+final class LocalMySqlServer extends RunsOnRdbms {
 
     private static final String CONFIGURATION_FILE = "jdbc-storage.properties";
 

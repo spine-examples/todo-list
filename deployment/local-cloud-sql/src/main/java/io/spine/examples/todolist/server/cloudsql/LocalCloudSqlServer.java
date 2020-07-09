@@ -49,7 +49,7 @@ import java.io.IOException;
  * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
  *         creation</a>
  */
-public class LocalCloudSqlServer {
+final class LocalCloudSqlServer {
 
     /** Prevents direct instantiation. */
     private LocalCloudSqlServer() {

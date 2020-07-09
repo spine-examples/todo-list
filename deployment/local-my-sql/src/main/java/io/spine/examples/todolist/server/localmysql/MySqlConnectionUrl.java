@@ -29,7 +29,7 @@ import static java.lang.String.format;
 /**
  * A URL for connecting to a MySQL database.
  */
-public final class MySqlConnectionUrl extends ConnectionUrl {
+final class MySqlConnectionUrl extends ConnectionUrl {
 
     MySqlConnectionUrl(ConnectionProperties properties) {
         super(properties);

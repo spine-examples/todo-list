@@ -44,12 +44,12 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 public final class ConnectionProperties {
 
+    private static final String PROTOCOL = "db.protocol";
+
     @VisibleForTesting
     public static final String NAME = "db.name";
     @VisibleForTesting
     public static final String INSTANCE = "db.instance";
-    @VisibleForTesting
-    public static final String PROTOCOL = "db.protocol";
     @VisibleForTesting
     public static final String USERNAME = "db.username";
     @VisibleForTesting

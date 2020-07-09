@@ -33,6 +33,12 @@ public abstract class ConnectionUrl {
 
     private final ConnectionProperties properties;
 
+    /**
+     * Constructs a new URL based on the specified properties.
+     *
+     * <p>Properties are used to {@linkplain #stringValue(ConnectionProperties) compose a string
+     * value}.
+     */
     protected ConnectionUrl(ConnectionProperties properties) {
         this.properties = properties;
     }
@@ -59,6 +65,9 @@ public abstract class ConnectionUrl {
         return properties;
     }
 
+    /**
+     * Returns a string representation of this URL usable for connecting to a database.
+     */
     @Override
     public final String toString() {
         String result = composeString(properties);
