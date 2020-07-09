@@ -118,7 +118,6 @@ public final class ConnectionProperties {
     public DbCredentials credentials() {
         String username = value(USERNAME);
         String password = value(PASSWORD);
-
         DbCredentials result =
                 DbCredentials
                         .newBuilder()

@@ -62,7 +62,6 @@ public final class RelationalStorage implements Logging {
 
     private DataSource datasource() {
         HikariConfig config = new HikariConfig();
-
         _debug().log("Connecting to the database. URL: `%s`", connectionUrl);
         config.setJdbcUrl(connectionUrl.toString());
         config.setUsername(dbCredentials.getUsername());
