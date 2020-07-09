@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.rdbms.ConnectionProperties.NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.databaseName;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.instance;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.password;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.protocol;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.username;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlTestEnv.databaseName;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlTestEnv.instance;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlTestEnv.password;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlTestEnv.protocol;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlTestEnv.username;
 
 @DisplayName("`CloudSqlServer` should")
 class CloudSqlServerTest {

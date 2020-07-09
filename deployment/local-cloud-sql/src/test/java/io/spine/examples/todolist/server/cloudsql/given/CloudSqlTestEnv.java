@@ -26,9 +26,9 @@ package io.spine.examples.todolist.server.cloudsql.given;
  * <p>When editing the values, refer to {@code cloud-sql.properties} for the source
  * which should match the props defined by this class.
  */
-public final class CloudSqlServerTestEnv {
+public final class CloudSqlTestEnv {
 
-    private CloudSqlServerTestEnv() {
+    private CloudSqlTestEnv() {
     }
 
     public static String protocol() {
