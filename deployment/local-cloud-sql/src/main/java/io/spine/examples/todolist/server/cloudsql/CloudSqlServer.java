@@ -31,7 +31,7 @@ import static io.spine.examples.todolist.rdbms.ConnectionProperties.fromResource
  * A To-Do list application server backed by a Google Cloud SQL-based storage.
  *
  * <p>To run the server, use {@link #start()}. The application must be launched with the necessary
- * configuration provided via named properties: {@code -DpropertyName="value"}.
+ * configuration provided via named properties (e.g. {@code -Dproperty.name="value"}).
  *
  * <p>The necessary properties are:
  * <ol>
