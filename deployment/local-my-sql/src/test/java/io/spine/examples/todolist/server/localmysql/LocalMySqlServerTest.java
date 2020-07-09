@@ -26,22 +26,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.spine.examples.todolist.server.localmysql.given.LocalMySqlTestEnv.database;
+import static io.spine.examples.todolist.server.localmysql.given.LocalMySqlTestEnv.password;
+import static io.spine.examples.todolist.server.localmysql.given.LocalMySqlTestEnv.protocol;
+import static io.spine.examples.todolist.server.localmysql.given.LocalMySqlTestEnv.username;
 
 @DisplayName("`LocalMySqlServer` should")
 class LocalMySqlServerTest {
 
-    private static final String PROTOCOL = "jdbc:mysql:test:";
-    private static final String DB_NAME = "my_db";
-    private static final String USERNAME = "admin";
-    private static final String PASSWORD = "admin";
 
     @Test
     @SuppressWarnings("AccessOfSystemProperties")
     @DisplayName("system properties as DB connection properties")
     void systemProperties() {
         String dbName = "dbName";
-        String username = "username";
-        String password = "password";
+        String username = "foobar";
+        String password = "fmm5%qasd!SD";
 
         System.setProperty(ConnectionProperties.NAME, dbName);
         System.setProperty(ConnectionProperties.USERNAME, username);
@@ -61,10 +61,10 @@ class LocalMySqlServerTest {
         LocalMySqlServer server = new LocalMySqlServer();
         ConnectionProperties properties = server.connectionProperties();
         assertThat(properties.connectionProtocol()
-                             .getValue()).isEqualTo(PROTOCOL);
-        assertThat(properties.dbName()).isEqualTo(DB_NAME);
+                             .getValue()).isEqualTo(protocol());
+        assertThat(properties.dbName()).isEqualTo(database());
         DbCredentials credentials = properties.credentials();
-        assertThat(credentials.getUsername()).isEqualTo(USERNAME);
-        assertThat(credentials.getPassword()).isEqualTo(PASSWORD);
+        assertThat(credentials.getUsername()).isEqualTo(username());
+        assertThat(credentials.getPassword()).isEqualTo(password());
     }
 }

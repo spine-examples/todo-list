@@ -22,7 +22,6 @@
  * An environment for tests of
  * {@link io.spine.examples.todolist.server.cloudsql.CloudSqlServer} and its descendants.
  */
-
 @CheckReturnValue
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.server.cloudsql.given;

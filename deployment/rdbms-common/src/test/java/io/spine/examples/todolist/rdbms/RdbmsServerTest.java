@@ -36,11 +36,11 @@ class RdbmsServerTest {
 
     private final ConnectionProperties.Builder testProperties =
             ConnectionProperties.newBuilder()
-                                .setDbName("db_name")
-                                .setPassword("password")
-                                .setUsername("test_user")
-                                .setInstanceName("test_instance")
-                                .setConnectionProtocol("test_protocol");
+                                .setDbName("tasks")
+                                .setUsername("laura")
+                                .setPassword("5gasSfW")
+                                .setInstanceName("beta")
+                                .setConnectionProtocol("jdbc:acme:");
 
     @AfterEach
     void afterEach() {

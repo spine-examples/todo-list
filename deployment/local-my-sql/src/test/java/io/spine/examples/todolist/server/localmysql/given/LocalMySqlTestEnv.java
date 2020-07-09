@@ -18,36 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.cloudsql.given;
+package io.spine.examples.todolist.server.localmysql.given;
 
 /**
- * Expected properties for testing the instance running on top of Cloud SQL.
+ * Expected properties for testing the instance running on top of a local MySQL instance.
  *
- * <p>When editing the values, refer to {@code cloud-sql.properties} for the source
+ * <p>When editing the values, refer to {@code jdbc-storage.properties} for the source
  * which should match the props defined by this class.
  */
-public final class CloudSqlServerTestEnv {
+public final class LocalMySqlTestEnv {
 
-    private CloudSqlServerTestEnv() {
+    private LocalMySqlTestEnv() {
     }
 
     public static String protocol() {
-        return "cloud-sql:";
+        return "jdbc:mysql:test:";
     }
 
-    public static String instance() {
-        return "staging";
+    public static String database() {
+        return "local-tasks";
     }
-
-    public static String databaseName() {
-        return "cloud-tasks";
-    }
-
     public static String username() {
-        return "jeffrey";
+        return "maria";
     }
-
     public static String password() {
-        return "M555Lffaete!";
+        return "4Fasdf0123!f_";
     }
 }

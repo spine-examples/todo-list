@@ -18,36 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server.cloudsql.given;
-
 /**
- * Expected properties for testing the instance running on top of Cloud SQL.
- *
- * <p>When editing the values, refer to {@code cloud-sql.properties} for the source
- * which should match the props defined by this class.
+ * Defines the test environment
+ * for {@link io.spine.examples.todolist.server.localmysql.LocalMySqlServerTest}.
  */
-public final class CloudSqlServerTestEnv {
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.server.localmysql.given;
 
-    private CloudSqlServerTestEnv() {
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    public static String protocol() {
-        return "cloud-sql:";
-    }
-
-    public static String instance() {
-        return "staging";
-    }
-
-    public static String databaseName() {
-        return "cloud-tasks";
-    }
-
-    public static String username() {
-        return "jeffrey";
-    }
-
-    public static String password() {
-        return "M555Lffaete!";
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

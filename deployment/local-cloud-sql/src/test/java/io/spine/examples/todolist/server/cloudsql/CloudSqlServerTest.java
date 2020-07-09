@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.rdbms.ConnectionProperties.NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.JDBC_PROTOCOL;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.USERNAME;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.databaseName;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.instance;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.password;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.protocol;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.username;
 
 @DisplayName("`CloudSqlServer` should")
 class CloudSqlServerTest {
@@ -75,13 +75,13 @@ class CloudSqlServerTest {
     }
 
     private static void assertMatchesResourceFile(ConnectionProperties properties) {
-        assertThat(properties.dbName()).isEqualTo(DB_NAME);
-        assertThat(properties.instanceName()).isEqualTo(INSTANCE_NAME);
+        assertThat(properties.dbName()).isEqualTo(databaseName());
+        assertThat(properties.instanceName()).isEqualTo(instance());
         assertThat(properties.connectionProtocol()
-                             .getValue()).isEqualTo(JDBC_PROTOCOL);
+                             .getValue()).isEqualTo(protocol());
 
         DbCredentials credentials = properties.credentials();
-        assertThat(credentials.getUsername()).isEqualTo(USERNAME);
-        assertThat(credentials.getPassword()).isEqualTo(PASSWORD);
+        assertThat(credentials.getUsername()).isEqualTo(username());
+        assertThat(credentials.getPassword()).isEqualTo(password());
     }
 }
