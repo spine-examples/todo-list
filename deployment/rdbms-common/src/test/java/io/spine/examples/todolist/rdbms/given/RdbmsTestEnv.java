@@ -46,8 +46,9 @@ public final class RdbmsTestEnv {
             this.properties = properties;
         }
 
+
         @Override
-        public RelationalStorage storage(String[] args) {
+        public RelationalStorage storage(ConnectionProperties connectionProperties) {
             ConnectionUrl connectionUrl = new ConnectionUrl(properties) {
                 @Override
                 protected String stringValue(ConnectionProperties properties) {

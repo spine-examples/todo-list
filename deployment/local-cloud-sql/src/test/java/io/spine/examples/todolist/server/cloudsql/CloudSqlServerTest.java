@@ -21,34 +21,39 @@
 package io.spine.examples.todolist.server.cloudsql;
 
 import io.spine.examples.todolist.rdbms.ConnectionProperties;
+import io.spine.examples.todolist.rdbms.DbCredentials;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth8.assertThat;
-import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.TestCloudSqlServer;
+import static io.spine.examples.todolist.rdbms.ConnectionProperties.NAME;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.DB_NAME;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.INSTANCE_NAME;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.JDBC_PROTOCOL;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.PASSWORD;
+import static io.spine.examples.todolist.server.cloudsql.given.CloudSqlServerTestEnv.USERNAME;
 
 @DisplayName("`CloudSqlServer` should")
 class CloudSqlServerTest {
 
+    @SuppressWarnings("AccessOfSystemProperties")
     @Test
-    @DisplayName("use the value from the properties file if command line args are insufficient")
+    @DisplayName("use the value from the properties file if system properties are insufficient")
     void fallbackToProperties() {
-        TestCloudSqlServer server = new TestCloudSqlServer();
-        String[] args = {"name", "password"};
-        Optional<ConnectionProperties> properties = server.connectionProperties(args);
-        assertThat(properties).isEmpty();
+        CloudSqlServer server = new CloudSqlServer();
+        System.setProperty(NAME, "name");
+        ConnectionProperties properties = server.connectionProperties();
+        assertMatchesResourceFile(properties);
     }
 
     @Test
-    @DisplayName("use the values specified to the command line")
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    void useArgs() {
+    @DisplayName("use the values specified to the system properties")
+    @SuppressWarnings("AccessOfSystemProperties")
+    void useSystemProps() {
         String dbName = "test_database";
         String username = "test-user";
         String password = "test-password";
+        String instanceName = "testInstance";
 
         ConnectionProperties expectedProperties =
                 ConnectionProperties
@@ -56,11 +61,27 @@ class CloudSqlServerTest {
                         .setDbName(dbName)
                         .setUsername(username)
                         .setPassword(password)
+                        .setInstanceName(instanceName)
                         .build();
 
-        String[] args = {dbName, username, password};
-        TestCloudSqlServer server = new TestCloudSqlServer();
-        Optional<ConnectionProperties> properties = server.connectionProperties(args);
-        assertThat(properties.get()).isEqualTo(expectedProperties);
+        System.setProperty(ConnectionProperties.NAME, dbName);
+        System.setProperty(ConnectionProperties.USERNAME, username);
+        System.setProperty(ConnectionProperties.PASSWORD, password);
+        System.setProperty(ConnectionProperties.INSTANCE, instanceName);
+
+        CloudSqlServer server = new CloudSqlServer();
+        ConnectionProperties properties = server.connectionProperties();
+        assertThat(properties).isEqualTo(expectedProperties);
+    }
+
+    private static void assertMatchesResourceFile(ConnectionProperties properties) {
+        assertThat(properties.dbName()).isEqualTo(DB_NAME);
+        assertThat(properties.instanceName()).isEqualTo(INSTANCE_NAME);
+        assertThat(properties.connectionProtocol()
+                             .getValue()).isEqualTo(JDBC_PROTOCOL);
+
+        DbCredentials credentials = properties.credentials();
+        assertThat(credentials.getUsername()).isEqualTo(USERNAME);
+        assertThat(credentials.getPassword()).isEqualTo(PASSWORD);
     }
 }

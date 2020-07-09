@@ -20,32 +20,14 @@
 
 package io.spine.examples.todolist.server.cloudsql.given;
 
-import io.spine.examples.todolist.rdbms.ConnectionProperties;
-import io.spine.examples.todolist.server.cloudsql.CloudSqlServer;
-
-import java.util.Optional;
-
 public final class CloudSqlServerTestEnv {
 
+    public static final String JDBC_PROTOCOL = "local-sql:";
+    public static final String INSTANCE_NAME = "instance_1";
+    public static final String DB_NAME = "tests";
+    public static final String USERNAME = "test_user";
+    public static final String PASSWORD = "test_password";
+
     private CloudSqlServerTestEnv() {
-    }
-
-    public static class TestCloudSqlServer extends CloudSqlServer {
-
-        @Override
-        public Optional<ConnectionProperties> connectionProperties(String[] args) {
-            if (args.length == 3) {
-                ConnectionProperties result =
-                        ConnectionProperties
-                                .newBuilder()
-                                .setDbName(args[0])
-                                .setUsername(args[1])
-                                .setPassword(args[2])
-                                .build();
-                return Optional.of(result);
-            } else {
-                return Optional.empty();
-            }
-        }
     }
 }

@@ -33,12 +33,20 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
- * todoAS DPbASD jbiASDBj[DSA
+ * An abstract base for To-Do List application servers that are backed by a relational storage.
+ *
+ * <p>To specify the relational storage, override {@link #storage(ConnectionProperties)}.
+ * {@code RelationalStorage} is configured using {@code ConnectionProperties}. By default,
+ * {@code ConnectionProperties} are {@linkplain #connectionProperties() parsed from system
+ * properties}. This behavior can be changed by overriding {@code connectionProperties()} to,
+ * for example, parse the configuration from a local file.
+ *
+ * <p>To run the server, use {@link #start()}.
  */
 public abstract class RunsOnRdbms {
 
     /**
-     * todo AS PIDbASD ADS
+     * Launches the To-Do List application server.
      */
     public final void start() throws IOException {
         ConnectionProperties properties = connectionProperties();
@@ -53,12 +61,19 @@ public abstract class RunsOnRdbms {
     }
 
     /**
-     * Constructs a {@code RelationalStorage} using the command line arguments.
-     *
-     * <p>Extenders are free to ignore the arguments and use other data to assemble the storage.
+     * Constructs a {@code RelationalStorage} using the specified connection properties.
      */
     protected abstract RelationalStorage storage(ConnectionProperties connectionProperties);
 
+    /**
+     * Parses the connection properties using {@code System.getProperty} for each connection
+     * property.
+     *
+     * <p>The return value of this method is used to create the {@code RelationalStorage}.
+     * Extend this to use values that do not come from system properties.
+     *
+     * @return connection properties to create the {@code RelationalStorage}
+     */
     protected ConnectionProperties connectionProperties() {
         ConnectionProperties result = ConnectionProperties.fromSystemProperties();
         return result;

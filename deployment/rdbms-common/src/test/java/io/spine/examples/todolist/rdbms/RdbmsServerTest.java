@@ -34,8 +34,6 @@ import static io.spine.examples.todolist.rdbms.ConnectionUrl.LOCAL_H2_PROTOCOL;
 @DisplayName("Servers that run on relational databases should")
 class RdbmsServerTest {
 
-    private static final String[] EMPTY_ARGS = {};
-
     private final ConnectionProperties.Builder testProperties =
             ConnectionProperties.newBuilder()
                                 .setDbName("db_name")
@@ -56,7 +54,8 @@ class RdbmsServerTest {
         ConnectionProperties props = testProperties.setEnvType(Production.class)
                                                    .build();
         TestServer server = new TestServer(props);
-        ConnectionUrl connectionUrl = server.storage(EMPTY_ARGS).connectionUrl();
+        ConnectionUrl connectionUrl = server.storage(props)
+                                            .connectionUrl();
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(props.connectionProtocol()
                                                 .getValue());
@@ -68,7 +67,8 @@ class RdbmsServerTest {
         ConnectionProperties props = testProperties.setEnvType(Tests.class)
                                                    .build();
         TestServer server = new TestServer(props);
-        ConnectionUrl connectionUrl = server.storage(EMPTY_ARGS).connectionUrl();
+        ConnectionUrl connectionUrl = server.storage(props)
+                                            .connectionUrl();
         String stringValue = connectionUrl.toString();
         assertThat(stringValue).startsWith(LOCAL_H2_PROTOCOL);
     }

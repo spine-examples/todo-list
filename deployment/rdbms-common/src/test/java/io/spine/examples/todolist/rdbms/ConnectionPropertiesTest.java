@@ -24,8 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.examples.todolist.rdbms.ConnectionProperties.INSTANCE;
-import static io.spine.examples.todolist.rdbms.ConnectionProperties.NAME;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("`ConnectionProperties` should")
@@ -62,8 +60,8 @@ class ConnectionPropertiesTest {
         String name = "name";
         String instanceName = "instance_name";
 
-        System.setProperty(NAME, name);
-        System.setProperty(INSTANCE, instanceName);
+        System.setProperty(ConnectionProperties.NAME, name);
+        System.setProperty(ConnectionProperties.INSTANCE, instanceName);
 
         ConnectionProperties properties = ConnectionProperties.fromSystemProperties();
         assertThat(properties.dbName()).isEqualTo(name);

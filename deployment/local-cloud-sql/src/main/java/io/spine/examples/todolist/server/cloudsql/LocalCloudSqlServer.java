@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
@@ -29,14 +30,15 @@ import java.io.IOException;
  *
  * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
- *     <li>Install {@code gcloud} tool.
- *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.
- *     <li>Create a Cloud SQL instance.
- *     <li>Create a database.
+ * <li>Install {@code gcloud} tool.
+ * <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.
+ * <li>Create a Cloud SQL instance.
+ * <li>Create a database.
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
+ * {@code gradle :local-cloud-sql:runServer -Ddb.name=<db_name> -Ddb.instance=<db_instance>
+ * -Ddb.username=<username> -Ddb.password=<password> -Ddb.protocol=<protocol>}
  *
  * <p>If the parameters were omitted, a default configuration is parsed from a configuration file
  * in resources. See {@code /resources/cloud-sql.properties}.
@@ -57,7 +59,7 @@ public class LocalCloudSqlServer {
     /**
      * Starts the To-Do List application server.
      *
-     * @see Server#start()
+     * @see CloudSqlServer
      */
     public static void main(String[] args) throws IOException {
         CloudSqlServer server = new CloudSqlServer();

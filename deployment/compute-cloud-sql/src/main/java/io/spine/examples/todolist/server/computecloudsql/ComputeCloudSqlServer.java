@@ -39,7 +39,7 @@ public final class ComputeCloudSqlServer {
     /**
      * Starts the Compute Engine based To-Do List application server.
      *
-     * <p>All of the configuration is set by the {@code /resources/cloud-sql.properties} file.
+     * <p>All of the configuration is taken from the {@code /resources/cloud-sql.properties} file.
      *
      * @see CloudSqlServer
      */

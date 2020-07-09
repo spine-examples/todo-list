@@ -31,7 +31,8 @@ import java.io.IOException;
  * A local {@link Server} backed by a MySQL-based storage.
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
+ * {@code gradle :local-my-sql:runServer -Ddb.name=<db_name> -Ddb.username=username
+ * -Ddb.password=password}
  *
  * <p>If the parameters were omitted, a default configuration is parsed from the resource file.
  * See {@code /resources/jdbc-storage.properties}.
@@ -50,6 +51,7 @@ public final class LocalMySqlServer extends RunsOnRdbms {
      * Starts the To-Do list application server.
      *
      * @see Server#start()
+     * @see RunsOnRdbms
      */
     public static void main(String[] args) throws IOException {
         LocalMySqlServer server = new LocalMySqlServer();
@@ -63,6 +65,15 @@ public final class LocalMySqlServer extends RunsOnRdbms {
         return result;
     }
 
+    /**
+     * Returns the connection properties for a MySQL database.
+     *
+     * <p>If the connection properties parsed from the system properties are sufficient, simply
+     * returns {@code super.connectionProperties()}. If they are not sufficient, parses
+     * them from {@code /resources/jdbc-storage.properties}.
+     *
+     * @return properties for connecting to a MySQL database
+     */
     @Override
     protected ConnectionProperties connectionProperties() {
         ConnectionProperties properties = super.connectionProperties();

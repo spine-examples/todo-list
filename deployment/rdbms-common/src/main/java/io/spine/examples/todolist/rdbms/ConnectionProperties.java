@@ -45,13 +45,15 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 public final class ConnectionProperties {
 
     @VisibleForTesting
-    static final String NAME = "db.name";
+    public static final String NAME = "db.name";
     @VisibleForTesting
-    static final String INSTANCE = "db.instance";
-
-    private static final String PROTOCOL = "db.protocol";
-    private static final String USERNAME = "db.username";
-    private static final String PASSWORD = "db.password";
+    public static final String INSTANCE = "db.instance";
+    @VisibleForTesting
+    public static final String PROTOCOL = "db.protocol";
+    @VisibleForTesting
+    public static final String USERNAME = "db.username";
+    @VisibleForTesting
+    public static final String PASSWORD = "db.password";
 
     private final ImmutableMap<String, String> properties;
     private final Class<? extends EnvironmentType> envType;

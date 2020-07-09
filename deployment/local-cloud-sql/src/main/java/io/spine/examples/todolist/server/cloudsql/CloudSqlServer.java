@@ -29,7 +29,7 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
  * A To-Do list application server backed by a Google Cloud SQL-based storage.
  *
  * <p>To run the server, use {@link #start()}. The application must be launched with the necessary
- * configuration provided via named properties (the {@code -DpropertyName="value"}.
+ * configuration provided via named properties: {@code -DpropertyName="value"}.
  *
  * <p>The necessary properties are:
  * <ol>
@@ -44,7 +44,7 @@ import io.spine.examples.todolist.rdbms.RunsOnRdbms;
  * resource file. See {@code /resources/cloud-sql.properties} of the module which launches the
  * application.
  */
-public final class CloudSqlServer extends RunsOnRdbms {
+public class CloudSqlServer extends RunsOnRdbms {
 
     private static final ConnectionProperties CLOUD_SQL_PROPERTIES =
             ConnectionProperties.fromResourceFile("cloud-sql.properties");
@@ -55,6 +55,18 @@ public final class CloudSqlServer extends RunsOnRdbms {
         return new RelationalStorage(url, properties.credentials());
     }
 
+    /**
+     * Returns the connection properties for a Google Cloud SQL database.
+     *
+     * <p>If the connection properties parsed from the system properties are sufficient, simply
+     * returns {@code super.connectionProperties()}. If they are not sufficient, parses
+     * them from {@code /resources/cloud-sql.properties}.
+     *
+     * <p>Refer to the class-level Javadoc for the necessary connection properties and how to pass
+     * them.
+     *
+     * @return properties for connecting to a Google Cloud SQL database
+     */
     @Override
     protected final ConnectionProperties connectionProperties() {
         ConnectionProperties properties = super.connectionProperties();
