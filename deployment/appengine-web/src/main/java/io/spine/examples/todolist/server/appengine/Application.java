@@ -69,8 +69,8 @@ final class Application {
     }
 
     private static Application create() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(Tracing.createTracing(), Production.class)
+        ServerEnvironment.instance()
+                         .use(Tracing.createTracing(), Production.class)
                          .use(Storage.createStorage(), Production.class)
                          .use(InMemoryTransportFactory.newInstance(), Production.class);
 
