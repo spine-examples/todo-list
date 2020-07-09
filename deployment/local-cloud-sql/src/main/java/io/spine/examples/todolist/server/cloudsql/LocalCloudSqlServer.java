@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.server.cloudsql;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
