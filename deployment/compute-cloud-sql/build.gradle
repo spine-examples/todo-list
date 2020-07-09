@@ -52,7 +52,7 @@ dependencies {
     }
 }
 
-mainClassName = "io.spine.examples.todolist.server.ComputeCloudSqlServer"
+mainClassName = "io.spine.examples.todolist.server.computecloudsql.ComputeCloudSqlServer"
 
 // A task to build a `uber-jar`.
 shadowJar {
