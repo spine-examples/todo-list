@@ -33,16 +33,20 @@ import static io.spine.examples.todolist.rdbms.ConnectionProperties.fromResource
  * A local {@link Server} backed by a MySQL-based storage.
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-my-sql:runServer -Ddb.name=<db_name> -Ddb.username=username
- * -Ddb.password=password}
+ * <pre>
+ *     gradle :local-my-sql:runServer
+ *         -Ddb.name=$db_name
+ *         -Ddb.username=$username
+ *         -Ddb.password=$password
+ * </pre>
  *
- * <p>If the parameters were omitted, a default configuration is parsed from the resource file.
- * See {@code /resources/jdbc-storage.properties}.
+ * <p>If the parameters are omitted, a default configuration is parsed from the resource file
+ * located at {@code /resources/jdbc-storage.properties}.
  *
  * <p>The application relies on a properly configured, launched MySQL database.
  *
  * <p>The server exposes its {@code gRPC API} at
- * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
+ * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT a default port}.
  */
 final class LocalMySqlServer extends RunsOnRdbms {
 
