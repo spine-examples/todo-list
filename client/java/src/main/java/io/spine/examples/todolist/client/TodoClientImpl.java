@@ -79,7 +79,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     public void postCommand(CommandMessage cmd) {
         client.onBehalfOf(user)
               .command(cmd)
-              .post();
+              .postAndForget();
     }
 
     @Override
