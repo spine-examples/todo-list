@@ -14,7 +14,7 @@
     "spine-web": "1.6.0"
   },
   "devDependencies": {
-    "webpack": "^4.8.3",
-    "webpack-cli": "^3.1.1"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }
