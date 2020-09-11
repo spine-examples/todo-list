@@ -30,8 +30,8 @@ import io.spine.examples.todolist.tasks.command.UpdateLabelDetails;
 import io.spine.examples.todolist.tasks.event.LabelCreated;
 import io.spine.examples.todolist.tasks.event.LabelDetailsUpdated;
 import io.spine.examples.todolist.tasks.rejection.Rejections;
-import io.spine.testing.server.blackbox.BlackBoxContext;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.testing.server.blackbox.ContextAwareTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,13 +40,11 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.create
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 
 @DisplayName("LabelAggregate should")
-class LabelAggregateTest {
+class LabelAggregateTest extends ContextAwareTest {
 
-    private BlackBoxContext context;
-
-    @BeforeEach
-    void setUp() {
-        context = BlackBoxContext.from(TasksContextFactory.builder());
+    @Override
+    protected BoundedContextBuilder contextBuilder() {
+        return TasksContextFactory.builder();
     }
 
     @Nested
@@ -57,10 +55,10 @@ class LabelAggregateTest {
         @DisplayName("produce LabelCreated event")
         void produceEvent() {
             CreateBasicLabel createLabel = createLabelInstance();
-            context.receivesCommand(createLabel)
-                   .assertEvents()
-                   .withType(LabelCreated.class)
-                   .hasSize(1);
+            context().receivesCommand(createLabel)
+                     .assertEvents()
+                     .withType(LabelCreated.class)
+                     .hasSize(1);
         }
 
         @Test
@@ -75,11 +73,11 @@ class LabelAggregateTest {
                     .setTitle(createLabel.getLabelTitle())
                     .build();
 
-            context.receivesCommand(createLabel)
-                   .assertEntity(labelId, LabelAggregate.class)
-                   .hasStateThat()
-                   .comparingExpectedFieldsOnly()
-                   .isEqualTo(expected);
+            context().receivesCommand(createLabel)
+                     .assertEntity(labelId, LabelAggregate.class)
+                     .hasStateThat()
+                     .comparingExpectedFieldsOnly()
+                     .isEqualTo(expected);
         }
     }
 
@@ -93,11 +91,11 @@ class LabelAggregateTest {
             CreateBasicLabel createLabel = createLabelInstance();
             LabelId labelId = createLabel.getLabelId();
             UpdateLabelDetails updateDetails = updateLabelDetailsInstance(labelId);
-            context.receivesCommand(createLabel)
-                   .receivesCommand(updateDetails)
-                   .assertEvents()
-                   .withType(LabelDetailsUpdated.class)
-                   .hasSize(1);
+            context().receivesCommand(createLabel)
+                     .receivesCommand(updateDetails)
+                     .assertEvents()
+                     .withType(LabelDetailsUpdated.class)
+                     .hasSize(1);
         }
 
         @Test
@@ -119,12 +117,12 @@ class LabelAggregateTest {
                     .setColor(newDetails.getColor())
                     .build();
 
-            context.receivesCommand(createLabel)
-                   .receivesCommand(firstUpdate)
-                   .receivesCommand(secondUpdate)
-                   .assertEntity(labelId, LabelAggregate.class)
-                   .hasStateThat()
-                   .isEqualTo(expected);
+            context().receivesCommand(createLabel)
+                     .receivesCommand(firstUpdate)
+                     .receivesCommand(secondUpdate)
+                     .assertEntity(labelId, LabelAggregate.class)
+                     .hasStateThat()
+                     .isEqualTo(expected);
         }
 
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
@@ -145,11 +143,11 @@ class LabelAggregateTest {
 
             UpdateLabelDetails updateDetails =
                     updateLabelDetailsInstance(labelId, previousDetails, newDetails);
-            context.receivesCommand(createLabel)
-                   .receivesCommand(updateDetails)
-                   .assertEvents()
-                   .withType(Rejections.CannotUpdateLabelDetails.class)
-                   .hasSize(1);
+            context().receivesCommand(createLabel)
+                     .receivesCommand(updateDetails)
+                     .assertEvents()
+                     .withType(Rejections.CannotUpdateLabelDetails.class)
+                     .hasSize(1);
         }
 
         private LabelDetails newDetails() {

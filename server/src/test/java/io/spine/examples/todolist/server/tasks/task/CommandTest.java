@@ -28,21 +28,25 @@ import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.command.SkipLabels;
 import io.spine.examples.todolist.tasks.command.StartTaskCreation;
 import io.spine.examples.todolist.tasks.command.UpdateTaskDetails;
-import io.spine.testing.server.blackbox.BlackBoxContext;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.testing.server.blackbox.ContextAwareTest;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Abstract base for tests testing command execution.
  */
-abstract class CommandTest {
+abstract class CommandTest extends ContextAwareTest {
 
-    private BlackBoxContext context;
     private TaskId taskId;
     private TaskCreationId processId;
 
+    @Override
+    protected BoundedContextBuilder contextBuilder() {
+        return TasksContextFactory.builder();
+    }
+
     @BeforeEach
     void setUp() {
-        context = BlackBoxContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
         processId = TaskCreationId.generate();
     }
@@ -53,7 +57,7 @@ abstract class CommandTest {
                 .setId(processId)
                 .setTaskId(taskId)
                 .vBuild();
-        context.receivesCommand(cmd);
+        context().receivesCommand(cmd);
     }
 
     void addDescription() {
@@ -70,7 +74,7 @@ abstract class CommandTest {
                 .setId(processId)
                 .setDescriptionChange(descriptionChange)
                 .vBuild();
-        context.receivesCommand(cmd);
+        context().receivesCommand(cmd);
     }
 
     void skipLabels() {
@@ -78,11 +82,7 @@ abstract class CommandTest {
                 .newBuilder()
                 .setId(processId)
                 .vBuild();
-        context.receivesCommand(cmd);
-    }
-
-    BlackBoxContext context() {
-        return context;
+        context().receivesCommand(cmd);
     }
 
     TaskCreationId processId() {

@@ -24,7 +24,8 @@ import io.spine.base.CommandMessage;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.examples.todolist.tasks.TaskId;
 import io.spine.examples.todolist.tasks.view.TaskView;
-import io.spine.testing.server.blackbox.BlackBoxContext;
+import io.spine.server.BoundedContextBuilder;
+import io.spine.testing.server.blackbox.ContextAwareTest;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -35,20 +36,18 @@ import org.junit.jupiter.api.BeforeEach;
  * <p>Provides a way to send commands and check whether the entity state is equal to the
  * expected result.
  */
-class TaskCommandTestBase {
+class TaskCommandTestBase extends ContextAwareTest {
 
-    private BlackBoxContext context;
     private TaskId taskId;
+
+    @Override
+    protected BoundedContextBuilder contextBuilder() {
+        return TasksContextFactory.builder();
+    }
 
     @BeforeEach
     void setUp() {
-        context = BlackBoxContext.from(TasksContextFactory.builder());
         taskId = TaskId.generate();
-    }
-
-    /** Obtains an instance of bounded context that is used during the test. */
-    BlackBoxContext context() {
-        return context;
     }
 
     /**
@@ -72,9 +71,9 @@ class TaskCommandTestBase {
         for (CommandMessage command : commandMessages) {
             context().receivesCommand(command);
         }
-        context.assertEntity(taskId, TaskViewProjection.class)
-               .hasStateThat()
-               .comparingExpectedFieldsOnly()
-               .isEqualTo(expected);
+        context().assertEntity(taskId, TaskViewProjection.class)
+                 .hasStateThat()
+                 .comparingExpectedFieldsOnly()
+                 .isEqualTo(expected);
     }
 }
