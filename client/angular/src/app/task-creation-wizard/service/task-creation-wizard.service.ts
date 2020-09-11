@@ -114,7 +114,7 @@ export class TaskCreationWizard {
         this.spineWebClient.command(cmd)
                            .onOk(resolve)
                            .onError(reject)
-                           .onRejection(reject)
+                           .onImmediateRejection(reject)
                            .post()
     );
     return updateTask.then(() => {
@@ -148,7 +148,7 @@ export class TaskCreationWizard {
         this.spineWebClient.command(cmd)
                            .onOk(resolve)
                            .onError(reject)
-                           .onRejection(reject)
+                           .onImmediateRejection(reject)
                            .post()
     );
     return addLabels.then(() => {
@@ -167,7 +167,7 @@ export class TaskCreationWizard {
         this.spineWebClient.command(cmd)
                            .onOk(resolve)
                            .onError(reject)
-                           .onRejection(reject)
+                           .onImmediateRejection(reject)
                            .post()
     );
     return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
@@ -183,7 +183,7 @@ export class TaskCreationWizard {
         this.spineWebClient.command(cmd)
                            .onOk(resolve)
                            .onError(reject)
-                           .onRejection(reject)
+                           .onImmediateRejection(reject)
                            .post()
     );
     return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
@@ -199,7 +199,7 @@ export class TaskCreationWizard {
         this.spineWebClient.command(cmd)
                            .onOk(resolve)
                            .onError(reject)
-                           .onRejection(reject)
+                           .onImmediateRejection(reject)
                            .post()
     );
     return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
@@ -226,7 +226,7 @@ export class TaskCreationWizard {
           this.spineWebClient.command(cmd)
                              .onOk(startProcess)
                              .onError(reject)
-                             .onRejection(reject)
+                             .onImmediateRejection(reject)
                              .post();
         }
     );

@@ -71,7 +71,7 @@ export class Client {
         this._spineWebClient.command(command)
                             .onOk(logSuccess)
                             .onError(errorCallback)
-                            .onRejection(errorCallback)
+                            .onImmediateRejection(errorCallback)
                             .post();
     }
 
