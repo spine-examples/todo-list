@@ -212,7 +212,7 @@ export class TaskService implements OnDestroy {
     this.spineWebClient.command(cmd)
                        .onOk(onSuccess)
                        .onError(onError)
-                       .onRejection(onError)
+                       .onImmediateRejection(onError)
                        .post();
   }
 

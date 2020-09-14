@@ -113,8 +113,7 @@
     <rule ref="category/java/errorprone.xml/NonStaticInitializer"/>
     <rule ref="category/java/codestyle.xml/PackageCase"/>
     <rule ref="category/java/design.xml/SingularField"/>
-    <rule ref="category/java/bestpractices.xml/PositionLiteralsFirstInComparisons"/>
-    <rule ref="category/java/bestpractices.xml/PositionLiteralsFirstInCaseInsensitiveComparisons"/>
+    <rule ref="category/java/bestpractices.xml/LiteralsFirstInComparisons"/>
     <rule ref="category/java/errorprone.xml/AssignmentToNonFinalStatic"/>
     <rule ref="category/java/performance.xml/UseStringBufferForStringAppends"/>
     <rule ref="category/java/multithreading.xml/UnsynchronizedStaticFormatter"/>

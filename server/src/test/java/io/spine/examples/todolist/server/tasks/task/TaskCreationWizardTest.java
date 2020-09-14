@@ -48,7 +48,6 @@ import io.spine.examples.todolist.tasks.command.UpdateTaskPriority;
 import io.spine.examples.todolist.tasks.event.LabelAssignmentSkipped;
 import io.spine.examples.todolist.tasks.rejection.Rejections;
 import io.spine.testing.server.CommandSubject;
-import io.spine.testing.server.blackbox.BlackBoxContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -338,13 +337,13 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setId(processId())
                     .vBuild();
-            BlackBoxContext context = context().receivesCommand(cmd);
-            context.assertCommands()
-                   .withType(FinalizeDraft.class)
-                   .hasSize(1);
-            context.assertEntity(processId(), TaskCreationWizard.class)
-                   .archivedFlag()
-                   .isTrue();
+            context().receivesCommand(cmd);
+            context().assertCommands()
+                     .withType(FinalizeDraft.class)
+                     .hasSize(1);
+            context().assertEntity(processId(), TaskCreationWizard.class)
+                     .archivedFlag()
+                     .isTrue();
         }
     }
 

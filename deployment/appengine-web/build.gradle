@@ -37,6 +37,11 @@ apply from: "$projectDir/gradle/datastore-emulator.gradle"
 
 apply from: "$rootDir/version.gradle"
 
+spine.enableJava {
+    firebaseWebServer()
+    withDatastore()
+}
+
 dependencies {
     implementation("com.google.api-client:google-api-client-appengine:$deps.versions.googleApiClient") {
         exclude group: 'javax.servlet', module: 'servlet-api'
@@ -45,8 +50,6 @@ dependencies {
         "com.google.appengine:appengine-api-1.0-sdk:$deps.versions.appengineSdk",
         "com.google.api-client:google-api-client:$deps.versions.googleApiClient",
 
-        "io.spine.gcloud:spine-firebase-web:$deps.versions.spineWeb",
-        "io.spine.gcloud:spine-datastore:$deps.versions.spineGcloud",
         "io.spine.gcloud:spine-stackdriver-trace:$deps.versions.spineGcloud",
 
         project(':server')
@@ -61,11 +64,10 @@ configurations.all({
 })
 
 appengine {
-    deploy.project = 'spine-todo-list-example'
+    deploy.projectId = 'spine-todo-list-example'
     run {
         port = 8080
         jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
-        logLevel = "debug"
     }
 }
 

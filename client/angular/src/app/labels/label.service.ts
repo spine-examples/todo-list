@@ -50,7 +50,7 @@ export class LabelService {
       this.spineWebClient.command(cmd)
                          .onOk(resolve)
                          .onError(reject)
-                         .onRejection(reject)
+                         .onImmediateRejection(reject)
                          .post();
     });
   }

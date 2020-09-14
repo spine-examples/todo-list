@@ -19,7 +19,7 @@
  */
 
 ext {
-    jlineVersion = '3.15.0'
+    jlineVersion = '3.16.0'
 }
 
 spine.enableJava().client()
