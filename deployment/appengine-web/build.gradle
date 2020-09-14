@@ -65,6 +65,7 @@ configurations.all({
 
 appengine {
     deploy.projectId = 'spine-todo-list-example'
+    deploy.version = '1.6.0'
     run {
         port = 8080
         jvmFlags = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
