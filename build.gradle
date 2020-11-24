@@ -19,7 +19,7 @@
  */
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '1.6.0' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '1.6.15' apply false
     id 'net.ltgt.errorprone' version '1.2.1' apply false
 }
 
