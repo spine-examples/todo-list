@@ -26,6 +26,7 @@ import io.spine.time.Temporal;
 import io.spine.time.Temporals;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
@@ -62,7 +63,7 @@ final class DateFormatter {
     @SuppressWarnings("FromTemporalAccessor") // we're sure that Timestamp has required fields
     private static String formatTimestamp(Timestamp timestamp) {
         Temporal<?> temporal = Temporals.from(timestamp);
-        LocalDate localDate = LocalDate.from(temporal.toInstant());
+        LocalDateTime localDate = LocalDateTime.from(temporal.toInstant());
         return FORMATTER.format(localDate);
     }
 }
