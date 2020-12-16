@@ -23,8 +23,8 @@
  * local development.
  */
 
-import org.gradle.internal.os.OperatingSystem
 import io.github.httpbuilderng.http.HttpTask
+import org.gradle.internal.os.OperatingSystem
 
 final def DATASTORE_EMULATOR_TASK_GROUP = "Datastore emulator"
 

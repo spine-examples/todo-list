@@ -26,6 +26,7 @@ import io.spine.web.query.QueryServlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import static io.spine.examples.todolist.server.appengine.Application.application;
 
 /**

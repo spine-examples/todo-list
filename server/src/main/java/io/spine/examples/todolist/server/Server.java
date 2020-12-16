@@ -24,9 +24,9 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
+import io.spine.server.GrpcContainer;
 import io.spine.server.QueryService;
 import io.spine.server.SubscriptionService;
-import io.spine.server.GrpcContainer;
 
 import java.io.IOException;
 

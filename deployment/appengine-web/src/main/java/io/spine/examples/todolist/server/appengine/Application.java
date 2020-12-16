@@ -25,7 +25,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
 import io.spine.base.Production;
-import io.spine.base.Tests;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
