@@ -25,6 +25,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
 import io.spine.base.Production;
+import io.spine.base.Tests;
 import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -69,10 +70,11 @@ final class Application {
     }
 
     private static Application create() {
-        ServerEnvironment.instance()
-                         .use(Tracing.createTracing(), Production.class)
-                         .use(Storage.createStorage(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(Tracing.createTracing())
+                .use(Storage.createStorage())
+                .use(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = TasksContextFactory.create();
         FluentLogger.Api info = logger.atInfo();

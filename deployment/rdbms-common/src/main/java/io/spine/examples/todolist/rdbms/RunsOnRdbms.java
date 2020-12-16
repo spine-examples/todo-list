@@ -51,9 +51,10 @@ public abstract class RunsOnRdbms {
     public final void start() throws IOException {
         ConnectionProperties properties = connectionProperties();
         RelationalStorage storage = storage(properties);
-        ServerEnvironment.instance()
-                         .use(storage.storageFactory(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(storage.storageFactory())
+                .use(InMemoryTransportFactory.newInstance());
         BoundedContext context = TasksContextFactory.create();
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, context);
         server.start();

@@ -25,23 +25,24 @@ ext {
 spine.enableJava().client()
 
 dependencies {
-    implementation (
-        "org.jline:jline:$jlineVersion",
-        project(path: ':client:java')
+    implementation(
+            "org.jline:jline:$jlineVersion",
+            project(path: ':client:java'),
+            project(path: ':tasks')
     )
     testImplementation(
-        "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
-        "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
-        "org.apiguardian:apiguardian-api:1.1.0",
+            "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
+            "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
+            "org.apiguardian:apiguardian-api:1.1.0",
 
-        project(path: ':testutil-api'),
-        project(path: ':server')
+            project(path: ':testutil-api'),
+            project(path: ':server')
     )
 }
 
 // A task to run the client. See `ClientApp` for the details.
 task runTodoClient(dependsOn: jar, type: JavaExec) {
-    if(project.hasProperty('conf')){
+    if (project.hasProperty('conf')) {
         args(conf.split(','))
     }
 

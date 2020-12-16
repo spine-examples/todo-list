@@ -41,14 +41,17 @@ import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create
  */
 public final class LocalInMemoryServer {
 
+    /**
+     * Prevents instantiation of this class.
+     */
     private LocalInMemoryServer() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
         Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
         server.start();

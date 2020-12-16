@@ -18,6 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+spine.enableJava().server()
+
 dependencies {
     implementation project(path: ':server')
 }

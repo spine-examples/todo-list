@@ -19,14 +19,14 @@
  */
 
 plugins {
-    id 'io.spine.tools.gradle.bootstrap' version '1.6.0' apply false
-    id 'net.ltgt.errorprone' version '1.2.1' apply false
+    id 'io.spine.tools.gradle.bootstrap' version '1.7.0' apply false
+    id 'net.ltgt.errorprone' version '1.3.0' apply false
 }
 
 final def scripts = [
-    version         : "$rootDir/version.gradle",
-    jacoco          : "$rootDir/gradle/jacoco.gradle",
-    staticAnalysis  : "$rootDir/gradle/static-analysis.gradle"
+        version       : "$rootDir/version.gradle",
+        jacoco        : "$rootDir/gradle/jacoco.gradle",
+        staticAnalysis: "$rootDir/gradle/static-analysis.gradle"
 ]
 
 allprojects {
@@ -41,15 +41,15 @@ allprojects {
 
     ext {
         final def gradlePlugins = [
-            errorProne   : "net.ltgt.gradle:gradle-errorprone-plugin:$deps.versions.errorPronePlugin",
-            protobuf     : "com.google.protobuf:protobuf-gradle-plugin:$deps.versions.protobufPlugin",
-            appengine    : "com.google.cloud.tools:appengine-gradle-plugin:$deps.versions.appenginePlugin",
-            licenseReport: "com.github.jk1:gradle-license-report:$deps.versions.licensePlugin"
+                errorProne   : "net.ltgt.gradle:gradle-errorprone-plugin:$deps.versions.errorPronePlugin",
+                protobuf     : "com.google.protobuf:protobuf-gradle-plugin:$deps.versions.protobufPlugin",
+                appengine    : "com.google.cloud.tools:appengine-gradle-plugin:$deps.versions.appenginePlugin",
+                licenseReport: "com.github.jk1:gradle-license-report:$deps.versions.licensePlugin"
         ]
 
         run = [
-                "scripts"       : scripts,
-                "gradlePlugins" : gradlePlugins
+                "scripts"      : scripts,
+                "gradlePlugins": gradlePlugins
         ]
     }
 }
@@ -59,10 +59,8 @@ subprojects {
     dependencies {
         errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
         errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
-        implementation (
-                "com.google.guava:guava:$deps.versions.guava",
-                "org.checkerframework:checker-qual:$deps.versions.checkerFramework"
-        )
+        implementation("com.google.guava:guava:$deps.versions.guava")
+        compileOnly("org.checkerframework:checker-qual:$deps.versions.checkerFramework")
         runtimeOnly deps.grpc.grpcNetty
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit5"
     }

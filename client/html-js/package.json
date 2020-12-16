@@ -1,6 +1,6 @@
 {
   "name": "html-js",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "The Web client of the TodoList application.",
   "main": "index.js",
   "scripts": {
@@ -9,12 +9,12 @@
   "author": "Spine Event Engine",
   "license": "Apache-2.0",
   "dependencies": {
-    "firebase": "^7.20.0",
-    "rxjs": "6.3.3",
-    "spine-web": "1.6.0"
+    "firebase": "^7.24.0",
+    "rxjs": "6.5.5",
+    "spine-web": "1.7.0"
   },
   "devDependencies": {
-    "webpack": "^4.44.1",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   }
 }

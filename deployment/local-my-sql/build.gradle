@@ -31,7 +31,7 @@ task runServer(dependsOn: jar, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     // Accept properties specified via -D.
-    System.properties.each { k,v->
+    System.properties.each { k, v ->
         if (k.startsWith("db.")) {
             systemProperty k, v
         }

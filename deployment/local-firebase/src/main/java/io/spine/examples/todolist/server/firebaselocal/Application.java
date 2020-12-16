@@ -61,9 +61,10 @@ final class Application {
     }
 
     private static Application create() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = TasksContextFactory.create();
         CommandService commandService = CommandService
@@ -78,10 +79,12 @@ final class Application {
                 .newBuilder()
                 .add(context)
                 .build();
-        Application application = new Application(commandService,
-                                                  queryService,
-                                                  subscriptionService,
-                                                  firebaseClient());
+        Application application = new Application(
+                commandService,
+                queryService,
+                subscriptionService,
+                firebaseClient()
+        );
         return application;
     }
 
@@ -102,8 +105,8 @@ final class Application {
         return client;
     }
 
-    private static
-    FirebaseQueryBridge newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
+    private static FirebaseQueryBridge
+    newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
         return FirebaseQueryBridge
                 .newBuilder()
                 .setQueryService(queryService)
