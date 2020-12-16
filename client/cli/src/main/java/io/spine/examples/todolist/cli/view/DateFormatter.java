@@ -22,8 +22,10 @@ package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Timestamp;
-import io.spine.time.TimestampTemporal;
+import io.spine.time.Temporal;
+import io.spine.time.Temporals;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
@@ -45,7 +47,7 @@ final class DateFormatter {
     }
 
     /**
-     * Formats the {@code timestamp} into a date string of the {@code yyyy-MM-dd} format.
+     * Formats the {@code timestamp} into a date string of the {@code YYYY-MM-dd} format.
      *
      * <p>If the {@code timestamp} milliseconds is equal to {@code 0} returns a constant
      * {@code default} string.
@@ -54,6 +56,12 @@ final class DateFormatter {
         long millis = toMillis(timestamp);
         return millis == 0
                ? DEFAULT_TIMESTAMP_VALUE
-               : FORMATTER.format(TimestampTemporal.from(timestamp).toInstant());
+               : formatTimestamp(timestamp);
+    }
+
+    private static String formatTimestamp(Timestamp timestamp) {
+        Temporal<?> temporal = Temporals.from(timestamp);
+        LocalDate localDate = LocalDate.from(temporal.toInstant());
+        return FORMATTER.format(localDate);
     }
 }
