@@ -47,7 +47,7 @@ final class DateFormatter {
     }
 
     /**
-     * Formats the {@code timestamp} into a date string of the {@code YYYY-MM-dd} format.
+     * Formats the {@code timestamp} into a date string of the {@code yyyy-MM-dd} format.
      *
      * <p>If the {@code timestamp} milliseconds is equal to {@code 0} returns a constant
      * {@code default} string.
@@ -59,6 +59,7 @@ final class DateFormatter {
                : formatTimestamp(timestamp);
     }
 
+    @SuppressWarnings("FromTemporalAccessor") // we're sure that Timestamp has required fields
     private static String formatTimestamp(Timestamp timestamp) {
         Temporal<?> temporal = Temporals.from(timestamp);
         LocalDate localDate = LocalDate.from(temporal.toInstant());
