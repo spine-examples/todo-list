@@ -22,10 +22,9 @@ package io.spine.examples.todolist.cli.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Timestamp;
+import io.spine.time.TimestampTemporal;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.time.format.DateTimeFormatter;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
 
@@ -34,25 +33,27 @@ import static com.google.protobuf.util.Timestamps.toMillis;
  */
 final class DateFormatter {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @VisibleForTesting
     static final String DEFAULT_TIMESTAMP_VALUE = "default";
 
-    /** Prevents instantiation of this utility class. */
+    /**
+     * Prevents instantiation of this utility class.
+     */
     private DateFormatter() {
     }
 
+    /**
+     * Formats the {@code timestamp} into a date string of the {@code yyyy-MM-dd} format.
+     *
+     * <p>If the {@code timestamp} milliseconds is equal to {@code 0} returns a constant
+     * {@code default} string.
+     */
     static String format(Timestamp timestamp) {
         long millis = toMillis(timestamp);
         return millis == 0
                ? DEFAULT_TIMESTAMP_VALUE
-               : getDateFormat().format(new Date(millis));
-    }
-
-    @VisibleForTesting
-    static SimpleDateFormat getDateFormat() {
-        SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-        return result;
+               : FORMATTER.format(TimestampTemporal.from(timestamp).toInstant());
     }
 }
