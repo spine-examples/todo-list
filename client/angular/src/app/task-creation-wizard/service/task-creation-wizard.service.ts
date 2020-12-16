@@ -30,12 +30,12 @@ import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {
-  AddLabels,
-  CancelTaskCreation,
-  CompleteTaskCreation,
-  SkipLabels,
-  StartTaskCreation,
-  UpdateTaskDetails
+    AddLabels,
+    CancelTaskCreation,
+    CompleteTaskCreation,
+    SkipLabels,
+    StartTaskCreation,
+    UpdateTaskDetails
 } from 'proto/todolist/commands_pb';
 
 /**

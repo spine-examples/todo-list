@@ -22,7 +22,11 @@ import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {Client, Message} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, observableSubscriptionDataOf, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {
+    mockSpineWebClient,
+    observableSubscriptionDataOf,
+    subscriptionDataOf
+} from 'test/given/mock-spine-web-client';
 import {chore, chore2, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
 import {TaskStatus, TaskView} from 'proto/todolist/views_pb';

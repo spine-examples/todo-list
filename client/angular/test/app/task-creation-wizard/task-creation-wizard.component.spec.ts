@@ -55,7 +55,11 @@ import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {chores} from 'test/given/tasks';
 import {LabelService} from 'app/labels/label.service';
-import {initMockProcess, initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
+import {
+    initMockProcess,
+    initMockProcessWithLabels,
+    taskCreationProcess
+} from 'test/given/task-creation-process';
 
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
