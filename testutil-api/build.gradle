@@ -18,8 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+plugins {
+    id("java-library")
+}
+
 dependencies {
-    implementation(project(path: ':tasks'))
-    implementation(project(path: ':server'))
-    implementation("io.spine:spine-testutil-core:$deps.versions.spineCore")
+    api(project(path: ':tasks'))
+    api(project(path: ':server'))
+    api("io.spine:spine-testutil-core:$deps.versions.spineCore")
 }

@@ -28,6 +28,7 @@ dependencies {
     implementation(deps.grpc.grpcProtobuf)
 
     testImplementation(
+            "io.spine:spine-server:$deps.versions.spineCore",
             project(path: ':testutil-api'),
             project(path: ':server')
     )
