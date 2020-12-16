@@ -25,8 +25,8 @@ import com.google.protobuf.Timestamp;
 import io.spine.time.Temporal;
 import io.spine.time.Temporals;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
@@ -63,7 +63,7 @@ final class DateFormatter {
     @SuppressWarnings("FromTemporalAccessor") // we're sure that Timestamp has required fields
     private static String formatTimestamp(Timestamp timestamp) {
         Temporal<?> temporal = Temporals.from(timestamp);
-        LocalDateTime localDate = LocalDateTime.from(temporal.toInstant());
+        LocalDateTime localDate = LocalDateTime.ofInstant(temporal.toInstant(), ZoneOffset.UTC);
         return FORMATTER.format(localDate);
     }
 }
