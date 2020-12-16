@@ -26,11 +26,10 @@ import org.jline.terminal.impl.DumbTerminal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.cli.Terminals.newTerminal;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 
-@DisplayName("Terminals should")
+@DisplayName("`Terminals` should")
 class TerminalsTest extends UtilityClassTest<Terminals> {
 
     TerminalsTest() {
@@ -41,6 +40,7 @@ class TerminalsTest extends UtilityClassTest<Terminals> {
     @DisplayName("create a new dumb terminal")
     void createNewDumbTerminal() {
         Terminal terminal = newTerminal();
-        assertThat(terminal, instanceOf(DumbTerminal.class));
+        assertThat(terminal)
+                .isInstanceOf(DumbTerminal.class);
     }
 }

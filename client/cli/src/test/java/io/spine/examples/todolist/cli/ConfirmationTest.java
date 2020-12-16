@@ -28,11 +28,10 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.cli.Confirmation.NEGATIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.POSITIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.ask;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Confirmation should")
+@DisplayName("`Confirmation` should")
 class ConfirmationTest extends UtilityClassTest<Confirmation> {
 
     private static final String QUESTION = "?";
@@ -51,7 +50,7 @@ class ConfirmationTest extends UtilityClassTest<Confirmation> {
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(Confirmation.class);
+        assertHasPrivateParameterlessCtor();
     }
 
     @Test
