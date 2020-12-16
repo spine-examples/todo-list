@@ -22,6 +22,7 @@ package io.spine.examples.todolist.server.inmem;
 
 import io.spine.base.Production;
 import io.spine.examples.todolist.server.Server;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
@@ -30,7 +31,6 @@ import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create;
 
 /**
  * A local {@link Server} using
@@ -53,7 +53,7 @@ public final class LocalInMemoryServer {
                 .use(InMemoryStorageFactory.newInstance())
                 .use(InMemoryTransportFactory.newInstance());
 
-        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, TasksContextFactory.create());
         server.start();
     }
 }
