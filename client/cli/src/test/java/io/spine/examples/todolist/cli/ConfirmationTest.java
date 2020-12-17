@@ -31,11 +31,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.cli.Confirmation.NEGATIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.POSITIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.ask;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("`Confirmation` should")
 class ConfirmationTest extends UtilityClassTest<Confirmation> {
@@ -54,17 +53,12 @@ class ConfirmationTest extends UtilityClassTest<Confirmation> {
     }
 
     @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor();
-    }
-
-    @Test
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
         bot.addAnswer(POSITIVE_ANSWER);
         boolean result = ask(bot.screen(), QUESTION);
-        assertTrue(result);
+        assertThat(result)
+                .isTrue();
     }
 
     @Test
@@ -72,7 +66,8 @@ class ConfirmationTest extends UtilityClassTest<Confirmation> {
     void returnFalseForNegativeAnswer() {
         bot.addAnswer(NEGATIVE_ANSWER);
         boolean result = ask(bot.screen(), QUESTION);
-        assertFalse(result);
+        assertThat(result)
+                .isFalse();
     }
 
     @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
