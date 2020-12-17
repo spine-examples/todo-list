@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,11 +32,10 @@ import org.jline.terminal.impl.DumbTerminal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.cli.Terminals.newTerminal;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 
-@DisplayName("Terminals should")
+@DisplayName("`Terminals` should")
 class TerminalsTest extends UtilityClassTest<Terminals> {
 
     TerminalsTest() {
@@ -41,6 +46,7 @@ class TerminalsTest extends UtilityClassTest<Terminals> {
     @DisplayName("create a new dumb terminal")
     void createNewDumbTerminal() {
         Terminal terminal = newTerminal();
-        assertThat(terminal, instanceOf(DumbTerminal.class));
+        assertThat(terminal)
+                .isInstanceOf(DumbTerminal.class);
     }
 }

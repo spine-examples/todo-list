@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -46,20 +52,19 @@ dependencies {
     implementation("com.google.api-client:google-api-client-appengine:$deps.versions.googleApiClient") {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
-    implementation (
-        "com.google.appengine:appengine-api-1.0-sdk:$deps.versions.appengineSdk",
-        "com.google.api-client:google-api-client:$deps.versions.googleApiClient",
+    implementation(
+            "com.google.appengine:appengine-api-1.0-sdk:$deps.versions.appengineApi",
+            "com.google.api-client:google-api-client:$deps.versions.googleApiClient",
 
-        "io.spine.gcloud:spine-stackdriver-trace:$deps.versions.spineGcloud",
+            "io.spine.gcloud:spine-stackdriver-trace:$deps.versions.spineGcloud",
 
-        project(':server')
+            project(':server')
     )
 }
 
 configurations.all({
     resolutionStrategy {
-        // Force the `google-api-client` version required by the Spine Web.
-        force "com.google.api-client:google-api-client:1.25.0"
+        force "com.google.api-client:google-api-client:$deps.versions.googleApiClient"
     }
 })
 

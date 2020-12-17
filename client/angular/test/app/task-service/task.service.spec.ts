@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,7 +28,11 @@ import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {Client, Message} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, observableSubscriptionDataOf, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {
+    mockSpineWebClient,
+    observableSubscriptionDataOf,
+    subscriptionDataOf
+} from 'test/given/mock-spine-web-client';
 import {chore, chore2, CHORE_1_DESC, CHORE_1_ID, CHORE_2_DESC, CHORE_2_ID} from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
 import {TaskStatus, TaskView} from 'proto/todolist/views_pb';

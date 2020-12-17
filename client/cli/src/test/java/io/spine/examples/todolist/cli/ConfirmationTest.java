@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,14 +31,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.cli.Confirmation.NEGATIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.POSITIVE_ANSWER;
 import static io.spine.examples.todolist.cli.Confirmation.ask;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Confirmation should")
+@DisplayName("`Confirmation` should")
 class ConfirmationTest extends UtilityClassTest<Confirmation> {
 
     private static final String QUESTION = "?";
@@ -49,17 +53,12 @@ class ConfirmationTest extends UtilityClassTest<Confirmation> {
     }
 
     @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(Confirmation.class);
-    }
-
-    @Test
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
         bot.addAnswer(POSITIVE_ANSWER);
         boolean result = ask(bot.screen(), QUESTION);
-        assertTrue(result);
+        assertThat(result)
+                .isTrue();
     }
 
     @Test
@@ -67,7 +66,8 @@ class ConfirmationTest extends UtilityClassTest<Confirmation> {
     void returnFalseForNegativeAnswer() {
         bot.addAnswer(NEGATIVE_ANSWER);
         boolean result = ask(bot.screen(), QUESTION);
-        assertFalse(result);
+        assertThat(result)
+                .isFalse();
     }
 
     @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})

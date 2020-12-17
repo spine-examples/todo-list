@@ -1,6 +1,12 @@
 /*
  * Copyright 2020, TeamDev. All rights reserved.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
  * disclaimer.
@@ -22,6 +28,7 @@ package io.spine.examples.todolist.server.inmem;
 
 import io.spine.base.Production;
 import io.spine.examples.todolist.server.Server;
+import io.spine.examples.todolist.server.tasks.TasksContextFactory;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
@@ -30,7 +37,6 @@ import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create;
 
 /**
  * A local {@link Server} using
@@ -41,16 +47,19 @@ import static io.spine.examples.todolist.server.tasks.TasksContextFactory.create
  */
 public final class LocalInMemoryServer {
 
+    /**
+     * Prevents instantiation of this class.
+     */
     private LocalInMemoryServer() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
-        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, TasksContextFactory.create());
         server.start();
     }
 }

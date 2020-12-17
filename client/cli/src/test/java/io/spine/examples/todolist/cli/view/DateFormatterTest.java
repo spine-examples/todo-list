@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -21,20 +27,16 @@
 package io.spine.examples.todolist.cli.view;
 
 import com.google.protobuf.Timestamp;
+import com.google.protobuf.util.Timestamps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-
-import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.base.Time.currentTime;
+import static com.google.common.truth.Truth.assertThat;
 import static io.spine.examples.todolist.cli.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
 import static io.spine.examples.todolist.cli.view.DateFormatter.format;
-import static io.spine.examples.todolist.cli.view.DateFormatter.getDateFormat;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("DateFormatter should")
+@DisplayName("`DateFormatter` should")
 class DateFormatterTest {
 
     @Test
@@ -46,17 +48,17 @@ class DateFormatterTest {
     @Test
     @DisplayName("return the default value for default timestamp")
     void returnDefaultValueForTimestamp() {
-        assertEquals(DEFAULT_TIMESTAMP_VALUE, format(Timestamp.getDefaultInstance()));
+        assertThat(format(Timestamp.getDefaultInstance()))
+                .isEqualTo(DEFAULT_TIMESTAMP_VALUE);
     }
 
     @Test
     @DisplayName("format timestamp")
     void formatTimestamp() {
-        Timestamp timestamp = currentTime();
-        long millis = toMillis(timestamp);
-        Date date = new Date(millis);
-
-        String expectedValue = getDateFormat().format(date);
-        assertEquals(expectedValue, format(timestamp));
+        long millis = 1608131220000L; // 2020-12-16 15:07:00 UTC
+        Timestamp timestamp = Timestamps.fromMillis(millis);
+        String actual = format(timestamp);
+        assertThat(actual)
+                .isEqualTo("2020-12-16");
     }
 }

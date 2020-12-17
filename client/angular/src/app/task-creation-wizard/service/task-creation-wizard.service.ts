@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,12 +36,12 @@ import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {
-  AddLabels,
-  CancelTaskCreation,
-  CompleteTaskCreation,
-  SkipLabels,
-  StartTaskCreation,
-  UpdateTaskDetails
+    AddLabels,
+    CancelTaskCreation,
+    CompleteTaskCreation,
+    SkipLabels,
+    StartTaskCreation,
+    UpdateTaskDetails
 } from 'proto/todolist/commands_pb';
 
 /**

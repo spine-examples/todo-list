@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -55,7 +61,11 @@ import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {chores} from 'test/given/tasks';
 import {LabelService} from 'app/labels/label.service';
-import {initMockProcess, initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
+import {
+    initMockProcess,
+    initMockProcessWithLabels,
+    taskCreationProcess
+} from 'test/given/task-creation-process';
 
 import {TaskCreation} from 'proto/todolist/tasks_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';

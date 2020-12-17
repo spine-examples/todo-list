@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -41,12 +47,12 @@ public final class Confirmation {
     @VisibleForTesting
     static final String NEGATIVE_ANSWER = "n";
 
-    private static final String DETAILED_HINT_FORMAT = "Valid values: '%s' or '%s'.";
-    private static final String DETAILED_HINT = format(DETAILED_HINT_FORMAT,
-                                                       POSITIVE_ANSWER, NEGATIVE_ANSWER);
-    private static final String MINOR_HINT_FORMAT = "(%s/%s)";
-    private static final String MINOR_HINT = format(MINOR_HINT_FORMAT,
-                                                    POSITIVE_ANSWER, NEGATIVE_ANSWER);
+    private static final String DETAILED_HINT = format(
+            "Valid values: `%s` or `%s`.", POSITIVE_ANSWER, NEGATIVE_ANSWER
+    );
+    private static final String MINOR_HINT = format(
+            "(%s/%s)", POSITIVE_ANSWER, NEGATIVE_ANSWER
+    );
 
     /** Prevents instantiation of this utility class. */
     private Confirmation() {

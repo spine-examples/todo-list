@@ -1,5 +1,11 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -61,9 +67,10 @@ final class Application {
     }
 
     private static Application create() {
-        ServerEnvironment serverEnvironment = ServerEnvironment.instance();
-        serverEnvironment.use(InMemoryStorageFactory.newInstance(), Production.class)
-                         .use(InMemoryTransportFactory.newInstance(), Production.class);
+        ServerEnvironment
+                .when(Production.class)
+                .use(InMemoryStorageFactory.newInstance())
+                .use(InMemoryTransportFactory.newInstance());
 
         BoundedContext context = TasksContextFactory.create();
         CommandService commandService = CommandService
@@ -78,10 +85,12 @@ final class Application {
                 .newBuilder()
                 .add(context)
                 .build();
-        Application application = new Application(commandService,
-                                                  queryService,
-                                                  subscriptionService,
-                                                  firebaseClient());
+        Application application = new Application(
+                commandService,
+                queryService,
+                subscriptionService,
+                firebaseClient()
+        );
         return application;
     }
 
@@ -102,8 +111,8 @@ final class Application {
         return client;
     }
 
-    private static
-    FirebaseQueryBridge newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
+    private static FirebaseQueryBridge
+    newQueryBridge(QueryService queryService, FirebaseClient firebaseClient) {
         return FirebaseQueryBridge
                 .newBuilder()
                 .setQueryService(queryService)
