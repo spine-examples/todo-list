@@ -39,7 +39,7 @@ dependencies {
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:$deps.versions.junit5",
             "org.junit.jupiter:junit-jupiter-params:$deps.versions.junit5",
-            "org.apiguardian:apiguardian-api:1.1.0",
+            "org.apiguardian:apiguardian-api:1.1.1",
 
             "io.spine:spine-server:$deps.versions.spineCore",
             project(path: ':testutil-api'),
