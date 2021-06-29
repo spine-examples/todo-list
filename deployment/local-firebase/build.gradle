@@ -36,16 +36,18 @@ dependencies {
 
 apply from: "$projectDir/scripts/install-firebase-emulator.gradle"
 
+// This task runs `firebase emulators:start` using the pre-installed emulator. See the README.md
+// for more details.
+//
+// In scope of its start-up, the emulator will rely onto the `firebase.json`
+// and `firebase-rules.json` configuration files located in the project directory.
+//
+// Emulator is configured to start on port 5000.
+//
 task runEmulator(type: com.github.psxpaul.task.ExecFork) {
-    workingDir = "$projectDir/node_modules/.bin"
-
-    final def runsOnWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
-    final def extension = runsOnWindows ? '.cmd' : ''
-
-    executable = "$workingDir/firebase-server$extension"
-
-    final def rulesFile = "$projectDir/firebase-rules.json" as File
-    args = ['-e', '-r', rulesFile.getPath()]
+    workingDir = "$projectDir"
+    executable = "firebase"
+    args = ["emulators:start"]
 
     waitForPort = 5000
 

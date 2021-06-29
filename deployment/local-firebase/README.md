@@ -2,13 +2,20 @@
 
 A local web server which uses in-memory storage and Firebase Realtime Database emulator.
 
+### Prerequisites
+
+Make sure to install the Firebase Database emulator. See the [official docs](https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration) on the installation and configuration.
+
+If you are transitioning from the older versions of this Spine example project, use this
+[migration guide](https://github.com/urish/firebase-server/blob/master/docs/firebase-emulators.md).
+
 ### Running the server
 The server can be run with the command:
 ```bash
 ./gradlew :local-firebase:runServer
 ```
 
-The command will start a local Firebase emulator and a local Spine web server at the address 
+The command will start a local Firebase emulator, and a local Spine web server at the address 
 `localhost:8080`.
 
 After that, the [`html-js`](../../client/html-js) or [`angular`](../../client/angular) client can 
