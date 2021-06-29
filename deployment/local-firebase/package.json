@@ -1,9 +1,0 @@
-{
-  "name": "local-firebase",
-  "version": "1.7.0",
-  "description": "To-Do List server based on local Firebase Realtime Database emulator",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "firebase-server": "^1.1.0"
-  }
-}
