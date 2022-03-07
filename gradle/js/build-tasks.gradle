@@ -100,6 +100,24 @@ task auditNodePackages {
 }
 
 /**
+ * Audits the module dependencies using the `npm audit` command.
+ *
+ * Sets the minimum level of vulnerability for `npm audit` to exit with a non-zero exit code
+ * to "high".
+ */
+task auditFixNodePackages {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Audits the module`s Node dependencies.'
+
+    inputs.dir nodeModulesDir
+
+    doLast {
+        npm 'set', 'audit-level', 'critical'
+        npm 'audit', 'fix'
+    }
+}
+
+/**
  * Installs the module dependencies and checks them for vulnerabilities.
  */
 task installDependencies {

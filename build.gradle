@@ -66,6 +66,7 @@ subprojects {
         errorprone "com.google.errorprone:error_prone_core:$deps.versions.errorProne"
         errorproneJavac "com.google.errorprone:javac:$deps.versions.errorProneJavac"
         implementation("com.google.guava:guava:$deps.versions.guava")
+        implementation("javax.annotation:javax.annotation-api:$deps.versions.javaxAnnotations")
         compileOnly("org.checkerframework:checker-qual:$deps.versions.checkerFramework")
         runtimeOnly deps.grpc.grpcNetty
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$deps.versions.junit5"
