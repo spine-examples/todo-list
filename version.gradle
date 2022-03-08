@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-final def SPINE_VERSION = '1.7.0'
+final def SPINE_VERSION = '1.8.0'
 
 final def versions = [
         checkerFramework : "3.7.1",
