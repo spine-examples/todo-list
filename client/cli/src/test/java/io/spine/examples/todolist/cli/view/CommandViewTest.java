@@ -40,7 +40,6 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.cli.action.NoOpAction.noOpActionProducer;
 import static io.spine.examples.todolist.cli.view.CommandView.GenericParameter.COMMAND_MESSAGE;
 import static io.spine.examples.todolist.cli.view.CommandView.GenericParameter.STATE_BUILDER;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,17 +94,6 @@ class CommandViewTest {
             assertEquals(CreateProject.class, COMMAND_MESSAGE.argumentIn(ACommandView.class));
             assertEquals(CreateProject.Builder.class,
                          STATE_BUILDER.argumentIn(ACommandView.class));
-        }
-    }
-
-    @Nested
-    @DisplayName("TypeInfo should")
-    class TypeInfoTest {
-
-        @Test
-        @DisplayName("have the private constructor")
-        void havePrivateCtor() {
-            assertHasPrivateParameterlessCtor(CommandView.TypeInfo.class);
         }
     }
 
