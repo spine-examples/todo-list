@@ -159,7 +159,7 @@ public abstract class CommandView<M extends Message, B extends ValidatingBuilder
     /**
      * Provides type information on {@link CommandView} descendants.
      */
-    static class TypeInfo {
+    private static class TypeInfo {
 
         private TypeInfo() {
             // Prevent instantiation of this utility class.
@@ -169,14 +169,13 @@ public abstract class CommandView<M extends Message, B extends ValidatingBuilder
          * Obtains the class of the {@linkplain ValidatingBuilder} for the given
          * {@link CommandView} descendant class.
          */
-        private static <M extends Message>
-        Class<M> messageClass(Class<? extends CommandView<M, ?>> viewClass) {
+        @SuppressWarnings("WeakerAccess") // PMD false positive error: `UnusedPrivateMethod`.
+        static <M extends Message> Class<M>
+        messageClass(Class<? extends CommandView<M, ?>> viewClass) {
             checkNotNull(viewClass);
             @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
             Class<M> builderClass = (Class<M>) COMMAND_MESSAGE.argumentIn(viewClass);
             return builderClass;
         }
-
-
     }
 }

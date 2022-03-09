@@ -77,8 +77,7 @@ public final class Confirmation {
             answer = getValidAnswer(screen, DETAILED_HINT);
         }
 
-        return answer.get()
-                     .equals(POSITIVE_ANSWER);
+        return POSITIVE_ANSWER.equals(answer.get());
     }
 
     /**

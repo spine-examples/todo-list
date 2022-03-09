@@ -25,7 +25,7 @@
  */
 
 import {Message} from 'google-protobuf';
-import * as uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 /**
  * A generator of UUID values.

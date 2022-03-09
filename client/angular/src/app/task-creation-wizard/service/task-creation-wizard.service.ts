@@ -221,7 +221,7 @@ export class TaskCreationWizard {
     const cmd = new StartTaskCreation();
     cmd.setId(taskCreationId);
     cmd.setTaskId(taskId);
-    return new Promise<TaskCreationId>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
           const startProcess = () => {
             this._id = taskCreationId;
             this._taskId = taskId;
