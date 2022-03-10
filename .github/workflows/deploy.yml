@@ -1,4 +1,4 @@
-name: Build under Ubuntu
+name: Deploy to AppEngine
 
 on: push
 #  push:
