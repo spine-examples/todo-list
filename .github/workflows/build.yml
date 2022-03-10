@@ -23,9 +23,6 @@ jobs:
         env:
           FIREBASE_CREDS_KEY: ${{ secrets.FIREBASE_CREDS_KEY }}
 
-      - name: Pull config
-        run: git submodule update --init --recursive
-
       - name: Build project and run tests
         shell: bash
         run: ./gradlew build --stacktrace
