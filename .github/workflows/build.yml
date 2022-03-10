@@ -15,6 +15,14 @@ jobs:
           distribution: zulu
           cache: gradle
 
+      - name: Decrypt Firebase service account
+        run: chmod +x ./scripts/decrypt.sh && \
+             ./scripts/decrypt.sh "$FIREBASE_CREDS_KEY" \
+             ./.github/keys/service-account.json.gpg \
+             ./deployment/appengine-web/src/main/resources/service-account.json
+        env:
+          FIREBASE_CREDS_KEY: ${{ secrets.FIREBASE_CREDS_KEY }}
+
       - name: Pull config
         run: git submodule update --init --recursive
 
