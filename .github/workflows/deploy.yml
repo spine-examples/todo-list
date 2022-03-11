@@ -23,7 +23,7 @@ jobs:
           FIREBASE_CREDS_KEY: ${{ secrets.FIREBASE_CREDS_KEY }}
 
       - name: Prepare GCloud credentials
-        run: gcloud auth activate-service-account --key-file deployment/appengine-web/src/main/resources/service-account.json
+        run: gcloud auth activate-service-account --key-file ./deployment/appengine-web/src/main/resources/service-account.json
 
       - name: Prepare GCloud project ID
         run: gcloud config set project spine-todo-list-example
