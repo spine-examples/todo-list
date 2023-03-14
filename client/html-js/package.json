@@ -14,7 +14,7 @@
     "spine-web": "1.8.0"
   },
   "devDependencies": {
-    "webpack": "^5.70.0",
+    "webpack": "^5.76.0",
     "webpack-cli": "^4.9.2"
   }
 }
